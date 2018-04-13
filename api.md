@@ -1,6 +1,6 @@
 # API
 
-## POST /pastes
+## POST `/pastes`
 
 Accepts:
 
@@ -64,6 +64,12 @@ Output (error):
 }
 ```
 
-## DELETE /pastes/{id}
+## DELETE `/pastes/<id>`
 
-## PATCH /pastes/{id}
+## PATCH `/pastes/<id>`
+
+## GET `/pastes/<id>`
+
+## GET `/pastes/<id>/files`
+
+## GET `/pastes/<id>/files/<id>`

@@ -7,6 +7,7 @@ use rocket::http::RawStr;
 use rocket::request::FromParam;
 
 use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
+use serde::ser::{Serialize, Serializer};
 
 use serde_json;
 
@@ -72,7 +73,7 @@ impl<'a> FromParam<'a> for PasteId {
 }
 
 /// A paste with files and metadata.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Paste {
   #[serde(flatten)]
   pub metadata: Metadata,
@@ -139,7 +140,7 @@ pub enum Visibility {
 }
 
 /// A file in a [`Paste`].
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct PasteFile {
   pub name: Option<String>,
   pub content: Content,
@@ -156,6 +157,18 @@ pub enum Content {
   Gzip(String),
   /// Base64-encoded xz data
   Xz(String),
+}
+
+impl Serialize for Content {
+  fn serialize<S>(&self, ser: S) -> Result<S::Ok, S::Error>
+    where S: Serializer,
+  {
+    match *self {
+      Content::Text(ref s) => ser.serialize_str(s),
+      Content::Base64(ref b) => ser.serialize_str(&base64::encode(b)),
+      _ => unreachable!(),
+    }
+  }
 }
 
 // Allow PasteFile to be deserialized.

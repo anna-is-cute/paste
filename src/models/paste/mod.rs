@@ -1,8 +1,6 @@
 use errors::Result as PasteResult;
 use store::Store;
 
-use base64;
-
 use rocket::http::RawStr;
 use rocket::request::FromParam;
 
@@ -15,6 +13,8 @@ use std::fs::File;
 use std::ops::{Deref, DerefMut};
 use std::path::PathBuf;
 use std::str::FromStr;
+
+pub mod output;
 
 /// An ID for a paste, which may or may not exist.
 ///
@@ -74,6 +74,7 @@ impl<'a> FromParam<'a> for PasteId {
 pub struct Paste {
   #[serde(flatten)]
   pub metadata: Metadata,
+  #[serde(skip_serializing_if = "Vec::is_empty")]
   pub files: Vec<PasteFile>,
 }
 
@@ -163,8 +164,8 @@ pub enum Content {
 mod base64_serde {
   use base64;
 
-  use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
-  use serde::ser::{Serialize, Serializer, SerializeStruct};
+  use serde::de::{self, Deserializer, Visitor};
+  use serde::ser::Serializer;
 
   use std::fmt::{self, Formatter};
 

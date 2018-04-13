@@ -1,4 +1,6 @@
+use models::paste::PasteId;
+
 #[get("/<id>")]
-fn get(id: String) -> String {
-  format!("getting paste {}", id)
+fn get(id: PasteId) -> String {
+  format!("getting paste {}", *id)
 }

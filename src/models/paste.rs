@@ -1,6 +1,35 @@
+use rocket::request::FromParam;
+use rocket::http::RawStr;
+
 use serde::de::{self, Deserialize, Deserializer, Visitor, SeqAccess, MapAccess};
 
+use uuid::Uuid;
+
+use std::str::FromStr;
+use std::ops::Deref;
 use std::fmt;
+
+#[derive(Debug)]
+pub struct PasteId(Uuid);
+
+impl Deref for PasteId {
+  type Target = Uuid;
+
+  fn deref(&self) -> &Self::Target {
+    &self.0
+  }
+}
+
+impl<'a> FromParam<'a> for PasteId {
+  type Error = &'a RawStr;
+
+  fn from_param(param: &'a RawStr) -> Result<Self, &'a RawStr> {
+    match Uuid::from_str(param) {
+      Ok(u) => Ok(PasteId(u)),
+      Err(_) => Err(param)
+    }
+  }
+}
 
 #[derive(Debug, Deserialize)]
 pub struct Paste {

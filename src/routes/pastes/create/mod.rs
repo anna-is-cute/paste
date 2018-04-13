@@ -1,10 +1,14 @@
 use errors::*;
 use models::paste::{Paste, Metadata, Content};
-use models::status::{Status, Error};
+use models::status::Status;
+use store::Store;
 
 use base64;
 
 use git2::Repository;
+
+use rocket::response::status::Custom;
+use rocket::http::Status as HttpStatus;
 
 use rocket_contrib::Json;
 
@@ -21,37 +25,30 @@ mod output;
 use self::output::Success;
 
 #[post("/", format = "application/json", data = "<info>")]
-fn create(info: Json<Paste>) -> Result<Json<Status<Success>>> {
-  // check for repeat file names
-  // TODO: check for path separator
-  {
-    let mut names: Vec<&String> = info.files.iter().filter_map(|x| x.name.as_ref()).collect();
-    let names_len = names.len();
-    names.sort();
-    names.dedup();
-    if names.len() != names_len {
-      return Ok(Json(Status::Error(Error::new(1, "duplicate file names"))));
-    }
+fn create(info: ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>) -> Result<Custom<Json<Status<Success>>>> {
+  // TODO: can this be a request guard?
+  let info = match info {
+    Ok(x) => x,
+    Err(e) => {
+      let message = format!("could not parse json: {}", e);
+      return Ok(
+        Status::show(HttpStatus::BadRequest, Status::error(2, message))
+      )
+    },
+  };
+
+  // check that files are valid
+  // move validate_files to Paste?
+  if let Err(e) = Store::validate_files(&info.files) {
+    return Ok(
+      Status::show(HttpStatus::BadRequest, Status::error(1, e))
+    );
   }
-
+  // move this to PasteId::create?
   // rocket has already verified the paste info is valid, so create a paste id
-  let paste_id = Uuid::new_v4();
+  let id = Store::new_paste(&info.metadata)?;
 
-  // get the path to the repo
-  let repo_path = Path::new("repos").join(paste_id.simple().to_string());
-
-  // FIXME: refactor this out into centralized paste handling
-  // make the repo for the paste
-  let repo = Repository::init(&repo_path);
-
-  // create a metadata file
-  let meta_file = File::create(repo_path.join("metadata.json"))?;
-  serde_json::to_writer(meta_file, &info.metadata)?;
-
-  // create the files directory
-  let files = repo_path.join("files");
-  fs::create_dir_all(&files)?;
-
+  // PasteId::write_files?
   // write the files
   for (i, pf) in info.into_inner().files.into_iter().enumerate() {
     let pf_path = files.join(pf.name.unwrap_or_else(|| format!("pastefile{}", i + 1)));
@@ -69,5 +66,5 @@ fn create(info: Json<Paste>) -> Result<Json<Status<Success>>> {
   // TODO: commit
 
   // return success
-  Ok(Json(Status::Success(paste_id.into())))
+  Ok(Status::show(HttpStatus::Ok, Status::success(paste_id.into())))
 }

@@ -21,14 +21,20 @@ impl Store {
   pub fn new_paste(paste: &Paste) -> Result<(PasteId, Internal)> {
     let id = PasteId(Uuid::new_v4());
 
-    // get the path to the repo
-    let repo_path = Store::directory().join(id.simple().to_string());
+    // get the path to the paste
+    let paste_path = Store::directory().join(id.simple().to_string());
 
-    // make the repo for the paste
-    let repo = Repository::init(&repo_path);
+    // get the files path for the paste
+    let files_path = paste_path.join("files");
+
+    // create directory for the paste
+    fs::create_dir_all(&paste_path)?;
+
+    // make the files repo for the paste
+    let repo = Repository::init(&files_path);
 
     // create a metadata file
-    let meta_file = File::create(repo_path.join("metadata.json"))?;
+    let meta_file = File::create(paste_path.join("metadata.json"))?;
     serde_json::to_writer(meta_file, &paste.metadata)?;
 
     // create internal metadata
@@ -44,12 +50,8 @@ impl Store {
     }
 
     // create internal metadata file
-    let internal_file = File::create(repo_path.join("internal.json"))?;
+    let internal_file = File::create(paste_path.join("internal.json"))?;
     serde_json::to_writer(internal_file, &internal)?;
-
-    // create the files directory
-    let files = repo_path.join("files");
-    fs::create_dir_all(&files)?;
 
     Ok((id, internal))
   }

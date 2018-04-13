@@ -1,24 +1,15 @@
 use errors::*;
-use models::paste::{Paste, Metadata, Content};
+use models::paste::{Paste, Content};
 use models::status::Status;
 use store::Store;
-
-use base64;
-
-use git2::Repository;
 
 use rocket::response::status::Custom;
 use rocket::http::Status as HttpStatus;
 
 use rocket_contrib::Json;
 
-use serde_json;
-
-use uuid::Uuid;
-
-use std::fs::{self, File};
+use std::fs::File;
 use std::io::Write;
-use std::path::Path;
 
 mod output;
 
@@ -46,12 +37,14 @@ fn create(info: ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>
   }
   // move this to PasteId::create?
   // rocket has already verified the paste info is valid, so create a paste id
-  let id = Store::new_paste(&info.metadata)?;
+  let (id, internal) = Store::new_paste(&*info)?;
+
+  let files = id.files_directory();
 
   // PasteId::write_files?
   // write the files
-  for (i, pf) in info.into_inner().files.into_iter().enumerate() {
-    let pf_path = files.join(pf.name.unwrap_or_else(|| format!("pastefile{}", i + 1)));
+  for (i, (pf, map)) in info.into_inner().files.into_iter().zip(&*internal.names).enumerate() {
+    let pf_path = files.join(map.0.simple().to_string());
 
     let mut file = File::create(pf_path)?;
     let content = match pf.content {
@@ -66,5 +59,5 @@ fn create(info: ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>
   // TODO: commit
 
   // return success
-  Ok(Status::show(HttpStatus::Ok, Status::success(paste_id.into())))
+  Ok(Status::show(HttpStatus::Ok, Status::success(Success::from(*id))))
 }

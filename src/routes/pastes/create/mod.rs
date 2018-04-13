@@ -3,6 +3,8 @@ use models::paste::{Paste, Content};
 use models::status::Status;
 use store::Store;
 
+use git2::{Repository, Signature};
+
 use rocket::response::status::Custom;
 use rocket::http::Status as HttpStatus;
 
@@ -56,7 +58,12 @@ fn create(info: ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>
     file.write_all(&content)?;
   }
 
-  // TODO: commit
+  let repo = Repository::open(&files)?;
+  let sig = Signature::now("No one", "no-one@example.com")?;
+  let mut index = repo.index()?;
+  let tree_id = index.write_tree()?;
+  let tree = repo.find_tree(tree_id)?;
+  repo.commit(Some("HEAD"), &sig, &sig, "create paste", &tree, &[])?;
 
   // return success
   Ok(Status::show(HttpStatus::Ok, Status::success(Success::from(*id))))

@@ -1,32 +1,36 @@
-use rocket_contrib::Json;
-
 use serde::de::{self, Deserialize, Deserializer, Visitor, SeqAccess, MapAccess};
 
 use std::fmt;
 
 #[derive(Debug, Deserialize)]
-struct Data {
-  name: Option<String>,
-  visibility: Option<Visibility>,
-  files: Vec<PasteFile>,
+pub struct Paste {
+  #[serde(flatten)]
+  pub metadata: Metadata,
+  pub files: Vec<PasteFile>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Metadata {
+  pub name: Option<String>,
+  pub visibility: Option<Visibility>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-enum Visibility {
+pub enum Visibility {
   Public,
   Unlisted,
   Private,
 }
 
 #[derive(Debug)]
-struct PasteFile {
-  name: Option<String>,
-  content: Content,
+pub struct PasteFile {
+  pub name: Option<String>,
+  pub content: Content,
 }
 
 #[derive(Debug)]
-enum Content {
+pub enum Content {
   Text(String),
   Base64(String),
   Gzip(String),
@@ -136,10 +140,3 @@ impl<'de> Deserialize<'de> for PasteFile {
     des.deserialize_struct("PasteFile", FIELDS, PasteFileVisitor)
   }
 }
-
-#[post("/", format = "application/json", data = "<data>")]
-fn create(data: Json<Data>) -> &'static str {
-  println!("{:#?}", data);
-  "test post"
-}
-

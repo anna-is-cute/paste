@@ -8,8 +8,16 @@ rocket = "0.3"
 rocket_codegen = "0.3"
 serde = "1"
 serde_derive = "1"
+serde_json = "1"
+git2 = "0.7"
+base64 = "0.9"
+failure = "0.1"
 
 [dependencies.rocket_contrib]
 version = "0.3"
 default_features = false
 features = ["json"]
+
+[dependencies.uuid]
+version = "0.6"
+features = ["v4", "serde"]

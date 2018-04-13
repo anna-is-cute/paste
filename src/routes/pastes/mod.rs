@@ -1,9 +1,5 @@
 pub mod create;
-
-#[get("/<id>")]
-fn get(id: String) -> String {
-  format!("getting paste {}", id)
-}
+pub mod get;
 
 #[patch("/<id>")]
 fn edit(id: String) -> &'static str {

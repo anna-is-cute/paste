@@ -1,5 +1,6 @@
 pub mod create;
 pub mod get;
+pub mod files;
 
 #[patch("/<id>")]
 fn edit(id: String) -> &'static str {

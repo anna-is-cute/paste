@@ -16,7 +16,7 @@ failure = "0.1"
 [dependencies.rocket_contrib]
 version = "0.3"
 default_features = false
-features = ["json"]
+features = ["json", "uuid"]
 
 [dependencies.uuid]
 version = "0.6"

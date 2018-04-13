@@ -58,7 +58,9 @@ fn create(info: ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>
     file.write_all(&content)?;
   }
 
+  // commit initial state
   let repo = Repository::open(&files)?;
+  // TODO: change this for authed via api key
   let sig = Signature::now("No one", "no-one@example.com")?;
   let mut index = repo.index()?;
   let tree_id = index.write_tree()?;

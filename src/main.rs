@@ -1,4 +1,4 @@
-#![feature(plugin)]
+#![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
 
 extern crate base64;
@@ -27,9 +27,12 @@ fn main() {
     .mount("/", routes![index])
     .mount("/api/pastes", routes![
       routes::pastes::get::get,
+      routes::pastes::get::get_query,
       routes::pastes::create::create,
       routes::pastes::edit,
       routes::pastes::delete,
+
+      routes::pastes::files::get::get_file_id,
     ])
     .launch();
 }

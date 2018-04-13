@@ -140,14 +140,17 @@ pub enum Visibility {
 }
 
 /// A file in a [`Paste`].
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct PasteFile {
   pub name: Option<String>,
+  #[serde(flatten)]
   pub content: Content,
 }
 
 /// The content of a [`PasteFile`].
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+#[serde(tag = "format", content = "content")]
 pub enum Content {
   /// Valid UTF-8 text
   Text(String),
@@ -157,135 +160,4 @@ pub enum Content {
   Gzip(String),
   /// Base64-encoded xz data
   Xz(String),
-}
-
-impl Serialize for PasteFile {
-  fn serialize<S>(&self, ser: S) -> Result<S::Ok, S::Error>
-    where S: Serializer,
-  {
-    let mut s = ser.serialize_struct("PasteFile", 2)?;
-
-    s.serialize_field("name", &self.name)?;
-    match self.content {
-      Content::Text(ref text) => s.serialize_field("text", text)?,
-      Content::Base64(ref bytes) => s.serialize_field("base64", &base64::encode(bytes))?,
-      _ => unreachable!(),
-    }
-    s.end()
-  }
-}
-
-// Allow PasteFile to be deserialized.
-//
-// This has to be done due to the way that the content field is deserialized.
-impl<'de> Deserialize<'de> for PasteFile {
-  fn deserialize<D>(des: D) -> Result<Self, D::Error>
-    where D: Deserializer<'de>,
-  {
-    enum Field {
-      Name,
-      Text,
-      Base64,
-      Gzip,
-      Xz,
-    }
-
-    impl<'de> Deserialize<'de> for Field {
-      fn deserialize<D>(des: D) -> Result<Field, D::Error>
-        where D: Deserializer<'de>,
-      {
-        struct FieldVisitor;
-
-        impl<'de> Visitor<'de> for FieldVisitor {
-          type Value = Field;
-
-          fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-            formatter.write_str("one of `name` or [`text`, `base64`, `gzip`, `xz`]")
-          }
-
-          fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-            where E: de::Error,
-          {
-            match value {
-              "name" => Ok(Field::Name),
-              "text" => Ok(Field::Text),
-              "base64" => Ok(Field::Base64),
-              "gzip" => Ok(Field::Gzip),
-              "xz" => Ok(Field::Xz),
-              _ => Err(de::Error::unknown_field(value, FIELDS)),
-            }
-          }
-        }
-
-        des.deserialize_identifier(FieldVisitor)
-      }
-    }
-
-    struct PasteFileVisitor;
-
-    impl <'de> Visitor<'de> for PasteFileVisitor {
-      type Value = PasteFile;
-
-      fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("struct PasteFile")
-      }
-
-      fn visit_map<V>(self, mut map: V) -> Result<Self::Value, V::Error>
-        where V: MapAccess<'de>,
-      {
-        let mut name = None;
-        let mut content = None;
-        while let Some(key) = map.next_key()? {
-          match key {
-            Field::Name => {
-              if name.is_some() {
-                return Err(de::Error::duplicate_field("name"));
-              }
-              name = Some(map.next_value()?);
-            },
-            Field::Text => {
-              if content.is_some() {
-                return Err(de::Error::duplicate_field("content"));
-              }
-              content = Some(Content::Text(map.next_value()?));
-            },
-            Field::Base64 => {
-              if content.is_some() {
-                return Err(de::Error::duplicate_field("content"));
-              }
-              let string: String = map.next_value()?;
-              let decoded = match base64::decode(&string) {
-                Ok(d) => d,
-                Err(_) => return Err(de::Error::invalid_value(
-                  de::Unexpected::Str(&string),
-                  &"valid base64",
-                )),
-              };
-              content = Some(Content::Base64(decoded));
-            },
-            Field::Gzip => {
-              if content.is_some() {
-                return Err(de::Error::duplicate_field("content"));
-              }
-              content = Some(Content::Gzip(map.next_value()?));
-            },
-            Field::Xz => {
-              if content.is_some() {
-                return Err(de::Error::duplicate_field("content"));
-              }
-              content = Some(Content::Xz(map.next_value()?));
-            },
-          }
-        }
-        let content = content.ok_or_else(|| de::Error::missing_field("content"))?;
-        Ok(PasteFile {
-          name,
-          content,
-        })
-      }
-    }
-
-    const FIELDS: &[&str] = &["name", "text", "base64", "gzip", "xz"];
-    des.deserialize_struct("PasteFile", FIELDS, PasteFileVisitor)
-  }
 }

@@ -15,7 +15,8 @@ Accepts:
   // private - only visible to the authed user creating the paste
   "visibility": "public",
   // array of files to add to the paste
-  // all files must have data, specified by one and only one of the following keys
+  // all files must have content (field content) in a given format (field format)
+  // formats are listed below
   // text - valid utf-8 text
   // base64 - base64 of the uncompressed content
   // gzip - base64 of the gzip-compressed content
@@ -25,13 +26,17 @@ Accepts:
       // name of the file
       // if not specified, pastefile1, pastefile2, etc.
       "name": "file_1.txt",
+      // specify that the content field is valid utf-8 text
+      "format": "text",
       // content of the file as valid utf-8 text
-      "text": "Hello!"
+      "content": "Hello!"
     },
     {
       "name": "file_2.jpg",
+      // specify that the content field is base64-encoded data
+      "format": "base64",
       // content of the jpg in base64 (truncated here)
-      "base64": "/9j/4AAQSkZJRgABAQAAAQABAAD//gA7..."
+      "content": "/9j/4AAQSkZJRgABAQAAAQABAAD//gA7..."
     }
   ]
 }

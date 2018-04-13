@@ -2,6 +2,8 @@ use errors::*;
 use models::paste::{Paste, Metadata, Content};
 use models::status::{Status, Error};
 
+use base64;
+
 use git2::Repository;
 
 use rocket_contrib::Json;
@@ -54,11 +56,12 @@ fn create(info: Json<Paste>) -> Result<Json<Status<Success>>> {
 
     let mut file = File::create(pf_path)?;
     let content = match pf.content {
-      Content::Text(c) => c,
+      Content::Text(c) => c.into_bytes(),
+      Content::Base64(b) => b,
       // FIXME: others
       _ => continue,
     };
-    file.write_all(content.as_bytes())?;
+    file.write_all(&content)?;
   }
 
   // TODO: commit

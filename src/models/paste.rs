@@ -1,3 +1,5 @@
+use base64;
+
 use rocket::request::FromParam;
 use rocket::http::RawStr;
 
@@ -61,7 +63,7 @@ pub struct PasteFile {
 #[derive(Debug)]
 pub enum Content {
   Text(String),
-  Base64(String),
+  Base64(Vec<u8>),
   Gzip(String),
   Xz(String),
 }
@@ -141,7 +143,15 @@ impl<'de> Deserialize<'de> for PasteFile {
               if content.is_some() {
                 return Err(de::Error::duplicate_field("content"));
               }
-              content = Some(Content::Base64(map.next_value()?));
+              let string: String = map.next_value()?;
+              let decoded = match base64::decode(&string) {
+                Ok(d) => d,
+                Err(_) => return Err(de::Error::invalid_value(
+                  de::Unexpected::Str(&string),
+                  &"valid base64",
+                )),
+              };
+              content = Some(Content::Base64(decoded));
             },
             Field::Gzip => {
               if content.is_some() {

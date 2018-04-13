@@ -1,5 +1,3 @@
-use errors::*;
-
 use rocket::http::Status as HttpStatus;
 use rocket::response::status::Custom;
 

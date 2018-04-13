@@ -15,6 +15,7 @@ extern crate failure;
 mod errors;
 mod models;
 mod routes;
+mod store;
 
 #[get("/")]
 fn index() -> &'static str {

@@ -6,9 +6,6 @@ use base64;
 use rocket::http::RawStr;
 use rocket::request::FromParam;
 
-use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
-use serde::ser::{Serialize, Serializer, SerializeStruct};
-
 use serde_json;
 
 use uuid::Uuid;
@@ -155,9 +152,49 @@ pub enum Content {
   /// Valid UTF-8 text
   Text(String),
   /// Base64-encoded data
+  #[serde(with = "base64_serde")]
   Base64(Vec<u8>),
   /// Base64-encoded gzip data
   Gzip(String),
   /// Base64-encoded xz data
   Xz(String),
+}
+
+mod base64_serde {
+  use base64;
+
+  use serde::de::{self, Deserialize, Deserializer, MapAccess, Visitor};
+  use serde::ser::{Serialize, Serializer, SerializeStruct};
+
+  use std::fmt::{self, Formatter};
+
+  pub fn serialize<T, S>(data: &T, ser: S) -> Result<S::Ok, S::Error>
+    where S: Serializer,
+          T: AsRef<[u8]> + ?Sized,
+  {
+    ser.serialize_str(&base64::encode(data))
+  }
+
+  pub fn deserialize<'de, D>(des: D) -> Result<Vec<u8>, D::Error>
+    where D: Deserializer<'de>,
+  {
+    struct Base64Visitor;
+
+    impl<'de> Visitor<'de> for Base64Visitor {
+      type Value = Vec<u8>;
+
+      fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
+        formatter.write_str("a string")
+      }
+
+      fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+        where E: de::Error,
+      {
+        base64::decode(v)
+          .map_err(|_| de::Error::invalid_value(de::Unexpected::Str(v), &"valid base64"))
+      }
+    }
+
+    des.deserialize_string(Base64Visitor)
+  }
 }

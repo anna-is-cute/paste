@@ -45,7 +45,7 @@ fn create(info: ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>
 
   // PasteId::write_files?
   // write the files
-  for (i, (pf, map)) in info.into_inner().files.into_iter().zip(&*internal.names).enumerate() {
+  for (pf, map) in info.into_inner().files.into_iter().zip(&*internal.names) {
     let pf_path = files.join(map.0.simple().to_string());
 
     let mut file = File::create(pf_path)?;

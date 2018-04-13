@@ -44,9 +44,11 @@ fn create(info: Json<Paste>) -> Result<Json<Status<Success>>> {
   // make the repo for the paste
   let repo = Repository::init(&repo_path);
 
-  let info_file = File::create(repo_path.join("info.json"))?;
-  serde_json::to_writer(info_file, &info.metadata)?;
+  // create a metadata file
+  let meta_file = File::create(repo_path.join("metadata.json"))?;
+  serde_json::to_writer(meta_file, &info.metadata)?;
 
+  // create the files directory
   let files = repo_path.join("files");
   fs::create_dir_all(&files)?;
 

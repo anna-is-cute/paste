@@ -11,9 +11,13 @@ use std::str::FromStr;
 use std::ops::Deref;
 use std::fmt;
 
+/// An ID for a paste, which may or may not exist.
+///
+/// Mostly useful for having Rocket accept only valid IDs in routes.
 #[derive(Debug)]
 pub struct PasteId(Uuid);
 
+// Allow PasteId to be dereferenced into its inner type
 impl Deref for PasteId {
   type Target = Uuid;
 
@@ -22,6 +26,7 @@ impl Deref for PasteId {
   }
 }
 
+// Allow Rocket to accept PasteId in routes
 impl<'a> FromParam<'a> for PasteId {
   type Error = &'a RawStr;
 
@@ -33,6 +38,7 @@ impl<'a> FromParam<'a> for PasteId {
   }
 }
 
+/// A paste with files and metadata.
 #[derive(Debug, Deserialize)]
 pub struct Paste {
   #[serde(flatten)]
@@ -40,34 +46,50 @@ pub struct Paste {
   pub files: Vec<PasteFile>,
 }
 
+/// Metadata describing a [`Paste`].
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Metadata {
   pub name: Option<String>,
   pub visibility: Option<Visibility>,
 }
 
+/// Visibility of a [`Paste`].
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Visibility {
+  /// Paste is visible to everyone and can be crawled.
   Public,
+  /// Paste is visible to everyone who knows the link and cannot be crawled.
   Unlisted,
+  /// Paste is visible only to the user who created it.
+  ///
+  /// Not available for anonymous pastes.
   Private,
 }
 
+/// A file in a [`Paste`].
 #[derive(Debug)]
 pub struct PasteFile {
   pub name: Option<String>,
   pub content: Content,
 }
 
+/// The content of a [`PasteFile`].
 #[derive(Debug)]
 pub enum Content {
+  /// Valid UTF-8 text
   Text(String),
+  /// Base64-encoded data
   Base64(Vec<u8>),
+  /// Base64-encoded gzip data
   Gzip(String),
+  /// Base64-encoded xz data
   Xz(String),
 }
 
+// Allow PasteFile to be deserialized.
+//
+// This has to be done due to the way that the content field is deserialized.
 impl<'de> Deserialize<'de> for PasteFile {
   fn deserialize<D>(des: D) -> Result<Self, D::Error>
     where D: Deserializer<'de>,

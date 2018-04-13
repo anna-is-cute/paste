@@ -2,6 +2,13 @@
 
 ## POST `/pastes`
 
+Query params:
+
+- `full` (`bool`): `true` or `false` (default: `false`)
+
+  Includes files and their contents if `true`
+- `api_key` (`str`): api key for creating private pastes (default: not specified)
+
 Accepts:
 
 ```javascript

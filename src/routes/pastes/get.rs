@@ -21,6 +21,7 @@ fn get(id: PasteId) -> Result<Json<Paste>> {
     let mut data = Vec::new();
     file.read_to_end(&mut data)?;
 
+    // TODO: store if the file is text or binary instead of attempting to parse
     let content = String::from_utf8(data.clone())
       .map(Content::Text)
       .unwrap_or_else(|_| Content::Base64(data));

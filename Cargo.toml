@@ -1,0 +1,15 @@
+[package]
+name = "paste"
+version = "0.1.0"
+authors = ["Kyle Clemens <git@kyleclemens.com>"]
+
+[dependencies]
+rocket = "0.3"
+rocket_codegen = "0.3"
+serde = "1"
+serde_derive = "1"
+
+[dependencies.rocket_contrib]
+version = "0.3"
+default_features = false
+features = ["json"]

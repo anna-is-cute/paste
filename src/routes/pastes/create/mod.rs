@@ -46,9 +46,8 @@ fn create(info: ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>
     let mut file = File::create(pf_path)?;
     let content = match pf.content {
       Content::Text(c) => c.into_bytes(),
-      Content::Base64(b) => b,
-      // FIXME: others
-      _ => continue,
+      // all base64/compress/decompress is handled via serde
+      Content::Base64(b) | Content::Gzip(b) | Content::Xz(b) => b,
     };
     file.write_all(&content)?;
   }

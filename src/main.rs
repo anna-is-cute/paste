@@ -2,7 +2,9 @@
 #![plugin(rocket_codegen)]
 
 extern crate base64;
+extern crate failure;
 extern crate git2;
+extern crate libflate;
 extern crate rocket_contrib;
 extern crate rocket;
 #[macro_use]
@@ -10,7 +12,7 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate serde;
 extern crate uuid;
-extern crate failure;
+extern crate xz2;
 
 mod errors;
 mod models;

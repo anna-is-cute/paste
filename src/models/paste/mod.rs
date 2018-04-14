@@ -31,6 +31,10 @@ impl PasteId {
     self.directory().join("files")
   }
 
+  pub fn exists(&self) -> bool {
+    self.directory().exists()
+  }
+
   pub fn metadata(&self) -> PasteResult<Metadata> {
     let file = File::open(self.directory().join("metadata.json"))?;
     Ok(serde_json::from_reader(file)?)

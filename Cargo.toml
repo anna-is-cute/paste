@@ -28,6 +28,9 @@ libflate = "0.1"
 # accepintg base64 xz data
 xz2 = "0.1"
 
+# secure password hashing
+sodiumoxide = "0.0.16"
+
 # web logic with json and uuids
 [dependencies.rocket_contrib]
 version = "0.3"

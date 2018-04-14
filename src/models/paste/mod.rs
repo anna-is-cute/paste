@@ -167,9 +167,11 @@ pub enum Content {
   #[serde(with = "base64_serde")]
   Base64(Vec<u8>),
   /// Base64-encoded gzip data
-  Gzip(String),
+  #[serde(with = "gzip_base64_serde")]
+  Gzip(Vec<u8>),
   /// Base64-encoded xz data
-  Xz(String),
+  #[serde(with = "xz_base64_serde")]
+  Xz(Vec<u8>),
 }
 
 mod base64_serde {
@@ -179,6 +181,23 @@ mod base64_serde {
   use serde::ser::Serializer;
 
   use std::fmt::{self, Formatter};
+
+  pub struct Base64Visitor;
+
+  impl<'de> Visitor<'de> for Base64Visitor {
+    type Value = Vec<u8>;
+
+    fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
+      formatter.write_str("a string")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+      where E: de::Error,
+    {
+      base64::decode(v)
+        .map_err(|_| de::Error::invalid_value(de::Unexpected::Str(v), &"valid base64"))
+    }
+  }
 
   pub fn serialize<T, S>(data: &T, ser: S) -> Result<S::Ok, S::Error>
     where S: Serializer,
@@ -190,23 +209,73 @@ mod base64_serde {
   pub fn deserialize<'de, D>(des: D) -> Result<Vec<u8>, D::Error>
     where D: Deserializer<'de>,
   {
-    struct Base64Visitor;
-
-    impl<'de> Visitor<'de> for Base64Visitor {
-      type Value = Vec<u8>;
-
-      fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {
-        formatter.write_str("a string")
-      }
-
-      fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
-        where E: de::Error,
-      {
-        base64::decode(v)
-          .map_err(|_| de::Error::invalid_value(de::Unexpected::Str(v), &"valid base64"))
-      }
-    }
-
     des.deserialize_string(Base64Visitor)
+  }
+}
+
+mod gzip_base64_serde {
+  use super::base64_serde::Base64Visitor;
+
+  use base64;
+
+  use libflate::gzip::{Encoder, Decoder};
+
+  use serde::de::{self, Deserializer, Visitor};
+  use serde::ser::{self, Serializer};
+
+  use std::io::{Read, Write};
+
+  pub fn serialize<T, S>(data: &T, ser: S) -> Result<S::Ok, S::Error>
+    where S: Serializer,
+          T: AsRef<[u8]> + ?Sized,
+  {
+    let mut encoder = Encoder::new(Vec::new()).map_err(|e| ser::Error::custom(e))?;
+    encoder.write_all(data.as_ref()).map_err(|e| ser::Error::custom(e))?;
+    let encoded_bytes = encoder.finish().into_result().map_err(|e| ser::Error::custom(e))?;
+    ser.serialize_str(&base64::encode(&encoded_bytes))
+  }
+
+  pub fn deserialize<'de, D>(des: D) -> Result<Vec<u8>, D::Error>
+    where D: Deserializer<'de>,
+  {
+    let bytes = des.deserialize_string(Base64Visitor)?;
+    let mut decoder = Decoder::new(bytes.as_slice()).map_err(|e| de::Error::custom(e))?;
+    let mut decoded_bytes = Vec::new();
+    decoder.read_to_end(&mut decoded_bytes).map_err(|e| de::Error::custom(e))?;
+    Ok(decoded_bytes)
+  }
+}
+
+mod xz_base64_serde {
+  use super::base64_serde::Base64Visitor;
+
+  use base64;
+
+  use xz2::read::XzDecoder;
+  use xz2::write::XzEncoder;
+
+  use serde::de::{self, Deserializer, Visitor};
+  use serde::ser::{self, Serializer};
+
+  use std::io::{Read, Write};
+
+  pub fn serialize<T, S>(data: &T, ser: S) -> Result<S::Ok, S::Error>
+    where S: Serializer,
+          T: AsRef<[u8]> + ?Sized,
+  {
+    let mut encoder = XzEncoder::new(Vec::new(), 9);
+    encoder.write_all(data.as_ref()).map_err(|e| ser::Error::custom(e))?;
+    let encoded_bytes = encoder.finish().map_err(|e| ser::Error::custom(e))?;
+    ser.serialize_str(&base64::encode(&encoded_bytes))
+  }
+
+  pub fn deserialize<'de, D>(des: D) -> Result<Vec<u8>, D::Error>
+    where D: Deserializer<'de>,
+  {
+    let bytes = des.deserialize_string(Base64Visitor)?;
+    let mut decoder = XzDecoder::new(bytes.as_slice());
+    let mut decoded_bytes = Vec::new();
+    decoder.read_to_end(&mut decoded_bytes).map_err(|e| de::Error::custom(e))?;
+    Ok(decoded_bytes)
   }
 }

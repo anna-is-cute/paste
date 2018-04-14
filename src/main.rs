@@ -32,7 +32,8 @@ fn main() {
       routes::pastes::edit,
       routes::pastes::delete,
 
-      routes::pastes::files::get::get_file_id,
+      routes::pastes::files::get::get_files,
+      routes::pastes::files::file::get_file_id,
     ])
     .launch();
 }

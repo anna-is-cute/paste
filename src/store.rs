@@ -31,7 +31,7 @@ impl Store {
     fs::create_dir_all(&paste_path)?;
 
     // make the files repo for the paste
-    let repo = Repository::init(&files_path);
+    Repository::init(&files_path)?;
 
     // create a metadata file
     let meta_file = File::create(paste_path.join("metadata.json"))?;

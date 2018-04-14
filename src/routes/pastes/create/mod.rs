@@ -1,11 +1,10 @@
-use errors::*;
 use models::paste::{Paste, Content};
-use models::status::Status;
+use models::status::{Status, ErrorKind};
+use routes::RouteResult;
 use store::Store;
 
 use git2::{Repository, Signature};
 
-use rocket::response::status::Custom;
 use rocket::http::Status as HttpStatus;
 
 use rocket_contrib::Json;
@@ -18,24 +17,20 @@ mod output;
 use self::output::Success;
 
 #[post("/", format = "application/json", data = "<info>")]
-fn create(info: ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>) -> Result<Custom<Json<Status<Success>>>> {
+fn create(info: ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>) -> RouteResult<Success> {
   // TODO: can this be a request guard?
   let info = match info {
     Ok(x) => x,
     Err(e) => {
       let message = format!("could not parse json: {}", e);
-      return Ok(
-        Status::show(HttpStatus::BadRequest, Status::error(2, message))
-      )
+      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(Some(message))));
     },
   };
 
   // check that files are valid
   // move validate_files to Paste?
   if let Err(e) = Store::validate_files(&info.files) {
-    return Ok(
-      Status::show(HttpStatus::BadRequest, Status::error(1, e))
-    );
+    return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::InvalidFile(Some(e))));
   }
   // move this to PasteId::create?
   // rocket has already verified the paste info is valid, so create a paste
@@ -68,5 +63,5 @@ fn create(info: ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>
   repo.commit(Some("HEAD"), &sig, &sig, "create paste", &tree, &[])?;
 
   // return success
-  Ok(Status::show(HttpStatus::Ok, Status::success(Success::from(*id))))
+  Ok(Status::show_success(HttpStatus::Ok, Success::from(*id)))
 }

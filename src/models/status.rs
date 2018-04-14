@@ -10,26 +10,37 @@ use std::fmt::Debug;
 #[derive(Debug, Serialize)]
 #[serde(tag = "status", rename_all = "lowercase")]
 pub enum Status<T> {
-  Success(T),
-  Error {
-    code: u64,
-    message: String,
+  Success {
+    result: T
   },
+  Error(ErrorKind),
 }
 
 impl<T> Status<T>
   where T: Debug + serde::Serialize
 {
   pub fn success(t: T) -> Status<T> {
-    Status::Success(t)
+    Status::Success { result: t }
   }
 
-  pub fn error<S: Into<String>>(code: u64, message: S) -> Status<T> {
-    let message = message.into();
-    Status::Error { code, message }
+  pub fn error(error: ErrorKind) -> Status<T> {
+    Status::Error(error)
   }
 
-  pub fn show(status: HttpStatus, t: T) -> Custom<Json<T>> {
-    Custom(status, Json(t))
+  pub fn show_error(status: HttpStatus, error: ErrorKind) -> Custom<Json<Status<T>>> {
+    Custom(status, Json(Status::error(error)))
   }
+
+  pub fn show_success(status: HttpStatus, t: T) -> Custom<Json<Status<T>>> {
+    Custom(status, Json(Status::success(t)))
+  }
+}
+
+#[derive(Debug, Serialize)]
+#[serde(tag = "error", content = "message", rename_all = "snake_case")]
+pub enum ErrorKind {
+  InvalidFile(#[serde(skip_serializing_if = "Option::is_none")] Option<String>),
+  BadJson(#[serde(skip_serializing_if = "Option::is_none")] Option<String>),
+  MissingPaste,
+  MissingFile,
 }

@@ -1,8 +1,9 @@
-use errors::*;
 use models::paste::{Paste, Content, PasteId};
 use models::paste::output::{Output, OutputFile};
+use models::status::{Status, ErrorKind};
+use routes::RouteResult;
 
-use rocket_contrib::Json;
+use rocket::http::Status as HttpStatus;
 
 use std::fs::File;
 use std::io::Read;
@@ -15,18 +16,20 @@ struct Query {
 // routes separated because of https://github.com/SergioBenitez/Rocket/issues/376
 
 #[get("/<id>")]
-fn get(id: PasteId) -> Result<Json<Output>> {
+fn get(id: PasteId) -> RouteResult<Output> {
   _get(id, None)
 }
 
 #[get("/<id>?<query>")]
-fn get_query(id: PasteId, query: Query) -> Result<Json<Output>> {
+fn get_query(id: PasteId, query: Query) -> RouteResult<Output> {
   _get(id, Some(query))
 }
 
-fn _get(id: PasteId, query: Option<Query>) -> Result<Json<Output>> {
+fn _get(id: PasteId, query: Option<Query>) -> RouteResult<Output> {
+  if !id.exists() {
+    return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste));
+  }
   let files_dir = id.files_directory();
-  // FIXME: check if dir exists and return 404 instead of failing below and returning 500
 
   let metadata = id.metadata()?;
   let internal = id.internal()?;
@@ -52,11 +55,13 @@ fn _get(id: PasteId, query: Option<Query>) -> Result<Json<Output>> {
     files.push(pf);
   }
 
-  Ok(Json(Output {
+  let output = Output {
     paste: Paste {
       metadata,
       files: Vec::new(),
     },
     files,
-  }))
+  };
+
+  Ok(Status::show_success(HttpStatus::Ok, output))
 }

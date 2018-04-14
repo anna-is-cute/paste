@@ -40,11 +40,7 @@ fn get_file_id(paste_id: PasteId, file_id: UUID) -> Result<Custom<Json<Status<Ou
     .map(Content::Text)
     .unwrap_or_else(|_| Content::Base64(data));
 
-  let pf = OutputFile {
-    id: file_id.simple().to_string(),
-    name: Some(name.clone()),
-    content: Some(content),
-  };
+  let pf = OutputFile::new(&file_id, Some(name.clone()), Some(content));
 
   Ok(Status::show(HttpStatus::Ok, Status::success(pf)))
 }

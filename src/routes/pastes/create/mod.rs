@@ -38,7 +38,7 @@ fn create(info: ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>
     );
   }
   // move this to PasteId::create?
-  // rocket has already verified the paste info is valid, so create a paste id
+  // rocket has already verified the paste info is valid, so create a paste
   let (id, internal) = Store::new_paste(&*info)?;
 
   let files = id.files_directory();

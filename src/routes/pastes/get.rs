@@ -45,14 +45,10 @@ fn _get(id: PasteId, query: Option<Query>) -> Result<Json<Output>> {
       Some(true) => Some(String::from_utf8(data.clone())
         .map(Content::Text)
         .unwrap_or_else(|_| Content::Base64(data))),
-      _ => None
+      _ => None,
     };
 
-    let pf = OutputFile {
-      id: uuid.simple().to_string(),
-      name: Some(name.clone()),
-      content,
-    };
+    let pf = OutputFile::new(uuid, Some(name.clone()), content);
     files.push(pf);
   }
 

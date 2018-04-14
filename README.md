@@ -2,7 +2,7 @@
 
 *A sensible pastebin.*
 
-## Super unfinished. Like not even close to working
+## Very unfinished. Many features do not work
 
 ## Idea
 
@@ -23,3 +23,10 @@ highlighting, anonymity, and secure authentication.
   - [ ] Pretty
   - [ ] Performant
   - [ ] Functional
+
+## Usage
+
+Clone repo, then do `cargo run`. Use the API.
+
+A folder called `store` will be created wherever `cargo run` is executed in, and pastes will be
+stored there.

@@ -86,7 +86,8 @@ pub struct Paste {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Metadata {
   pub name: Option<String>,
-  pub visibility: Option<Visibility>,
+  #[serde(default)]
+  pub visibility: Visibility,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
@@ -139,6 +140,12 @@ pub enum Visibility {
   ///
   /// Not available for anonymous pastes.
   Private,
+}
+
+impl Default for Visibility {
+  fn default() -> Self {
+    Visibility::Unlisted
+  }
 }
 
 /// A file in a [`Paste`].

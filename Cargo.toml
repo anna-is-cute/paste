@@ -1,23 +1,40 @@
 [package]
 name = "paste"
-version = "0.1.0"
+version = "0.0.0"
 authors = ["Kyle Clemens <git@kyleclemens.com>"]
 
 [dependencies]
+# all web logic
 rocket = "0.3"
 rocket_codegen = "0.3"
+
+# json serialization and deserialization
 serde = "1"
 serde_derive = "1"
 serde_json = "1"
+
+# creating paste histories
 git2 = "0.7"
+
+# handling binary uploads in json
 base64 = "0.9"
+
+# error handling in the crate
 failure = "0.1"
 
+# accepting base64 gzip data
+libflate = "0.1"
+
+# accepintg base64 xz data
+xz2 = "0.1"
+
+# web logic with json and uuids
 [dependencies.rocket_contrib]
 version = "0.3"
 default_features = false
 features = ["json", "uuid"]
 
+# unique paste-related ids
 [dependencies.uuid]
 version = "0.6"
 features = ["v4", "serde"]

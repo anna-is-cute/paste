@@ -20,3 +20,9 @@ pub struct NewFile {
   name: Option<String>,
   is_binary: Option<bool>,
 }
+
+impl NewFile {
+  pub fn new(id: Uuid, paste_id: Uuid, name: Option<String>, is_binary: Option<bool>) -> Self {
+    NewFile { id, paste_id, name, is_binary }
+  }
+}

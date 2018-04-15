@@ -20,3 +20,9 @@ pub struct NewPaste {
   visibility: i16,
   author_id: Option<Uuid>,
 }
+
+impl NewPaste {
+  pub fn new(id: Uuid, name: Option<String>, visibility: i16, author_id: Option<Uuid>) -> Self {
+    NewPaste { id, name, visibility, author_id }
+  }
+}

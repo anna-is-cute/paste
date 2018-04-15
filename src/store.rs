@@ -1,5 +1,5 @@
 use errors::*;
-use models::paste::{Paste, PasteFile, PasteId};
+use models::paste::{PasteFile, PasteId};
 
 use git2::Repository;
 

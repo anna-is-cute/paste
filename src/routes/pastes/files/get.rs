@@ -1,22 +1,32 @@
-use models::paste::PasteId;
+use database::DbConn;
+use database::models::pastes::Paste as DbPaste;
+use database::models::files::File as DbFile;
+use database::schema::pastes;
+use models::paste::{PasteId, Visibility};
 use models::paste::output::OutputFile;
 use models::status::{Status, ErrorKind};
-use routes::RouteResult;
+use routes::{RouteResult, OptionalUser};
+
+use diesel::prelude::*;
 
 use rocket::http::Status as HttpStatus;
 
 #[get("/<paste_id>/files")]
-fn get_files(paste_id: PasteId) -> RouteResult<Vec<OutputFile>> {
-  if !paste_id.exists() {
+fn get_files(paste_id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<OutputFile>> {
+  let paste: Option<DbPaste> = pastes::table.filter(pastes::id.eq(*paste_id)).first(&*conn).optional()?;
+  let paste = match paste {
+    Some(paste) => paste,
+    None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
+  };
+
+  if paste.visibility() == Visibility::Private && user.as_ref().map(|x| x.id()) != *paste.author_id() {
     return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste));
   }
 
-  let metadata = paste_id.metadata()?; // FIXME: check if private
-  let internal = paste_id.internal()?;
-
-  let files: Vec<OutputFile> = internal.names
-    .iter()
-    .map(|(uuid, name)| OutputFile::new(uuid, Some(name.clone()), None))
+  let db_file: Vec<DbFile> = DbFile::belonging_to(&paste).load(&*conn)?;
+  let files: Vec<OutputFile> = db_file
+    .into_iter()
+    .map(|f| OutputFile::new(&f.id(), Some(f.name().clone()), None))
     .collect();
 
   Ok(Status::show_success(HttpStatus::Ok, files))

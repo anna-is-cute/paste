@@ -1,16 +1,19 @@
-use errors::Result as PasteResult;
 use store::Store;
+
+use diesel::backend::Backend;
+use diesel::deserialize::{self, FromSql};
+use diesel::Queryable;
+use diesel::serialize::{self, ToSql};
+use diesel::sql_types::SmallInt;
 
 use rocket::http::RawStr;
 use rocket::request::FromParam;
 
-use serde_json;
-
 use uuid::Uuid;
 
 use std::fmt::{self, Display, Formatter};
-use std::fs::File;
-use std::ops::{Deref, DerefMut};
+use std::io::Write;
+use std::ops::Deref;
 use std::path::PathBuf;
 use std::str::FromStr;
 
@@ -29,20 +32,6 @@ impl PasteId {
 
   pub fn files_directory(&self) -> PathBuf {
     self.directory().join("files")
-  }
-
-  pub fn exists(&self) -> bool {
-    self.directory().exists()
-  }
-
-  pub fn metadata(&self) -> PasteResult<Metadata> {
-    let file = File::open(self.directory().join("metadata.json"))?;
-    Ok(serde_json::from_reader(file)?)
-  }
-
-  pub fn internal(&self) -> PasteResult<Internal> {
-    let file = File::open(self.directory().join("internal.json"))?;
-    Ok(serde_json::from_reader(file)?)
   }
 }
 
@@ -89,51 +78,6 @@ pub struct Metadata {
   #[serde(default)]
   pub visibility: Visibility,
 }
-
-#[derive(Debug, Default, Serialize, Deserialize)]
-pub struct Internal {
-  pub names: NameMapping,
-}
-
-#[derive(Debug, Default, Serialize, Deserialize)]
-pub struct NameMapping(Vec<(Uuid, String)>);
-
-impl Deref for NameMapping {
-  type Target = Vec<(Uuid, String)>;
-
-  fn deref(&self) -> &Self::Target {
-    &self.0
-  }
-}
-
-impl DerefMut for NameMapping {
-  fn deref_mut(&mut self) -> &mut Self::Target {
-    &mut self.0
-  }
-}
-
-impl NameMapping {
-  pub fn get_name<'a, 'b>(&'a self, uuid: &'b Uuid) -> Option<&'a String> {
-    self.0
-      .iter()
-      .find(|(u, _)| u == uuid)
-      .map(|(_, n)| n)
-  }
-
-  pub fn get_uuid<'a, 'b>(&'a self, name: &'b str) -> Option<&'a Uuid> {
-    self.0
-      .iter()
-      .find(|(_, n)| n == name)
-      .map(|(u, _)| u)
-  }
-}
-
-use diesel::backend::Backend;
-use diesel::serialize::{self, ToSql};
-use diesel::deserialize::{self, FromSql};
-use diesel::Queryable;
-use diesel::sql_types::SmallInt;
-use std::io::Write;
 
 /// Visibility of a [`Paste`].
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, AsExpression)]
@@ -265,7 +209,7 @@ mod gzip_base64_serde {
 
   use libflate::gzip::{Encoder, Decoder};
 
-  use serde::de::{self, Deserializer, Visitor};
+  use serde::de::{self, Deserializer};
   use serde::ser::{self, Serializer};
 
   use std::io::{Read, Write};
@@ -299,7 +243,7 @@ mod xz_base64_serde {
   use xz2::read::XzDecoder;
   use xz2::write::XzEncoder;
 
-  use serde::de::{self, Deserializer, Visitor};
+  use serde::de::{self, Deserializer};
   use serde::ser::{self, Serializer};
 
   use std::io::{Read, Write};

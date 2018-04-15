@@ -1,7 +1,6 @@
 use database::DbConn;
 use database::models::pastes::Paste;
-use database::models::deletion_keys::DeletionKey;
-use database::schema::{pastes, deletion_keys};
+use database::schema::pastes;
 use models::paste::{PasteId, Visibility};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, DeletionAuth};
@@ -15,9 +14,6 @@ use std::fs;
 
 #[delete("/<id>")]
 fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
-  if !id.exists() {
-    return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste));
-  }
   let paste: Option<Paste> = pastes::table.filter(pastes::id.eq(*id)).first(&*conn).optional()?;
   let paste = match paste {
     Some(p) => p,

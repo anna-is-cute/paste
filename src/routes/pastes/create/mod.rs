@@ -1,7 +1,7 @@
 use database::{DbConn, schema};
-use database::models::pastes::{Paste as DbPaste, NewPaste};
+use database::models::pastes::NewPaste;
 use database::models::deletion_keys::NewDeletionKey;
-use database::models::files::{File as DbFile, NewFile};
+use database::models::files::NewFile;
 use models::paste::{Paste, Content};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
@@ -15,6 +15,8 @@ use git2::{Repository, Signature};
 use rocket::http::Status as HttpStatus;
 
 use rocket_contrib::Json;
+
+use uuid::Uuid;
 
 use std::fs::File;
 use std::io::Write;
@@ -43,7 +45,7 @@ fn create(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Suc
   }
   // move this to PasteId::create?
   // rocket has already verified the paste info is valid, so create a paste
-  let (id, internal) = Store::new_paste(&*info)?;
+  let id = Store::new_paste()?;
 
   let np = NewPaste::new(
     *id,
@@ -70,8 +72,10 @@ fn create(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Suc
   // PasteId::write_files?
   // write the files
   let mut new_files = Vec::with_capacity(info.files.len());
-  for (pf, map) in info.into_inner().files.into_iter().zip(&*internal.names) {
-    let pf_path = files.join(map.0.simple().to_string());
+  let mut count = 0;
+  for pf in info.into_inner().files {
+    let file_id = Uuid::new_v4();
+    let pf_path = files.join(file_id.simple().to_string());
 
     let mut file = File::create(pf_path)?;
     let content = match pf.content {
@@ -80,7 +84,14 @@ fn create(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Suc
       Content::Base64(b) | Content::Gzip(b) | Content::Xz(b) => b,
     };
     file.write_all(&content)?;
-    new_files.push(NewFile::new(map.0, *id, pf.name.clone(), None));
+    let name = match pf.name {
+      Some(n) => n,
+      None => {
+        count += 1;
+        format!("pastefile{}", count)
+      },
+    };
+    new_files.push(NewFile::new(file_id, *id, name, None));
   }
 
   diesel::insert_into(schema::files::table)

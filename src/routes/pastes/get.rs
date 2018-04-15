@@ -1,7 +1,13 @@
-use models::paste::{Paste, Content, PasteId};
+use database::DbConn;
+use database::models::pastes::Paste as DbPaste;
+use database::models::files::File as DbFile;
+use database::schema::pastes;
+use models::paste::{Paste, Content, Metadata, Visibility, PasteId};
 use models::paste::output::{Output, OutputFile};
 use models::status::{Status, ErrorKind};
-use routes::RouteResult;
+use routes::{RouteResult, OptionalUser};
+
+use diesel::prelude::*;
 
 use rocket::http::Status as HttpStatus;
 
@@ -16,29 +22,35 @@ struct Query {
 // routes separated because of https://github.com/SergioBenitez/Rocket/issues/376
 
 #[get("/<id>")]
-fn get(id: PasteId) -> RouteResult<Output> {
-  _get(id, None)
+fn get(id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
+  _get(id, None, user, conn)
 }
 
 #[get("/<id>?<query>")]
-fn get_query(id: PasteId, query: Query) -> RouteResult<Output> {
-  _get(id, Some(query))
+fn get_query(id: PasteId, query: Query, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
+  _get(id, Some(query), user, conn)
 }
 
-fn _get(id: PasteId, query: Option<Query>) -> RouteResult<Output> {
-  if !id.exists() {
+fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
+  let paste: Option<DbPaste> = pastes::table.filter(pastes::id.eq(*id)).first(&*conn).optional()?;
+  let paste = match paste {
+    Some(paste) => paste,
+    None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
+  };
+
+  if paste.visibility() == Visibility::Private && user.as_ref().map(|x| x.id()) != *paste.author_id() {
     return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste));
   }
-  let files_dir = id.files_directory();
 
-  let metadata = id.metadata()?;
-  let internal = id.internal()?;
+  let db_files: Vec<DbFile> = DbFile::belonging_to(&paste).load(&*conn)?;
+
+  let files_dir = id.files_directory();
 
   let query = query.unwrap_or_default();
 
-  let mut files = Vec::with_capacity(internal.names.len());
-  for (uuid, name) in &*internal.names {
-    let file_path = files_dir.join(uuid.simple().to_string());
+  let mut files = Vec::with_capacity(db_files.len());
+  for db_file in db_files {
+    let file_path = files_dir.join(db_file.id().simple().to_string());
     let mut file = File::open(file_path)?;
     let mut data = Vec::new();
     file.read_to_end(&mut data)?;
@@ -51,13 +63,16 @@ fn _get(id: PasteId, query: Option<Query>) -> RouteResult<Output> {
       _ => None,
     };
 
-    let pf = OutputFile::new(uuid, Some(name.clone()), content);
+    let pf = OutputFile::new(&db_file.id(), Some(db_file.name().clone()), content);
     files.push(pf);
   }
 
   let output = Output {
     paste: Paste {
-      metadata,
+      metadata: Metadata {
+        name: paste.name().clone(),
+        visibility: paste.visibility(),
+      },
       files: Vec::new(),
     },
     files,

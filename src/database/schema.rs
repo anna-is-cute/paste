@@ -16,7 +16,7 @@ table! {
     files (id) {
         id -> Uuid,
         paste_id -> Uuid,
-        name -> Nullable<Text>,
+        name -> Text,
         is_binary -> Nullable<Bool>,
     }
 }

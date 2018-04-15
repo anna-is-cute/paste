@@ -43,8 +43,8 @@ impl Store {
       return Err("duplicate names".into());
     }
 
-    if names.iter().any(|x| x.contains(|c| c == '\\' || c == '/')) {
-      return Err("names contained path separators".into());
+    if names.iter().any(|x| x.is_empty()) {
+      return Err("names cannot be empty (for no name, omit the name field)".into());
     }
 
     Ok(())

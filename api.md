@@ -2,7 +2,7 @@
 
 ## Base URL
 
-This document assumes as base url of `/api`.
+This document assumes a base URL of `/api`.
 
 ## POST `/pastes`
 

@@ -43,4 +43,5 @@ pub enum ErrorKind {
   BadJson(#[serde(skip_serializing_if = "Option::is_none")] Option<String>),
   MissingPaste,
   MissingFile,
+  BadApiKey(#[serde(skip_serializing_if = "Option::is_none")] Option<String>),
 }

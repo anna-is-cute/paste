@@ -5,17 +5,20 @@ use rocket::http::Status;
 use rocket::request::{self, FromRequest};
 use rocket::{Request, State, Outcome};
 
+use std::env;
 use std::ops::Deref;
 
 pub mod models;
 pub mod schema;
 
-type PostgresPool = Pool<ConnectionManager<PgConnection>>;
+pub type PostgresPool = Pool<ConnectionManager<PgConnection>>;
 
-static DATABASE_URL: &'static str = env!("DATABASE_URL");
+lazy_static! {
+  static ref DATABASE_URL: String = env::var("DATABASE_URL").expect("missing DATABASE_URL env var");
+}
 
 pub fn init_pool() -> PostgresPool {
-  let manager = ConnectionManager::<PgConnection>::new(DATABASE_URL);
+  let manager = ConnectionManager::<PgConnection>::new(DATABASE_URL.as_str());
   Pool::new(manager).expect("db pool")
 }
 
@@ -25,7 +28,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
   type Error = ();
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
-    let pool = request.guard::<State<PostgresPool>>()?;
+    let pool: State<PostgresPool> = request.guard()?;
     match pool.get() {
       Ok(conn) => Outcome::Success(DbConn(conn)),
       Err(_) => Outcome::Failure((Status::ServiceUnavailable, ())),

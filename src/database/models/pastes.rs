@@ -1,3 +1,4 @@
+use models::paste::Visibility;
 use super::super::schema::pastes;
 use super::users::User;
 
@@ -8,7 +9,7 @@ use uuid::Uuid;
 pub struct Paste {
   id: Uuid,
   name: Option<String>,
-  visibility: i16, // FIXME: turn into Visibility enum
+  visibility: Visibility,
   author_id: Option<Uuid>,
 }
 
@@ -17,12 +18,12 @@ pub struct Paste {
 pub struct NewPaste {
   id: Uuid,
   name: Option<String>,
-  visibility: i16,
+  visibility: Visibility,
   author_id: Option<Uuid>,
 }
 
 impl NewPaste {
-  pub fn new(id: Uuid, name: Option<String>, visibility: i16, author_id: Option<Uuid>) -> Self {
+  pub fn new(id: Uuid, name: Option<String>, visibility: Visibility, author_id: Option<Uuid>) -> Self {
     NewPaste { id, name, visibility, author_id }
   }
 }

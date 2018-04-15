@@ -2,14 +2,20 @@ use super::super::schema::users;
 
 use uuid::Uuid;
 
-#[derive(Identifiable, Queryable)]
+#[derive(Debug, Identifiable, Queryable)]
 pub struct User {
   id: Uuid,
   username: String,
   password: String,
 }
 
-#[derive(Insertable)]
+impl User {
+  pub fn id(&self) -> Uuid {
+    self.id
+  }
+}
+
+#[derive(Debug, Insertable)]
 #[table_name = "users"]
 pub struct NewUser {
   id: Uuid,

@@ -36,6 +36,11 @@ fn main() {
 
   rocket::ignite()
     .manage(database::init_pool())
+    .catch(errors![
+      routes::bad_request,
+      routes::not_found,
+      routes::internal_server_error,
+    ])
     .mount("/", routes![index])
     .mount("/api/pastes", routes![
       routes::pastes::get::get,

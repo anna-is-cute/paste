@@ -4,7 +4,8 @@ use super::users::User;
 
 use uuid::Uuid;
 
-#[derive(Identifiable, Queryable, Associations)]
+#[derive(Identifiable, AsChangeset, Queryable, Associations)]
+#[changeset_options(treat_none_as_null = "true")]
 #[belongs_to(User, foreign_key = "author_id")]
 pub struct Paste {
   id: Uuid,
@@ -22,8 +23,16 @@ impl Paste {
     &self.name
   }
 
+  pub fn set_name(&mut self, name: Option<String>) {
+    self.name = name;
+  }
+
   pub fn visibility(&self) -> Visibility {
     self.visibility
+  }
+
+  pub fn set_visibility(&mut self, visibility: Visibility) {
+    self.visibility = visibility;
   }
 
   pub fn author_id(&self) -> &Option<Uuid> {

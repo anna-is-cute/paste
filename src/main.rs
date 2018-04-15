@@ -43,14 +43,14 @@ fn main() {
     ])
     .mount("/", routes![index])
     .mount("/api/pastes", routes![
-      routes::pastes::get::get,
-      routes::pastes::get::get_query,
-      routes::pastes::create::create,
+      routes::pastes::post::post,
       routes::pastes::delete::delete,
-      routes::pastes::edit,
+      routes::pastes::get::get_query,
+      routes::pastes::get::get,
+      routes::pastes::patch::patch,
 
-      routes::pastes::files::get::get_files,
       routes::pastes::files::file::get_file_id,
+      routes::pastes::files::get::get_files,
     ])
     .launch();
 }

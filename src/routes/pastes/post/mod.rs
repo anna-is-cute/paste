@@ -28,7 +28,7 @@ use self::output::Success;
 type InfoResult = ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>;
 
 #[post("/", format = "application/json", data = "<info>")]
-fn create(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Success> {
+fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Success> {
   // TODO: can this be a request guard?
   let info = match info {
     Ok(x) => x,

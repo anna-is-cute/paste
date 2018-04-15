@@ -13,6 +13,14 @@ impl User {
   pub fn id(&self) -> Uuid {
     self.id
   }
+
+  pub fn username(&self) -> &String {
+    &self.username
+  }
+
+  pub fn password(&self) -> &String {
+    &self.password
+  }
 }
 
 #[derive(Debug, Insertable)]

@@ -26,9 +26,11 @@ mod models;
 mod routes;
 mod store;
 
+use rocket::response::NamedFile;
+
 #[get("/")]
-fn index() -> &'static str {
-  "Hello, world!"
+fn index() -> std::io::Result<NamedFile> {
+  NamedFile::open("index.html")
 }
 
 fn main() {

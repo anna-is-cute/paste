@@ -4,6 +4,7 @@
 extern crate base64;
 #[macro_use]
 extern crate diesel;
+extern crate dotenv;
 extern crate failure;
 extern crate git2;
 extern crate libflate;
@@ -28,7 +29,10 @@ fn index() -> &'static str {
 }
 
 fn main() {
+  dotenv::dotenv().ok();
+
   rocket::ignite()
+    .manage(database::init_pool())
     .mount("/", routes![index])
     .mount("/api/pastes", routes![
       routes::pastes::get::get,

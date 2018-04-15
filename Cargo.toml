@@ -31,6 +31,9 @@ xz2 = "0.1"
 # secure password hashing
 sodiumoxide = "0.0.16"
 
+# environment variable loading
+dotenv = "0.11"
+
 # web logic with json and uuids
 [dependencies.rocket_contrib]
 version = "0.3"
@@ -45,4 +48,4 @@ features = ["v4", "serde"]
 # database orm
 [dependencies.diesel]
 version = "1"
-features = ["postgres", "uuid"]
+features = ["postgres", "uuid", "r2d2"]

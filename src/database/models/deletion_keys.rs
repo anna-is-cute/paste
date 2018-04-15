@@ -17,3 +17,17 @@ pub struct NewDeletionKey {
   key: Uuid,
   paste_id: Uuid,
 }
+
+impl NewDeletionKey {
+  pub fn new(key: Uuid, paste_id: Uuid) -> Self {
+    NewDeletionKey { key, paste_id }
+  }
+
+  pub fn generate(paste_id: Uuid) -> Self {
+    NewDeletionKey::new(Uuid::new_v4(), paste_id)
+  }
+
+  pub fn key(&self) -> Uuid {
+    self.key
+  }
+}

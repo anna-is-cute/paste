@@ -215,18 +215,16 @@ Get an existing paste's files.
 ```javascript
 {
   "status": "success",
-  "result": {
-    [
-      {
-        "id": "def456",
-        "name": "file_1.txt"
-      },
-      {
-        "id": "ghi789",
-        "name": "file_2.jpg"
-      }
-    ]
-  }
+  "result": [
+    {
+      "id": "def456",
+      "name": "file_1.txt"
+    },
+    {
+      "id": "ghi789",
+      "name": "file_2.jpg"
+    }
+  ]
 }
 ```
 

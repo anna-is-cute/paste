@@ -93,10 +93,11 @@ impl<'a, 'r> FromRequest<'a, 'r> for OptionalUser {
       .first(&*conn)
       .optional();
     let user = match user {
-      Ok(u) => u,
-      Err(_) => return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::NotLinked)),
+      Ok(Some(u)) => u,
+      Ok(None) => return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::NotLinked)),
+      Err(_) => return Outcome::Failure((HttpStatus::ServiceUnavailable, ApiKeyError::Internal)),
     };
-    Outcome::Success(OptionalUser(user))
+    Outcome::Success(OptionalUser(Some(user)))
   }
 }
 

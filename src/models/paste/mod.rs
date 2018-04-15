@@ -18,6 +18,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 
 pub mod output;
+pub mod update;
 
 /// An ID for a paste, which may or may not exist.
 ///
@@ -141,14 +142,13 @@ impl<DB: Backend<RawValue = [u8]>> FromSql<SmallInt, DB> for Visibility {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PasteFile {
   pub name: Option<String>,
-  #[serde(flatten)]
   pub content: Content,
 }
 
 /// The content of a [`PasteFile`].
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-#[serde(tag = "format", content = "content")]
+#[serde(tag = "format", content = "value")]
 pub enum Content {
   /// Valid UTF-8 text
   Text(String),

@@ -4,7 +4,7 @@
 
 Create a new paste.
 
-Headers:
+### Headers
 
 - `Content-Type` (required): `application/json`
 - `Authorization` (optional): `Key <api_key>`
@@ -15,7 +15,7 @@ Headers:
   If this header is not included, a deletion key will be generated and returned in order to delete
   anonymous pastes. Provide this key instead of an API key to the delete method.
 
-Accepts:
+### Accepts
 
 ```javascript
 {
@@ -60,7 +60,7 @@ Accepts:
 }
 ```
 
-Output (success, `200`):
+### Output (success, `200`)
 
 ```javascript
 {
@@ -77,7 +77,7 @@ Output (success, `200`):
 }
 ```
 
-Output (error, `400 | 403 | 404`):
+### Output (error, `400 | 403 | 404`)
 
 ```javascript
 {
@@ -93,7 +93,9 @@ Output (error, `400 | 403 | 404`):
 
 ## DELETE `/pastes/<id>`
 
-Headers:
+Deletes an existing paste.
+
+### Headers
 
 - `Authorization` (required): `Key <api_key/deletion_key>`
 
@@ -102,11 +104,11 @@ Headers:
   If the paste was anonymous, use its deletion key (returned when creating the paste) instead of an
   API key.
 
-Output (success, `204`):
+### Output (success, `204`)
 
 No content
 
-Output (error, `400 | 403 | 404`)
+### Output (error, `400 | 403 | 404`)
 
 Standard error (see POST `/pastes`)
 
@@ -114,7 +116,7 @@ Standard error (see POST `/pastes`)
 
 Update an existing paste.
 
-Headers:
+### Headers
 
 - `Content-Type` (required): `application/json`
 - `Authorization` (required): `Key <api_key>`
@@ -123,7 +125,7 @@ Headers:
 
   Anonymous pastes cannot be update.
 
-Accepts:
+### Accepts
 
 The same object as POST `/pastes`, but all fields are optional.
 
@@ -135,11 +137,11 @@ Fields that can be unset:
 - name
 - files.name
 
-Output (success, `204`):
+### Output (success, `204`)
 
 No content
 
-Output (error, `400 | 403 | 404`):
+### Output (error, `400 | 403 | 404`)
 
 Standard error (see POST `/pastes`)
 
@@ -147,20 +149,20 @@ Standard error (see POST `/pastes`)
 
 Get an existing paste.
 
-Query params:
+### Query params
 
 - `full` (`bool`): `true` or `false` (default: `false`)
 
   Includes the contents of files if `true`.
 
-Headers:
+### Headers
 
 - `Authorization` (optional): `Key <api_key>`
 
   An API key is only necessary when viewing a private paste. The key must be linked to the account
   that created the private paste.
 
-Output (success, `200`):
+### Output (success, `200`)
 
 ```javascript
 {
@@ -193,7 +195,7 @@ Output (success, `200`):
 }
 ```
 
-Output (error, `400 | 403 | 404`):
+### Output (error, `400 | 403 | 404`)
 
 Standard error (see POST `/pastes`)
 
@@ -201,14 +203,14 @@ Standard error (see POST `/pastes`)
 
 Get an existing paste's files.
 
-Headers:
+### Headers
 
 - `Authorization` (optional): `Key <api_key>`
 
   An API key is only necessary when viewing a private paste. The key must be linked to the account
   that created the private paste.
 
-Output (success, `200`):
+### Output (success, `200`)
 
 ```javascript
 {
@@ -228,7 +230,7 @@ Output (success, `200`):
 }
 ```
 
-Output (error, `400 | 403 | 404`):
+### Output (error, `400 | 403 | 404`)
 
 Standard error (see POST `/pastes`)
 
@@ -236,14 +238,14 @@ Standard error (see POST `/pastes`)
 
 Get one file from an existing paste.
 
-Headers:
+### Headers
 
 - `Authorization` (optional): `Key <api_key>`
 
   An API key is only necessary when viewing a private paste. The key must be linked to the account
   that created the private paste.
 
-Output (success, `200`):
+### Output (success, `200`)
 
 ```javascript
 {
@@ -259,6 +261,6 @@ Output (success, `200`):
 }
 ```
 
-Output (error, `400 | 403 | 404`):
+### Output (error, `400 | 403 | 404`)
 
 Standard error (see POST `/pastes`)

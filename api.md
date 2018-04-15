@@ -1,5 +1,9 @@
 # API
 
+## Base URL
+
+This document assumes as base url of `/api`.
+
 ## POST `/pastes`
 
 Create a new paste.

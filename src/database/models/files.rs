@@ -8,8 +8,26 @@ use uuid::Uuid;
 pub struct File {
   id: Uuid,
   paste_id: Uuid,
-  name: Option<String>,
+  name: String,
   is_binary: Option<bool>,
+}
+
+impl File {
+  pub fn id(&self) -> Uuid {
+    self.id
+  }
+
+  pub fn paste_id(&self) -> Uuid {
+    self.paste_id
+  }
+
+  pub fn name(&self) -> &String {
+    &self.name
+  }
+
+  pub fn is_binary(&self) -> &Option<bool> {
+    &self.is_binary
+  }
 }
 
 #[derive(Insertable)]
@@ -17,12 +35,12 @@ pub struct File {
 pub struct NewFile {
   id: Uuid,
   paste_id: Uuid,
-  name: Option<String>,
+  name: String,
   is_binary: Option<bool>,
 }
 
 impl NewFile {
-  pub fn new(id: Uuid, paste_id: Uuid, name: Option<String>, is_binary: Option<bool>) -> Self {
+  pub fn new(id: Uuid, paste_id: Uuid, name: String, is_binary: Option<bool>) -> Self {
     NewFile { id, paste_id, name, is_binary }
   }
 }

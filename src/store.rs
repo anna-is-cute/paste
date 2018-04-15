@@ -1,13 +1,11 @@
 use errors::*;
-use models::paste::{Paste, PasteFile, PasteId, Internal};
+use models::paste::{Paste, PasteFile, PasteId};
 
 use git2::Repository;
 
-use serde_json;
-
 use uuid::Uuid;
 
-use std::fs::{self, File};
+use std::fs;
 use std::path::PathBuf;
 use std::result;
 
@@ -18,7 +16,7 @@ impl Store {
     PathBuf::from("store")
   }
 
-  pub fn new_paste(paste: &Paste) -> Result<(PasteId, Internal)> {
+  pub fn new_paste() -> Result<PasteId> {
     let id = PasteId(Uuid::new_v4());
 
     // get the path to the paste
@@ -33,27 +31,7 @@ impl Store {
     // make the files repo for the paste
     Repository::init(&files_path)?;
 
-    // create a metadata file
-    let meta_file = File::create(paste_path.join("metadata.json"))?;
-    serde_json::to_writer(meta_file, &paste.metadata)?;
-
-    // create internal metadata
-    let mut internal = Internal::default();
-    let mut count = 0;
-    for file in &paste.files {
-      let file_id = Uuid::new_v4();
-      let file_name = file.name.clone().unwrap_or_else(|| {
-        count += 1;
-        format!("pastefile{}", count)
-      });
-      internal.names.push((file_id, file_name));
-    }
-
-    // create internal metadata file
-    let internal_file = File::create(paste_path.join("internal.json"))?;
-    serde_json::to_writer(internal_file, &internal)?;
-
-    Ok((id, internal))
+    Ok(id)
   }
 
   pub fn validate_files(files: &[PasteFile]) -> result::Result<(), String> {

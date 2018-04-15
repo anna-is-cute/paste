@@ -1,7 +1,13 @@
-use models::paste::{PasteId, Content};
+use database::DbConn;
+use database::models::files::File as DbFile;
+use database::models::pastes::Paste as DbPaste;
+use database::schema::{pastes, files};
+use models::paste::{PasteId, Visibility, Content};
 use models::paste::output::OutputFile;
 use models::status::{Status, ErrorKind};
-use routes::RouteResult;
+use routes::{RouteResult, OptionalUser};
+
+use diesel::prelude::*;
 
 use rocket_contrib::UUID;
 
@@ -11,21 +17,29 @@ use std::fs::File;
 use std::io::Read;
 
 #[get("/<paste_id>/files/<file_id>")]
-fn get_file_id(paste_id: PasteId, file_id: UUID) -> RouteResult<OutputFile> {
-  if !paste_id.exists() {
+fn get_file_id(paste_id: PasteId, file_id: UUID, user: OptionalUser, conn: DbConn) -> RouteResult<OutputFile> {
+  let paste: Option<DbPaste> = pastes::table.filter(pastes::id.eq(*paste_id)).first(&*conn).optional()?;
+  let paste = match paste {
+    Some(paste) => paste,
+    None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
+  };
+
+  if paste.visibility() == Visibility::Private && user.as_ref().map(|x| x.id()) != *paste.author_id() {
     return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste));
   }
-  let files_dir = paste_id.files_directory();
 
-  let metadata = paste_id.metadata()?; // FIXME: check if private (request guard?)
-  let internal = paste_id.internal()?;
-
-  let name = match internal.names.iter().find(|(u, _)| u == &*file_id) {
-    Some((_, name)) => name,
+  let db_file: Option<DbFile> = DbFile::belonging_to(&paste)
+    .filter(files::id.eq(*file_id))
+    .first(&*conn)
+    .optional()?;
+  let db_file = match db_file {
+    Some(f) => f,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingFile)),
   };
 
-  let file_path = files_dir.join(file_id.simple().to_string());
+  let files_dir = paste_id.files_directory();
+
+  let file_path = files_dir.join(db_file.id().simple().to_string());
   let mut file = File::open(file_path)?;
   let mut data = Vec::new();
   file.read_to_end(&mut data)?;
@@ -35,7 +49,7 @@ fn get_file_id(paste_id: PasteId, file_id: UUID) -> RouteResult<OutputFile> {
     .map(Content::Text)
     .unwrap_or_else(|_| Content::Base64(data));
 
-  let pf = OutputFile::new(&file_id, Some(name.clone()), Some(content));
+  let pf = OutputFile::new(&db_file.id(), Some(db_file.name().clone()), Some(content));
 
   Ok(Status::show_success(HttpStatus::Ok, pf))
 }

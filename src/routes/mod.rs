@@ -16,7 +16,6 @@ use rocket_contrib::Json;
 use uuid::Uuid;
 
 use std::ops::Deref;
-use std::result;
 use std::str::FromStr;
 
 pub type RouteResult<T> = Result<Custom<Json<Status<T>>>>;

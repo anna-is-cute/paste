@@ -2,6 +2,8 @@
 #![plugin(rocket_codegen)]
 
 extern crate base64;
+#[macro_use]
+extern crate diesel;
 extern crate failure;
 extern crate git2;
 extern crate libflate;
@@ -14,6 +16,7 @@ extern crate serde;
 extern crate uuid;
 extern crate xz2;
 
+mod database;
 mod errors;
 mod models;
 mod routes;

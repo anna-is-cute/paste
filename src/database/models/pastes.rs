@@ -13,6 +13,24 @@ pub struct Paste {
   author_id: Option<Uuid>,
 }
 
+impl Paste {
+  pub fn id(&self) -> Uuid {
+    self.id
+  }
+
+  pub fn name(&self) -> &Option<String> {
+    &self.name
+  }
+
+  pub fn visibility(&self) -> Visibility {
+    self.visibility
+  }
+
+  pub fn author_id(&self) -> &Option<Uuid> {
+    &self.author_id
+  }
+}
+
 #[derive(Insertable)]
 #[table_name = "pastes"]
 pub struct NewPaste {

@@ -23,6 +23,33 @@ pub type RouteResult<T> = Result<Custom<Json<Status<T>>>>;
 
 pub mod pastes;
 
+#[error(400)]
+pub fn bad_request(req: &Request) -> String {
+  if req.uri().path().starts_with("/api") {
+    return r#"{"status":"error","error":"bad_request"}"#.into();
+  }
+  // FIXME: use template when frontend work starts
+  Default::default()
+}
+
+#[error(404)]
+pub fn not_found(req: &Request) -> String {
+  if req.uri().path().starts_with("/api") {
+    return r#"{"status":"error","error":"not_found"}"#.into();
+  }
+  // FIXME: use template when frontend work starts
+  Default::default()
+}
+
+#[error(500)]
+pub fn internal_server_error(req: &Request) -> String {
+  if req.uri().path().starts_with("/api") {
+    return r#"{"status":"error","error":"internal_server_error"}"#.into();
+  }
+  // FIXME: use template when frontend work starts
+  Default::default()
+}
+
 #[derive(Debug)]
 pub enum ApiKeyError {
   NotPresent,

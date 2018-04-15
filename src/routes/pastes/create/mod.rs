@@ -4,7 +4,7 @@ use database::models::deletion_keys::NewDeletionKey;
 use database::models::files::{File as DbFile, NewFile};
 use models::paste::{Paste, Content};
 use models::status::{Status, ErrorKind};
-use routes::RouteResult;
+use routes::{RouteResult, OptionalUser};
 use store::Store;
 
 use diesel;
@@ -26,7 +26,7 @@ use self::output::Success;
 type InfoResult = ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>;
 
 #[post("/", format = "application/json", data = "<info>")]
-fn create(info: InfoResult, conn: DbConn) -> RouteResult<Success> {
+fn create(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Success> {
   // TODO: can this be a request guard?
   let info = match info {
     Ok(x) => x,
@@ -48,17 +48,22 @@ fn create(info: InfoResult, conn: DbConn) -> RouteResult<Success> {
   let np = NewPaste::new(
     *id,
     info.metadata.name.clone(),
-    1, // FIXME
-    None,
+    info.metadata.visibility,
+    user.as_ref().map(|x| x.id()),
   );
   diesel::insert_into(schema::pastes::table)
     .values(&np)
     .execute(&*conn)?;
 
-  let deletion_key = NewDeletionKey::generate(*id);
-  diesel::insert_into(schema::deletion_keys::table)
-    .values(&deletion_key)
-    .execute(&*conn)?;
+  let deletion_key = if user.is_none() {
+    let key = NewDeletionKey::generate(*id);
+    diesel::insert_into(schema::deletion_keys::table)
+      .values(&key)
+      .execute(&*conn)?;
+    Some(key.key())
+  } else {
+    None
+  };
 
   let files = id.files_directory();
 
@@ -92,6 +97,6 @@ fn create(info: InfoResult, conn: DbConn) -> RouteResult<Success> {
   repo.commit(Some("HEAD"), &sig, &sig, "create paste", &tree, &[])?;
 
   // return success
-  let output = Success::new(*id, Some(deletion_key.key()));
+  let output = Success::new(*id, deletion_key);
   Ok(Status::show_success(HttpStatus::Ok, output))
 }

@@ -128,8 +128,15 @@ impl NameMapping {
   }
 }
 
+use diesel::backend::Backend;
+use diesel::serialize::{self, ToSql};
+use diesel::deserialize::{self, FromSql};
+use diesel::sql_types::SmallInt;
+use std::io::Write;
+
 /// Visibility of a [`Paste`].
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, AsExpression)]
+#[sql_type = "SmallInt"]
 #[serde(rename_all = "lowercase")]
 pub enum Visibility {
   /// Paste is visible to everyone and can be crawled.
@@ -145,6 +152,30 @@ pub enum Visibility {
 impl Default for Visibility {
   fn default() -> Self {
     Visibility::Unlisted
+  }
+}
+
+impl<DB: Backend> ToSql<SmallInt, DB> for Visibility {
+  fn to_sql<W: Write>(&self, out: &mut serialize::Output<W, DB>) -> serialize::Result {
+    let visibility: i16 = match *self {
+      Visibility::Public => 0,
+      Visibility::Unlisted => 1,
+      Visibility::Private => 2,
+    };
+
+    <i16 as ToSql<SmallInt, DB>>::to_sql(&visibility, out)
+  }
+}
+
+impl<DB: Backend<RawValue = [u8]>> FromSql<SmallInt, DB> for Visibility {
+  fn from_sql(bytes: Option<&DB::RawValue>) -> deserialize::Result<Self> {
+    let visibility = match <i16 as FromSql<SmallInt, DB>>::from_sql(bytes)? {
+      0 => Visibility::Public,
+      1 => Visibility::Unlisted,
+      2 => Visibility::Private,
+      x => return Err(Box::new(format_err!("bad visibility enum: {}", x).compat())),
+    };
+    Ok(visibility)
   }
 }
 

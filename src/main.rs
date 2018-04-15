@@ -5,8 +5,11 @@ extern crate base64;
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
+#[macro_use]
 extern crate failure;
 extern crate git2;
+#[macro_use]
+extern crate lazy_static;
 extern crate libflate;
 extern crate rocket_contrib;
 extern crate rocket;

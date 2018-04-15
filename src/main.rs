@@ -41,8 +41,8 @@ fn main() {
       routes::pastes::get::get,
       routes::pastes::get::get_query,
       routes::pastes::create::create,
+      routes::pastes::delete::delete,
       routes::pastes::edit,
-      routes::pastes::delete,
 
       routes::pastes::files::get::get_files,
       routes::pastes::files::file::get_file_id,

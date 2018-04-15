@@ -131,11 +131,12 @@ impl NameMapping {
 use diesel::backend::Backend;
 use diesel::serialize::{self, ToSql};
 use diesel::deserialize::{self, FromSql};
+use diesel::Queryable;
 use diesel::sql_types::SmallInt;
 use std::io::Write;
 
 /// Visibility of a [`Paste`].
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, AsExpression)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, AsExpression)]
 #[sql_type = "SmallInt"]
 #[serde(rename_all = "lowercase")]
 pub enum Visibility {
@@ -152,6 +153,19 @@ pub enum Visibility {
 impl Default for Visibility {
   fn default() -> Self {
     Visibility::Unlisted
+  }
+}
+
+impl<DB: Backend<RawValue = [u8]>> Queryable<SmallInt, DB> for Visibility {
+  type Row = i16;
+
+  fn build(row: Self::Row) -> Self {
+    match row {
+      0 => Visibility::Public,
+      1 => Visibility::Unlisted,
+      2 => Visibility::Private,
+      _ => panic!("invalid visibility in database")
+    }
   }
 }
 

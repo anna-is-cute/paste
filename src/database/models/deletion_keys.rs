@@ -3,12 +3,22 @@ use super::pastes::Paste;
 
 use uuid::Uuid;
 
-#[derive(Identifiable, Queryable, Associations)]
+#[derive(Debug, Identifiable, Queryable, Associations)]
 #[primary_key(key)]
 #[belongs_to(Paste)]
 pub struct DeletionKey {
   key: Uuid,
   paste_id: Uuid,
+}
+
+impl DeletionKey {
+  pub fn key(&self) -> Uuid {
+    self.key
+  }
+
+  pub fn paste_id(&self) -> Uuid {
+    self.paste_id
+  }
 }
 
 #[derive(Insertable)]

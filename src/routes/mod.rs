@@ -1,5 +1,6 @@
 use database::{PostgresPool, schema};
 use database::models::users::User;
+use database::models::deletion_keys::DeletionKey;
 use errors::Result;
 use models::status::Status;
 
@@ -32,12 +33,18 @@ pub enum ApiKeyError {
 }
 
 #[derive(Debug)]
-pub struct ApiKey(Uuid);
+pub enum DeletionAuth {
+  User(User),
+  Key(DeletionKey),
+}
+
+#[derive(Debug)]
+pub struct RequiredUser(User);
 
 #[derive(Debug)]
 pub struct OptionalUser(Option<User>);
 
-impl<'a, 'r> FromRequest<'a, 'r> for ApiKey {
+impl<'a, 'r> FromRequest<'a, 'r> for DeletionAuth {
   type Error = ApiKeyError;
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
@@ -48,15 +55,83 @@ impl<'a, 'r> FromRequest<'a, 'r> for ApiKey {
     if !auth.to_lowercase().starts_with("key ") {
       return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::BadHeader));
     }
-    match Uuid::from_str(&auth[4..]) {
-      Ok(u) => Outcome::Success(ApiKey(u)),
-      Err(_) => Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::Invalid)),
-    }
+    let uuid = match Uuid::from_str(&auth[4..]) {
+      Ok(u) => u,
+      Err(_) => return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::Invalid)),
+    };
+    let conn = match request.guard::<State<PostgresPool>>() {
+      Outcome::Success(p) => match p.get() {
+        Ok(c) => c,
+        Err(_) => return Outcome::Failure((HttpStatus::ServiceUnavailable, ApiKeyError::Internal)),
+      },
+      Outcome::Failure((status, _)) => return Outcome::Failure((status, ApiKeyError::Internal)),
+      Outcome::Forward(f) => return Outcome::Forward(f),
+    };
+    let user = schema::users::table
+      .inner_join(schema::api_keys::table)
+      .filter(schema::api_keys::dsl::key.eq(uuid))
+      .select(schema::users::all_columns)
+      .first(&*conn)
+      .optional();
+    let auth = match user {
+      Ok(Some(u)) => DeletionAuth::User(u),
+      Ok(None) => {
+        match schema::deletion_keys::table
+          .filter(schema::deletion_keys::key.eq(uuid))
+          .first(&*conn)
+          .optional()
+        {
+          Ok(Some(d)) => DeletionAuth::Key(d),
+          Ok(None) => return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::NotLinked)),
+          Err(_) => return Outcome::Failure((HttpStatus::ServiceUnavailable, ApiKeyError::Internal)),
+        }
+      },
+      Err(_) => return Outcome::Failure((HttpStatus::ServiceUnavailable, ApiKeyError::Internal)),
+    };
+    Outcome::Success(auth)
   }
 }
 
-impl Deref for ApiKey {
-  type Target = Uuid;
+impl<'a, 'r> FromRequest<'a, 'r> for RequiredUser {
+  type Error = ApiKeyError;
+
+  fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+    let auth = match request.headers().get_one("Authorization") {
+      Some(a) => a,
+      None => return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::NotPresent)),
+    };
+    if !auth.to_lowercase().starts_with("key ") {
+      return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::BadHeader));
+    }
+    let uuid = match Uuid::from_str(&auth[4..]) {
+      Ok(u) => u,
+      Err(_) => return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::Invalid)),
+    };
+    let conn = match request.guard::<State<PostgresPool>>() {
+      Outcome::Success(p) => match p.get() {
+        Ok(c) => c,
+        Err(_) => return Outcome::Failure((HttpStatus::ServiceUnavailable, ApiKeyError::Internal)),
+      },
+      Outcome::Failure((status, _)) => return Outcome::Failure((status, ApiKeyError::Internal)),
+      Outcome::Forward(f) => return Outcome::Forward(f),
+    };
+    let user = schema::users::table
+      .inner_join(schema::api_keys::table)
+      .filter(schema::api_keys::dsl::key.eq(uuid))
+      .select(schema::users::all_columns)
+      .first(&*conn)
+      .optional();
+    let user = match user {
+      Ok(Some(u)) => u,
+      Ok(None) => return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::NotLinked)),
+      Err(_) => return Outcome::Failure((HttpStatus::ServiceUnavailable, ApiKeyError::Internal)),
+    };
+    Outcome::Success(RequiredUser(user))
+  }
+}
+
+impl Deref for RequiredUser {
+  type Target = User;
 
   fn deref(&self) -> &Self::Target {
     &self.0

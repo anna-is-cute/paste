@@ -6,6 +6,7 @@ use models::paste::{PasteId, Visibility};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, DeletionAuth};
 
+use diesel;
 use diesel::prelude::*;
 
 use rocket::http::Status as HttpStatus;
@@ -49,7 +50,10 @@ fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
   }
   // should be validated beyond this point
 
+  // remove files
   fs::remove_dir_all(id.directory())?;
+  // remove database entry
+  diesel::delete(&paste).execute(&*conn)?;
 
   // FIXME:
   // Error: Failed to write response: Custom { kind: WriteZero, error: StringError("failed to write

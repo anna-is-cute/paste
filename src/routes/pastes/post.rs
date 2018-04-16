@@ -72,7 +72,6 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     .map(|x| x.as_output_file(false))
     .collect::<Result<_, _>>()?;
 
-  // FIXME: do this better (aka refactor this here and in GET)
   let output = Output::new(
     *id,
     info.metadata.name.clone(),

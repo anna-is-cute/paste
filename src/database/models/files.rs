@@ -3,7 +3,7 @@ use super::pastes::Paste;
 
 use uuid::Uuid;
 
-#[derive(Identifiable, Queryable, Associations)]
+#[derive(Identifiable, AsChangeset, Queryable, Associations)]
 #[belongs_to(Paste)]
 pub struct File {
   id: Uuid,
@@ -23,6 +23,10 @@ impl File {
 
   pub fn name(&self) -> &String {
     &self.name
+  }
+
+  pub fn set_name(&mut self, name: String) {
+    self.name = name;
   }
 
   pub fn is_binary(&self) -> &Option<bool> {

@@ -34,8 +34,11 @@ sodiumoxide = "0.0.16"
 # environment variable loading
 dotenv = "0.11"
 
-# for lazy statics
+# lazy statics
 lazy_static = "1"
+
+# complicated ifs with pattern matching
+if_chain = "0.1"
 
 # web logic with json and uuids
 [dependencies.rocket_contrib]

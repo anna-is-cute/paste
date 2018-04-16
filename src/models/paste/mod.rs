@@ -102,15 +102,39 @@ impl PasteId {
     Ok(id)
   }
 
+  pub fn len(&self, conn: &DbConn) -> PasteResult<usize> {
+    let size: i64 = files::table
+      .filter(files::paste_id.eq(self.0))
+      .select(diesel::dsl::count(files::id))
+      .first(&**conn)?;
+
+    Ok(size as usize)
+  }
+
+  pub fn is_empty(&self, conn: &DbConn) -> PasteResult<bool> {
+    Ok(self.len(conn)? == 0)
+  }
+
   pub fn next_generic_name(&self, conn: &DbConn) -> PasteResult<String> {
-    // TODO: efficiency?
-    let files: Vec<DbFile> = files::table.filter(files::paste_id.eq(self.0)).load(&**conn)?;
-    Ok(format!("pastefile{}", files.len() + 1))
+    Ok(format!("pastefile{}", self.len(conn)? + 1))
   }
 
   pub fn delete_file(&self, conn: &DbConn, id: Uuid) -> PasteResult<()> {
     diesel::delete(files::table.filter(files::id.eq(id))).execute(&**conn)?;
     fs::remove_dir_all(self.files_directory().join(id.simple().to_string()))?;
+
+    if self.is_empty(conn)? {
+      self.delete(conn)?;
+    }
+
+    Ok(())
+  }
+
+  pub fn delete(&self, conn: &DbConn) -> PasteResult<()> {
+    // database will cascade and delete all files and deletion keys, as well
+    diesel::delete(pastes::table.filter(pastes::id.eq(self.0))).execute(&**conn)?;
+    // remove from system
+    fs::remove_dir_all(self.directory())?;
 
     Ok(())
   }

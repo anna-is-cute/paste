@@ -98,7 +98,6 @@ pub fn patch(id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn) 
             },
             // deleting file
             Some(None) => {
-              // FIXME: if all files are deleted, delete paste, too
               paste_id.delete_file(&conn, db_file.id())?;
               db_changed = false;
               // do not update file in database

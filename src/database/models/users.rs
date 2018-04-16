@@ -7,6 +7,8 @@ pub struct User {
   id: Uuid,
   username: String,
   password: String,
+  name: Option<String>,
+  email: Option<String>,
 }
 
 impl User {
@@ -29,4 +31,6 @@ pub struct NewUser {
   id: Uuid,
   username: String,
   password: String,
+  name: Option<String>,
+  email: Option<String>,
 }

@@ -1,5 +1,6 @@
 use database::DbConn;
-use database::models::files::NewFile;
+use database::models::files::{NewFile, File as DbFile};
+use database::models::pastes::Paste as DbPaste;
 use database::schema::{files, pastes};
 use errors::*;
 use models::paste::Content;
@@ -136,6 +137,14 @@ impl PasteId {
     fs::remove_dir_all(self.directory())?;
 
     Ok(())
+  }
+
+  pub fn get(&self, conn: &DbConn) -> Result<Option<DbPaste>> {
+    Ok(pastes::table.find(self.0).first(&**conn).optional()?)
+  }
+
+  pub fn files(&self, conn: &DbConn) -> Result<Vec<DbFile>> {
+    Ok(files::table.filter(files::paste_id.eq(self.0)).load(&**conn)?)
   }
 }
 

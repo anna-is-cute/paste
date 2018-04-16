@@ -33,7 +33,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
   };
 
   // verify auth
-  let mut paste: DbPaste = match pastes::table.find(*paste_id).first(&*conn).optional()? {
+  let mut paste = match paste_id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };
@@ -54,7 +54,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
   if let Some(files) = info.files {
     let files_directory = paste_id.files_directory();
 
-    let mut db_files: Vec<DbFile> = DbFile::belonging_to(&paste).load(&*conn)?;
+    let mut db_files = paste_id.files(&conn)?;
     {
       let db_files_ids: Vec<Uuid> = db_files.iter().map(|x| x.id()).collect();
       let db_files_names: Vec<&String> = db_files.iter().map(|x| x.name()).collect();

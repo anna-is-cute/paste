@@ -18,8 +18,7 @@ use std::io::Read;
 
 #[get("/<paste_id>/files/<file_id>")]
 fn get_file_id(paste_id: PasteId, file_id: UUID, user: OptionalUser, conn: DbConn) -> RouteResult<OutputFile> {
-  let paste: Option<DbPaste> = pastes::table.filter(pastes::id.eq(*paste_id)).first(&*conn).optional()?;
-  let paste = match paste {
+  let paste = match paste_id.get(&conn)? {
     Some(paste) => paste,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };
@@ -28,6 +27,7 @@ fn get_file_id(paste_id: PasteId, file_id: UUID, user: OptionalUser, conn: DbCon
     return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste));
   }
 
+  // TODO: refactor into PasteId::get_file
   let db_file: Option<DbFile> = DbFile::belonging_to(&paste)
     .filter(files::id.eq(*file_id))
     .first(&*conn)

@@ -14,8 +14,7 @@ use std::fs;
 
 #[delete("/<id>")]
 fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
-  let paste: Option<Paste> = pastes::table.filter(pastes::id.eq(*id)).first(&*conn).optional()?;
-  let paste = match paste {
+  let paste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };

@@ -2,19 +2,13 @@ use database::DbConn;
 use database::models::deletion_keys::DeletionKey;
 use database::models::pastes::Paste;
 use database::models::users::User;
-use database::schema::pastes;
 use models::paste::{PasteId, Visibility};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, DeletionAuth};
 
-use diesel;
-use diesel::prelude::*;
-
 use rocket::http::Status as HttpStatus;
 
 use uuid::Uuid;
-
-use std::fs;
 
 #[delete("/<id>")]
 fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
@@ -27,10 +21,7 @@ fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
   }
   // should be validated beyond this point
 
-  // remove files
-  fs::remove_dir_all(id.directory())?;
-  // remove database entry
-  diesel::delete(&paste).execute(&*conn)?;
+  id.delete(&conn)?;
 
   // FIXME:
   // Error: Failed to write response: Custom { kind: WriteZero, error: StringError("failed to write

@@ -1,8 +1,7 @@
 use database::DbConn;
 use database::models::files::File as DbFile;
-use database::models::pastes::Paste as DbPaste;
-use database::schema::{pastes, files};
-use models::paste::{PasteId, Visibility, Content};
+use database::schema::files;
+use models::paste::{PasteId, Content};
 use models::paste::output::OutputFile;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
@@ -23,8 +22,8 @@ fn get_file_id(paste_id: PasteId, file_id: UUID, user: OptionalUser, conn: DbCon
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };
 
-  if paste.visibility() == Visibility::Private && user.as_ref().map(|x| x.id()) != *paste.author_id() {
-    return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste));
+  if let Some((status, kind)) = paste.check_access(user.as_ref().map(|x| x.id())) {
+    return Ok(Status::show_error(status, kind));
   }
 
   // TODO: refactor into PasteId::get_file

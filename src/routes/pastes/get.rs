@@ -38,7 +38,7 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
   let full = query.full == Some(true);
   let files: Vec<OutputFile> = id.files(&conn)?
     .iter()
-    .map(|x| super::files::make_output_file(x, full))
+    .map(|x| x.as_output_file(full))
     .collect::<Result<_, _>>()?;
 
   let output = Output {

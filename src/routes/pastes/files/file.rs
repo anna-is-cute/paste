@@ -33,7 +33,7 @@ fn get_file_id(paste_id: PasteId, file_id: UUID, user: OptionalUser, conn: DbCon
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingFile)),
   };
 
-  let pf = super::make_output_file(&db_file, true)?;
+  let pf = db_file.as_output_file(true)?;
 
   Ok(Status::show_success(HttpStatus::Ok, pf))
 }

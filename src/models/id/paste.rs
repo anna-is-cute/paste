@@ -146,6 +146,14 @@ impl PasteId {
   pub fn files(&self, conn: &DbConn) -> Result<Vec<DbFile>> {
     Ok(files::table.filter(files::paste_id.eq(self.0)).load(&**conn)?)
   }
+
+  pub fn file(&self, conn: &DbConn, id: Uuid) -> Result<Option<DbFile>> {
+    Ok(files::table
+      .find(id)
+      .filter(files::paste_id.eq(self.0))
+      .first(&**conn)
+      .optional()?)
+  }
 }
 
 impl Display for PasteId {

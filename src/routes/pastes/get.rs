@@ -1,14 +1,11 @@
 use database::DbConn;
 use models::id::PasteId;
-use models::paste::{Paste, Content, Metadata};
+use models::paste::{Paste, Metadata};
 use models::paste::output::{Output, OutputFile};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
 
 use rocket::http::Status as HttpStatus;
-
-use std::fs::File;
-use std::io::Read;
 
 #[derive(Debug, Default, FromForm)]
 struct Query {
@@ -36,37 +33,13 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
   if let Some((status, kind)) = paste.check_access(user.as_ref().map(|x| x.id())) {
     return Ok(Status::show_error(status, kind));
   }
-
-  let db_files = id.files(&conn)?;
-
-  let files_dir = id.files_directory();
-
   let query = query.unwrap_or_default();
 
-  let mut files = Vec::with_capacity(db_files.len());
-  for db_file in db_files {
-    let file_path = files_dir.join(db_file.id().simple().to_string());
-    let mut file = File::open(file_path)?;
-    let mut data = Vec::new();
-    file.read_to_end(&mut data)?;
-
-    // TODO: store if the file is text or binary instead of attempting to parse
-    let content = match query.full {
-      Some(true) => {
-        if *db_file.is_binary() == Some(true) {
-          Some(Content::Base64(data))
-        } else {
-          // FIXME: fall back to base64? this error shouldn't really be possible except for FS
-          //        corruption
-          Some(Content::Text(String::from_utf8(data)?))
-        }
-      },
-      _ => None,
-    };
-
-    let pf = OutputFile::new(&db_file.id(), Some(db_file.name().clone()), content);
-    files.push(pf);
-  }
+  let full = query.full == Some(true);
+  let files: Vec<OutputFile> = id.files(&conn)?
+    .iter()
+    .map(|x| super::files::make_output_file(x, full))
+    .collect::<Result<_, _>>()?;
 
   let output = Output {
     paste: Paste {

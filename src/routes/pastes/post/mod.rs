@@ -10,8 +10,6 @@ use store::Store;
 use diesel;
 use diesel::prelude::*;
 
-use git2::{Repository, Signature};
-
 use rocket::http::Status as HttpStatus;
 
 use rocket_contrib::Json;
@@ -98,14 +96,8 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Succe
     .values(&new_files)
     .execute(&*conn)?;
 
-  // commit initial state
-  let repo = Repository::open(&files)?;
   // TODO: change this for authed via api key
-  let sig = Signature::now("No one", "no-one@example.com")?;
-  let mut index = repo.index()?;
-  let tree_id = index.write_tree()?;
-  let tree = repo.find_tree(tree_id)?;
-  repo.commit(Some("HEAD"), &sig, &sig, "create paste", &tree, &[])?;
+  id.commit("No one", "no-one@example.com", "create paste")?;
 
   // return success
   let output = Success::new(*id, deletion_key);

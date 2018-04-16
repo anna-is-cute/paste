@@ -9,6 +9,8 @@ extern crate dotenv;
 extern crate failure;
 extern crate git2;
 #[macro_use]
+extern crate if_chain;
+#[macro_use]
 extern crate lazy_static;
 extern crate libflate;
 extern crate rocket_contrib;

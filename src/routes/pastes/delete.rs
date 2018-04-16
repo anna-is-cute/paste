@@ -1,5 +1,7 @@
 use database::DbConn;
+use database::models::deletion_keys::DeletionKey;
 use database::models::pastes::Paste;
+use database::models::users::User;
 use database::schema::pastes;
 use models::paste::{PasteId, Visibility};
 use models::status::{Status, ErrorKind};
@@ -10,6 +12,8 @@ use diesel::prelude::*;
 
 use rocket::http::Status as HttpStatus;
 
+use uuid::Uuid;
+
 use std::fs;
 
 #[delete("/<id>")]
@@ -18,30 +22,8 @@ fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
     Some(p) => p,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };
-  match *paste.author_id() {
-    Some(ref author_id) => {
-      let is_private = paste.visibility() == Visibility::Private;
-      let user = match auth {
-        DeletionAuth::User(ref u) => u,
-        _ if is_private => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
-        _ => return Ok(Status::show_error(HttpStatus::Forbidden, ErrorKind::NotAllowed)),
-      };
-      if user.id() != *author_id {
-        if is_private {
-          return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste));
-        }
-        return Ok(Status::show_error(HttpStatus::Forbidden, ErrorKind::NotAllowed));
-      }
-    },
-    None => {
-      let deletion_key = match auth {
-        DeletionAuth::Key(ref d) => d,
-        _ => return Ok(Status::show_error(HttpStatus::Forbidden, ErrorKind::NotAllowed)),
-      };
-      if deletion_key.paste_id() != *id {
-        return Ok(Status::show_error(HttpStatus::Forbidden, ErrorKind::NotAllowed));
-      }
-    },
+  if let Some((status, kind)) = check_deletion(&paste, auth) {
+    return Ok(Status::show_error(status, kind));
   }
   // should be validated beyond this point
 
@@ -54,4 +36,41 @@ fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
   // Error: Failed to write response: Custom { kind: WriteZero, error: StringError("failed to write
   // whole buffer") }.
   Ok(Status::show_success(HttpStatus::NoContent, ()))
+}
+
+fn check_deletion(paste: &Paste, auth: DeletionAuth) -> Option<(HttpStatus, ErrorKind)> {
+  let author_id = paste.author_id();
+  if_chain! {
+    if let DeletionAuth::Key(ref key) = auth;
+    if author_id.is_none();
+    then {
+      return check_deletion_key(paste, key);
+    }
+  }
+  if_chain! {
+    if let DeletionAuth::User(ref user) = auth;
+    if let Some(id) = author_id;
+    then {
+      return check_deletion_user(paste, user, *id);
+    }
+  }
+
+  None
+}
+
+fn check_deletion_user(paste: &Paste, user: &User, author_id: Uuid) -> Option<(HttpStatus, ErrorKind)> {
+  if user.id() == author_id {
+    return None;
+  }
+  if paste.visibility() == Visibility::Private {
+    return Some((HttpStatus::NotFound, ErrorKind::MissingPaste));
+  }
+  Some((HttpStatus::Forbidden, ErrorKind::NotAllowed))
+}
+
+fn check_deletion_key(paste: &Paste, key: &DeletionKey) -> Option<(HttpStatus, ErrorKind)> {
+  if paste.id() == key.paste_id() {
+    return None;
+  }
+  Some((HttpStatus::Forbidden, ErrorKind::NotAllowed))
 }

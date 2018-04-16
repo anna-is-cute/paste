@@ -1,6 +1,12 @@
+use database::DbConn;
+use errors::*;
+use models::paste::update::PasteUpdate;
 use models::paste::Visibility;
 use super::super::schema::pastes;
 use super::users::User;
+
+use diesel;
+use diesel::prelude::*;
 
 use uuid::Uuid;
 
@@ -23,8 +29,8 @@ impl Paste {
     &self.name
   }
 
-  pub fn set_name(&mut self, name: Option<String>) {
-    self.name = name;
+  pub fn set_name<S: AsRef<str>>(&mut self, name: Option<S>) {
+    self.name = name.map(|x| x.as_ref().to_string());
   }
 
   pub fn visibility(&self) -> Visibility {
@@ -37,6 +43,22 @@ impl Paste {
 
   pub fn author_id(&self) -> &Option<Uuid> {
     &self.author_id
+  }
+
+  pub fn update(&mut self, conn: &DbConn, update: &PasteUpdate) -> Result<()> {
+    let changed = update.metadata.name.is_some() || update.metadata.visibility.is_some();
+    if !changed {
+      return Ok(());
+    }
+    if let Some(ref update) = update.metadata.name {
+      self.set_name(update.clone());
+    }
+    if let Some(ref update) = update.metadata.visibility {
+      self.set_visibility(*update);
+    }
+    diesel::update(pastes::table).set(&*self).execute(&**conn)?;
+
+    Ok(())
   }
 }
 

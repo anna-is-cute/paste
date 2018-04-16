@@ -3,7 +3,7 @@ use database::schema::{pastes, files};
 use database::models::pastes::{NewPaste, Paste as DbPaste};
 use database::models::deletion_keys::NewDeletionKey;
 use database::models::files::{NewFile, File as DbFile};
-use models::paste::{Paste, Visibility, PasteId, Content};
+use models::paste::{Paste, PasteFile, Visibility, PasteId, Content};
 use models::paste::update::PasteUpdate;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, RequiredUser};
@@ -49,22 +49,12 @@ pub fn patch(id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn) 
     });
   }
 
-  // update paste and database if necessary
-  let mut db_changed = false;
-  if let Some(update) = info.metadata.name {
-    paste.set_name(update);
-    db_changed = true;
-  }
-  if let Some(update) = info.metadata.visibility {
-    paste.set_visibility(update);
-    db_changed = true;
-  }
-  if db_changed {
-    diesel::update(pastes::table).set(&paste).execute(&*conn)?;
-    db_changed = false;
-  }
+  let paste_id = PasteId(paste.id());
 
-  let mut fs_changed = false;
+  // update paste and database if necessary
+  paste.update(&conn, &info)?;
+
+  let mut db_changed = false;
 
   // update files and database if necessary
   if let Some(files) = info.files {
@@ -104,19 +94,12 @@ pub fn patch(id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn) 
                 .write(true)
                 .truncate(true)
                 .open(files_directory.join(db_file.id().simple().to_string()))?;
-              let bytes = match content {
-                Content::Text(s) => s.into_bytes(),
-                Content::Base64(b) | Content::Gzip(b) | Content::Xz(b) => b,
-              };
-              f.write_all(&bytes)?;
-              fs_changed = true;
+              f.write_all(&content.into_bytes())?;
             },
             // deleting file
             Some(None) => {
               // FIXME: if all files are deleted, delete paste, too
-              diesel::delete(&*db_file).execute(&*conn)?;
-              fs::remove_file(files_directory.join(db_file.id().simple().to_string()))?;
-              fs_changed = true;
+              paste_id.delete_file(&conn, db_file.id())?;
               db_changed = false;
               // do not update file in database
               continue;
@@ -132,43 +115,17 @@ pub fn patch(id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn) 
         },
         // adding file
         None => {
-          let file_id = Uuid::new_v4();
-
-          let mut f = File::create(files_directory.join(file_id.simple().to_string()))?;
-          // should be safe because of check above
-          let bytes = match file.content.expect("missing content 1").expect("missing content 2") {
-            Content::Text(s) => s.into_bytes(),
-            Content::Base64(b) | Content::Gzip(b) | Content::Xz(b) => b,
-          };
-          f.write_all(&bytes)?;
-          fs_changed = true;
-          let file_name = file.name.unwrap_or_else(|| {
-            db_files_len += 1;
-            format!("pastefile{}", db_files_len)
-          });
-
-          let nf = NewFile::new(file_id, paste.id(), file_name, None);
-          diesel::insert_into(files::table).values(&nf).execute(&*conn)?;
+          let content = file.content.expect("missing content 1").expect("missing content 2");
+          paste_id.create_file(&conn, paste_id, file.name, content)?;
         },
       }
     }
   }
 
   // commit if any files were changed
-  if fs_changed {
-    let paste_id = PasteId(paste.id());
-    let repo = Repository::open(paste_id.files_directory())?;
-    let mut index = repo.index()?;
-    let tree_id = index.write_tree()?;
-    let tree = repo.find_tree(tree_id)?;
-    let head_id = repo.refname_to_id("HEAD")?;
-    let parent = repo.find_commit(head_id)?;
-    let username = user.username().as_str();
-    // TODO: figure out what email should be
-    let sig = Signature::now(username, &format!("{}@paste.com", username))?;
-    // TODO: more descriptive commit name?
-    repo.commit(Some("HEAD"), &sig, &sig, "update paste", &tree, &[&parent])?;
-  }
+  let username = user.username().as_str();
+  // TODO: more descriptive commit message
+  paste_id.commit_if_dirty(&username, &format!("{}@paste.com", username), "update paste")?;
 
   // return status (204?)
   Ok(Status::show_success(HttpStatus::NoContent, ()))

@@ -1,10 +1,18 @@
+use errors::Result as PasteResult;
+use database::DbConn;
+use database::models::files::{NewFile, File as DbFile};
+use database::schema::{pastes, files};
 use store::Store;
 
+use diesel;
+use diesel::prelude::*;
 use diesel::backend::Backend;
 use diesel::deserialize::{self, FromSql};
 use diesel::Queryable;
 use diesel::serialize::{self, ToSql};
 use diesel::sql_types::SmallInt;
+
+use git2::{Repository, Signature, DiffOptions};
 
 use rocket::http::RawStr;
 use rocket::request::FromParam;
@@ -12,6 +20,7 @@ use rocket::request::FromParam;
 use uuid::Uuid;
 
 use std::fmt::{self, Display, Formatter};
+use std::fs::{self, File};
 use std::io::Write;
 use std::ops::Deref;
 use std::path::PathBuf;
@@ -23,7 +32,7 @@ pub mod update;
 /// An ID for a paste, which may or may not exist.
 ///
 /// Mostly useful for having Rocket accept only valid IDs in routes.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct PasteId(pub Uuid);
 
 impl PasteId {
@@ -33,6 +42,77 @@ impl PasteId {
 
   pub fn files_directory(&self) -> PathBuf {
     self.directory().join("files")
+  }
+
+  pub fn repo_dirty(&self) -> PasteResult<bool> {
+    let repo = Repository::open(self.files_directory())?;
+    let mut options = DiffOptions::new();
+    options.ignore_submodules(true);
+    let diff = repo.diff_index_to_workdir(None, Some(&mut options))?;
+    Ok(diff.stats()?.files_changed() != 0)
+  }
+
+  pub fn commit_if_dirty(&self, username: &str, email: &str, message: &str) -> PasteResult<()> {
+    if self.repo_dirty()? {
+      return self.commit(username, email, message);
+    }
+
+    Ok(())
+  }
+
+  pub fn commit(&self, username: &str, email: &str, message: &str) -> PasteResult<()> {
+    let repo = Repository::open(self.files_directory())?;
+
+    let mut index = repo.index()?;
+
+    let tree_id = index.write_tree()?;
+    let tree = repo.find_tree(tree_id)?;
+
+    let head_id = repo.refname_to_id("HEAD")?;
+    let parent = repo.find_commit(head_id)?;
+
+    let signature = Signature::now(username, email)?;
+
+    repo.commit(Some("HEAD"), &signature, &signature, message, &tree, &[&parent])?;
+
+    Ok(())
+  }
+
+  pub fn create_file<S: AsRef<str>>(&self, conn: &DbConn, paste: PasteId, name: Option<S>, content: Content) -> PasteResult<Uuid> {
+    // generate file id
+    let id = Uuid::new_v4();
+
+    // check if content is binary for later
+    let binary = content.is_binary();
+
+    // create file on the system
+    let file_path = self.files_directory().join(id.simple().to_string());
+    let mut f = File::create(file_path)?;
+    f.write_all(&content.into_bytes())?;
+
+    let name = name
+      .map(|s| s.as_ref().to_string()) // get a String
+      .or_else(|| self.next_generic_name(conn).ok()) // try to get a generic name if no name specified
+      .unwrap_or_else(|| id.simple().to_string()); // fall back to uuid if necessary
+
+    // add file to the database
+    let new_file = NewFile::new(id, *paste, name, Some(binary));
+    diesel::insert_into(files::table).values(&new_file).execute(&**conn)?;
+
+    Ok(id)
+  }
+
+  pub fn next_generic_name(&self, conn: &DbConn) -> PasteResult<String> {
+    // TODO: efficiency?
+    let files: Vec<DbFile> = files::table.filter(files::paste_id.eq(self.0)).load(&**conn)?;
+    Ok(format!("pastefile{}", files.len() + 1))
+  }
+
+  pub fn delete_file(&self, conn: &DbConn, id: Uuid) -> PasteResult<()> {
+    diesel::delete(files::table.filter(files::id.eq(id))).execute(&**conn)?;
+    fs::remove_dir_all(self.files_directory().join(id.simple().to_string()))?;
+
+    Ok(())
   }
 }
 
@@ -161,6 +241,23 @@ pub enum Content {
   /// Base64-encoded xz data
   #[serde(with = "xz_base64_serde")]
   Xz(Vec<u8>),
+}
+
+impl Content {
+  pub fn into_bytes(self) -> Vec<u8> {
+    match self {
+      Content::Text(s) => s.into_bytes(),
+      Content::Base64(b) | Content::Gzip(b) | Content::Xz(b) => b,
+    }
+  }
+
+  pub fn is_binary(&self) -> bool {
+    // TODO: allow this to be specified in the paste?
+    match *self {
+      Content::Base64(_) | Content::Gzip(_) | Content::Xz(_) => true,
+      _ => false,
+    }
+  }
 }
 
 mod base64_serde {

@@ -44,6 +44,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
 
   let mut db_changed = false;
 
+  // TODO: this needs much refactor love
   // update files and database if necessary
   if let Some(files) = info.files {
     let files_directory = paste_id.files_directory();

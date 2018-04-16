@@ -23,20 +23,21 @@ Create a new paste.
 
 ```javascript
 {
-  // name of the paste
+  // (optional) name of the paste
   "name": "my files",
-  // the visibility of the paste
+  // (optional) the visibility of the paste
   // can be any one of the following (* is default)
   // public - publicly available and not hidden from crawlers
   // *unlisted - publicly available to anyone with the link, hidden from crawlers
   // private - only visible to the authed user creating the paste
   "visibility": "public",
-  // array of files to add to the paste
+  // (required – at least one file) array of files to add to the paste
   "files": [
     {
-      // name of the file
+      // (optional) name of the file
       // if not specified, pastefile1, pastefile2, etc.
       "name": "file_1.txt",
+      // (required) the content of the file
       // all files must have content in a given format
       "content": {
         // formats are listed below
@@ -45,8 +46,10 @@ Create a new paste.
         // gzip - base64 of the gzip-compressed content
         // xz - base64 of the xz-compressed content
 
+        // (required)  the format of the file
         // specify that the content field is valid utf-8 text
         "format": "text",
+        // (required)  the value of the file contents
         // content of the file as valid utf-8 text
         "value": "Hello!"
       }

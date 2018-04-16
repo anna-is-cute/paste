@@ -1,7 +1,9 @@
 use database::{DbConn, schema};
-use database::models::pastes::NewPaste;
 use database::models::deletion_keys::NewDeletionKey;
-use models::paste::Paste;
+use database::models::files::File as DbFile;
+use database::models::pastes::NewPaste;
+use models::paste::{Paste, Metadata};
+use models::paste::output::{Output, OutputFile};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
 use store::Store;
@@ -13,17 +15,13 @@ use rocket::http::Status as HttpStatus;
 
 use rocket_contrib::Json;
 
-mod output;
-
-use self::output::Success;
-
 type InfoResult = ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>;
 
 #[post("/", format = "application/json", data = "<info>")]
-fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Success> {
+fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
   // TODO: can this be a request guard?
   let info = match info {
-    Ok(x) => x,
+    Ok(x) => x.into_inner(),
     Err(e) => {
       let message = format!("could not parse json: {}", e);
       return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(Some(message))));
@@ -61,14 +59,32 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Succe
     None
   };
 
-  for pf in info.into_inner().files {
-    id.create_file(&conn, pf.name, pf.content)?;
-  }
+  let files: Vec<DbFile> = info.files
+    .into_iter()
+    .map(|x| id.create_file(&conn, x.name, x.content))
+    .collect::<Result<_, _>>()?;
 
   // TODO: change this for authed via api key
   id.commit("No one", "no-one@example.com", "create paste")?;
 
-  // TODO: output GET /pastes/<id>
-  let output = Success::new(*id, deletion_key);
+  let files: Vec<OutputFile> = files
+    .into_iter()
+    .map(|x| x.as_output_file(false))
+    .collect::<Result<_, _>>()?;
+
+  // FIXME: do this better (aka refactor this here and in GET)
+  let output = Output {
+    id: (*id).into(),
+    paste: Paste {
+      metadata: Metadata {
+        name: info.metadata.name.clone(),
+        visibility: info.metadata.visibility,
+      },
+      files: Vec::new(),
+    },
+    deletion_key,
+    files,
+  };
+
   Ok(Status::show_success(HttpStatus::Ok, output))
 }

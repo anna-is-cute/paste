@@ -27,6 +27,7 @@ mod errors;
 mod models;
 mod routes;
 mod store;
+mod utils;
 
 use rocket::response::NamedFile;
 

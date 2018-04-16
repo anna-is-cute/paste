@@ -62,12 +62,17 @@ impl PasteId {
     let tree_id = index.write_tree()?;
     let tree = repo.find_tree(tree_id)?;
 
-    let head_id = repo.refname_to_id("HEAD")?;
-    let parent = repo.find_commit(head_id)?;
+    let parent = if repo.is_empty()? {
+      None
+    } else {
+      let head_id = repo.refname_to_id("HEAD")?;
+      Some(repo.find_commit(head_id)?)
+    };
+    let parents = parent.as_ref().map(|x| vec![x]).unwrap_or_default();
 
     let signature = Signature::now(username, email)?;
 
-    repo.commit(Some("HEAD"), &signature, &signature, message, &tree, &[&parent])?;
+    repo.commit(Some("HEAD"), &signature, &signature, message, &tree, &parents)?;
 
     Ok(())
   }

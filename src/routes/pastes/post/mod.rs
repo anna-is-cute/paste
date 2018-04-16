@@ -1,8 +1,7 @@
 use database::{DbConn, schema};
 use database::models::pastes::NewPaste;
 use database::models::deletion_keys::NewDeletionKey;
-use database::models::files::NewFile;
-use models::paste::{Paste, Content};
+use models::paste::Paste;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
 use store::Store;
@@ -13,11 +12,6 @@ use diesel::prelude::*;
 use rocket::http::Status as HttpStatus;
 
 use rocket_contrib::Json;
-
-use uuid::Uuid;
-
-use std::fs::File;
-use std::io::Write;
 
 mod output;
 
@@ -64,8 +58,6 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Succe
   } else {
     None
   };
-
-  let files = id.files_directory();
 
   for pf in info.into_inner().files {
     id.create_file(&conn, pf.name, pf.content)?;

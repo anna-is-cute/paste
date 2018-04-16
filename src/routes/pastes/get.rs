@@ -1,11 +1,8 @@
 use database::DbConn;
-use database::models::files::File as DbFile;
 use models::paste::{Paste, Content, Metadata, PasteId};
 use models::paste::output::{Output, OutputFile};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
-
-use diesel::prelude::*;
 
 use rocket::http::Status as HttpStatus;
 
@@ -39,7 +36,7 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
     return Ok(Status::show_error(status, kind));
   }
 
-  let db_files: Vec<DbFile> = DbFile::belonging_to(&paste).load(&*conn)?;
+  let db_files = id.files(&conn)?;
 
   let files_dir = id.files_directory();
 

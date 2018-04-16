@@ -13,8 +13,7 @@ use rocket::http::Status as HttpStatus;
 
 #[get("/<paste_id>/files")]
 fn get_files(paste_id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<OutputFile>> {
-  let paste: Option<DbPaste> = pastes::table.filter(pastes::id.eq(*paste_id)).first(&*conn).optional()?;
-  let paste = match paste {
+  let paste = match paste_id.get(&conn)? {
     Some(paste) => paste,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };
@@ -23,8 +22,7 @@ fn get_files(paste_id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult
     return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste));
   }
 
-  let db_file: Vec<DbFile> = DbFile::belonging_to(&paste).load(&*conn)?;
-  let files: Vec<OutputFile> = db_file
+  let files: Vec<OutputFile> = paste_id.files(&conn)?
     .into_iter()
     .map(|f| OutputFile::new(&f.id(), Some(f.name().clone()), None))
     .collect();

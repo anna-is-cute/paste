@@ -32,8 +32,7 @@ fn get_query(id: PasteId, query: Query, user: OptionalUser, conn: DbConn) -> Rou
 }
 
 fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
-  let paste: Option<DbPaste> = pastes::table.filter(pastes::id.eq(*id)).first(&*conn).optional()?;
-  let paste = match paste {
+  let paste = match id.get(&conn)? {
     Some(paste) => paste,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };

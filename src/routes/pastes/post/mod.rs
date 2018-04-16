@@ -67,34 +67,9 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Succe
 
   let files = id.files_directory();
 
-  // PasteId::write_files?
-  // write the files
-  let mut new_files = Vec::with_capacity(info.files.len());
-  let mut count = 0;
   for pf in info.into_inner().files {
-    let file_id = Uuid::new_v4();
-    let pf_path = files.join(file_id.simple().to_string());
-
-    let mut file = File::create(pf_path)?;
-    let content = match pf.content {
-      Content::Text(c) => c.into_bytes(),
-      // all base64/compress/decompress is handled via serde
-      Content::Base64(b) | Content::Gzip(b) | Content::Xz(b) => b,
-    };
-    file.write_all(&content)?;
-    let name = match pf.name {
-      Some(n) => n,
-      None => {
-        count += 1;
-        format!("pastefile{}", count)
-      },
-    };
-    new_files.push(NewFile::new(file_id, *id, name, None));
+    id.create_file(&conn, pf.name, pf.content)?;
   }
-
-  diesel::insert_into(schema::files::table)
-    .values(&new_files)
-    .execute(&*conn)?;
 
   // TODO: change this for authed via api key
   id.commit("No one", "no-one@example.com", "create paste")?;

@@ -1,18 +1,14 @@
-use database::{DbConn, schema};
+use database::DbConn;
 use database::schema::{pastes, files};
-use database::models::pastes::{NewPaste, Paste as DbPaste};
-use database::models::deletion_keys::NewDeletionKey;
-use database::models::files::{NewFile, File as DbFile};
-use models::paste::{Paste, PasteFile, Visibility, PasteId, Content};
+use database::models::pastes::Paste as DbPaste;
+use database::models::files::File as DbFile;
+use models::paste::{Visibility, PasteId};
 use models::paste::update::PasteUpdate;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, RequiredUser};
-use store::Store;
 
 use diesel;
 use diesel::prelude::*;
-
-use git2::{Repository, Signature};
 
 use rocket::http::Status as HttpStatus;
 
@@ -20,7 +16,7 @@ use rocket_contrib::Json;
 
 use uuid::Uuid;
 
-use std::fs::{self, File, OpenOptions};
+use std::fs::OpenOptions;
 use std::io::Write;
 
 type UpdateResult = ::std::result::Result<Json<PasteUpdate>, ::rocket_contrib::SerdeError>;
@@ -59,7 +55,6 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
     let files_directory = paste_id.files_directory();
 
     let mut db_files: Vec<DbFile> = DbFile::belonging_to(&paste).load(&*conn)?;
-    let mut db_files_len = db_files.len();
     {
       let db_files_ids: Vec<Uuid> = db_files.iter().map(|x| x.id()).collect();
       let db_files_names: Vec<&String> = db_files.iter().map(|x| x.name()).collect();

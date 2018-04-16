@@ -54,9 +54,15 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
 
     // TODO: store if the file is text or binary instead of attempting to parse
     let content = match query.full {
-      Some(true) => Some(String::from_utf8(data.clone())
-        .map(Content::Text)
-        .unwrap_or_else(|_| Content::Base64(data))),
+      Some(true) => {
+        if *db_file.is_binary() == Some(true) {
+          Some(Content::Base64(data))
+        } else {
+          // FIXME: fall back to base64? this error shouldn't really be possible except for FS
+          //        corruption
+          Some(Content::Text(String::from_utf8(data)?))
+        }
+      },
       _ => None,
     };
 

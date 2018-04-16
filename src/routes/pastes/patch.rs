@@ -108,7 +108,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
         // adding file
         None => {
           let content = file.content.expect("missing content 1").expect("missing content 2");
-          paste_id.create_file(&conn, paste_id, file.name, content)?;
+          paste_id.create_file(&conn, file.name, content)?;
         },
       }
     }

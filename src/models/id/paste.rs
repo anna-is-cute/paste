@@ -78,7 +78,7 @@ impl PasteId {
     Ok(())
   }
 
-  pub fn create_file<S: AsRef<str>>(&self, conn: &DbConn, name: Option<S>, content: Content) -> Result<Uuid> {
+  pub fn create_file<S: AsRef<str>>(&self, conn: &DbConn, name: Option<S>, content: Content) -> Result<DbFile> {
     // generate file id
     let id = Uuid::new_v4();
 
@@ -97,9 +97,9 @@ impl PasteId {
 
     // add file to the database
     let new_file = NewFile::new(id, **self, name, Some(binary));
-    diesel::insert_into(files::table).values(&new_file).execute(&**conn)?;
+    let db_file = diesel::insert_into(files::table).values(&new_file).get_result(&**conn)?;
 
-    Ok(id)
+    Ok(db_file)
   }
 
   pub fn len(&self, conn: &DbConn) -> Result<usize> {

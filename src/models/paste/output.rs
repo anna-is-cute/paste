@@ -1,20 +1,22 @@
 use super::{Paste, Content};
+use utils::SimpleUuid;
 
 use uuid::Uuid;
 
 #[derive(Debug, Serialize)]
 pub struct Output {
+  pub id: SimpleUuid,
   #[serde(flatten)]
   pub paste: Paste,
+  #[serde(skip_serializing_if = "Option::is_none")]
+  pub deletion_key: Option<Uuid>,
   pub files: Vec<OutputFile>,
 }
 
 #[derive(Debug, Serialize)]
 pub struct OutputFile {
-  id: String,
+  id: SimpleUuid,
   name: Option<String>,
-  // ideally we'd just do Option<Content>, then flatten it and skip serialization if none
-  // but you can't do that yet with serde
   #[serde(skip_serializing_if = "Option::is_none")]
   content: Option<Content>,
 }
@@ -22,7 +24,7 @@ pub struct OutputFile {
 impl OutputFile {
   pub fn new<S: Into<String>>(id: &Uuid, name: Option<S>, content: Option<Content>) -> Self {
     OutputFile {
-      id: id.simple().to_string(),
+      id: (*id).into(),
       name: name.map(Into::into),
       content,
     }

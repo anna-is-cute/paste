@@ -42,6 +42,7 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
     .collect::<Result<_, _>>()?;
 
   let output = Output {
+    id: (*id).into(),
     paste: Paste {
       metadata: Metadata {
         name: paste.name().clone(),
@@ -49,6 +50,7 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
       },
       files: Vec::new(),
     },
+    deletion_key: None,
     files,
   };
 

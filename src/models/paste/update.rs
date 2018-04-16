@@ -2,6 +2,8 @@ use models::paste::{Content, Visibility};
 
 use serde::de::{Deserialize, Deserializer};
 
+use uuid::Uuid;
+
 #[derive(Debug, Deserialize)]
 pub struct PasteUpdate {
   #[serde(flatten)]
@@ -24,12 +26,16 @@ pub struct MetadataUpdate {
 
 #[derive(Debug, Deserialize)]
 pub struct PasteFileUpdate {
-  // double option because name can be removed, changed, or left alone
-  #[serde(default, deserialize_with = "double_option")]
-  pub name: Option<Option<String>>,
-  // single option because content can only be changed or left alone (all pastes must have content)
+  // single option because id can be specified to mean "update this file" or omitted to mean "add
+  // this file"
   #[serde(default)]
-  pub content: Option<Content>,
+  pub id: Option<Uuid>,
+  // single option because name can only be changed or left alone (all pastes must have name)
+  #[serde(default)]
+  pub name: Option<String>,
+  // double option because content can be removed (file deletion), changed, or left alone
+  #[serde(default, deserialize_with = "double_option")]
+  pub content: Option<Option<Content>>,
 }
 
 fn double_option<'de, T, D>(de: D) -> Result<Option<Option<T>>, D::Error>

@@ -39,6 +39,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Succe
   // rocket has already verified the paste info is valid, so create a paste
   let id = Store::new_paste()?;
 
+  // TODO: refactor
   let np = NewPaste::new(
     *id,
     info.metadata.name.clone(),
@@ -49,6 +50,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Succe
     .values(&np)
     .execute(&*conn)?;
 
+  // TODO: refactor
   let deletion_key = if user.is_none() {
     let key = NewDeletionKey::generate(*id);
     diesel::insert_into(schema::deletion_keys::table)
@@ -66,7 +68,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Succe
   // TODO: change this for authed via api key
   id.commit("No one", "no-one@example.com", "create paste")?;
 
-  // return success
+  // TODO: output GET /pastes/<id>
   let output = Success::new(*id, deletion_key);
   Ok(Status::show_success(HttpStatus::Ok, output))
 }

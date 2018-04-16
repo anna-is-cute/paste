@@ -1,5 +1,5 @@
 use database::DbConn;
-use models::paste::PasteId;
+use models::id::PasteId;
 use models::paste::output::OutputFile;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};

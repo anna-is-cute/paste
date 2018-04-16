@@ -6,12 +6,9 @@ use diesel::sql_types::SmallInt;
 
 use std::io::Write;
 
-pub mod id;
 pub mod output;
 pub mod update;
 
-pub use self::id::paste::PasteId;
-pub use self::id::file::FileId;
 
 /// A paste with files and metadata.
 #[derive(Debug, Serialize, Deserialize)]

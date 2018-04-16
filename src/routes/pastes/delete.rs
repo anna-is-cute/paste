@@ -2,7 +2,8 @@ use database::DbConn;
 use database::models::deletion_keys::DeletionKey;
 use database::models::pastes::Paste;
 use database::models::users::User;
-use models::paste::{PasteId, Visibility};
+use models::id::PasteId;
+use models::paste::Visibility;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, DeletionAuth};
 

@@ -19,7 +19,7 @@ fn get_files(paste_id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult
 
   let files: Vec<OutputFile> = paste_id.files(&conn)?
     .into_iter()
-    .map(|f| super::make_output_file(&f, false))
+    .map(|f| f.as_output_file(false))
     .collect::<Result<_, _>>()?;
 
   Ok(Status::show_success(HttpStatus::Ok, files))

@@ -25,8 +25,8 @@ use std::io::Write;
 
 type UpdateResult = ::std::result::Result<Json<PasteUpdate>, ::rocket_contrib::SerdeError>;
 
-#[patch("/<id>", format = "application/json", data = "<info>")]
-pub fn patch(id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
+#[patch("/<paste_id>", format = "application/json", data = "<info>")]
+pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
   // TODO: can this be a request guard?
   let info = match info {
     Ok(x) => x.into_inner(),
@@ -37,7 +37,7 @@ pub fn patch(id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn) 
   };
 
   // verify auth
-  let mut paste: DbPaste = match pastes::table.find(*id).first(&*conn).optional()? {
+  let mut paste: DbPaste = match pastes::table.find(*paste_id).first(&*conn).optional()? {
     Some(p) => p,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };
@@ -49,8 +49,6 @@ pub fn patch(id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn) 
     });
   }
 
-  let paste_id = PasteId(paste.id());
-
   // update paste and database if necessary
   paste.update(&conn, &info)?;
 
@@ -58,7 +56,7 @@ pub fn patch(id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn) 
 
   // update files and database if necessary
   if let Some(files) = info.files {
-    let files_directory = id.files_directory();
+    let files_directory = paste_id.files_directory();
 
     let mut db_files: Vec<DbFile> = DbFile::belonging_to(&paste).load(&*conn)?;
     let mut db_files_len = db_files.len();

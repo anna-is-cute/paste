@@ -1,7 +1,8 @@
 use database::DbConn;
 use database::models::files::File as DbFile;
 use database::schema::files;
-use models::paste::{PasteId, Content};
+use models::id::PasteId;
+use models::paste::Content;
 use models::paste::output::OutputFile;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};

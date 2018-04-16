@@ -1,6 +1,6 @@
 use database::DbConn;
 use database::schema::files;
-use models::paste::PasteId;
+use models::id::PasteId;
 use models::paste::update::PasteUpdate;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, RequiredUser};

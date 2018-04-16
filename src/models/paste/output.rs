@@ -1,4 +1,4 @@
-use super::{Paste, Content};
+use super::{Paste, Metadata, Visibility, Content};
 use utils::SimpleUuid;
 
 use uuid::Uuid;
@@ -9,8 +9,28 @@ pub struct Output {
   #[serde(flatten)]
   pub paste: Paste,
   #[serde(skip_serializing_if = "Option::is_none")]
-  pub deletion_key: Option<Uuid>,
+  pub deletion_key: Option<SimpleUuid>,
   pub files: Vec<OutputFile>,
+}
+
+impl Output {
+  pub fn new<N, F>(paste_id: Uuid, name: Option<N>, vis: Visibility, deletion_key: Option<Uuid>, files: F) -> Self
+    where N: AsRef<str>,
+          F: IntoIterator<Item = OutputFile>,
+  {
+    Output {
+      id: paste_id.into(),
+      paste: Paste {
+        metadata: Metadata {
+          name: name.map(|x| x.as_ref().to_string()),
+          visibility: vis,
+        },
+        files: Vec::new(),
+      },
+      deletion_key: deletion_key.map(Into::into),
+      files: files.into_iter().collect(),
+    }
+  }
 }
 
 #[derive(Debug, Serialize)]

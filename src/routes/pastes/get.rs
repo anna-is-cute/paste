@@ -1,6 +1,5 @@
 use database::DbConn;
 use models::id::PasteId;
-use models::paste::{Paste, Metadata};
 use models::paste::output::{Output, OutputFile};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
@@ -41,18 +40,7 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
     .map(|x| x.as_output_file(full))
     .collect::<Result<_, _>>()?;
 
-  let output = Output {
-    id: (*id).into(),
-    paste: Paste {
-      metadata: Metadata {
-        name: paste.name().clone(),
-        visibility: paste.visibility(),
-      },
-      files: Vec::new(),
-    },
-    deletion_key: None,
-    files,
-  };
+  let output = Output::new(*id, paste.name().clone(), paste.visibility(), None, files);
 
   Ok(Status::show_success(HttpStatus::Ok, output))
 }

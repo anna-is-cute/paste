@@ -35,6 +35,8 @@ table! {
         id -> Uuid,
         username -> Text,
         password -> Text,
+        name -> Nullable<Text>,
+        email -> Nullable<Text>,
     }
 }
 

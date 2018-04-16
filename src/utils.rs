@@ -10,6 +10,7 @@ use std::ops::Deref;
 pub struct SimpleUuid(Uuid);
 
 impl SimpleUuid {
+  #[allow(unused)]
   pub fn into_inner(self) -> Uuid {
     self.0
   }

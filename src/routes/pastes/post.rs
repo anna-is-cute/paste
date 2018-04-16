@@ -2,7 +2,7 @@ use database::{DbConn, schema};
 use database::models::deletion_keys::NewDeletionKey;
 use database::models::files::File as DbFile;
 use database::models::pastes::NewPaste;
-use models::paste::{Paste, Metadata};
+use models::paste::Paste;
 use models::paste::output::{Output, OutputFile};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
@@ -73,18 +73,13 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     .collect::<Result<_, _>>()?;
 
   // FIXME: do this better (aka refactor this here and in GET)
-  let output = Output {
-    id: (*id).into(),
-    paste: Paste {
-      metadata: Metadata {
-        name: info.metadata.name.clone(),
-        visibility: info.metadata.visibility,
-      },
-      files: Vec::new(),
-    },
+  let output = Output::new(
+    *id,
+    info.metadata.name.clone(),
+    info.metadata.visibility,
     deletion_key,
     files,
-  };
+  );
 
   Ok(Status::show_success(HttpStatus::Ok, output))
 }

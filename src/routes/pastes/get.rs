@@ -1,8 +1,6 @@
 use database::DbConn;
-use database::models::pastes::Paste as DbPaste;
 use database::models::files::File as DbFile;
-use database::schema::pastes;
-use models::paste::{Paste, Content, Metadata, Visibility, PasteId};
+use models::paste::{Paste, Content, Metadata, PasteId};
 use models::paste::output::{Output, OutputFile};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
@@ -37,8 +35,8 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };
 
-  if paste.visibility() == Visibility::Private && user.as_ref().map(|x| x.id()) != *paste.author_id() {
-    return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste));
+  if let Some((status, kind)) = paste.check_access(user.as_ref().map(|x| x.id())) {
+    return Ok(Status::show_error(status, kind));
   }
 
   let db_files: Vec<DbFile> = DbFile::belonging_to(&paste).load(&*conn)?;

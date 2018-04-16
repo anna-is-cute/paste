@@ -1,13 +1,8 @@
 use database::DbConn;
-use database::models::pastes::Paste as DbPaste;
-use database::models::files::File as DbFile;
-use database::schema::pastes;
-use models::paste::{PasteId, Visibility};
+use models::paste::PasteId;
 use models::paste::output::OutputFile;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
-
-use diesel::prelude::*;
 
 use rocket::http::Status as HttpStatus;
 
@@ -18,8 +13,8 @@ fn get_files(paste_id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };
 
-  if paste.visibility() == Visibility::Private && user.as_ref().map(|x| x.id()) != *paste.author_id() {
-    return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste));
+  if let Some((status, kind)) = paste.check_access(user.as_ref().map(|x| x.id())) {
+    return Ok(Status::show_error(status, kind));
   }
 
   let files: Vec<OutputFile> = paste_id.files(&conn)?

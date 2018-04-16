@@ -1,8 +1,6 @@
 use database::DbConn;
-use database::schema::{pastes, files};
-use database::models::pastes::Paste as DbPaste;
-use database::models::files::File as DbFile;
-use models::paste::{Visibility, PasteId};
+use database::schema::files;
+use models::paste::PasteId;
 use models::paste::update::PasteUpdate;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, RequiredUser};
@@ -37,12 +35,8 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
     Some(p) => p,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };
-  if *paste.author_id() != Some(user.id()) {
-    return Ok(if paste.visibility() == Visibility::Private {
-      Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)
-    } else {
-      Status::show_error(HttpStatus::Forbidden, ErrorKind::NotAllowed)
-    });
+  if let Some((status, kind)) = paste.check_access(Some(user.id())) {
+    return Ok(Status::show_error(status, kind));
   }
 
   // update paste and database if necessary

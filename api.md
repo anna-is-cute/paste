@@ -26,7 +26,7 @@ Create a new paste.
   // (optional) name of the paste
   "name": "my files",
   // (optional) description (tagline) of the paste
-  // this must be less than or equal to 255 extended grapheme clusters
+  // this must be less than or equal to 255 extended grapheme clusters and less than 25 KiB
   "description": "these are my files!",
   // (optional) the visibility of the paste
   // can be any one of the following (* is default)

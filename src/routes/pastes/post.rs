@@ -44,6 +44,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     info.metadata.description.clone().map(|x| x.into_inner()),
     info.metadata.visibility,
     user.as_ref().map(|x| x.id()),
+    None,
   );
   diesel::insert_into(schema::pastes::table)
     .values(&np)

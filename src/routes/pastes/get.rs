@@ -1,10 +1,64 @@
 use database::DbConn;
+use database::models::pastes::Paste as DbPaste;
+use database::schema::pastes;
 use models::id::PasteId;
+use models::paste::{Metadata, Visibility};
 use models::paste::output::{Output, OutputFile};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
+use utils::SimpleUuid;
+
+use diesel::prelude::*;
 
 use rocket::http::Status as HttpStatus;
+
+use std::cmp::max;
+
+#[derive(Debug, Serialize)]
+struct AllPaste {
+  id: SimpleUuid,
+  #[serde(flatten)]
+  metadata: Metadata,
+}
+
+#[derive(Debug, FromForm)]
+struct AllQuery {
+  limit: Option<u8>,
+}
+
+#[get("/?<query>")]
+fn get_all_query(query: AllQuery, conn: DbConn) -> RouteResult<Vec<AllPaste>> {
+  _get_all(Some(query), conn)
+}
+
+#[get("/")]
+fn get_all(conn: DbConn) -> RouteResult<Vec<AllPaste>> {
+  _get_all(None, conn)
+}
+
+fn _get_all(query: Option<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>> {
+  let limit = max(100, query.and_then(|x| x.limit).unwrap_or(5));
+
+  let pastes: Vec<DbPaste> = pastes::table
+    .filter(pastes::visibility.eq(Visibility::Public))
+    .order(pastes::created_at.desc())
+    .limit(limit as i64)
+    .load(&*conn)?;
+
+  let output = pastes
+    .into_iter()
+    .map(|x| AllPaste {
+      id: x.id().into(),
+      metadata: Metadata {
+        name: x.name().clone(),
+        description: x.description().clone().map(Into::into),
+        visibility: x.visibility(),
+      },
+    })
+    .collect();
+
+  Ok(Status::show_success(HttpStatus::Ok, output))
+}
 
 #[derive(Debug, Default, FromForm)]
 struct Query {

@@ -59,7 +59,10 @@ impl Paste {
     if let Some(ref update) = update.metadata.visibility {
       self.set_visibility(*update);
     }
-    diesel::update(pastes::table).set(&*self).execute(&**conn)?;
+    diesel::update(pastes::table)
+      .filter(pastes::id.eq(self.id))
+      .set(&*self)
+      .execute(&**conn)?;
 
     Ok(())
   }

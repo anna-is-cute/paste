@@ -1,4 +1,6 @@
-use models::paste::{Content, Visibility};
+#![cfg_attr(feature = "cargo-clippy", allow(option_option))]
+
+use models::paste::{Content, Description, Visibility};
 
 use serde::de::{Deserialize, Deserializer};
 
@@ -18,6 +20,9 @@ pub struct MetadataUpdate {
   // double option because name can be removed, changed, or left alone
   #[serde(default, deserialize_with = "double_option")]
   pub name: Option<Option<String>>,
+  // double option because description can be removed, changed, or left alone
+  #[serde(default, deserialize_with = "double_option")]
+  pub description: Option<Option<Description>>,
   // single option because visibility can only be changed or left alone (all pastes must have
   // visibility)
   #[serde(default)]

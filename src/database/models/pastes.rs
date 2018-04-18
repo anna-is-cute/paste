@@ -21,6 +21,7 @@ pub struct Paste {
   name: Option<String>,
   visibility: Visibility,
   author_id: Option<Uuid>,
+  description: Option<String>,
 }
 
 impl Paste {
@@ -48,8 +49,18 @@ impl Paste {
     &self.author_id
   }
 
+  pub fn description(&self) -> &Option<String> {
+    &self.description
+  }
+
+  pub fn set_description<S: AsRef<str>>(&mut self, description: Option<S>) {
+    self.description = description.map(|x| x.as_ref().to_string().into());
+  }
+
   pub fn update(&mut self, conn: &DbConn, update: &PasteUpdate) -> Result<()> {
-    let changed = update.metadata.name.is_some() || update.metadata.visibility.is_some();
+    let changed = update.metadata.name.is_some()
+      || update.metadata.visibility.is_some()
+      || update.metadata.description.is_some();
     if !changed {
       return Ok(());
     }
@@ -58,6 +69,9 @@ impl Paste {
     }
     if let Some(ref update) = update.metadata.visibility {
       self.set_visibility(*update);
+    }
+    if let Some(ref update) = update.metadata.description {
+      self.set_description(update.clone().map(|x| x.into_inner()));
     }
     diesel::update(pastes::table)
       .filter(pastes::id.eq(self.id))
@@ -87,10 +101,11 @@ pub struct NewPaste {
   name: Option<String>,
   visibility: Visibility,
   author_id: Option<Uuid>,
+  description: Option<String>,
 }
 
 impl NewPaste {
-  pub fn new(id: Uuid, name: Option<String>, visibility: Visibility, author_id: Option<Uuid>) -> Self {
-    NewPaste { id, name, visibility, author_id }
+  pub fn new(id: Uuid, name: Option<String>, description: Option<String>, visibility: Visibility, author_id: Option<Uuid>) -> Self {
+    NewPaste { id, name, visibility, author_id, description }
   }
 }

@@ -14,8 +14,9 @@ pub struct Output {
 }
 
 impl Output {
-  pub fn new<N, F>(paste_id: Uuid, name: Option<N>, vis: Visibility, deletion_key: Option<Uuid>, files: F) -> Self
+  pub fn new<N, D, F>(paste_id: Uuid, name: Option<N>, desc: Option<D>, vis: Visibility, deletion_key: Option<Uuid>, files: F) -> Self
     where N: AsRef<str>,
+          D: AsRef<str>,
           F: IntoIterator<Item = OutputFile>,
   {
     Output {
@@ -23,6 +24,7 @@ impl Output {
       paste: Paste {
         metadata: Metadata {
           name: name.map(|x| x.as_ref().to_string()),
+          description: desc.map(|x| x.as_ref().to_string().into()),
           visibility: vis,
         },
         files: Vec::new(),

@@ -40,6 +40,9 @@ lazy_static = "1"
 # complicated ifs with pattern matching
 if_chain = "0.1"
 
+# splitting on graphemes
+unicode-segmentation = "1"
+
 # web logic with json and uuids
 [dependencies.rocket_contrib]
 version = "0.3"

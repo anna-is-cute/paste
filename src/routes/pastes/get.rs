@@ -40,7 +40,14 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
     .map(|x| x.as_output_file(full))
     .collect::<Result<_, _>>()?;
 
-  let output = Output::new(*id, paste.name().clone(), paste.visibility(), None, files);
+  let output = Output::new(
+    *id,
+    paste.name().clone(),
+    paste.description().clone(),
+    paste.visibility(),
+    None,
+    files,
+  );
 
   Ok(Status::show_success(HttpStatus::Ok, output))
 }

@@ -1,3 +1,5 @@
+#![cfg_attr(feature = "cargo-clippy", allow(option_option))]
+
 use errors::*;
 use models::id::PasteId;
 use models::paste::Content;
@@ -48,17 +50,16 @@ impl File {
     let mut data = Vec::new();
     file.read_to_end(&mut data)?;
 
-    let content = match with_content {
-      true => {
-        if *self.is_binary() == Some(true) {
-          Some(Content::Base64(data))
-        } else {
-          // FIXME: fall back to base64? this error shouldn't really be possible except for FS
-          //        corruption
-          Some(Content::Text(String::from_utf8(data)?))
-        }
-      },
-      false => None,
+    let content = if with_content {
+      if *self.is_binary() == Some(true) {
+        Some(Content::Base64(data))
+      } else {
+        // FIXME: fall back to base64? this error shouldn't really be possible except for FS
+        //        corruption
+        Some(Content::Text(String::from_utf8(data)?))
+      }
+    } else {
+      None
     };
 
     Ok(OutputFile::new(&self.id(), Some(self.name().clone()), content))

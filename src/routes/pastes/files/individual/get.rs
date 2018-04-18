@@ -1,15 +1,13 @@
 use database::DbConn;
-use models::id::PasteId;
+use models::id::{PasteId, FileId};
 use models::paste::output::OutputFile;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
 
-use rocket_contrib::UUID;
-
 use rocket::http::Status as HttpStatus;
 
 #[get("/<paste_id>/files/<file_id>")]
-fn get_file_id(paste_id: PasteId, file_id: UUID, user: OptionalUser, conn: DbConn) -> RouteResult<OutputFile> {
+fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn) -> RouteResult<OutputFile> {
   let paste = match paste_id.get(&conn)? {
     Some(paste) => paste,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),

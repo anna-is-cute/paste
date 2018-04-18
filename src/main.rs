@@ -55,9 +55,11 @@ fn main() {
       routes::pastes::get::get,
       routes::pastes::patch::patch,
 
-      routes::pastes::files::file::get_file_id,
-      routes::pastes::files::get::get_files,
+      routes::pastes::files::get::get,
       routes::pastes::files::patch::patch,
+
+      routes::pastes::files::individual::delete::delete,
+      routes::pastes::files::individual::get::get,
     ])
     .launch();
 }

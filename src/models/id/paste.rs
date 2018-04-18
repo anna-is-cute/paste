@@ -121,7 +121,7 @@ impl PasteId {
 
   pub fn delete_file(&self, conn: &DbConn, id: Uuid) -> Result<()> {
     diesel::delete(files::table.filter(files::id.eq(id))).execute(&**conn)?;
-    fs::remove_dir_all(self.files_directory().join(id.simple().to_string()))?;
+    fs::remove_file(self.files_directory().join(id.simple().to_string()))?;
 
     if self.is_empty(conn)? {
       self.delete(conn)?;

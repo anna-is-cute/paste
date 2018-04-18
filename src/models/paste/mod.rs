@@ -58,7 +58,7 @@ impl<'de> Deserialize<'de> for Description {
 
     let graphemes = string.graphemes(true).count();
     if graphemes > 255 {
-      return Err(de::Error::invalid_length(graphemes, &"<= 255 extended grapheme clusters"))
+      return Err(de::Error::invalid_length(graphemes, &"<= 255 extended grapheme clusters"));
     }
 
     Ok(Description(string))

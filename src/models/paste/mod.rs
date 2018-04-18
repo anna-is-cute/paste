@@ -53,7 +53,7 @@ impl<'de> Deserialize<'de> for Description {
 
     let bytes = string.len();
     if bytes > 25 * 1024 {
-      return Err(de::Error::invalid_length(bytes, &"<= 25KiB bytes"));
+      return Err(de::Error::invalid_length(bytes, &"<= 25KiB"));
     }
 
     let graphemes = string.graphemes(true).count();

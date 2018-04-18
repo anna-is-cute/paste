@@ -51,6 +51,11 @@ impl<'de> Deserialize<'de> for Description {
   {
     let string: String = String::deserialize(des)?;
 
+    let bytes = string.len();
+    if bytes > 25 * 1024 {
+      return Err(de::Error::invalid_length(bytes, &"<= 25KiB bytes"));
+    }
+
     let graphemes = string.graphemes(true).count();
     if graphemes > 255 {
       return Err(de::Error::invalid_length(graphemes, &"<= 255 extended grapheme clusters"))

@@ -81,7 +81,10 @@ impl Paste {
     Ok(())
   }
 
-  pub fn check_access(&self, user: Option<Uuid>) -> Option<(HttpStatus, ErrorKind)> {
+  pub fn check_access<U>(&self, user: U) -> Option<(HttpStatus, ErrorKind)>
+    where U: Into<Option<Uuid>>,
+  {
+    let user = user.into();
     let is_private = self.visibility == Visibility::Private;
     if self.author_id.is_none() || !is_private || self.author_id == user {
       return None;

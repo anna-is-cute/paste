@@ -4,6 +4,37 @@
 
 This document assumes a base URL of `/api`.
 
+## GET `/pastes`
+
+Get the most recent public pastes.
+
+### Query params
+
+- `limit` (`u8`): number of pastes to fetch (default: `5`)
+
+### Output (success, `200`)
+
+```javascript
+{
+  "status": "success",
+  "result": [
+    {
+      "id": "abc123",
+      // (optional)
+      "name": "paste name!",
+      // (optional)
+      "description": "my paste has all the cool stuff",
+      "visibility": "public"
+    }
+    // and so on
+  ]
+}
+```
+
+### Output (error, `500`)
+
+Standard error. See POST `/pastes`.
+
 ## POST `/pastes`
 
 Create a new paste.
@@ -150,7 +181,7 @@ Update an existing paste.
 
 ### Accepts
 
-The same object as POST `/pastes`, but all fields are optional.
+A metadata object with all fields optional.
 
 Omit a field to leave it untouched, set a field to null to unset it, and set a field to any other
 value to update it.
@@ -158,7 +189,21 @@ value to update it.
 Fields that can be unset:
 
 - name
-- files.name
+- description
+
+Fields that cannot be unset:
+
+- visibility
+
+```javascript
+{
+  // remove the name
+  "name": null,
+  // set or update the description
+  "description": "henlo"
+  // visibility is not specified and therefore not modified
+}
+```
 
 ### Output (success, `204`)
 
@@ -282,6 +327,198 @@ Get one file from an existing paste.
   }
 }
 ```
+
+### Output (error, `400 | 403 | 404`)
+
+Standard error (see POST `/pastes`)
+
+## PATCH `/pastes/<id>/files`
+
+Update files on an existing paste.
+
+### Headers
+
+- `Authorization` (required): `Key <api_key>`
+
+  The API key provided must be linked to the account that created the paste being modified.
+
+### Accepts
+
+An array of file objects.
+
+If a file object has an ID field, it will update that file. If no ID field is present, a new file
+will be added.
+
+When updating a file, all fields are optional, and the name can be unset.
+
+When creating a new file, the `content` field is required.
+
+```javascript
+[
+  {
+    // update a file by specifying its ID
+    "id": "abcdef1234",
+    // remove the file's name (will turn into "pastefile#")
+    "name": null
+    // content is not modified, since no content field was included
+  },
+  {
+    // create a new file by omitting an ID
+    "content": {
+      "format": "text",
+      "value": "hello!"
+    }
+  }
+]
+```
+
+### Output (success, `204`)
+
+No content.
+
+### Output (error, `400 | 403 | 404`)
+
+Standard error (see POST `/pastes`)
+
+## POST `/pastes/<id>/files`
+
+Create a new file in an existing paste.
+
+### Headers
+
+- `Authorization` (required): `Key <api_key>`
+
+  The API key provided must be linked to the account that created the paste being modified.
+
+### Accepts
+
+A new file object, as specified in POST `/pastes`.
+
+### Output (success, `204`)
+
+No content.
+
+**Note**: this is slotted to change to return `200` and the file object that was created.
+
+### Output (error, `400 | 403 | 404`)
+
+Standard error (see POST `/pastes`)
+
+## PATCH `/pastes/<id>/files/<id>`
+
+Update an existing file in an existing paste.
+
+### Headers
+
+- `Authorization` (required): `Key <api_key>`
+
+  The API key provided must be linked to the account that created the paste being modified.
+
+### Accepts
+
+One file object with all fields optional. This takes exactly the same object for updating a file as specified in PATCH `/pastes/<id>/files`.
+
+### Output (success, `204`)
+
+No content.
+
+### Output (error, `400 | 403 | 404`)
+
+Standard error (see POST `/pastes`)
+
+## GET `/pastes/<id>/files/<id>`
+
+Get one file from an existing paste.
+
+### Headers
+
+- `Authorization` (optional): `Key <api_key>`
+
+  An API key is only necessary when viewing a private paste. The key must be linked to the account
+  that created the private paste.
+
+### Output (success, `200`)
+
+```javascript
+{
+  "status": "success",
+  "result": {
+    "id": "def456",
+    "name": "file_1.txt",
+    "content": {
+      "format": "text",
+      "value": "Hello!"
+    }
+  }
+}
+```
+
+### Output (error, `400 | 403 | 404`)
+
+Standard error (see POST `/pastes`)
+
+## GET `/pastes/<id>/files/<id>`
+
+Get one file from an existing paste.
+
+### Headers
+
+- `Authorization` (optional): `Key <api_key>`
+
+  An API key is only necessary when viewing a private paste. The key must be linked to the account
+  that created the private paste.
+
+### Output (success, `200`)
+
+```javascript
+{
+  "status": "success",
+  "result": {
+    "id": "def456",
+    "name": "file_1.txt",
+    "content": {
+      "format": "text",
+      "value": "Hello!"
+    }
+  }
+}
+```
+
+### Output (error, `400 | 403 | 404`)
+
+Standard error (see POST `/pastes`)
+
+## DELETE `/pastes/<id>/files/<id>`
+
+Delete an existing file in an existing paste.
+
+### Headers
+
+- `Authorization` (required): `Key <api_key>`
+
+  The API key provided must be linked to the account that created the paste being modified.
+
+### Output (success, `204`)
+
+No content.
+
+### Output (error, `400 | 403 | 404`)
+
+Standard error (see POST `/pastes`)
+
+## GET `/pastes/<id>/files/<id>/raw`
+
+Get the raw content of an existing file in an existing paste.
+
+### Accepts
+
+- `Authorization` (required): `Key <api_key>`
+
+  The API key provided must be linked to the account that created the paste being modified.
+
+### Output (success, `200`)
+
+The raw content of the file.
 
 ### Output (error, `400 | 403 | 404`)
 

@@ -25,6 +25,9 @@ Create a new paste.
 {
   // (optional) name of the paste
   "name": "my files",
+  // (optional) description (tagline) of the paste
+  // this must be less than or equal to 255 extended grapheme clusters
+  "description": "these are my files!",
   // (optional) the visibility of the paste
   // can be any one of the following (* is default)
   // public - publicly available and not hidden from crawlers
@@ -77,6 +80,19 @@ Create a new paste.
   "result": {
     // id of the created paste
     "id": "abcdef1234",
+    "name": "my files",
+    "description": "these are my files!",
+    "visibility": "public",
+    "files": [
+      {
+        "id": "ghijkl5678",
+        "name": "file_1.txt"
+      },
+      {
+        "id": "mnopqr9012",
+        "name": "file_2.jpg"
+      }
+    ],
     // (optional) key to use when deleting this paste, if this paste was made anonymously
     "deletion_key": "ghijkl5678"
     // TODO: include urls?
@@ -177,6 +193,7 @@ Get an existing paste.
   "result": {
     "id": "abc123",
     "name": "my files",
+    "description": "these are my files!",
     "visibility": "public",
     "files": [
       {

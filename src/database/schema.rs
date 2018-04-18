@@ -27,6 +27,7 @@ table! {
         name -> Nullable<Text>,
         visibility -> Int2,
         author_id -> Nullable<Uuid>,
+        description -> Nullable<Text>,
     }
 }
 

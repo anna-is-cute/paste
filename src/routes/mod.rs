@@ -1,3 +1,5 @@
+#![cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value, print_literal))]
+
 use database::{PostgresPool, schema};
 use database::models::users::User;
 use database::models::deletion_keys::DeletionKey;
@@ -91,7 +93,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for DeletionAuth {
         Err(_) => return Outcome::Failure((HttpStatus::ServiceUnavailable, ApiKeyError::Internal)),
       },
       Outcome::Failure((status, _)) => return Outcome::Failure((status, ApiKeyError::Internal)),
-      Outcome::Forward(f) => return Outcome::Forward(f),
+      Outcome::Forward(()) => return Outcome::Forward(()),
     };
     let user = schema::users::table
       .inner_join(schema::api_keys::table)
@@ -139,7 +141,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for RequiredUser {
         Err(_) => return Outcome::Failure((HttpStatus::ServiceUnavailable, ApiKeyError::Internal)),
       },
       Outcome::Failure((status, _)) => return Outcome::Failure((status, ApiKeyError::Internal)),
-      Outcome::Forward(f) => return Outcome::Forward(f),
+      Outcome::Forward(()) => return Outcome::Forward(()),
     };
     let user = schema::users::table
       .inner_join(schema::api_keys::table)
@@ -185,7 +187,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for OptionalUser {
         Err(_) => return Outcome::Failure((HttpStatus::ServiceUnavailable, ApiKeyError::Internal)),
       },
       Outcome::Failure((status, _)) => return Outcome::Failure((status, ApiKeyError::Internal)),
-      Outcome::Forward(f) => return Outcome::Forward(f),
+      Outcome::Forward(()) => return Outcome::Forward(()),
     };
     let user = schema::users::table
       .inner_join(schema::api_keys::table)

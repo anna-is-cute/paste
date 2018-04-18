@@ -41,6 +41,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
   let np = NewPaste::new(
     *id,
     info.metadata.name.clone(),
+    info.metadata.description.clone().map(|x| x.into_inner()),
     info.metadata.visibility,
     user.as_ref().map(|x| x.id()),
   );
@@ -75,6 +76,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
   let output = Output::new(
     *id,
     info.metadata.name.clone(),
+    info.metadata.description.clone().map(|x| x.into_inner()),
     info.metadata.visibility,
     deletion_key,
     files,

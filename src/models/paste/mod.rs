@@ -4,11 +4,15 @@ use diesel::Queryable;
 use diesel::serialize::{self, ToSql};
 use diesel::sql_types::SmallInt;
 
+use serde::de::{self, Deserialize, Deserializer};
+
+use unicode_segmentation::UnicodeSegmentation;
+
 use std::io::Write;
+use std::ops::Deref;
 
 pub mod output;
 pub mod update;
-
 
 /// A paste with files and metadata.
 #[derive(Debug, Serialize, Deserialize)]
@@ -23,8 +27,53 @@ pub struct Paste {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Metadata {
   pub name: Option<String>,
+  pub description: Option<Description>,
   #[serde(default)]
   pub visibility: Visibility,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct Description(String);
+
+impl Description {
+  pub fn new(s: String) -> Self {
+    Description(s)
+  }
+
+  pub fn into_inner(self) -> String {
+    self.0
+  }
+}
+
+impl<'de> Deserialize<'de> for Description {
+  fn deserialize<D>(des: D) -> Result<Self, D::Error>
+    where D: Deserializer<'de>,
+  {
+    let string: String = String::deserialize(des)?;
+
+    let graphemes = string.graphemes(true).count();
+    if graphemes > 255 {
+      return Err(de::Error::invalid_length(graphemes, &"<= 255 extended grapheme clusters"))
+    }
+
+    Ok(Description(string))
+  }
+}
+
+impl Deref for Description {
+  type Target = str;
+
+  fn deref(&self) -> &Self::Target {
+    &self.0
+  }
+}
+
+impl<S> From<S> for Description
+  where S: AsRef<str>,
+{
+  fn from(s: S) -> Self {
+    Description(s.as_ref().into())
+  }
 }
 
 /// Visibility of a [`Paste`].
@@ -182,9 +231,9 @@ mod gzip_base64_serde {
     where S: Serializer,
           T: AsRef<[u8]> + ?Sized,
   {
-    let mut encoder = Encoder::new(Vec::new()).map_err(|e| ser::Error::custom(e))?;
-    encoder.write_all(data.as_ref()).map_err(|e| ser::Error::custom(e))?;
-    let encoded_bytes = encoder.finish().into_result().map_err(|e| ser::Error::custom(e))?;
+    let mut encoder = Encoder::new(Vec::new()).map_err(ser::Error::custom)?;
+    encoder.write_all(data.as_ref()).map_err(ser::Error::custom)?;
+    let encoded_bytes = encoder.finish().into_result().map_err(ser::Error::custom)?;
     ser.serialize_str(&base64::encode(&encoded_bytes))
   }
 
@@ -192,9 +241,9 @@ mod gzip_base64_serde {
     where D: Deserializer<'de>,
   {
     let bytes = des.deserialize_string(Base64Visitor)?;
-    let mut decoder = Decoder::new(bytes.as_slice()).map_err(|e| de::Error::custom(e))?;
+    let mut decoder = Decoder::new(bytes.as_slice()).map_err(de::Error::custom)?;
     let mut decoded_bytes = Vec::new();
-    decoder.read_to_end(&mut decoded_bytes).map_err(|e| de::Error::custom(e))?;
+    decoder.read_to_end(&mut decoded_bytes).map_err(de::Error::custom)?;
     Ok(decoded_bytes)
   }
 }
@@ -217,8 +266,8 @@ mod xz_base64_serde {
           T: AsRef<[u8]> + ?Sized,
   {
     let mut encoder = XzEncoder::new(Vec::new(), 9);
-    encoder.write_all(data.as_ref()).map_err(|e| ser::Error::custom(e))?;
-    let encoded_bytes = encoder.finish().map_err(|e| ser::Error::custom(e))?;
+    encoder.write_all(data.as_ref()).map_err(ser::Error::custom)?;
+    let encoded_bytes = encoder.finish().map_err(ser::Error::custom)?;
     ser.serialize_str(&base64::encode(&encoded_bytes))
   }
 
@@ -228,7 +277,7 @@ mod xz_base64_serde {
     let bytes = des.deserialize_string(Base64Visitor)?;
     let mut decoder = XzDecoder::new(bytes.as_slice());
     let mut decoded_bytes = Vec::new();
-    decoder.read_to_end(&mut decoded_bytes).map_err(|e| de::Error::custom(e))?;
+    decoder.read_to_end(&mut decoded_bytes).map_err(de::Error::custom)?;
     Ok(decoded_bytes)
   }
 }

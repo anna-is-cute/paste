@@ -57,7 +57,7 @@ impl Paste {
   }
 
   pub fn set_description<S: AsRef<str>>(&mut self, description: Option<S>) {
-    self.description = description.map(|x| x.as_ref().to_string().into());
+    self.description = description.map(|x| x.as_ref().to_string());
   }
 
   pub fn created_at(&self) -> &NaiveDateTime {

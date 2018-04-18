@@ -42,7 +42,7 @@ fn _get_all(query: Option<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>>
   let pastes: Vec<DbPaste> = pastes::table
     .filter(pastes::visibility.eq(Visibility::Public))
     .order(pastes::created_at.desc())
-    .limit(limit as i64)
+    .limit(i64::from(limit))
     .load(&*conn)?;
 
   let output = pastes

@@ -96,7 +96,10 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
         }
 
         if db_changed {
-          diesel::update(files::table).set(&*db_file).execute(&*conn)?;
+          diesel::update(files::table)
+            .filter(files::id.eq(db_file.id()))
+            .set(&*db_file)
+            .execute(&*conn)?;
           db_changed = false;
         }
       },

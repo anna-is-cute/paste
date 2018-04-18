@@ -57,4 +57,9 @@ features = ["v4", "serde"]
 # database orm
 [dependencies.diesel]
 version = "1"
-features = ["postgres", "uuid", "r2d2"]
+features = ["postgres", "uuid", "r2d2", "chrono"]
+
+# timestamp handling
+[dependencies.chrono]
+version = "0.4"
+features = ["serde"]

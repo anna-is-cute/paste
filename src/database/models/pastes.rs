@@ -6,6 +6,8 @@ use models::status::ErrorKind;
 use super::super::schema::pastes;
 use super::users::User;
 
+use chrono::{NaiveDateTime, Utc};
+
 use diesel;
 use diesel::prelude::*;
 
@@ -22,6 +24,7 @@ pub struct Paste {
   visibility: Visibility,
   author_id: Option<Uuid>,
   description: Option<String>,
+  created_at: NaiveDateTime,
 }
 
 impl Paste {
@@ -55,6 +58,10 @@ impl Paste {
 
   pub fn set_description<S: AsRef<str>>(&mut self, description: Option<S>) {
     self.description = description.map(|x| x.as_ref().to_string().into());
+  }
+
+  pub fn created_at(&self) -> &NaiveDateTime {
+    &self.created_at
   }
 
   pub fn update(&mut self, conn: &DbConn, update: &MetadataUpdate) -> Result<()> {
@@ -105,10 +112,19 @@ pub struct NewPaste {
   visibility: Visibility,
   author_id: Option<Uuid>,
   description: Option<String>,
+  created_at: NaiveDateTime,
 }
 
 impl NewPaste {
-  pub fn new(id: Uuid, name: Option<String>, description: Option<String>, visibility: Visibility, author_id: Option<Uuid>) -> Self {
-    NewPaste { id, name, visibility, author_id, description }
+  pub fn new(
+    id: Uuid,
+    name: Option<String>,
+    description: Option<String>,
+    visibility: Visibility,
+    author_id: Option<Uuid>,
+    created_at: Option<NaiveDateTime>,
+  ) -> Self {
+    let created_at = created_at.unwrap_or_else(|| Utc::now().naive_utc());
+    NewPaste { id, name, visibility, author_id, description, created_at }
   }
 }

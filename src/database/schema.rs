@@ -18,6 +18,7 @@ table! {
         paste_id -> Uuid,
         name -> Text,
         is_binary -> Nullable<Bool>,
+        created_at -> Timestamp,
     }
 }
 
@@ -28,6 +29,7 @@ table! {
         visibility -> Int2,
         author_id -> Nullable<Uuid>,
         description -> Nullable<Text>,
+        created_at -> Timestamp,
     }
 }
 

@@ -8,10 +8,12 @@ use models::paste::output::OutputFile;
 use super::pastes::Paste;
 use super::super::schema::files;
 
-use std::fs::File as FsFile;
-use std::io::Read;
+use chrono::{NaiveDateTime, Utc};
 
 use uuid::Uuid;
+
+use std::fs::File as FsFile;
+use std::io::Read;
 
 #[derive(Identifiable, AsChangeset, Queryable, Associations)]
 #[belongs_to(Paste)]
@@ -20,6 +22,7 @@ pub struct File {
   paste_id: Uuid,
   name: String,
   is_binary: Option<bool>,
+  created_at: NaiveDateTime,
 }
 
 impl File {
@@ -41,6 +44,10 @@ impl File {
 
   pub fn is_binary(&self) -> &Option<bool> {
     &self.is_binary
+  }
+
+  pub fn created_at(&self) -> &NaiveDateTime {
+    &self.created_at
   }
 
   pub fn as_output_file(&self, with_content: bool) -> Result<OutputFile> {
@@ -73,10 +80,12 @@ pub struct NewFile {
   paste_id: Uuid,
   name: String,
   is_binary: Option<bool>,
+  created_at: NaiveDateTime,
 }
 
 impl NewFile {
-  pub fn new(id: Uuid, paste_id: Uuid, name: String, is_binary: Option<bool>) -> Self {
-    NewFile { id, paste_id, name, is_binary }
+  pub fn new(id: Uuid, paste_id: Uuid, name: String, is_binary: Option<bool>, created_at: Option<NaiveDateTime>) -> Self {
+    let created_at = created_at.unwrap_or_else(|| Utc::now().naive_utc());
+    NewFile { id, paste_id, name, is_binary, created_at }
   }
 }

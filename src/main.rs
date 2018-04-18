@@ -2,6 +2,7 @@
 #![plugin(rocket_codegen)]
 
 extern crate base64;
+extern crate chrono;
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
@@ -49,6 +50,9 @@ fn main() {
     ])
     .mount("/", routes![index])
     .mount("/api/v0/pastes", routes![
+      routes::pastes::get::get_all,
+      routes::pastes::get::get_all_query,
+
       routes::pastes::post::post,
       routes::pastes::delete::delete,
       routes::pastes::get::get_query,

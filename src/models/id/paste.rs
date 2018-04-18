@@ -96,7 +96,7 @@ impl PasteId {
       .unwrap_or_else(|| id.simple().to_string()); // fall back to uuid if necessary
 
     // add file to the database
-    let new_file = NewFile::new(id, **self, name, Some(binary));
+    let new_file = NewFile::new(id, **self, name, Some(binary), None);
     let db_file = diesel::insert_into(files::table).values(&new_file).get_result(&**conn)?;
 
     Ok(db_file)

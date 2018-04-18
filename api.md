@@ -2,7 +2,9 @@
 
 ## Base URL
 
-This document assumes a base URL of `/api`.
+This document assumes a base URL of `/api/<version>`.
+
+The current `<version>` is `v0`. Expect breakage.
 
 ## GET `/pastes`
 

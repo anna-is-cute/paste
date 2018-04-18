@@ -60,6 +60,7 @@ fn main() {
 
       routes::pastes::files::individual::delete::delete,
       routes::pastes::files::individual::get::get,
+      routes::pastes::files::individual::patch::patch,
     ])
     .launch();
 }

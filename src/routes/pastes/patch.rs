@@ -83,6 +83,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
                 .truncate(true)
                 .open(files_directory.join(db_file.id().simple().to_string()))?;
               f.write_all(&content.into_bytes())?;
+              // FIXME: set is_binary field
             },
             // deleting file
             Some(None) => {

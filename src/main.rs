@@ -57,6 +57,7 @@ fn main() {
 
       routes::pastes::files::get::get,
       routes::pastes::files::patch::patch,
+      routes::pastes::files::post::post,
 
       routes::pastes::files::individual::delete::delete,
       routes::pastes::files::individual::get::get,

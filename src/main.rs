@@ -48,7 +48,7 @@ fn main() {
       routes::internal_server_error,
     ])
     .mount("/", routes![index])
-    .mount("/api/pastes", routes![
+    .mount("/api/v0/pastes", routes![
       routes::pastes::post::post,
       routes::pastes::delete::delete,
       routes::pastes::get::get_query,

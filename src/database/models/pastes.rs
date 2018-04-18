@@ -1,6 +1,6 @@
 use database::DbConn;
 use errors::*;
-use models::paste::update::PasteUpdate;
+use models::paste::update::MetadataUpdate;
 use models::paste::Visibility;
 use models::status::ErrorKind;
 use super::super::schema::pastes;
@@ -57,20 +57,20 @@ impl Paste {
     self.description = description.map(|x| x.as_ref().to_string().into());
   }
 
-  pub fn update(&mut self, conn: &DbConn, update: &PasteUpdate) -> Result<()> {
-    let changed = update.metadata.name.is_some()
-      || update.metadata.visibility.is_some()
-      || update.metadata.description.is_some();
+  pub fn update(&mut self, conn: &DbConn, update: &MetadataUpdate) -> Result<()> {
+    let changed = update.name.is_some()
+      || update.visibility.is_some()
+      || update.description.is_some();
     if !changed {
       return Ok(());
     }
-    if let Some(ref update) = update.metadata.name {
+    if let Some(ref update) = update.name {
       self.set_name(update.clone());
     }
-    if let Some(ref update) = update.metadata.visibility {
+    if let Some(ref update) = update.visibility {
       self.set_visibility(*update);
     }
-    if let Some(ref update) = update.metadata.description {
+    if let Some(ref update) = update.description {
       self.set_description(update.clone().map(|x| x.into_inner()));
     }
     diesel::update(pastes::table)

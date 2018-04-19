@@ -14,16 +14,20 @@ extern crate if_chain;
 #[macro_use]
 extern crate lazy_static;
 extern crate libflate;
+extern crate reqwest;
 extern crate rocket_contrib;
 extern crate rocket;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
 extern crate serde;
+extern crate sodiumoxide;
+extern crate toml;
 extern crate unicode_segmentation;
 extern crate uuid;
 extern crate xz2;
 
+mod config;
 mod database;
 mod errors;
 mod models;
@@ -43,8 +47,17 @@ fn index() -> std::io::Result<NamedFile> {
 fn main() {
   dotenv::dotenv().ok();
 
+  let config = match config::load_config() {
+    Ok(c) => c,
+    Err(e) => {
+      println!("could not load config.toml: {}", e);
+      return;
+    }
+  };
+
   rocket::ignite()
     .manage(database::init_pool())
+    .manage(config)
     .attach(Template::fairing())
     .catch(errors![
       routes::bad_request,
@@ -53,7 +66,12 @@ fn main() {
     ])
     .mount("/", routes![
       routes::web::index::get,
+
+      routes::web::auth::login::get,
+      routes::web::auth::login::post,
+
       routes::web::auth::register::get,
+      routes::web::auth::register::post,
     ])
     .mount("/static", routes!{
       routes::web::static_files::get,

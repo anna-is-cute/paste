@@ -1,0 +1,6 @@
+[general]
+site_name = "paste"
+
+[recaptcha]
+site_key = "<site_key>"
+secret_key = "<secret_key>"

@@ -34,3 +34,15 @@ pub struct NewUser {
   name: Option<String>,
   email: Option<String>,
 }
+
+impl NewUser {
+  pub fn new(
+    id: Uuid,
+    username: String,
+    password: String,
+    name: Option<String>,
+    email: Option<String>,
+  ) -> Self {
+    NewUser { id, username, password, name, email }
+  }
+}

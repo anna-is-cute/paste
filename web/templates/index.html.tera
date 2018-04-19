@@ -1,0 +1,53 @@
+{% extends "base" %}
+
+{% block title %}Create{% endblock title %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="/static/css/style.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arbutus+Slab|Open+Sans:800,400"/>
+{% endblock head %}
+
+{% block body %}
+<nav>
+  <div class="nav-inner">
+    <span class="brand">paste.gg</span>
+    <ul>
+      <li><a href="/">New Paste</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+  </div>
+</nav>
+<header class="container">
+  <h2>New Paste</h2>
+</header>
+
+<main class="container">
+  <form class="inner">
+
+  <textarea>#include&lt;stdio.h&gt;
+
+int main (int argc, char* argv[]) {
+    printf("Hello world\n");
+}</textarea>
+  <a href="#" class="btn">Submit</a>
+  </form>
+</main>
+
+<div class="container">
+  <div class="alert">
+    TODO:
+    <ul>
+      <li>Button hover animations</li>
+      <li>Paste description/name field?</li>
+      <li>Ability to dynamically add/upload files</li>
+    </ul>
+  </div>
+</div>
+
+<div class="push"></div>
+
+<footer class="container">
+  <span class="copyright">&copy; 2018</span>
+</footer>
+{% endblock body %}

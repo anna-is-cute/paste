@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en">
+<head>
+  {% block head %}
+  <title>{% block title %}{% endblock title %} | {{ site_name | escape }}</title>
+  {% endblock head %}
+</head>
+<body>
+{% block body %}{% endblock body %}
+</body>
+</html>

@@ -1,0 +1,160 @@
+nav {
+  display: grid;
+  border-top: 0.6rem solid #0984e3;
+  grid-template-columns: 1fr minmax(auto, 1200px) 1fr;
+  background: #000;
+  color: #fff;
+  height: 3.8rem;
+  line-height: 1.25;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Arbutus Slab', serif;
+  font-weight: normal;
+  color: #e2e2e2;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr minmax(auto, 1200px) 1fr;
+}
+
+header {
+    background: #555;
+}
+
+.container * {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.btn {
+color: #0984e3;
+padding: 0.5em 0.6em;
+transition: background 0.2s;
+text-decoration: none;
+  border: 1px solid #0984e3;
+  border-radius: 3px;
+font-size: 0.8em;
+}
+
+.nav-inner {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.nav-inner span.brand {
+  grid-column: 1;
+  align-self: center;
+}
+
+.nav-inner ul {
+grid-row: 1;
+  grid-column: 2;
+  align-self: end;
+  list-style-type: none;
+  margin: 0;
+  height: 100%;
+  display: inline-block;
+  text-align: right;
+}
+
+.nav-inner ul li {
+  display: inline-block;
+  height: 100%;
+
+}
+
+.nav-inner ul li a {
+  text-decoration: none;
+  height: 100%;
+  padding: 0 1em;
+  line-height: 2.75;
+
+  display: block;
+}
+
+.nav-inner ul li a:hover {
+  background-color: #444;
+}
+
+
+
+body {
+  font-size: 18px;
+  font-family: 'Open Sans';
+  background-color: #333;
+  color: #eee;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body * {
+  flex-shrink: 0;
+
+}
+
+.push { flex: 1; }
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+main {
+  padding: 1em 1em;
+}
+
+textarea {
+  min-height: 20vh;
+  border: 1px solid #111;
+  background-color: #000;
+  color: #ddd;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 16px;
+  padding: 0.5em;
+  transition: 0.5s border;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+textarea:focus {
+  border: 1px solid #555;
+}
+
+footer {
+  background-color: #000;
+  color: #eee;
+  padding: 0.5em 0
+}
+
+.alert {
+  border: 1px solid #ff5500;
+  padding: 1em;
+}
+
+a {
+  color: #eee;
+}
+
+a:visited {
+  color: #eee;
+}

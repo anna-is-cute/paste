@@ -33,6 +33,8 @@ mod utils;
 
 use rocket::response::NamedFile;
 
+use rocket_contrib::Template;
+
 #[get("/")]
 fn index() -> std::io::Result<NamedFile> {
   NamedFile::open("index.html")
@@ -43,12 +45,18 @@ fn main() {
 
   rocket::ignite()
     .manage(database::init_pool())
+    .attach(Template::fairing())
     .catch(errors![
       routes::bad_request,
       routes::not_found,
       routes::internal_server_error,
     ])
-    .mount("/", routes![index])
+    .mount("/", routes![
+      routes::web::index::get,
+    ])
+    .mount("/static", routes!{
+      routes::web::static_files::get,
+    })
     .mount("/api/v0/pastes", routes![
       routes::pastes::get::get_all,
       routes::pastes::get::get_all_query,

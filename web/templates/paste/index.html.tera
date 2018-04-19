@@ -5,22 +5,30 @@
 {% endblock head %}
 
 {% block title %}
+  {% if paste.name %}
 {{ paste.name | escape }}
+  {% endif %}
 {% endblock title %}
 
 {% block header_title %}
+  {% if paste.name %}
 {{ paste.name | escape }}
+  {% endif %}
 {% endblock header_title %}
 
 {% block header_subtitle %}
-{{ paste.description | escape }}
+  {% if paste.description %}
+{{ paste.description | default | escape }}
+  {% endif %}
 {% endblock header_subtitle %}
 
 {% block main %}
 
 {% for file in paste.files %}
 <div class="box">
+  {% if file.name %}
   <h2 class="title">{{ file.name | escape }}</h2>
+  {% endif %}
   {% if file.content.format == "text" %}
   <pre>{{ file.content.value | escape }}</pre>
   {% else %}

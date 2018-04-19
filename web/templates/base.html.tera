@@ -9,14 +9,32 @@
 {% block body %}
 <nav class="navbar">
   <div class="navbar-brand">
-    <a class="navbar-item" href="/">paste.gg</a>
+    <div class="navbar-item">
+      <div class="field">
+        <p class="control">
+          <a class="button is-primary" href="/">
+            <span class="icon">
+              <i class="fas fa-paste"></i>
+            </span>
+            <span>paste.gg</span>
+          </a>
+        </p>
+      </div>
+    </div>
   </div>
   <div class="navbar-menu">
     <div class="navbar-start">
+      <a class="navbar-item" href="/">New</a>
     </div>
     <div class="navbar-end">
-      <a class="navbar-item" href="/">New Paste</a>
       <a class="navbar-item" href="/about">About</a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">Account</a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="/login">Login</a>
+          <a class="navbar-item" href="/register">Register</a>
+        </div>
+      </div>
     </div>
   </div>
 </nav>

@@ -1,6 +1,8 @@
 {% extends "base" %}
 
-{% block title %}Create{% endblock title %}
+{% block title %}
+Create
+{% endblock title %}
 
 {% block header_title %}
 New paste

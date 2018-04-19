@@ -47,7 +47,7 @@ unicode-segmentation = "1"
 [dependencies.rocket_contrib]
 version = "0.3"
 default_features = false
-features = ["json", "uuid"]
+features = ["json", "uuid", "tera_templates"]
 
 # unique paste-related ids
 [dependencies.uuid]

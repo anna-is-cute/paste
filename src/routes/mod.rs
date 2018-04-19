@@ -23,6 +23,7 @@ use std::str::FromStr;
 pub type RouteResult<T> = Result<Custom<Json<Status<T>>>>;
 
 pub mod pastes;
+pub mod web;
 
 #[error(400)]
 pub fn bad_request(req: &Request) -> String {

@@ -1,0 +1,6 @@
+[submodule "web/src/css/bulma"]
+	path = web/src/css/bulma
+	url = https://github.com/jgthms/bulma
+[submodule "web/src/css/bulmaswatch"]
+	path = web/src/css/bulmaswatch
+	url = https://github.com/jenil/bulmaswatch

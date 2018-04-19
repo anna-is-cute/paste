@@ -5,25 +5,25 @@
 {% endblock head %}
 
 {% block title %}
-{{ paste.name }}
+{{ paste.name | escape }}
 {% endblock title %}
 
 {% block header_title %}
-{{ paste.name }}
+{{ paste.name | escape }}
 {% endblock header_title %}
 
 {% block header_subtitle %}
-{{ paste.description }}
+{{ paste.description | escape }}
 {% endblock header_subtitle %}
 
 {% block main %}
 
 {% for file in paste.files %}
 <div class="box">
-  <h2 class="title">{{ file.name }}</h2>
+  <h2 class="title">{{ file.name | escape }}</h2>
   {% if file.content.format == "text" %}
   <pre>
-    {{ file.content.value }}
+    {{ file.content.value | escape }}
   </pre>
   {% else %}
     Binary content

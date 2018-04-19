@@ -16,11 +16,11 @@ Create a new account.
 {% endblock header_subtitle %}
 
 {% block main %}
-<form>
+<form method="post" action="/register">
   <div class="field">
     <label class="label">Name</label>
     <div class="control has-icons-left">
-      <input class="input" type="text" placeholder="Jim Bob Jones"/>
+      <input name="name" class="input" type="text" placeholder="Jim Bob Jones"/>
       <span class="icon is-small is-left">
         <i class="fas fa-id-card"></i>
       </span>
@@ -30,7 +30,7 @@ Create a new account.
   <div class="field">
     <label class="label">Username</label>
     <div class="control has-icons-left">
-      <input class="input" type="text" placeholder="jimbo33"/>
+      <input name="username" class="input" type="text" placeholder="jimbo33"/>
       <span class="icon is-small is-left">
         <i class="fas fa-user"></i>
       </span>
@@ -40,7 +40,7 @@ Create a new account.
   <div class="field">
     <label class="label">Email</label>
     <div class="control has-icons-left">
-      <input class="input" type="email" placeholder="your@email.com"/>
+      <input name="email" class="input" type="email" placeholder="your@email.com"/>
       <span class="icon is-small is-left">
         <i class="fas fa-envelope"></i>
       </span>
@@ -50,7 +50,7 @@ Create a new account.
   <div class="field">
     <label class="label">Password</label>
     <div class="control has-icons-left">
-      <input class="input" type="password" placeholder="Something really secure, please <3"/>
+      <input name="password" class="input" type="password" placeholder="Something really secure, please <3"/>
       <span class="icon is-small is-left">
         <i class="fas fa-asterisk"></i>
       </span>
@@ -60,14 +60,13 @@ Create a new account.
   <div class="field">
     <label class="label">Human check</label>
     <div class="control">
-      <!-- FIXME: use a variable for key -->
-      <div class="g-recaptcha" data-sitekey="6Ld7Q1QUAAAAAHk0G2hVUYVjJE1KcnBhZ1r94fTB"></div>
+      <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
     </div>
   </div>
 
   <div class="field">
     <div class="control">
-      <button class="button is-link">Submit</button>
+      <input type="submit" class="button is-link" value="Submit"/>
     </div>
   </div>
 </form>

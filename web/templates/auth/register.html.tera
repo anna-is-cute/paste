@@ -1,0 +1,74 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+<script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock head %}
+
+{% block title %}Register{% endblock title %}
+
+{% block header_title %}
+Register
+{% endblock header_title %}
+
+{% block header_subtitle %}
+Create a new account.
+{% endblock header_subtitle %}
+
+{% block main %}
+<form>
+  <div class="field">
+    <label class="label">Name</label>
+    <div class="control has-icons-left">
+      <input class="input" type="text" placeholder="Jim Bob Jones"/>
+      <span class="icon is-small is-left">
+        <i class="fas fa-id-card"></i>
+      </span>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Username</label>
+    <div class="control has-icons-left">
+      <input class="input" type="text" placeholder="jimbo33"/>
+      <span class="icon is-small is-left">
+        <i class="fas fa-user"></i>
+      </span>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Email</label>
+    <div class="control has-icons-left">
+      <input class="input" type="email" placeholder="your@email.com"/>
+      <span class="icon is-small is-left">
+        <i class="fas fa-envelope"></i>
+      </span>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Password</label>
+    <div class="control has-icons-left">
+      <input class="input" type="password" placeholder="Something really secure, please <3"/>
+      <span class="icon is-small is-left">
+        <i class="fas fa-asterisk"></i>
+      </span>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Human check</label>
+    <div class="control">
+      <!-- FIXME: use a variable for key -->
+      <div class="g-recaptcha" data-sitekey="6Ld7Q1QUAAAAAHk0G2hVUYVjJE1KcnBhZ1r94fTB"></div>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="control">
+      <button class="button is-link">Submit</button>
+    </div>
+  </div>
+</form>
+{% endblock main %}

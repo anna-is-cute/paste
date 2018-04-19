@@ -53,6 +53,7 @@ fn main() {
     ])
     .mount("/", routes![
       routes::web::index::get,
+      routes::web::auth::register::get,
     ])
     .mount("/static", routes!{
       routes::web::static_files::get,

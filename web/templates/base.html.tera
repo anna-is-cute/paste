@@ -1,11 +1,54 @@
-<!doctype html>
-<html lang="en">
-<head>
-  {% block head %}
-  <title>{% block title %}{% endblock title %} | {{ site_name | escape }}</title>
-  {% endblock head %}
-</head>
-<body>
-{% block body %}{% endblock body %}
-</body>
-</html>
+{% extends "frame" %}
+
+{% block head %}
+{# {{ super() }} #}
+<link rel="stylesheet" href="/static/css/style.css"/>
+<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+{% endblock head %}
+
+{% block body %}
+<nav class="navbar">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="/">paste.gg</a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start">
+    </div>
+    <div class="navbar-end">
+      <a class="navbar-item" href="/">New Paste</a>
+      <a class="navbar-item" href="/about">About</a>
+    </div>
+  </div>
+</nav>
+
+{% block header %}
+<section class="hero is-dark is-bold">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        {% block header_title %}{% endblock header_title %}
+      </h1>
+      <h2 class="subtitle">
+        {% block header_subtitle %}{% endblock header_subtitle %}
+      </h2>
+    </div>
+  </div>
+</section>
+{% endblock header %}
+
+<main class="section">
+  <div class="container">
+{% block main %}{% endblock main %}
+  </div>
+</main>
+
+<div class="push"></div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <span class="copyright">&copy; 2018</span>
+    </div>
+  </div>
+</footer>
+{% endblock body %}

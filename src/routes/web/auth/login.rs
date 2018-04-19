@@ -13,12 +13,9 @@ use rocket_contrib::Template;
 
 use sodiumoxide::crypto::pwhash;
 
-use std::collections::HashMap;
-
 #[get("/login")]
 fn get() -> Template {
-  let map: HashMap<String, String> = HashMap::default();
-  Template::render("auth/login", map)
+  Template::render("auth/login", json!({}))
 }
 
 #[derive(Debug, FromForm)]

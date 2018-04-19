@@ -1,7 +1,8 @@
 {% extends "frame" %}
 
 {% block head %}
-{# {{ super() }} #}
+{{ super() }}
+<title>{% block title %}{% endblock title %}</title>
 <link rel="stylesheet" href="/static/css/style.css"/>
 <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 {% endblock head %}

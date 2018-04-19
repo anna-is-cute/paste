@@ -3,7 +3,6 @@
 <head>
   {% block head %}
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>{% block title %}{% endblock title %}</title>
   {% endblock head %}
 </head>
 <body>

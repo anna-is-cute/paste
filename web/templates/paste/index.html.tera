@@ -22,9 +22,7 @@
 <div class="box">
   <h2 class="title">{{ file.name | escape }}</h2>
   {% if file.content.format == "text" %}
-  <pre>
-    {{ file.content.value | escape }}
-  </pre>
+  <pre>{{ file.content.value | escape }}</pre>
   {% else %}
     Binary content
   {% endif %}

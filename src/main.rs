@@ -40,6 +40,8 @@ use rocket::response::NamedFile;
 
 use rocket_contrib::Template;
 
+use std::env;
+
 #[get("/")]
 fn index() -> std::io::Result<NamedFile> {
   NamedFile::open("index.html")
@@ -48,7 +50,15 @@ fn index() -> std::io::Result<NamedFile> {
 fn main() {
   dotenv::dotenv().ok();
 
-  let config = match config::load_config() {
+  let config_path = match env::args().nth(1) {
+    Some(p) => p,
+    None => {
+      println!("please specify the path to the configuration file as the first argument");
+      return;
+    }
+  };
+
+  let config = match config::load_config(&config_path) {
     Ok(c) => c,
     Err(e) => {
       println!("could not load config.toml: {}", e);

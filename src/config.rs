@@ -22,8 +22,8 @@ pub struct ReCaptcha {
   pub site_key: String,
 }
 
-pub fn load_config() -> Result<Config> {
-  let mut file = File::open("config.toml")?;
+pub fn load_config(s: &str) -> Result<Config> {
+  let mut file = File::open(s)?;
   let mut content = String::new();
   file.read_to_string(&mut content)?;
   let config = toml::from_str(&content)?;

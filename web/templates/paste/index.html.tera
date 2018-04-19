@@ -1,0 +1,34 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}
+{{ paste.name }}
+{% endblock title %}
+
+{% block header_title %}
+{{ paste.name }}
+{% endblock header_title %}
+
+{% block header_subtitle %}
+{{ paste.description }}
+{% endblock header_subtitle %}
+
+{% block main %}
+
+{% for file in paste.files %}
+<div class="box">
+  <h2 class="title">{{ file.name }}</h2>
+  {% if file.content.format == "text" %}
+  <pre>
+    {{ file.content.value }}
+  </pre>
+  {% else %}
+    Binary content
+  {% endif %}
+</div>
+{% endfor %}
+
+{% endblock main %}

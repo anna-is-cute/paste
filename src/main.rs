@@ -83,6 +83,9 @@ fn main() {
 
       routes::web::auth::register::get,
       routes::web::auth::register::post,
+
+      routes::web::pastes::get::id,
+      routes::web::pastes::get::username_id,
     ])
     .mount("/static", routes!{
       routes::web::static_files::get,

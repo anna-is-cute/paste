@@ -2,5 +2,10 @@
 site_name = "paste"
 
 [recaptcha]
+# https://developers.google.com/recaptcha/docs/faq
+# With the following test keys, you will always get No CAPTCHA and all verification requests will
+# pass.
+# site key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+# secret key: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe6LeIxAcTAAAAAGG
 site_key = "<site_key>"
 secret_key = "<secret_key>"

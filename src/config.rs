@@ -5,18 +5,18 @@ use toml;
 use std::fs::File;
 use std::io::Read;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
   pub general: General,
   pub recaptcha: ReCaptcha,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct General {
   pub site_name: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ReCaptcha {
   pub secret_key: String,
   pub site_key: String,

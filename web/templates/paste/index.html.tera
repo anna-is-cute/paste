@@ -23,6 +23,24 @@
 {% endblock header_subtitle %}
 
 {% block main %}
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li>
+  {% if paste.author.username %}
+    <a>{{ paste.author.username | escape }}</a>
+  {% else %}
+    <a>anonymous</a>
+  {% endif %}
+    </li>
+    <li class="is-active">
+  {% if paste.name %}
+    <a>{{ paste.name | escape }}</a>
+  {% else %}
+    <a>{{ paste.id }}</a>
+  {% endif %}
+    </li>
+  </ul>
+</nav>
 
 {% for file in paste.files %}
 <div class="box">

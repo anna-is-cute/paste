@@ -5,7 +5,7 @@
 {% endblock head %}
 
 {% block title %}
-Create
+New
 {% endblock title %}
 
 {% block header_title %}

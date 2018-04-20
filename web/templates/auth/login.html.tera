@@ -15,6 +15,18 @@ Log in to your account.
 {% endblock header_subtitle %}
 
 {% block main %}
+{% if error %}
+<article class="message is-warning">
+  <div class="message-header">
+    <p>Error</p>
+    {# <button class="delete" aria-label="delete"></button> #}
+  </div>
+  <div class="message-body">
+    {{ error | escape }}
+  </div>
+</article>
+{% endif %}
+
 <form method="post" action="/login">
   <div class="field">
     <label class="label">Username</label>

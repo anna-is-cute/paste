@@ -1,9 +1,10 @@
 use database::DbConn;
 use database::models::pastes::Paste as DbPaste;
-use database::schema::pastes;
+use database::models::users::User;
+use database::schema::{pastes, users};
 use models::id::PasteId;
 use models::paste::{Metadata, Visibility};
-use models::paste::output::{Output, OutputFile};
+use models::paste::output::{Output, OutputFile, OutputAuthor};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
 use utils::SimpleUuid;
@@ -94,8 +95,17 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
     .map(|x| x.as_output_file(full))
     .collect::<Result<_, _>>()?;
 
+  let author = match paste.author_id() {
+    Some(author) => {
+      let user: User = users::table.find(author).first(&*conn)?;
+      Some(OutputAuthor::new(&author, user.username().clone()))
+    },
+    None => None
+  };
+
   let output = Output::new(
     *id,
+    author,
     paste.name().clone(),
     paste.description().clone(),
     paste.visibility(),

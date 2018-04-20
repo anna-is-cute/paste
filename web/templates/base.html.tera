@@ -16,7 +16,7 @@
             <span class="icon">
               <i class="fas fa-paste"></i>
             </span>
-            <span>paste.gg</span>
+            <span>{{ config.general.site_name | escape }}</span>
           </a>
         </p>
       </div>

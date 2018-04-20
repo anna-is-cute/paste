@@ -3,7 +3,7 @@ use database::models::deletion_keys::NewDeletionKey;
 use database::models::files::File as DbFile;
 use database::models::pastes::NewPaste;
 use models::paste::Paste;
-use models::paste::output::{Output, OutputFile};
+use models::paste::output::{Output, OutputFile, OutputAuthor};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
 use store::Store;
@@ -74,8 +74,14 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     .map(|x| x.as_output_file(false))
     .collect::<Result<_, _>>()?;
 
+  let author = match *user {
+    Some(ref user) => Some(OutputAuthor::new(&user.id(), user.username().clone())),
+    None => None,
+  };
+
   let output = Output::new(
     *id,
+    author,
     info.metadata.name.clone(),
     info.metadata.description.clone().map(|x| x.into_inner()),
     info.metadata.visibility,

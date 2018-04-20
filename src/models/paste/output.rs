@@ -6,6 +6,8 @@ use uuid::Uuid;
 #[derive(Debug, Serialize)]
 pub struct Output {
   pub id: SimpleUuid,
+  #[serde(skip_serializing_if = "Option::is_none")]
+  pub author: Option<OutputAuthor>,
   #[serde(flatten)]
   pub paste: Paste,
   #[serde(skip_serializing_if = "Option::is_none")]
@@ -14,13 +16,14 @@ pub struct Output {
 }
 
 impl Output {
-  pub fn new<N, D, F>(paste_id: Uuid, name: Option<N>, desc: Option<D>, vis: Visibility, deletion_key: Option<Uuid>, files: F) -> Self
+  pub fn new<N, D, F>(paste_id: Uuid, author: Option<OutputAuthor>, name: Option<N>, desc: Option<D>, vis: Visibility, deletion_key: Option<Uuid>, files: F) -> Self
     where N: AsRef<str>,
           D: AsRef<str>,
           F: IntoIterator<Item = OutputFile>,
   {
     Output {
       id: paste_id.into(),
+      author,
       paste: Paste {
         metadata: Metadata {
           name: name.map(|x| x.as_ref().to_string()),
@@ -49,6 +52,21 @@ impl OutputFile {
       id: (*id).into(),
       name: name.map(Into::into),
       content,
+    }
+  }
+}
+
+#[derive(Debug, Serialize)]
+pub struct OutputAuthor {
+  id: SimpleUuid,
+  username: String,
+}
+
+impl OutputAuthor {
+  pub fn new<S: Into<String>>(id: &Uuid, username: S) -> Self {
+    OutputAuthor {
+      id: (*id).into(),
+      username: username.into(),
     }
   }
 }

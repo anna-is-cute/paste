@@ -16,6 +16,18 @@ Create a new account.
 {% endblock header_subtitle %}
 
 {% block main %}
+{% if error %}
+<article class="message is-warning">
+  <div class="message-header">
+    <p>Error</p>
+    {# <button class="delete" aria-label="delete"></button> #}
+  </div>
+  <div class="message-body">
+    {{ error | escape }}
+  </div>
+</article>
+{% endif %}
+
 <form method="post" action="/register">
   <div class="field">
     <label class="label">Name</label>
@@ -60,7 +72,7 @@ Create a new account.
   <div class="field">
     <label class="label">Human check</label>
     <div class="control">
-      <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
+      <div class="g-recaptcha" data-sitekey="{{ config.recaptcha.site_key }}"></div>
     </div>
   </div>
 

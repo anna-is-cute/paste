@@ -18,13 +18,14 @@ use rocket_contrib::Template;
 
 use uuid::Uuid;
 
-use std::collections::HashMap;
-
 #[get("/register")]
-fn get(config: State<Config>) -> Template {
-  let mut map = HashMap::with_capacity(1);
-  map.insert("recaptcha_site_key", &config.recaptcha.site_key);
-  Template::render("auth/register", map)
+fn get(config: State<Config>, mut cookies: Cookies) -> Template {
+  let ctx = json!({
+    "config": &*config,
+    "error": cookies.get("error").map(|x| x.value()),
+  });
+  cookies.remove(Cookie::named("error"));
+  Template::render("auth/register", ctx)
 }
 
 #[derive(Debug, FromForm)]
@@ -32,7 +33,7 @@ struct RegistrationData {
   name: String,
   username: String,
   email: String,
-  password: HashedPassword,
+  password: String,
   #[form(field = "g-recaptcha-response")]
   recaptcha: ReCaptcha,
 }
@@ -40,10 +41,21 @@ struct RegistrationData {
 #[post("/register", format = "application/x-www-form-urlencoded", data = "<data>")]
 fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn, config: State<Config>) -> Result<Redirect> {
   let data = data.into_inner();
-  // FIXME: replace this with varable before commit
+
+  if data.username.is_empty() || data.name.is_empty()  || data.email.is_empty() || data.password.is_empty() {
+    cookies.add(Cookie::new("error", "No fields can be empty."));
+    return Ok(Redirect::to("/register"));
+  }
+  if data.username == "static" || data.username == "anonymous" {
+    cookies.add(Cookie::new("error", r#"Username cannot be "static" or "anonymous"."#));
+    return Ok(Redirect::to("/register"));
+  }
+  if data.password == data.username || data.password == data.email || data.password == "password" {
+    cookies.add(Cookie::new("error", r#"Password cannot be the same as your username, email, or "password"."#));
+    return Ok(Redirect::to("/register"));
+  }
   if !data.recaptcha.verify(&config.recaptcha.secret_key)? {
-    // FIXME: status message
-    println!("captcha fail");
+    cookies.add(Cookie::new("error", "The captcha did not validate. Try again."));
     return Ok(Redirect::to("/register"));
   }
 
@@ -52,8 +64,7 @@ fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn, config
     .select(count(users::id))
     .get_result(&*conn)?;
   if existing_names > 0 {
-    println!("duplicate name");
-    // FIXME: status message
+    cookies.add(Cookie::new("error", "A user with that username already exists."));
     return Ok(Redirect::to("/register"));
   }
 
@@ -61,14 +72,13 @@ fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn, config
   let nu = NewUser::new(
     id,
     data.username,
-    data.password.into_string(),
+    HashedPassword::from(data.password).into_string(),
     Some(data.name),
     Some(data.email),
   );
 
   diesel::insert_into(users::table).values(&nu).execute(&*conn)?;
 
-  // FIXME: log in
   cookies.add_private(Cookie::new("user_id", id.simple().to_string()));
 
   Ok(Redirect::to("/"))

@@ -1,12 +1,15 @@
+use config::Config;
 use database::DbConn;
 use database::models::pastes::Paste as DbPaste;
+use database::models::users::User;
 use database::schema::{pastes, users};
 use errors::*;
 use models::id::PasteId;
-use models::paste::output::{Output, OutputFile};
+use models::paste::output::{Output, OutputFile, OutputAuthor};
 
 use diesel::prelude::*;
 
+use rocket::State;
 use rocket::response::Redirect;
 
 use rocket_contrib::Template;
@@ -27,7 +30,7 @@ fn id(id: PasteId, conn: DbConn) -> Result<Redirect> {
 }
 
 #[get("/<username>/<id>")]
-fn username_id(username: String, id: PasteId, conn: DbConn) -> Result<Template> {
+fn username_id(username: String, id: PasteId, config: State<Config>, conn: DbConn) -> Result<Template> {
   // FIXME: respect visibility rules
   let paste: DbPaste = id.get(&conn)?.unwrap();
 
@@ -37,6 +40,14 @@ fn username_id(username: String, id: PasteId, conn: DbConn) -> Result<Template> 
   //   return Ok(Status::show_error(status, kind));
   // }
 
+  let author = match paste.author_id() {
+    Some(author) => {
+      let user: User = users::table.find(author).first(&*conn)?;
+      Some(OutputAuthor::new(&author, user.username().clone()))
+    },
+    None => None
+  };
+
   let files: Vec<OutputFile> = id.files(&conn)?
     .iter()
     .map(|x| x.as_output_file(true))
@@ -44,6 +55,7 @@ fn username_id(username: String, id: PasteId, conn: DbConn) -> Result<Template> 
 
   let output = Output::new(
     *id,
+    author,
     paste.name().clone(),
     paste.description().clone(),
     paste.visibility(),
@@ -51,12 +63,10 @@ fn username_id(username: String, id: PasteId, conn: DbConn) -> Result<Template> 
     files,
   );
 
-  let ctx = Context { paste: output };
+  let ctx = json!({
+    "paste": output,
+    "config": &*config,
+  });
 
   Ok(Template::render("paste/index", ctx))
-}
-
-#[derive(Serialize)]
-struct Context {
-  paste: Output,
 }

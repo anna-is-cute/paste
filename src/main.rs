@@ -89,6 +89,7 @@ fn main() {
       routes::web::pastes::get::username_id,
 
       routes::web::account::index::get,
+      routes::web::account::index::post,
     ])
     .mount("/static", routes!{
       routes::web::static_files::get,

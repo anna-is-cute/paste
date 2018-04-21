@@ -32,6 +32,12 @@
 {% endblock header %}
 
 {% block main %}
+{% if error %}
+<div class="notification is-warning">
+  {# <button class="delete"></button> #}
+  {{ error }}
+</div>
+{% endif %}
 <form action="/account" method="post">
   <div class="field is-horizontal">
     <div class="field-label is-normal">

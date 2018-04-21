@@ -102,7 +102,7 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <input class="input" type="password" name="current_password"/>
+          <input class="input" type="password" name="current_password" required/>
         </div>
         <p class="help">
           Required to change any information.

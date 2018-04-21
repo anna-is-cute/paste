@@ -51,12 +51,12 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
   let mut db_files = paste_id.files(&conn)?;
   {
     let db_files_ids: Vec<Uuid> = db_files.iter().map(|x| x.id()).collect();
-    let db_files_names: Vec<&String> = db_files.iter().map(|x| x.name()).collect();
+    let db_files_names: Vec<&str> = db_files.iter().map(|x| x.name()).collect();
     // verify all files before making changes
     if info.iter().filter_map(|x| x.id).any(|x| !db_files_ids.contains(&x)) {
       return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::MissingFile));
     }
-    if info.iter().filter_map(|x| x.name.as_ref()).any(|x| db_files_names.contains(&x)) {
+    if info.iter().filter_map(|x| x.name.as_ref()).any(|x| db_files_names.contains(&x.as_str())) {
       return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::InvalidFile(Some("duplicate file name".into()))));
     }
     if info.iter().any(|x| x.id.is_none() && (x.content.is_none() || x.content.as_ref().map(|z| z.is_none()) == Some(true))) {
@@ -112,7 +112,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
   }
 
   // commit if any files were changed
-  let username = user.username().as_str();
+  let username = user.username();
   // TODO: more descriptive commit message
   paste_id.commit_if_dirty(&username, &format!("{}@paste.com", username), "update paste")?;
 

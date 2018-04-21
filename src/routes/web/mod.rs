@@ -21,6 +21,12 @@ pub mod static_files;
 #[derive(Debug)]
 pub struct OptionalWebUser(Option<User>);
 
+impl OptionalWebUser {
+  pub fn into_inner(self) -> Option<User> {
+    self.0
+  }
+}
+
 impl<'a, 'r> FromRequest<'a, 'r> for OptionalWebUser {
   type Error = ();
 

@@ -13,8 +13,6 @@ use rocket::response::Redirect;
 
 use rocket_contrib::Template;
 
-use sodiumoxide::crypto::pwhash;
-
 #[get("/login")]
 fn get(config: State<Config>, mut cookies: Cookies) -> Template {
   let ctx = json!({
@@ -49,10 +47,7 @@ fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn) -> Res
     },
   };
 
-  let mut stored_bytes = user.password().clone().into_bytes();
-  stored_bytes.push(0);
-  let hash = pwhash::HashedPassword::from_slice(&stored_bytes).expect("hashed password");
-  if !pwhash::pwhash_verify(&hash, data.password.as_bytes()) {
+  if !user.check_password(&data.password) {
     cookies.add(Cookie::new("error", "Incorrect password."));
     return Ok(Redirect::to("/login"));
   }

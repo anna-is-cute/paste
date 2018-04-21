@@ -34,7 +34,7 @@ impl File {
     self.paste_id
   }
 
-  pub fn name(&self) -> &String {
+  pub fn name(&self) -> &str {
     &self.name
   }
 

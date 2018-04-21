@@ -3,6 +3,7 @@ use database::DbConn;
 use database::models::users::User;
 use database::schema::users;
 use errors::*;
+use routes::web::{Rst, OptionalWebUser};
 
 use diesel::prelude::*;
 
@@ -14,14 +15,17 @@ use rocket::response::Redirect;
 use rocket_contrib::Template;
 
 #[get("/login")]
-fn get(config: State<Config>, mut cookies: Cookies) -> Template {
+fn get(config: State<Config>, mut cookies: Cookies, user: OptionalWebUser) -> Rst {
+  if user.is_some() {
+    return Rst::Redirect(Redirect::to("/"));
+  }
   let ctx = json!({
     "config": &*config,
     // TODO: this can be made into an optional request guard
     "error": cookies.get("error").map(|x| x.value()),
   });
   cookies.remove(Cookie::named("error"));
-  Template::render("auth/login", ctx)
+  Rst::Template(Template::render("auth/login", ctx))
 }
 
 #[derive(Debug, FromForm)]

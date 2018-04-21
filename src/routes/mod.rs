@@ -2,10 +2,11 @@
 
 use config::Config;
 use database::{PostgresPool, schema};
-use database::models::users::User;
 use database::models::deletion_keys::DeletionKey;
+use database::models::users::User;
 use errors::*;
 use models::status::Status;
+use routes::web::OptionalWebUser;
 
 use diesel::prelude::*;
 
@@ -47,7 +48,7 @@ fn error(req: &Request, kind: &str, template: &'static str) -> StringOrTemplate 
     return StringOrTemplate::String(format!("{{\"status\":\"error\",\"error\":\"{}\"}}", kind));
   }
   let config: State<Config> = req.guard().unwrap();
-  let user: OptionalUser = req.guard().unwrap();
+  let user: OptionalWebUser = req.guard().unwrap();
   let ctx = json!({
     "config": &*config,
     "user": &*user,

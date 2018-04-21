@@ -1,2 +1,5 @@
-[development]
+[global]
 template_dir = "web/templates"
+
+[development]
+secret_key = "gt/gjaCknItthlJK1Cn/WOhpccnW7sD6T3r8OAP4Mxg="

@@ -20,7 +20,7 @@ use rocket_contrib::Template;
 use uuid::Uuid;
 
 #[get("/register")]
-fn get(config: State<Config>, mut cookies: Cookies, user: OptionalWebUser) -> Rst {
+fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Rst {
   if user.is_some() {
     return Rst::Redirect(Redirect::to("/"));
   }

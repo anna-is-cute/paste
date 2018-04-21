@@ -6,19 +6,19 @@
 
 {% block title %}
   {% if paste.name %}
-{{ paste.name | escape }}
+{{ paste.name }}
   {% endif %}
 {% endblock title %}
 
 {% block header_title %}
   {% if paste.name %}
-{{ paste.name | escape }}
+{{ paste.name }}
   {% endif %}
 {% endblock header_title %}
 
 {% block header_subtitle %}
   {% if paste.description %}
-{{ paste.description | default | escape }}
+{{ paste.description }}
   {% endif %}
 {% endblock header_subtitle %}
 
@@ -27,14 +27,14 @@
   <ul>
     <li>
   {% if paste.author.username %}
-    <a>{{ paste.author.username | escape }}</a>
+    <a>{{ paste.author.username }}</a>
   {% else %}
     <a>anonymous</a>
   {% endif %}
     </li>
     <li class="is-active">
   {% if paste.name %}
-    <a>{{ paste.name | escape }}</a>
+    <a>{{ paste.name }}</a>
   {% else %}
     <a>{{ paste.id }}</a>
   {% endif %}
@@ -45,10 +45,10 @@
 {% for file in paste.files %}
 <div class="box">
   {% if file.name %}
-  <h2 class="title">{{ file.name | escape }}</h2>
+  <h2 class="title">{{ file.name }}</h2>
   {% endif %}
   {% if file.content.format == "text" %}
-  <pre>{{ file.content.value | escape }}</pre>
+  <pre>{{ file.content.value }}</pre>
   {% else %}
     Binary content
   {% endif %}

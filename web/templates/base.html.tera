@@ -16,7 +16,7 @@
             <span class="icon">
               <i class="fas fa-paste"></i>
             </span>
-            <span>{{ config.general.site_name | escape }}</span>
+            <span>{{ config.general.site_name }}</span>
           </a>
         </p>
       </div>
@@ -32,8 +32,8 @@
         <a class="navbar-link">Account</a>
         <div class="navbar-dropdown">
         {% if user %}
-          <span class="navbar-item">{{ user.name | escape }}</span>
-          <span class="navbar-item">{{ user.username | escape }}</span>
+          <span class="navbar-item">{{ user.name }}</span>
+          <span class="navbar-item">{{ user.username }}</span>
           <hr class="navbar-divider"/>
           <a class="navbar-item">Log out</a>
         {% else %}

@@ -6,34 +6,17 @@ use database::schema::{pastes, users};
 use errors::*;
 use models::id::PasteId;
 use models::paste::output::{Output, OutputFile, OutputAuthor};
-use routes::web::OptionalWebUser;
+use routes::web::{Rst, OptionalWebUser};
 
 use diesel::prelude::*;
 
-use rocket::State;
 use rocket::http::Status as HttpStatus;
-use rocket::request::Request;
-use rocket::response::{Redirect, Responder, Response};
+use rocket::response::Redirect;
+use rocket::State;
 
 use rocket_contrib::Template;
 
 use std::result;
-
-enum Rst {
-  Redirect(Redirect),
-  Status(HttpStatus),
-  Template(Template),
-}
-
-impl<'r> Responder<'r> for Rst {
-  fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
-    match self {
-      Rst::Redirect(r) => r.respond_to(request),
-      Rst::Status(s) => Err(s),
-      Rst::Template(t) => t.respond_to(request),
-    }
-  }
-}
 
 #[get("/<id>")]
 fn id<'r>(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
@@ -98,6 +81,7 @@ fn username_id(username: String, id: PasteId, config: State<Config>, user: Optio
   let ctx = json!({
     "paste": output,
     "config": &*config,
+    "user": &*user,
   });
 
   Ok(Rst::Template(Template::render("paste/index", ctx)))

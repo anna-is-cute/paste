@@ -5,12 +5,16 @@ use database::schema::users;
 use rocket::{State, Outcome};
 use rocket::http::Status as HttpStatus;
 use rocket::request::{self, Request, FromRequest};
+use rocket::response::{Responder, Response, Redirect};
+
+use rocket_contrib::Template;
 
 use diesel::prelude::*;
 
 use uuid::Uuid;
 
 use std::ops::Deref;
+use std::result;
 
 pub mod account;
 pub mod auth;
@@ -61,5 +65,21 @@ impl Deref for OptionalWebUser {
 
   fn deref(&self) -> &Self::Target {
     &self.0
+  }
+}
+
+pub enum Rst {
+  Redirect(Redirect),
+  Status(HttpStatus),
+  Template(Template),
+}
+
+impl<'r> Responder<'r> for Rst {
+  fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
+    match self {
+      Rst::Redirect(r) => r.respond_to(request),
+      Rst::Status(s) => Err(s),
+      Rst::Template(t) => t.respond_to(request),
+    }
   }
 }

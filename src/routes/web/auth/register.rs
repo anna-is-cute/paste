@@ -3,6 +3,7 @@ use database::DbConn;
 use database::models::users::NewUser;
 use database::schema::users;
 use errors::*;
+use routes::web::{Rst, OptionalWebUser};
 use utils::{ReCaptcha, HashedPassword};
 
 use diesel;
@@ -19,13 +20,16 @@ use rocket_contrib::Template;
 use uuid::Uuid;
 
 #[get("/register")]
-fn get(config: State<Config>, mut cookies: Cookies) -> Template {
+fn get(config: State<Config>, mut cookies: Cookies, user: OptionalWebUser) -> Rst {
+  if user.is_some() {
+    return Rst::Redirect(Redirect::to("/"));
+  }
   let ctx = json!({
     "config": &*config,
     "error": cookies.get("error").map(|x| x.value()),
   });
   cookies.remove(Cookie::named("error"));
-  Template::render("auth/register", ctx)
+  Rst::Template(Template::render("auth/register", ctx))
 }
 
 #[derive(Debug, FromForm)]

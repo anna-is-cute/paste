@@ -3,12 +3,13 @@ use super::users::User;
 
 use uuid::Uuid;
 
-#[derive(Identifiable, Queryable, Associations)]
+#[derive(Debug, Serialize, Identifiable, Queryable, Associations)]
 #[primary_key(key)]
 #[belongs_to(User)]
 pub struct ApiKey {
   key: Uuid,
   user_id: Uuid,
+  name: String,
 }
 
 #[derive(Insertable)]
@@ -16,10 +17,11 @@ pub struct ApiKey {
 pub struct NewApiKey {
   key: Uuid,
   user_id: Uuid,
+  name: String,
 }
 
 impl NewApiKey {
-  pub fn new(key: Uuid, user_id: Uuid) -> Self {
-    NewApiKey { key, user_id }
+  pub fn new(name: String, key: Uuid, user_id: Uuid) -> Self {
+    NewApiKey { name, key, user_id }
   }
 }

@@ -22,8 +22,8 @@
     <nav class="tabs">
       <div class="container">
         <ul>
-          <li class="is-active" href="/account"><a>Settings</a></li>
-          <li><a href="/apikeys">API keys</a></li>
+          <li class="is-active"><a href="/account">Settings</a></li>
+          <li><a href="/account/keys">API keys</a></li>
         </ul>
       </div>
     </nav>

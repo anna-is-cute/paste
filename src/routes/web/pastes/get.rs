@@ -6,40 +6,67 @@ use database::schema::{pastes, users};
 use errors::*;
 use models::id::PasteId;
 use models::paste::output::{Output, OutputFile, OutputAuthor};
+use routes::web::OptionalWebUser;
 
 use diesel::prelude::*;
 
 use rocket::State;
-use rocket::response::Redirect;
+use rocket::http::Status as HttpStatus;
+use rocket::request::Request;
+use rocket::response::{Redirect, Responder, Response};
 
 use rocket_contrib::Template;
 
 use std::result;
 
+enum Rst {
+  Redirect(Redirect),
+  Status(HttpStatus),
+  Template(Template),
+}
+
+impl<'r> Responder<'r> for Rst {
+  fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
+    match self {
+      Rst::Redirect(r) => r.respond_to(request),
+      Rst::Status(s) => Err(s),
+      Rst::Template(t) => t.respond_to(request),
+    }
+  }
+}
+
 #[get("/<id>")]
-fn id(id: PasteId, conn: DbConn) -> Result<Redirect> {
+fn id<'r>(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
   // FIXME: respect visibility rules
-  let owner: Option<String> = users::table
+  // FIXME: show real 404
+  let result: Option<(Option<String>, DbPaste)> = users::table
     .inner_join(pastes::table)
+    .select((users::username.nullable(), pastes::all_columns))
     .filter(pastes::id.eq(*id))
-    .select(users::username)
     .first(&*conn)
     .optional()?;
+
+  let (owner, paste) = match result {
+    Some(x) => x,
+    None => return Ok(Rst::Status(HttpStatus::NotFound)),
+  };
+
+  if let Some((status, _)) = paste.check_access(user.as_ref().map(|x| x.id())) {
+    return Ok(Rst::Status(status));
+  }
+
   let owner = owner.unwrap_or_else(|| "anonymous".into());
-  Ok(Redirect::to(&format!("/{}/{}", owner, id)))
+  Ok(Rst::Redirect(Redirect::to(&format!("/{}/{}", owner, id))))
 }
 
 #[get("/<username>/<id>")]
-fn username_id(username: String, id: PasteId, config: State<Config>, conn: DbConn) -> Result<Template> {
-  // FIXME: respect visibility rules
-  let paste: DbPaste = id.get(&conn)?.unwrap();
+fn username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
+  let paste: DbPaste = match id.get(&conn)? {
+    Some(p) => p,
+    None => return Ok(Rst::Status(HttpStatus::NotFound)),
+  };
 
   // FIXME: check username
-
-  // if let Some((status, kind)) = paste.check_access(user.as_ref().map(|x| x.id())) {
-  //   return Ok(Status::show_error(status, kind));
-  // }
-
   let author = match paste.author_id() {
     Some(author) => {
       let user: User = users::table.find(author).first(&*conn)?;
@@ -47,6 +74,10 @@ fn username_id(username: String, id: PasteId, config: State<Config>, conn: DbCon
     },
     None => None
   };
+
+  if let Some((status, _)) = paste.check_access(user.as_ref().map(|x| x.id())) {
+    return Ok(Rst::Status(status));
+  }
 
   let files: Vec<OutputFile> = id.files(&conn)?
     .iter()
@@ -68,5 +99,5 @@ fn username_id(username: String, id: PasteId, config: State<Config>, conn: DbCon
     "config": &*config,
   });
 
-  Ok(Template::render("paste/index", ctx))
+  Ok(Rst::Template(Template::render("paste/index", ctx)))
 }

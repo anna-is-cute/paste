@@ -1,9 +1,10 @@
 #![cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value, print_literal))]
 
+use config::Config;
 use database::{PostgresPool, schema};
 use database::models::users::User;
 use database::models::deletion_keys::DeletionKey;
-use errors::Result;
+use errors::*;
 use models::status::Status;
 
 use diesel::prelude::*;
@@ -11,13 +12,15 @@ use diesel::prelude::*;
 use rocket::{Request, State, Outcome};
 use rocket::http::Status as HttpStatus;
 use rocket::request::{self, FromRequest};
+use rocket::response::{Responder, Response};
 use rocket::response::status::Custom;
 
-use rocket_contrib::Json;
+use rocket_contrib::{Json, Template};
 
 use uuid::Uuid;
 
 use std::ops::Deref;
+use std::result;
 use std::str::FromStr;
 
 pub type RouteResult<T> = Result<Custom<Json<Status<T>>>>;
@@ -25,31 +28,51 @@ pub type RouteResult<T> = Result<Custom<Json<Status<T>>>>;
 pub mod pastes;
 pub mod web;
 
-#[error(400)]
-pub fn bad_request(req: &Request) -> String {
+enum StringOrTemplate {
+  String(String),
+  Template(Template),
+}
+
+impl<'r> Responder<'r> for StringOrTemplate {
+    fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
+      match self {
+        StringOrTemplate::String(s) => s.respond_to(request),
+        StringOrTemplate::Template(t) => t.respond_to(request),
+      }
+    }
+}
+
+fn error(req: &Request, kind: &str, template: &'static str) -> StringOrTemplate {
   if req.uri().path().starts_with("/api") {
-    return r#"{"status":"error","error":"bad_request"}"#.into();
+    return StringOrTemplate::String(format!("{{\"status\":\"error\",\"error\":\"{}\"}}", kind));
   }
-  // FIXME: use template when frontend work starts
-  Default::default()
+  let config: State<Config> = req.guard().unwrap();
+  let user: OptionalUser = req.guard().unwrap();
+  let ctx = json!({
+    "config": &*config,
+    "user": &*user,
+  });
+  StringOrTemplate::Template(Template::render(template, ctx))
+}
+
+#[error(400)]
+fn bad_request(req: &Request) -> StringOrTemplate {
+  error(req, "bad_request", "error/400")
+}
+
+#[error(403)]
+fn forbidden(req: &Request) -> StringOrTemplate {
+  error(req, "forbidden", "error/403")
 }
 
 #[error(404)]
-pub fn not_found(req: &Request) -> String {
-  if req.uri().path().starts_with("/api") {
-    return r#"{"status":"error","error":"not_found"}"#.into();
-  }
-  // FIXME: use template when frontend work starts
-  Default::default()
+fn not_found(req: &Request) -> StringOrTemplate {
+  error(req, "not_found", "error/404")
 }
 
 #[error(500)]
-pub fn internal_server_error(req: &Request) -> String {
-  if req.uri().path().starts_with("/api") {
-    return r#"{"status":"error","error":"internal_server_error"}"#.into();
-  }
-  // FIXME: use template when frontend work starts
-  Default::default()
+fn internal_server_error(req: &Request) -> StringOrTemplate {
+  error(req, "internal_server_error", "error/500")
 }
 
 #[derive(Debug)]

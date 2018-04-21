@@ -1,0 +1,22 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}
+Error
+{% endblock title %}
+
+{% block header_title %}
+Error
+{% endblock header_title %}
+
+{% block header_subtitle %}
+Not to be confused with <em>ARROWED!</em>
+{% endblock header_subtitle %}
+
+{% block main %}
+You got some sort of error, man. It's not a 400, it's not a 403, definitely not a 404, and most
+assuredly not a 500.
+{% endblock main %}

@@ -15,7 +15,7 @@ use rocket::response::Redirect;
 use rocket_contrib::Template;
 
 #[get("/login")]
-fn get(config: State<Config>, mut cookies: Cookies, user: OptionalWebUser) -> Rst {
+fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Rst {
   if user.is_some() {
     return Rst::Redirect(Redirect::to("/"));
   }

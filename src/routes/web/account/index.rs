@@ -1,7 +1,11 @@
 use config::Config;
 use database::DbConn;
+use database::schema::users;
 use errors::*;
 use routes::web::OptionalWebUser;
+
+use diesel::dsl::count;
+use diesel::prelude::*;
 
 use rocket::http::{Cookies, Cookie, Status as HttpStatus};
 use rocket::request::{Request, Form};
@@ -78,7 +82,15 @@ fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut cookies: Cookies
   }
 
   if !update.username.is_empty() {
-    // FIXME: check for conflicts
+    // FIXME: refactor this logic out
+    let existing_names: i64 = users::table
+      .filter(users::username.eq(&update.username))
+      .select(count(users::id))
+      .get_result(&*conn)?;
+    if existing_names > 0 {
+      cookies.add(Cookie::new("error", "A user with that username already exists."));
+      return Ok(Redirect::to("/account"));
+    }
     user.set_username(update.username);
   }
 

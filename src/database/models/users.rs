@@ -88,6 +88,13 @@ impl User {
       .get_result(&**conn)?;
     Ok(key)
   }
+
+  pub fn delete_key(&self, conn: &DbConn, key: Uuid) -> Result<()> {
+    diesel::delete(api_keys::table)
+      .filter(api_keys::key.eq(key))
+      .execute(&**conn)?;
+    Ok(())
+  }
 }
 
 #[derive(Debug, Insertable)]

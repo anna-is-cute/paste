@@ -17,15 +17,10 @@ Create a new account.
 
 {% block main %}
 {% if error %}
-<article class="message is-warning">
-  <div class="message-header">
-    <p>Error</p>
-    {# <button class="delete" aria-label="delete"></button> #}
-  </div>
-  <div class="message-body">
-    {{ error }}
-  </div>
-</article>
+<div class="notification is-warning">
+  {# <button class="delete"></button> #}
+  {{ error }}
+</div>
 {% endif %}
 
 <form method="post" action="/register">

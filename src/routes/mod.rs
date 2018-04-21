@@ -43,7 +43,7 @@ impl<'r> Responder<'r> for StringOrTemplate {
 }
 
 fn error(req: &Request, kind: &str, template: &'static str) -> StringOrTemplate {
-  if req.uri().path().starts_with("/api") {
+  if req.uri().path().starts_with("/api/") || req.uri().path() == "/api" {
     return StringOrTemplate::String(format!("{{\"status\":\"error\",\"error\":\"{}\"}}", kind));
   }
   let config: State<Config> = req.guard().unwrap();

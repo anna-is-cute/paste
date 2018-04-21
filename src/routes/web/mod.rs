@@ -12,6 +12,7 @@ use uuid::Uuid;
 
 use std::ops::Deref;
 
+pub mod account;
 pub mod auth;
 pub mod index;
 pub mod pastes;

@@ -17,3 +17,9 @@ pub struct NewApiKey {
   key: Uuid,
   user_id: Uuid,
 }
+
+impl NewApiKey {
+  pub fn new(key: Uuid, user_id: Uuid) -> Self {
+    NewApiKey { key, user_id }
+  }
+}

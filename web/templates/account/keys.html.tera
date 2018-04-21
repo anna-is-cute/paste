@@ -1,0 +1,66 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}Account{% endblock title %}
+
+{% block header %}
+<section class="hero is-dark is-bold">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        API keys
+      </h1>
+      <h2 class="subtitle">
+        Manage API keys.
+      </h2>
+    </div>
+  </div>
+  <div class="hero-foot">
+    <nav class="tabs">
+      <div class="container">
+        <ul>
+          <li><a href="/account">Settings</a></li>
+          <li class="is-active"><a href="/account/keys">API keys</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</section>
+{% endblock header %}
+
+{% block main %}
+{% if error %}
+<div class="notification is-warning">
+  {# <button class="delete"></button> #}
+  {{ error }}
+</div>
+{% endif %}
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Key</th>
+    </tr>
+  </thead>
+{% for key in keys %}
+  <tr>
+    <td>{{ key.name }}</td>
+    <td><code>{{ key.key | replace(from="-", to="") }}</code></td>
+  </tr>
+{% endfor %}
+</table>
+<form action="/account/keys" method="post">
+  <div class="field has-addons">
+    <div class="control">
+      <input class="input" type="text" name="name" placeholder="Key name"/>
+    </div>
+    <div class="control">
+      <input class="button is-link" type="submit" value="Add"/>
+    </div>
+  </div>
+</form>
+{% endblock main %}

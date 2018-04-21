@@ -2,6 +2,7 @@ table! {
     api_keys (key) {
         key -> Uuid,
         user_id -> Uuid,
+        name -> Text,
     }
 }
 

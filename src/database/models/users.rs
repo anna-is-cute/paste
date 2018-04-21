@@ -1,6 +1,7 @@
-use super::super::DbConn;
-use super::super::schema::users;
 use errors::*;
+use super::super::DbConn;
+use super::super::models::api_keys::{ApiKey, NewApiKey};
+use super::super::schema::{users, api_keys};
 
 use diesel;
 use diesel::prelude::*;
@@ -70,6 +71,22 @@ impl User {
       .execute(&**conn)?;
 
     Ok(())
+  }
+
+  pub fn keys(&self, conn: &DbConn) -> Result<Vec<ApiKey>> {
+    let keys = api_keys::table
+      .filter(api_keys::user_id.eq(self.id))
+      .load(&**conn)?;
+
+    Ok(keys)
+  }
+
+  pub fn create_key(&self, conn: &DbConn, name: String) -> Result<ApiKey> {
+    let new_key = NewApiKey::new(name, Uuid::new_v4(), self.id);
+    let key = diesel::insert_into(api_keys::table)
+      .values(&new_key)
+      .get_result(&**conn)?;
+    Ok(key)
   }
 }
 

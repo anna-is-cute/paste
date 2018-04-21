@@ -90,6 +90,9 @@ fn main() {
 
       routes::web::account::index::get,
       routes::web::account::index::post,
+
+      routes::web::account::keys::get,
+      routes::web::account::keys::post,
     ])
     .mount("/static", routes!{
       routes::web::static_files::get,

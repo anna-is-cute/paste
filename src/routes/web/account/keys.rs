@@ -1,21 +1,14 @@
 use config::Config;
 use database::DbConn;
-use database::models::api_keys::ApiKey;
-use database::schema::api_keys;
 use errors::*;
 use routes::web::{Rst, OptionalWebUser};
-
-use diesel::dsl::count;
-use diesel::prelude::*;
 
 use rocket::http::{Cookies, Cookie};
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket::State;
 
-use rocket_contrib::Template;
-
-use utils::HashedPassword;
+use rocket_contrib::{Template, UUID};
 
 #[get("/account/keys")]
 fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies, conn: DbConn) -> Result<Rst> {
@@ -55,4 +48,16 @@ fn post(new: Form<NewKey>, user: OptionalWebUser, mut cookies: Cookies, conn: Db
 #[derive(Debug, FromForm)]
 struct NewKey {
   name: String,
+}
+
+#[post("/account/keys/<key>/delete")]
+fn delete(key: UUID, user: OptionalWebUser, conn: DbConn) -> Result<Redirect> {
+  let user = match *user {
+    Some(ref u) => u,
+    None => return Ok(Redirect::to("/login")),
+  };
+
+  user.delete_key(&conn, *key)?;
+
+  Ok(Redirect::to("/account/keys"))
 }

@@ -37,8 +37,6 @@ impl<'r> Responder<'r> for Rst {
 
 #[get("/<id>")]
 fn id<'r>(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
-  // FIXME: respect visibility rules
-  // FIXME: show real 404
   let result: Option<(Option<String>, DbPaste)> = users::table
     .inner_join(pastes::table)
     .select((users::username.nullable(), pastes::all_columns))
@@ -66,14 +64,17 @@ fn username_id(username: String, id: PasteId, config: State<Config>, user: Optio
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
   };
 
-  // FIXME: check username
-  let author = match paste.author_id() {
+  let (expected_username, author): (String, Option<OutputAuthor>) = match paste.author_id() {
     Some(author) => {
       let user: User = users::table.find(author).first(&*conn)?;
-      Some(OutputAuthor::new(&author, user.username().clone()))
+      (user.username().clone(), Some(OutputAuthor::new(&author, user.username().clone())))
     },
-    None => None
+    None => ("anonymous".into(), None),
   };
+
+  if username != expected_username {
+    return Ok(Rst::Status(HttpStatus::NotFound));
+  }
 
   if let Some((status, _)) = paste.check_access(user.as_ref().map(|x| x.id())) {
     return Ok(Rst::Status(status));

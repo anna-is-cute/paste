@@ -15,7 +15,7 @@ use rocket::http::Status as HttpStatus;
 
 use uuid::Uuid;
 
-#[derive(Identifiable, AsChangeset, Queryable, Associations)]
+#[derive(Debug, Identifiable, AsChangeset, Queryable, Associations)]
 #[changeset_options(treat_none_as_null = "true")]
 #[belongs_to(User, foreign_key = "author_id")]
 pub struct Paste {

@@ -31,8 +31,15 @@
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">Account</a>
         <div class="navbar-dropdown">
-          <a class="navbar-item" href="/login">Login</a>
+        {% if user %}
+          <span class="navbar-item">{{ user.name | escape }}</span>
+          <span class="navbar-item">{{ user.username | escape }}</span>
+          <hr class="navbar-divider"/>
+          <a class="navbar-item">Log out</a>
+        {% else %}
+          <a class="navbar-item" href="/login">Log in</a>
           <a class="navbar-item" href="/register">Register</a>
+        {% endif %}
         </div>
       </div>
     </div>

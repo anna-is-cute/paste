@@ -72,8 +72,9 @@ fn main() {
     .attach(Template::fairing())
     .catch(errors![
       routes::bad_request,
-      routes::not_found,
+      routes::forbidden,
       routes::internal_server_error,
+      routes::not_found,
     ])
     .mount("/", routes![
       routes::web::index::get,

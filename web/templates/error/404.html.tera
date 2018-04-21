@@ -1,0 +1,21 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}
+404
+{% endblock title %}
+
+{% block header_title %}
+404
+{% endblock header_title %}
+
+{% block header_subtitle %}
+Page not found.
+{% endblock header_subtitle %}
+
+{% block main %}
+We couldn't find what you're looking for. Sorry!
+{% endblock main %}

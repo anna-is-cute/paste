@@ -2,10 +2,11 @@ use super::super::schema::users;
 
 use uuid::Uuid;
 
-#[derive(Debug, Identifiable, Queryable)]
+#[derive(Debug, Serialize, Identifiable, Queryable)]
 pub struct User {
   id: Uuid,
   username: String,
+  #[serde(skip_serializing)]
   password: String,
   name: Option<String>,
   email: Option<String>,

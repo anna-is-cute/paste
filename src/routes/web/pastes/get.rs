@@ -19,7 +19,7 @@ use rocket_contrib::Template;
 use std::result;
 
 #[get("/<id>")]
-fn id<'r>(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
+fn id(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
   let result: Option<(Option<String>, DbPaste)> = pastes::table
     .left_join(users::table)
     .select((users::username.nullable(), pastes::all_columns))

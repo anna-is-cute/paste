@@ -27,7 +27,7 @@ Create a new account.
   <div class="field">
     <label class="label">Name</label>
     <div class="control has-icons-left">
-      <input name="name" class="input" type="text" placeholder="Jim Bob Jones"/>
+      <input name="name" class="input" type="text" placeholder="Jim Bob Jones" required/>
       <span class="icon is-small is-left">
         <i class="fas fa-id-card"></i>
       </span>
@@ -37,7 +37,7 @@ Create a new account.
   <div class="field">
     <label class="label">Username</label>
     <div class="control has-icons-left">
-      <input name="username" class="input" type="text" placeholder="jimbo33"/>
+      <input name="username" class="input" type="text" placeholder="jimbo33" required/>
       <span class="icon is-small is-left">
         <i class="fas fa-user"></i>
       </span>
@@ -47,7 +47,7 @@ Create a new account.
   <div class="field">
     <label class="label">Email</label>
     <div class="control has-icons-left">
-      <input name="email" class="input" type="email" placeholder="your@email.com"/>
+      <input name="email" class="input" type="email" placeholder="your@email.com" required/>
       <span class="icon is-small is-left">
         <i class="fas fa-envelope"></i>
       </span>
@@ -57,7 +57,7 @@ Create a new account.
   <div class="field">
     <label class="label">Password</label>
     <div class="control has-icons-left">
-      <input name="password" class="input" type="password" placeholder="Something really secure, please <3"/>
+      <input name="password" class="input" type="password" placeholder="Something really secure, please <3" required/>
       <span class="icon is-small is-left">
         <i class="fas fa-asterisk"></i>
       </span>

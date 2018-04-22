@@ -82,6 +82,8 @@ fn main() {
       routes::web::auth::login::get,
       routes::web::auth::login::post,
 
+      routes::web::auth::logout::post,
+
       routes::web::auth::register::get,
       routes::web::auth::register::post,
 

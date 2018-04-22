@@ -2,9 +2,8 @@
 
 {% block head %}
 {{ super() }}
-<link id="style-light" rel="stylesheet" href="/static/css/style.css"/>
-<link id="style-dark" rel="stylesheet" href="/static/css/dark-style.css"/>
-<script src="/static/js/theme.js"></script>
+<link id="style-dark" title="dark" rel="stylesheet alternate" href="/static/css/dark-style.css"/>
+<link id="style-light" title="light" rel="stylesheet" href="/static/css/style.css"/>
 <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 {% endblock head %}
 

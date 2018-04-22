@@ -67,8 +67,8 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     .collect::<Result<_, _>>()?;
 
   match *user {
-    Some(ref u) => id.commit(u.name(), u.email(), "create paste via web")?,
-    None => id.commit("Anonymous", "none", "create paste via web")?,
+    Some(ref u) => id.commit(u.name(), u.email(), "create paste")?,
+    None => id.commit("Anonymous", "none", "create paste")?,
   }
 
   let files: Vec<OutputFile> = files

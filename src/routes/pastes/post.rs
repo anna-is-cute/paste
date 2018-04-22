@@ -66,8 +66,10 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     .map(|x| id.create_file(&conn, x.name, x.content))
     .collect::<Result<_, _>>()?;
 
-  // TODO: change this for authed via api key
-  id.commit("No one", "no-one@example.com", "create paste")?;
+  match *user {
+    Some(ref u) => id.commit(u.name(), u.email(), "create paste via web")?,
+    None => id.commit("Anonymous", "none", "create paste via web")?,
+  }
 
   let files: Vec<OutputFile> = files
     .into_iter()

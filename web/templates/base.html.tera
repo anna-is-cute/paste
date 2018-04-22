@@ -4,6 +4,7 @@
 {{ super() }}
 <link id="style-dark" title="dark" rel="stylesheet alternate" href="/static/css/dark-style.css"/>
 <link id="style-light" title="light" rel="stylesheet" href="/static/css/style.css"/>
+<script src="/static/js/style.js"></script>
 <script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
 {% endblock head %}
 
@@ -40,6 +41,8 @@
             <a class="navbar-item" href="/login">Log in</a>
             <a class="navbar-item" href="/register">Register</a>
           {% endif %}
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" onclick="swapTheme()">Swap theme</a>
           </div>
         </div>
       </div>

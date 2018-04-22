@@ -69,6 +69,7 @@ fn main() {
   rocket::ignite()
     .manage(database::init_pool())
     .manage(config)
+    .attach(routes::web::LastPage::default())
     .attach(Template::fairing())
     .catch(errors![
       routes::bad_request,

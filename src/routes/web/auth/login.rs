@@ -58,5 +58,5 @@ fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn) -> Res
 
   cookies.add_private(Cookie::new("user_id", user.id().simple().to_string()));
 
-  Ok(Redirect::to("/"))
+  Ok(Redirect::to("lastpage"))
 }

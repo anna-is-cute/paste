@@ -2,8 +2,10 @@ use database::PostgresPool;
 use database::models::users::User;
 use database::schema::users;
 
-use rocket::{State, Outcome};
-use rocket::http::Status as HttpStatus;
+use rocket::{State, Outcome, Data};
+use rocket::fairing::{Fairing, Info, Kind};
+use rocket::http::{Cookie, Method, Status as HttpStatus};
+use rocket::http::hyper::header::Location;
 use rocket::request::{self, Request, FromRequest};
 use rocket::response::{Responder, Response, Redirect};
 
@@ -13,8 +15,11 @@ use diesel::prelude::*;
 
 use uuid::Uuid;
 
+use std::collections::HashMap;
 use std::ops::Deref;
 use std::result;
+use std::str::FromStr;
+use std::sync::RwLock;
 
 pub mod account;
 pub mod auth;
@@ -81,5 +86,92 @@ impl<'r> Responder<'r> for Rst {
       Rst::Status(s) => Err(s),
       Rst::Template(t) => t.respond_to(request),
     }
+  }
+}
+
+
+#[derive(Debug, Default)]
+pub struct LastPage {
+  map: RwLock<HashMap<Uuid, String>>,
+}
+
+impl Fairing for LastPage {
+  fn info(&self) -> Info {
+    Info {
+      name: "Last page handler",
+      kind: Kind::Request | Kind::Response,
+    }
+  }
+
+  fn on_request(&self, req: &mut Request, _: &Data) {
+    // only work on get requests
+    if req.method() != Method::Get {
+      return;
+    }
+
+    // get current path
+    let path = req.uri().path();
+
+    // don't track auth pages
+    if path == "/login" || path == "/register" || path.starts_with("/static/") {
+      return;
+    }
+
+    // get session (private cookie, so encrypted and authed)
+    let (add, session) = match req.cookies().get_private("session") {
+      Some(s) => (false, s.value().to_string()),
+      None => (true, Uuid::new_v4().simple().to_string()),
+    };
+
+    if add {
+      req.cookies().add_private(Cookie::new("session", session.clone()));
+    }
+
+    // get session as UUID
+    let sess_id = match Uuid::from_str(&session) {
+      Ok(u) => u,
+      Err(_) => return,
+    };
+
+    // write this path as the last page for this session
+    self.map.write().unwrap().insert(sess_id, path.to_string());
+  }
+
+  fn on_response(&self, req: &Request, resp: &mut Response) {
+    if resp.status() != HttpStatus::SeeOther {
+      return;
+    }
+
+    let loc = match resp.headers().get("Location").next() {
+      Some(l) => l.to_string(),
+      None => return,
+    };
+
+    if loc != "lastpage" {
+      return;
+    }
+
+    // set header to / in case no session
+    resp.set_header(Location("/".into()));
+
+    // get session (private cookie, so encrypted and authed)
+    let session = match req.cookies().get_private("session") {
+      Some(s) => s,
+      None => return,
+    };
+
+    // get session as UUID
+    let sess_id = match Uuid::from_str(session.value()) {
+      Ok(u) => u,
+      Err(_) => return,
+    };
+
+    // write this path as the last page for this session
+    let last_page = match self.map.read().unwrap().get(&sess_id) {
+      Some(l) => l.clone(),
+      None => return,
+    };
+
+    resp.set_header(Location(last_page));
   }
 }

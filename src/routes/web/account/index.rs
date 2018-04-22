@@ -27,6 +27,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Re
     "config": &*config,
     "user": user,
     "error": cookies.get("error").map(|x| x.value()),
+    "version": ::VERSION,
   });
   cookies.remove(Cookie::named("error"));
   Ok(Rst::Template(Template::render("account/index", ctx)))

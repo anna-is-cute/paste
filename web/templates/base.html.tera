@@ -75,9 +75,11 @@
   <nav class="breadcrumb is-centered has-bullet-separator" aria-label="breadcrumbs">
     <ul>
       <li><a href="https://github.com/jkcclemens/paste">code</a></li>
-      {# FIXME: use actual hash #}
-    {% if version %}
-      <li><a href="https://github.com/jkcclemens/paste/commit/{{ version }}">{{ version | truncate(length=7) | replace(from="…", to="") }}</a></li>
+    {% if server_version %}
+      <li><a href="https://github.com/jkcclemens/paste/commit/{{ server_version }}">server: {{ server_version | truncate(length=7) | replace(from="…", to="") }}</a></li>
+    {% endif %}
+    {% if resources_version %}
+      <li><a href="https://github.com/jkcclemens/paste/commit/{{ resources_version }}">resources: {{ resources_version | truncate(length=7) | replace(from="…", to="") }}</a></li>
     {% endif %}
       <li class="is-active"><a>&copy; 2018</a></li>
     </ul>

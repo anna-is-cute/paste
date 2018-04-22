@@ -23,7 +23,8 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Rs
     "config": &*config,
     // TODO: this can be made into an optional request guard
     "error": cookies.get("error").map(|x| x.value()),
-    "version": ::VERSION,
+    "server_version": ::SERVER_VERSION,
+    "resources_version": &*::RESOURCES_VERSION,
   });
   cookies.remove(Cookie::named("error"));
   Rst::Template(Template::render("auth/login", ctx))

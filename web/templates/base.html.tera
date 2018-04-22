@@ -32,7 +32,9 @@
             <span class="navbar-item">{{ user.name }}</span>
             <span class="navbar-item">{{ user.username }}</span>
             <hr class="navbar-divider"/>
-            <a class="navbar-item">Log out</a>
+            <form action="/logout" method="post" class="navbar-item">
+              <input type="submit" class="button" value="Log out"/>
+            </form>
           {% else %}
             <a class="navbar-item" href="/login">Log in</a>
             <a class="navbar-item" href="/register">Register</a>

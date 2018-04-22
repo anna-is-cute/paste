@@ -17,20 +17,85 @@ Create a new paste.
 {% endblock header_subtitle %}
 
 {% block main %}
-<form>
-  <div class="field">
-    <label class="label">Content</label>
-    <div class="control">
-      <textarea class="textarea" style="font-family: monospace;" placeholder="fn main() {
-  println!(&quot;Hello world!&quot;);
-}"></textarea>
+{% if error %}
+<div class="notification is-warning">
+  {# <button class="delete"></button> #}
+  {{ error }}
+</div>
+{% endif %}
+
+<form action="/pastes" method="post">
+  <div class="field is-grouped">
+    <div class="control is-expanded">
+      <label class="label">Paste name</label>
+      <input class="input" type="text" placeholder="Paste name" name="name"/>
+    </div>
+    <div class="control has-icons-left">
+      <label class="label">Visibility</label>
+      <div class="select">
+        <select name="visibility">
+          <option>public</option>
+          <option selected>unlisted</option>
+        {% if user %}
+          <option>private</option>
+        {% endif %}
+        </select>
+        <span class="icon is-small is-left">
+          <i class="fas fa-globe"></i>
+        </span>
+      </div>
     </div>
   </div>
 
   <div class="field">
+    <label class="label">Description</label>
     <div class="control">
-      <button class="button is-link">Submit</button>
+      <input class="input" type="text" placeholder="Paste description" name="description"/>
     </div>
   </div>
+
+  <div class="box">
+    <div class="field">
+      <div class="control is-expanded">
+        <input class="input" type="text" placeholder="File name with extension" name="file_name"/>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <textarea
+          class="textarea"
+          style="font-family: monospace;"
+          placeholder="fn main() {&#10;  println!(&quot;Hello world!&quot;);&#10;}"
+          name="file_content"
+          id="editor"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="field is-grouped is-pulled-right">
+  {% if user %}
+    <div class="control">
+      <button class="button" name="anonymous" type="submit">Submit anonymously</button>
+    </div>
+  {% endif %}
+    <div class="control">
+      <button class="button is-link" type="submit">Submit</button>
+    </div>
+  </div>
+
+  <!--
+  <div class="field is-grouped">
+    <div class="control">
+      <button class="button">Add file</button>
+    </div>
+  </div>
+  -->
 </form>
+
+<!--<script src="/static/js/ace-min-noconflict/ace.js"></script>
+<script>
+var editor = ace.edit("editor");
+editor.setTheme("ace/theme/monokai");
+// editor.session.setMode("ace/mode/rust");
+</script>-->
 {% endblock main %}

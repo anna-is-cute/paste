@@ -112,9 +112,8 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
   }
 
   // commit if any files were changed
-  let username = user.username();
   // TODO: more descriptive commit message
-  paste_id.commit_if_dirty(&username, &format!("{}@paste.com", username), "update paste")?;
+  paste_id.commit_if_dirty(user.name(), user.email(), "update paste")?;
 
   Ok(Status::show_success(HttpStatus::NoContent, ()))
 }

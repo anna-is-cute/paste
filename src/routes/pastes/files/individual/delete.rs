@@ -18,5 +18,7 @@ fn delete(paste_id: PasteId, file_id: FileId, user: RequiredUser, conn: DbConn) 
 
   paste_id.delete_file(&conn, *file_id)?;
 
+  paste_id.commit_if_dirty(user.name(), user.email(), "delete file")?;
+
   Ok(Status::show_success(HttpStatus::NoContent, ()))
 }

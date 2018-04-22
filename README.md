@@ -2,7 +2,9 @@
 
 *A sensible pastebin.*
 
-## Very unfinished. Many features do not work
+## Unfinished: some features do not work
+
+See the issues.
 
 ## Idea
 

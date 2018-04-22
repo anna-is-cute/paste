@@ -113,7 +113,7 @@ impl Fairing for LastPage {
     let path = req.uri().path();
 
     // don't track auth pages
-    if path == "/login" || path == "/register" || path.starts_with("/static/") {
+    if path == "/login" || path == "/register" || path == "/favicon.ico" || path.starts_with("/static/") {
       return;
     }
 

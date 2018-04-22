@@ -42,6 +42,8 @@ use rocket_contrib::Template;
 
 use std::env;
 
+pub static VERSION: Option<&'static str> =  include!(concat!(env!("OUT_DIR"), "/version"));
+
 #[get("/")]
 fn index() -> std::io::Result<NamedFile> {
   NamedFile::open("index.html")

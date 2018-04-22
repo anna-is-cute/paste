@@ -21,6 +21,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies, conn:
     "config": &*config,
     "user": user,
     "error": cookies.get("error").map(|x| x.value()),
+    "version": ::VERSION,
     "keys": &user.keys(&conn)?,
   });
   cookies.remove(Cookie::named("error"));

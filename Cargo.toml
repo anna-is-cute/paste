@@ -3,6 +3,12 @@ name = "paste"
 version = "0.0.0"
 authors = ["Kyle Clemens <git@kyleclemens.com>"]
 
+build = "build.rs"
+
+[build-dependencies]
+# getting current commit
+git2 = "0.7"
+
 [dependencies]
 # all web logic
 rocket = "0.3"

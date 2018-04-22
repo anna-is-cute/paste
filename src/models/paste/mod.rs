@@ -4,6 +4,9 @@ use diesel::Queryable;
 use diesel::serialize::{self, ToSql};
 use diesel::sql_types::SmallInt;
 
+use rocket::http::RawStr;
+use rocket::request::FromFormValue;
+
 use serde::de::{self, Deserialize, Deserializer};
 
 use unicode_segmentation::UnicodeSegmentation;
@@ -137,6 +140,25 @@ impl<DB: Backend<RawValue = [u8]>> FromSql<SmallInt, DB> for Visibility {
     };
     Ok(visibility)
   }
+}
+
+impl<'v> FromFormValue<'v> for Visibility {
+    type Error = &'v RawStr;
+
+    fn from_form_value(form_value: &'v RawStr) -> Result<Self, Self::Error> {
+      let vis = match form_value.as_str() {
+        "public" => Visibility::Public,
+        "unlisted" => Visibility::Unlisted,
+        "private" => Visibility::Private,
+        _ => return Err(form_value),
+      };
+
+      Ok(vis)
+    }
+
+    fn default() -> Option<Self> {
+      Some(Default::default())
+    }
 }
 
 /// A file in a [`Paste`].

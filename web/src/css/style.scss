@@ -1,18 +1,2 @@
-// Import the initial variables
-// @import "bulma/sass/utilities/initial-variables";
-// @import "bulma/sass/utilities/functions";
-
-// @import "bulma/sass/utilities/derived-variables";
-
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-div.wrapper {
-  flex: 1;
-}
-
-// Import the rest of Bulma
 @import "bulma/bulma";
+@import "custom"

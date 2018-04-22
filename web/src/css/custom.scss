@@ -1,0 +1,12 @@
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+div.wrapper {
+  flex: 1;
+}
+.footer {
+  background-color: $background;
+}

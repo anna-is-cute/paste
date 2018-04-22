@@ -27,7 +27,8 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Rs
   let ctx = json!({
     "config": &*config,
     "error": cookies.get("error").map(|x| x.value()),
-    "version": ::VERSION,
+    "server_version": ::SERVER_VERSION,
+    "resources_version": &*::RESOURCES_VERSION,
   });
   cookies.remove(Cookie::named("error"));
   Rst::Template(Template::render("auth/register", ctx))

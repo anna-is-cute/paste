@@ -42,7 +42,14 @@ use rocket_contrib::Template;
 
 use std::env;
 
-pub static VERSION: Option<&'static str> =  include!(concat!(env!("OUT_DIR"), "/version"));
+pub static SERVER_VERSION: Option<&'static str> = include!(concat!(env!("OUT_DIR"), "/version"));
+
+lazy_static! {
+  pub static ref RESOURCES_VERSION: Option<String> = git2::Repository::open(".")
+    .and_then(|r| r.revparse_single("HEAD").map(|p| p.id()))
+    .map(|r| r.to_string())
+    .ok();
+}
 
 #[get("/")]
 fn index() -> std::io::Result<NamedFile> {

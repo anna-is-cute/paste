@@ -12,7 +12,8 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Te
     "config": &*config,
     "user": &*user,
     "error": cookies.get("error").map(|x| x.value()),
-    "version": ::VERSION,
+    "server_version": ::SERVER_VERSION,
+    "resources_version": &*::RESOURCES_VERSION,
   });
   cookies.remove(Cookie::named("error"));
   Template::render("index", ctx)

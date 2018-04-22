@@ -82,7 +82,8 @@ fn username_id(username: String, id: PasteId, config: State<Config>, user: Optio
     "paste": output,
     "config": &*config,
     "user": &*user,
-    "version": ::VERSION,
+    "server_version": ::SERVER_VERSION,
+    "resources_version": &*::RESOURCES_VERSION,
   });
 
   Ok(Rst::Template(Template::render("paste/index", ctx)))

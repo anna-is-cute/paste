@@ -16,3 +16,5 @@ rust:
   - nightly
 matrix:
   fast_finish: true
+notifications:
+  email: false

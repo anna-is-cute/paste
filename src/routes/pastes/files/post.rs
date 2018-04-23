@@ -1,6 +1,7 @@
 use database::DbConn;
 use models::id::PasteId;
 use models::paste::PasteFile;
+use models::paste::output::OutputFile;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, RequiredUser};
 
@@ -11,7 +12,7 @@ use rocket_contrib::Json;
 type UpdateResult = ::std::result::Result<Json<PasteFile>, ::rocket_contrib::SerdeError>;
 
 #[post("/<paste_id>/files", format = "application/json", data = "<file>")]
-pub fn post(paste_id: PasteId, file: UpdateResult, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
+pub fn post(paste_id: PasteId, file: UpdateResult, user: RequiredUser, conn: DbConn) -> RouteResult<OutputFile> {
   // TODO: can this be a request guard?
   let file = match file {
     Ok(x) => x.into_inner(),
@@ -29,11 +30,13 @@ pub fn post(paste_id: PasteId, file: UpdateResult, user: RequiredUser, conn: DbC
     return Ok(Status::show_error(status, kind));
   }
 
-  paste_id.create_file(&conn, file.name, file.content)?;
+  let created = paste_id.create_file(&conn, file.name, file.content)?;
 
   // commit
   // TODO: more descriptive commit message
   paste_id.commit(user.name(), user.email(), "update paste")?;
 
-  Ok(Status::show_success(HttpStatus::NoContent, ()))
+  let output = OutputFile::new(&created.id(), Some(created.name().to_string()), None);
+
+  Ok(Status::show_success(HttpStatus::Created, output))
 }

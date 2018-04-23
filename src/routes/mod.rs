@@ -53,7 +53,7 @@ fn error(req: &Request, kind: &str, template: &'static str) -> StringOrTemplate 
     "config": &*config,
     "user": &*user,
     "server_version": ::SERVER_VERSION,
-    "resources_version": ::RESOURCES_VERSION,
+    "resources_version": &*::RESOURCES_VERSION,
   });
   StringOrTemplate::Template(Template::render(template, ctx))
 }

@@ -6,6 +6,8 @@ This document assumes a base URL of `/api/<version>`.
 
 The current `<version>` is `v0`. Expect breakage.
 
+*Note that on paste.gg, the base URL is `https://api.paste.gg/<version>`.*
+
 ## GET `/pastes`
 
 Get the most recent public pastes.

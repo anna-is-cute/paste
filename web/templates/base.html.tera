@@ -2,10 +2,24 @@
 
 {% block head %}
 {{ super() }}
-<link id="style-dark" title="dark" rel="stylesheet alternate" href="/static/css/dark-style.css"/>
-<link id="style-light" title="light" rel="stylesheet" href="/static/css/style.css"/>
-<script src="/static/js/style.js"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"></script>
+<link
+  title="dark"
+  rel="stylesheet alternate"
+  href="/static/css/dark-style.css"
+  integrity="sha384-yz84b8f09nWGmc1QFqH8SlCTmmpHA/0gAF9E5QnPO2Wub6sdYIcIdEFvVmUXwaTI"/>
+<link
+  title="light"
+  rel="stylesheet"
+  href="/static/css/style.css"
+  integrity="sha384-/uuQ2UakOAOYldme6hrwIVXKpJHSPB4Rf6DS/4W4eokZre43QSm595Q18eT3i53B"/>
+<script
+  src="/static/js/style.js"
+  integrity="sha384-Sa39DjhOugRWXlIXr+8DIk+32mACzHCpiP1Cq7MaBMpAwg3eEhW9ltlKLngdGxkv"></script>
+<script
+  defer
+  src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"
+  integrity="sha384-NM4GHvd8vowDIel+2LNoo7mgwJN5e3Uj5WODAko2Eqg0LUP7eyZ+W1pjSfjbnYXt"
+  crossorigin="anonymous"></script>
 {% endblock head %}
 
 {% block body %}

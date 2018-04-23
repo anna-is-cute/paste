@@ -37,7 +37,7 @@ fn post(delete: Form<DeleteRequest>, user: OptionalWebUser, mut cookies: Cookies
 
   if delete.into_inner().username != user.username() {
     cookies.add(Cookie::new("error", "That username does not match your username."));
-    return Ok(Redirect::to("lastpage"));
+    return Ok(Redirect::to("/account/delete"));
   }
 
   // TODO: sweep for unowned pastes on the disk and destroy them

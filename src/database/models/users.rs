@@ -95,6 +95,13 @@ impl User {
       .execute(&**conn)?;
     Ok(())
   }
+
+  pub fn delete(&self, conn: &DbConn) -> Result<()> {
+    diesel::delete(users::table)
+      .filter(users::id.eq(self.id))
+      .execute(&**conn)?;
+    Ok(())
+  }
 }
 
 #[derive(Debug, Insertable)]

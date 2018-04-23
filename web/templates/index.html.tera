@@ -4,9 +4,7 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}
-New
-{% endblock title %}
+{% block title %}New{% endblock title %}
 
 {% block header_title %}
 New paste

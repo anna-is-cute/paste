@@ -7,12 +7,31 @@
 {% block title %}
   {% if paste.name %}
 {{ paste.name }}
+  {% else %}
+untitled paste
   {% endif %}
 {% endblock title %}
 
 {% block header_title %}
+  {% if paste.visibility == "public" %}
+    <span class="icon is-large">
+      <i class="fas fa-globe" title="{{ paste.visibility }}"></i>
+    </span>
+  {% endif %}
+  {% if paste.visibility == "unlisted" %}
+    <span class="icon is-large">
+      <i class="fas fa-eye-slash" title="{{ paste.visibility }}"></i>
+    </span>
+  {% endif %}
+  {% if paste.visibility == "private" %}
+    <span class="icon is-large">
+      <i class="fas fa-lock" title="{{ paste.visibility }}"></i>
+    </span>
+  {% endif %}
   {% if paste.name %}
 {{ paste.name }}
+  {% else %}
+<em>untitled paste</em>
   {% endif %}
 {% endblock header_title %}
 

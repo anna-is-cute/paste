@@ -107,6 +107,9 @@ fn main() {
       routes::web::account::keys::get,
       routes::web::account::keys::post,
       routes::web::account::keys::delete,
+
+      routes::web::account::delete::get,
+      routes::web::account::delete::post,
     ])
     .mount("/static", routes!{
       routes::web::static_files::get,

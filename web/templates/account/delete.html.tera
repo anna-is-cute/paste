@@ -1,0 +1,73 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}Account{% endblock title %}
+
+{% block header %}
+<section class="hero is-danger is-bold">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">
+        Delete account
+      </h1>
+      <h2 class="subtitle">
+        Delete your account here.
+      </h2>
+    </div>
+  </div>
+  <div class="hero-foot">
+    <nav class="tabs">
+      <div class="container">
+        <ul>
+          <li><a href="/account">Settings</a></li>
+          <li><a href="/account/keys">API keys</a></li>
+          <li class="is-active"><a href="/account/delete">Delete</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+</section>
+{% endblock header %}
+
+{% block main %}
+{% if error %}
+<div class="notification is-warning">
+  {# <button class="delete"></button> #}
+  {{ error }}
+</div>
+{% endif %}
+<div class="message is-danger">
+  <div class="message-header">
+    <p>Whoa there!</p>
+  </div>
+  <div class="message-body">
+    <p>
+      <strong>Please take the time to read this text!</strong>
+    </p>
+    <p>
+      Deleting your account is <em>instantaneous and permanent</em>. All of your pastes will
+      immediately cease being accessible and will eventually be deleted off of the server by a task.
+    </p>
+    <p>
+      If you really want to delete your account, type your username in the box below and click the
+      button. You will be redirected to the home page after your account is deleted.
+    </p>
+  </div>
+</div>
+<form action="/account/delete" method="post">
+  <div class="field has-addons">
+    <div class="control is-expanded">
+      <input name="username" class="input" type="text" placeholder="{{ user.username }}" required/>
+      <p class="help">
+        Type your username to confirm account deletion.
+      </p>
+    </div>
+    <div class="control">
+      <button class="button is-danger" type="submit">Yes, delete my account</button>
+    </div>
+  </div>
+</form>
+{% endblock main %}

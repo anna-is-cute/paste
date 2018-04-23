@@ -105,7 +105,7 @@ Create a new paste.
 }
 ```
 
-### Output (success, `200`)
+### Output (success, `201`)
 
 ```javascript
 {
@@ -398,11 +398,19 @@ Create a new file in an existing paste.
 
 A new file object, as specified in POST `/pastes`.
 
-### Output (success, `204`)
+### Output (success, `201`)
 
-No content.
+The file created with no content field.
 
-**Note**: this is slotted to change to return `200` and the file object that was created.
+```javascript
+{
+  "status": "success",
+  "result": {
+    "id": "abc123",
+    "name": "henlo birb"
+  }
+}
+```
 
 ### Output (error, `400 | 403 | 404`)
 

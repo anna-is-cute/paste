@@ -91,5 +91,5 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     files,
   );
 
-  Ok(Status::show_success(HttpStatus::Ok, output))
+  Ok(Status::show_success(HttpStatus::Created, output))
 }

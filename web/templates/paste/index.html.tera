@@ -55,7 +55,7 @@ untitled paste
   {% if paste.name %}
     <a>{{ paste.name }}</a>
   {% else %}
-    <a>{{ paste.id }}</a>
+    <a><em>untitled paste</em></a>
   {% endif %}
     </li>
   </ul>

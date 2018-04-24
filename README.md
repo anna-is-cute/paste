@@ -28,7 +28,13 @@ highlighting, anonymity, and secure authentication.
 
 ## Usage
 
-Clone repo, then do `cargo run`. Use the API.
-
-A folder called `store` will be created wherever `cargo run` is executed in, and pastes will be
-stored there.
+- Clone the repo
+- Create a postgres database and user
+- `echo 'DATABASE_URL=postgres://username@/database' > .env`
+- `cargo install diesel_cli --no-default-features --features postgres`
+- `diesel migration run`
+- Edit `config.toml`
+- `cargo run --release path/to/config.toml`
+- Preferably use `ROCKET_ENV=prod` and set a secret key in `Rocket.toml`
+  - See [Rocket docs](https://rocket.rs/guide/configuration/)
+- Reverse proxy and handle `/static/` with a webserver and not the included route

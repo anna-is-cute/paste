@@ -2,6 +2,20 @@
 
 {% block head %}
 {{ super() }}
+<!-- FIXME: theme select + sane default based on site theme (light/dark) -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"
+  integrity="sha384-nyXucUVWQWGGNq3mSgG/FGxW4Jmsv+0uCbHZ0VpHRsGZt/PlUT31hz9sUek822eI"
+  crossorigin="anonymous"/>
+<script
+  defer
+  src="/static/js/highlight.pack.js"
+  integrity="sha384-JRRwtUx7H7KUP+6uHPOfXcRuX+cvNXZdsqluYW0tiu2BNVwdJCEQwOcCqhbmGysx"></script>
+<script
+  defer
+  src="/static/js/highlight.js"
+  integrity="sha384-klKybWsd0OoeCOm/YaKpJ4vYsgqNL9J9GWkWGDO+aO2pevXj5XsRbDzXjfGihvYB"></script>
 {% endblock head %}
 
 {% block title %}
@@ -64,10 +78,10 @@ untitled paste
 {% for file in paste.files %}
 <div class="box">
   {% if file.name %}
-  <h2 class="title">{{ file.name }}</h2>
+  <h2 id="{{ file.id }}-title" class="title">{{ file.name }}</h2>
   {% endif %}
   {% if file.content.format == "text" %}
-  <pre>{{ file.content.value }}</pre>
+  <pre id="{{ file.id }}">{{ file.content.value }}</pre>
   {% else %}
     Binary content
   {% endif %}

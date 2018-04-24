@@ -2,6 +2,18 @@
 
 {% block head %}
 {{ super() }}
+<script
+  defer
+  src="/static/js/ace-min-noconflict/ace.js"
+  integrity="sha384-pHolRD674CW03iJeuvwFcYxjrYHl7uBsv43EFlDLWhiCCLmhsGL/jveQRniHL+af"></script>
+<script
+  defer
+  src="/static/js/ace-min-noconflict/ext-modelist.js"
+  integrity="sha384-/whn+QM+slQwsIU53M8dabpXei0lk1uWLg1Wvit+S/i4zAnviTAG5ldiTy3stmNC"></script>
+<script
+  defer
+  src="/static/js/editor.js"
+  integrity="sha384-L/LCWVUkRbauyD9eftAdKSNd2gZleCYh/r1SrB0XF6TTP6N9Lw+7qas+wtNBO4V2"></script>
 {% endblock head %}
 
 {% block title %}
@@ -24,7 +36,7 @@ Create a new paste.
 </div>
 {% endif %}
 
-<form action="/pastes" method="post">
+<form id="paste_upload" action="/pastes" method="post">
   <div class="field is-grouped">
     <div class="control is-expanded">
       <label class="label">Paste name</label>
@@ -58,7 +70,7 @@ Create a new paste.
 
   <div class="field">
     <div class="control is-expanded">
-      <input class="input" type="text" placeholder="File name with extension" name="file_name"/>
+      <input id="file_name" class="input" type="text" placeholder="File name with extension" name="file_name"/>
     </div>
   </div>
   <div class="field">
@@ -91,11 +103,4 @@ Create a new paste.
   </div>
   -->
 </form>
-
-<!--<script src="/static/js/ace-min-noconflict/ace.js"></script>
-<script>
-var editor = ace.edit("editor");
-editor.setTheme("ace/theme/monokai");
-// editor.session.setMode("ace/mode/rust");
-</script>-->
 {% endblock main %}

@@ -15,7 +15,7 @@
 <script
   defer
   src="/static/js/highlight.js"
-  integrity="sha384-klKybWsd0OoeCOm/YaKpJ4vYsgqNL9J9GWkWGDO+aO2pevXj5XsRbDzXjfGihvYB"></script>
+  integrity="sha384-Eow6BxtNF/i7ypHEeTYp7tJ4IlKewmFioGA2pyd1XsoE2UkKe2RArHvQxVgD0NJS"></script>
 {% endblock head %}
 
 {% block title %}

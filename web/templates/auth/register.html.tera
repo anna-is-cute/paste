@@ -101,7 +101,7 @@ Create a new account.
       <p class="help">
         <progress id="strength_progress" class="password progress is-marginless is-danger" value="100" max="100"></progress>
         <span id="strength"></span>
-        <span id="strength_warning" class="has-warning-text"></span>
+        <span id="strength_warning" class="has-text-warning"></span>
       </p>
     </div>
   </div>

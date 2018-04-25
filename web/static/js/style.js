@@ -7,6 +7,13 @@ function setActiveStyleSheet(title) {
       }
     }
   }
+  if (typeof paste_editor !== 'undefined') {
+    if (title === "dark") {
+      paste_editor.setTheme("ace/theme/idle_fingers");
+    } else if (title === "light") {
+      paste_editor.setTheme("ace/theme/tomorrow");
+    }
+  }
 }
 
 function getActiveStyleSheet() {
@@ -37,17 +44,19 @@ function swapTheme() {
   setActiveStyleSheet(next);
 }
 
-window.onload = function(e) {
-  var style = this.localStorage.getItem("style");
+(function() {
+  window.onload = function(e) {
+    var style = this.localStorage.getItem("style");
+    var title = style ? style : getPreferredStyleSheet();
+    setActiveStyleSheet(title);
+  }
+
+  window.onunload = function(e) {
+    var title = getActiveStyleSheet();
+    this.localStorage.setItem("style", title);
+  }
+
+  var style = localStorage.getItem("style");
   var title = style ? style : getPreferredStyleSheet();
   setActiveStyleSheet(title);
-}
-
-window.onunload = function(e) {
-  var title = getActiveStyleSheet();
-  this.localStorage.setItem("style", title);
-}
-
-var style = localStorage.getItem("style");
-var title = style ? style : getPreferredStyleSheet();
-setActiveStyleSheet(title);
+})();

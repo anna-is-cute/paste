@@ -1,4 +1,13 @@
 @import "bulmaswatch/superhero/variables";
 @import "bulma/bulma";
 @import "bulmaswatch/superhero/overrides";
-@import "custom"
+@import "custom";
+
+input[type="text"], input[type="email"], input[type="password"], .select select, textarea {
+  background-color: $dark;
+  color: $white-ter;
+  border-color: $grey-dark;
+  &::placeholder {
+    color: $grey-light;
+  }
+}

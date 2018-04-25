@@ -36,7 +36,7 @@ function getPreferredStyleSheet() {
 
 function swapTheme() {
   var next;
-  if (getActiveStyleSheet() == "dark") {
+  if (getActiveStyleSheet() === "dark") {
     next = "light";
   } else {
     next = "dark";

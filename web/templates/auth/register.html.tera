@@ -11,7 +11,11 @@
 <script
   defer
   src="/static/js/register.js"
-  integrity="sha384-SZfhk2c9oF9qR4CrJDNJFwJqz+e0Y4FBJTvCG/RxdVZSSCkb7jUzNAEy40xftt6Z"></script>
+  integrity="sha384-mG6dnHkWn30hTgko4Fe60grBcxRpuyFJR3Bl8XoSA0AXKtN3u8YEWtTdZbZD67Ps"></script>
+<script
+  defer
+  src="/static/js/password.js"
+  integrity="sha384-21oPii3a3emrkQEvcWrf4Nz8ImQTVcxwscQx6g9Xw8bFZaOPrg3q17eBXwBRW3WP"></script>
 {% endblock head %}
 
 {% block title %}Register{% endblock title %}

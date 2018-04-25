@@ -3,6 +3,7 @@ use database::DbConn;
 use database::schema::users;
 use errors::*;
 use routes::web::{Rst, OptionalWebUser};
+use utils::HashedPassword;
 
 use diesel::dsl::count;
 use diesel::prelude::*;
@@ -14,7 +15,7 @@ use rocket::State;
 
 use rocket_contrib::Template;
 
-use utils::HashedPassword;
+use unicode_segmentation::UnicodeSegmentation;
 
 #[get("/account")]
 fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Result<Rst> {
@@ -54,11 +55,6 @@ fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut cookies: Cookies
     return Ok(Redirect::to("/account"));
   }
 
-  if !update.new_password.is_empty() {
-    let hashed = HashedPassword::from(&update.new_password).into_string();
-    user.set_password(hashed);
-  }
-
   if !update.email.is_empty() {
     user.set_email(update.email);
   }
@@ -80,6 +76,23 @@ fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut cookies: Cookies
     user.set_username(update.username);
   }
 
+  if !update.password.is_empty() {
+    if update.password != update.password_verify {
+      cookies.add_private(Cookie::new("error", "New passwords did not match."));
+      return Ok(Redirect::to("/account"));
+    }
+    if update.password.graphemes(true).count() < 10 {
+      cookies.add_private(Cookie::new("error", "New password must be at least 10 characters long."));
+      return Ok(Redirect::to("/account"));
+    }
+    if update.password == user.name() || update.password == user.username() || update.password == user.email() || update.password == "password" {
+      cookies.add_private(Cookie::new("error", r#"New password cannot be your name, username, email, or "password"."#));
+      return Ok(Redirect::to("/account"));
+    }
+    let hashed = HashedPassword::from(&update.password).into_string();
+    user.set_password(hashed);
+  }
+
   user.update(&conn)?;
 
   Ok(Redirect::to("/account"))
@@ -90,6 +103,7 @@ struct AccountUpdate {
   name: String,
   username: String,
   email: String,
-  new_password: String,
+  password: String,
+  password_verify: String,
   current_password: String,
 }

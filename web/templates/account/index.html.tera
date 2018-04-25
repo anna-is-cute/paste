@@ -2,6 +2,14 @@
 
 {% block head %}
 {{ super() }}
+<script
+  async
+  src="/static/js/zxcvbn/zxcvbn.js"
+  integrity="sha384-jhGcGHNZytnBnH1wbEM3KxJYyRDy9Q0QLKjE65xk+aMqXFCdvFuYIjzMWAAWBBtR"></script>
+<script
+  defer
+  src="/static/js/password.js"
+  integrity="sha384-21oPii3a3emrkQEvcWrf4Nz8ImQTVcxwscQx6g9Xw8bFZaOPrg3q17eBXwBRW3WP"></script>
 {% endblock head %}
 
 {% block title %}Account{% endblock title %}
@@ -47,7 +55,12 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <input class="input" type="text" placeholder="{{ user.name }}" name="name"/>
+          <input
+            id="name"
+            name="name"
+            class="input"
+            type="text"
+            placeholder="{{ user.name }}"/>
         </div>
       </div>
     </div>
@@ -59,7 +72,12 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <input class="input" type="text" placeholder="{{ user.username }}" name="username"/>
+          <input
+            id="username"
+            name="username"
+            class="input"
+            type="text"
+            placeholder="{{ user.username }}"/>
         </div>
         <p class="help">
           Changing your username will invalidate all links with your username in them.
@@ -75,7 +93,12 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <input class="input" type="email" placeholder="{{ user.email }}" name="email"/>
+          <input
+            id="email"
+            name="email"
+            class="input"
+            type="email"
+            placeholder="{{ user.email }}"/>
         </div>
       </div>
     </div>
@@ -88,11 +111,36 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <input class="input" type="password" name="new_password"/>
+          <input
+            id="password"
+            name="password"
+            data-bar="hidden"
+            class="input"
+            type="password"/>
         </div>
         <p class="help">
           Leave this blank to keep your password the same.
+          <progress id="strength_progress" class="password progress is-marginless is-danger" style="display: none;" value="100" max="100"></progress>
+          <span id="strength"></span>
+          <span id="strength_warning" class="has-warning-text"></span>
         </p>
+      </div>
+    </div>
+  </div>
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
+      <label class="label">Change password (again)</label>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          <input
+            required
+            id="password_verify"
+            name="password_verify"
+            class="input"
+            type="password"/>
+        </div>
       </div>
     </div>
   </div>
@@ -103,7 +151,11 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <input class="input" type="password" name="current_password" required/>
+          <input
+            required
+            name="current_password"
+            class="input"
+            type="password"/>
         </div>
         <p class="help">
           Required to change any information.
@@ -118,7 +170,10 @@
     <div class="field-body">
       <div class="field">
         <div class="control">
-          <input class="button is-link" type="submit" value="Change"/>
+          <input
+            class="button is-link"
+            type="submit"
+            value="Change"/>
         </div>
       </div>
     </div>

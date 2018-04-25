@@ -116,7 +116,7 @@
             name="password"
             data-bar="hidden"
             class="input"
-            minlength="12"
+            minlength="10"
             type="password"/>
         </div>
         <p class="help">
@@ -139,7 +139,7 @@
             id="password_verify"
             name="password_verify"
             class="input"
-            minlength="12"
+            minlength="10"
             type="password"/>
         </div>
       </div>

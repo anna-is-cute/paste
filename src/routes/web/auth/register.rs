@@ -52,8 +52,8 @@ fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn, config
     cookies.add(Cookie::new("error", "No fields can be empty."));
     return Ok(Redirect::to("/register"));
   }
-  if data.username == "static" || data.username == "anonymous" {
-    cookies.add(Cookie::new("error", r#"Username cannot be "static" or "anonymous"."#));
+  if data.username == "anonymous" {
+    cookies.add(Cookie::new("error", r#"Username cannot be "anonymous"."#));
     return Ok(Redirect::to("/register"));
   }
   if data.password == data.username || data.password == data.email || data.password == "password" {

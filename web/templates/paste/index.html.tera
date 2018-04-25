@@ -2,7 +2,9 @@
 
 {% block head %}
 {{ super() }}
-<!-- FIXME: theme select + sane default based on site theme (light/dark) -->
+{% if paste.visibility != "public" %}
+<meta name="robots" content="noindex nofollow"/>
+{% endif %}
 <link
   title="dark"
   rel="stylesheet alternate"

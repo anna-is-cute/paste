@@ -87,7 +87,12 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut cookies: Cookies, c
     None => id.commit("Anonymous", "none", "create paste via web")?,
   }
 
-  Ok(Redirect::to(&format!("/{}", id.simple())))
+  let username = match user {
+    Some(ref u) => u.username().clone(),
+    None => "anonymous".into(),
+  };
+
+  Ok(Redirect::to(&format!("/users/{}/{}", username, id.simple())))
 }
 
 #[derive(Debug, FromForm)]

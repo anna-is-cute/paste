@@ -99,6 +99,7 @@ fn main() {
 
       routes::web::pastes::get::id,
       routes::web::pastes::get::username_id,
+      routes::web::pastes::get::users_username_id,
       routes::web::pastes::post::post,
 
       routes::web::account::index::get,

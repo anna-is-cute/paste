@@ -27,32 +27,17 @@
 
 <link rel="icon" sizes="16x16 32x32 48x48 64x64" href="/static/favicons/favicon.ico"/>
 <!--[if IE]><link rel="shortcut icon" href="/static/favicons/favicon.ico"/><![endif]-->
-
-<!-- The below are optional but encouraged -->
-
-<!-- Touch icon for iOS 2.0+ and Android 2.1+: -->
 <link rel="apple-touch-icon-precomposed" href="/static/favicons/favicon-152.png"/>
-
-<!-- The below are optional -->
-
-<!-- IE 10 Metro tile icon (Metro equivalent of apple-touch-icon): -->
 <meta name="msapplication-TileColor" content="#FFFFFF"/>
 <meta name="msapplication-TileImage" content="/static/favicons/favicon-144.png"/>
-<!-- IE 11 live tiles: -->
 <meta name="msapplication-square70x70logo" content="/static/favicons/favicon-70.png"/>
 <meta name="msapplication-square150x150logo" content="/static/favicons/favicon-150.png"/>
 <meta name="msapplication-square310x310logo" content="/static/favicons/favicon-310.png"/>
-<!-- For iPad with high-resolution Retina display running iOS ≥ 7: -->
 <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/static/favicons/favicon-152.png"/>
-<!-- For iPad with high-resolution Retina display running iOS ≤ 6: -->
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/favicons/favicon-144.png"/>
-<!-- For iPhone with high-resolution Retina display running iOS ≥ 7: -->
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="/static/favicons/favicon-120.png"/>
-<!-- For iPhone with high-resolution Retina display running iOS ≤ 6: -->
 <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/favicons/favicon-114.png"/>
-<!-- For first- and second-generation iPad: -->
 <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/favicons/favicon-72.png"/>
-<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
 <link rel="apple-touch-icon-precomposed" href="/static/favicons/favicon-57.png"/>
 {% endblock head %}
 

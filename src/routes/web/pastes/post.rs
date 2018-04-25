@@ -19,7 +19,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut cookies: Cookies, c
   let paste = paste.into_inner();
 
   if paste.file_content.is_empty() {
-    cookies.add(Cookie::new("error", "File content must not be empty."));
+    cookies.add_private(Cookie::new("error", "File content must not be empty."));
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -32,7 +32,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut cookies: Cookies, c
   };
 
   if anonymous && paste.visibility == Visibility::Private {
-    cookies.add(Cookie::new("error", "Cannot make anonymous private pastes."));
+    cookies.add_private(Cookie::new("error", "Cannot make anonymous private pastes."));
     return Ok(Redirect::to("lastpage"));
   }
 

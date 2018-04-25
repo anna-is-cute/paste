@@ -20,12 +20,12 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies, conn:
   let ctx = json!({
     "config": &*config,
     "user": user,
-    "error": cookies.get("error").map(|x| x.value()),
+    "error": cookies.get_private("error").map(|x| x.value()),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
     "keys": &user.keys(&conn)?,
   });
-  cookies.remove(Cookie::named("error"));
+  cookies.remove_private(Cookie::named("error"));
   Ok(Rst::Template(Template::render("account/keys", ctx)))
 }
 
@@ -38,7 +38,7 @@ fn post(new: Form<NewKey>, user: OptionalWebUser, mut cookies: Cookies, conn: Db
 
   let new = new.into_inner();
   if new.name.is_empty() {
-    cookies.add(Cookie::new("error", "API key name cannot be empty"));
+    cookies.add_private(Cookie::new("error", "API key name cannot be empty"));
     return Ok(Redirect::to("/account/keys"));
   }
 

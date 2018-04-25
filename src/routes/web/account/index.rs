@@ -26,11 +26,11 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Re
   let ctx = json!({
     "config": &*config,
     "user": user,
-    "error": cookies.get("error").map(|x| x.value()),
+    "error": cookies.get_private("error").map(|x| x.value()),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });
-  cookies.remove(Cookie::named("error"));
+  cookies.remove_private(Cookie::named("error"));
   Ok(Rst::Template(Template::render("account/index", ctx)))
 }
 
@@ -45,12 +45,12 @@ fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut cookies: Cookies
   let update = update.into_inner();
 
   if update.current_password.is_empty() {
-    cookies.add(Cookie::new("error", "Current password cannot be empty."));
+    cookies.add_private(Cookie::new("error", "Current password cannot be empty."));
     return Ok(Redirect::to("/account"));
   }
 
   if !user.check_password(&update.current_password) {
-    cookies.add(Cookie::new("error", "Incorrect password."));
+    cookies.add_private(Cookie::new("error", "Incorrect password."));
     return Ok(Redirect::to("/account"));
   }
 
@@ -74,7 +74,7 @@ fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut cookies: Cookies
       .select(count(users::id))
       .get_result(&*conn)?;
     if existing_names > 0 {
-      cookies.add(Cookie::new("error", "A user with that username already exists."));
+      cookies.add_private(Cookie::new("error", "A user with that username already exists."));
       return Ok(Redirect::to("/account"));
     }
     user.set_username(update.username);

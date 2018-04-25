@@ -20,11 +20,11 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Re
   let ctx = json!({
     "config": &*config,
     "user": user,
-    "error": cookies.get("error").map(|x| x.value()),
+    "error": cookies.get_private("error").map(|x| x.value()),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });
-  cookies.remove(Cookie::named("error"));
+  cookies.remove_private(Cookie::named("error"));
   Ok(Rst::Template(Template::render("account/delete", ctx)))
 }
 
@@ -36,7 +36,7 @@ fn post(delete: Form<DeleteRequest>, user: OptionalWebUser, mut cookies: Cookies
   };
 
   if delete.into_inner().username != user.username() {
-    cookies.add(Cookie::new("error", "That username does not match your username."));
+    cookies.add_private(Cookie::new("error", "That username does not match your username."));
     return Ok(Redirect::to("/account/delete"));
   }
 

@@ -2,7 +2,16 @@
 
 {% block head %}
 {{ super() }}
-<script src="https://www.google.com/recaptcha/api.js"></script>
+<script
+  src="https://www.google.com/recaptcha/api.js"></script>
+<script
+  async
+  src="/static/js/zxcvbn/zxcvbn.js"
+  integrity="sha384-jhGcGHNZytnBnH1wbEM3KxJYyRDy9Q0QLKjE65xk+aMqXFCdvFuYIjzMWAAWBBtR"></script>
+<script
+  defer
+  src="/static/js/register.js"
+  integrity="sha384-SZfhk2c9oF9qR4CrJDNJFwJqz+e0Y4FBJTvCG/RxdVZSSCkb7jUzNAEy40xftt6Z"></script>
 {% endblock head %}
 
 {% block title %}Register{% endblock title %}
@@ -27,7 +36,13 @@ Create a new account.
   <div class="field">
     <label class="label">Name</label>
     <div class="control has-icons-left">
-      <input name="name" class="input" type="text" placeholder="Jim Bob Jones" required/>
+      <input
+        required
+        id="name"
+        name="name"
+        class="input"
+        type="text"
+        placeholder="Jim Bob Jones"/>
       <span class="icon is-small is-left">
         <i class="fas fa-id-card"></i>
       </span>
@@ -37,7 +52,13 @@ Create a new account.
   <div class="field">
     <label class="label">Username</label>
     <div class="control has-icons-left">
-      <input name="username" class="input" type="text" placeholder="jimbo33" required/>
+      <input
+        required
+        id="username"
+        name="username"
+        class="input"
+        type="text"
+        placeholder="jimbo33"/>
       <span class="icon is-small is-left">
         <i class="fas fa-user"></i>
       </span>
@@ -47,7 +68,13 @@ Create a new account.
   <div class="field">
     <label class="label">Email</label>
     <div class="control has-icons-left">
-      <input name="email" class="input" type="email" placeholder="your@email.com" required/>
+      <input
+        required
+        id="email"
+        name="email"
+        class="input"
+        type="email"
+        placeholder="your@email.com"/>
       <span class="icon is-small is-left">
         <i class="fas fa-envelope"></i>
       </span>
@@ -57,7 +84,34 @@ Create a new account.
   <div class="field">
     <label class="label">Password</label>
     <div class="control has-icons-left">
-      <input name="password" class="input" type="password" placeholder="Something really secure, please <3" required/>
+      <input
+        required
+        id="password"
+        name="password"
+        class="input"
+        type="password"
+        placeholder="Something really secure, please <3"/>
+      <span class="icon is-small is-left">
+        <i class="fas fa-asterisk"></i>
+      </span>
+      <p class="help">
+        <progress id="strength_progress" class="password progress is-marginless is-danger" value="100" max="100"></progress>
+        <span id="strength"></span>
+        <span id="strength_warning" class="has-warning-text"></span>
+      </p>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Password (again)</label>
+    <div class="control has-icons-left">
+      <input
+        required
+        id="password_verify"
+        name="password_verify"
+        class="input"
+        type="password"
+        placeholder="What you typed above"/>
       <span class="icon is-small is-left">
         <i class="fas fa-asterisk"></i>
       </span>
@@ -94,9 +148,4 @@ Create a new account.
     </div>
   </div>
 </form>
-<script>
-if (localStorage.getItem('style') === 'dark') {
-  document.getElementById('recaptcha').setAttribute('data-theme', 'dark');
-}
-</script>
 {% endblock main %}

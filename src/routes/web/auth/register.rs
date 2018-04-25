@@ -17,6 +17,8 @@ use rocket::response::Redirect;
 
 use rocket_contrib::Template;
 
+use unicode_segmentation::UnicodeSegmentation;
+
 use uuid::Uuid;
 
 #[get("/register")]
@@ -40,6 +42,7 @@ struct RegistrationData {
   username: String,
   email: String,
   password: String,
+  password_verify: String,
   #[form(field = "g-recaptcha-response")]
   recaptcha: ReCaptcha,
 }
@@ -56,10 +59,21 @@ fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn, config
     cookies.add_private(Cookie::new("error", r#"Username cannot be "anonymous"."#));
     return Ok(Redirect::to("/register"));
   }
-  if data.password == data.username || data.password == data.email || data.password == "password" {
-    cookies.add_private(Cookie::new("error", r#"Password cannot be the same as your username, email, or "password"."#));
+
+  if data.password != data.password_verify {
+    cookies.add_private(Cookie::new("error", "Passwords did not match."));
     return Ok(Redirect::to("/register"));
   }
+
+  if data.password.graphemes(true).count() < 10 {
+    cookies.add_private(Cookie::new("error", "Password must be at least 10 characters long."));
+    return Ok(Redirect::to("/register"));
+  }
+  if data.password == data.name || data.password == data.username || data.password == data.email || data.password == "password" {
+    cookies.add_private(Cookie::new("error", r#"Password cannot be the same as your name, username, email, or "password"."#));
+    return Ok(Redirect::to("/register"));
+  }
+
   if !data.recaptcha.verify(&config.recaptcha.secret_key)? {
     cookies.add_private(Cookie::new("error", "The captcha did not validate. Try again."));
     return Ok(Redirect::to("/register"));

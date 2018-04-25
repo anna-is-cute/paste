@@ -4,3 +4,6 @@
 [submodule "web/src/css/bulmaswatch"]
 	path = web/src/css/bulmaswatch
 	url = https://github.com/jenil/bulmaswatch
+[submodule "web/src/css/bulma-tooltip"]
+	path = web/src/css/bulma-tooltip
+	url = https://github.com/Wikiki/bulma-tooltip

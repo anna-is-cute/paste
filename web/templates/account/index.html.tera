@@ -116,6 +116,7 @@
             name="password"
             data-bar="hidden"
             class="input"
+            minlength="12"
             type="password"/>
         </div>
         <p class="help">
@@ -135,10 +136,10 @@
       <div class="field">
         <div class="control">
           <input
-            required
             id="password_verify"
             name="password_verify"
             class="input"
+            minlength="12"
             type="password"/>
         </div>
       </div>

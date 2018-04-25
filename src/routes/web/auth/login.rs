@@ -22,7 +22,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Rs
   let ctx = json!({
     "config": &*config,
     // TODO: this can be made into an optional request guard
-    "error": cookies.get_private("error").map(|x| x.value()),
+    "error": cookies.get_private("error").map(|x| x.value().to_string()),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });

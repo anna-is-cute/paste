@@ -20,7 +20,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies, conn:
   let ctx = json!({
     "config": &*config,
     "user": user,
-    "error": cookies.get_private("error").map(|x| x.value()),
+    "error": cookies.get_private("error").map(|x| x.value().to_string()),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
     "keys": &user.keys(&conn)?,

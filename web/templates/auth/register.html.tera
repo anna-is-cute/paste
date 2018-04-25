@@ -94,7 +94,7 @@ Create a new account.
         name="password"
         class="input"
         type="password"
-        minlength="12"
+        minlength="10"
         placeholder="Something really secure, please <3"/>
       <span class="icon is-small is-left">
         <i class="fas fa-asterisk"></i>
@@ -116,7 +116,7 @@ Create a new account.
         name="password_verify"
         class="input"
         type="password"
-        minlength="12"
+        minlength="10"
         placeholder="What you typed above"
         required/>
       <span class="icon is-small is-left">

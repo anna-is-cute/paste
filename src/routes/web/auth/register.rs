@@ -26,11 +26,11 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Rs
   }
   let ctx = json!({
     "config": &*config,
-    "error": cookies.get("error").map(|x| x.value()),
+    "error": cookies.get_private("error").map(|x| x.value()),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });
-  cookies.remove(Cookie::named("error"));
+  cookies.remove_private(Cookie::named("error"));
   Rst::Template(Template::render("auth/register", ctx))
 }
 
@@ -49,19 +49,19 @@ fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn, config
   let data = data.into_inner();
 
   if data.username.is_empty() || data.name.is_empty()  || data.email.is_empty() || data.password.is_empty() {
-    cookies.add(Cookie::new("error", "No fields can be empty."));
+    cookies.add_private(Cookie::new("error", "No fields can be empty."));
     return Ok(Redirect::to("/register"));
   }
   if data.username == "anonymous" {
-    cookies.add(Cookie::new("error", r#"Username cannot be "anonymous"."#));
+    cookies.add_private(Cookie::new("error", r#"Username cannot be "anonymous"."#));
     return Ok(Redirect::to("/register"));
   }
   if data.password == data.username || data.password == data.email || data.password == "password" {
-    cookies.add(Cookie::new("error", r#"Password cannot be the same as your username, email, or "password"."#));
+    cookies.add_private(Cookie::new("error", r#"Password cannot be the same as your username, email, or "password"."#));
     return Ok(Redirect::to("/register"));
   }
   if !data.recaptcha.verify(&config.recaptcha.secret_key)? {
-    cookies.add(Cookie::new("error", "The captcha did not validate. Try again."));
+    cookies.add_private(Cookie::new("error", "The captcha did not validate. Try again."));
     return Ok(Redirect::to("/register"));
   }
 
@@ -70,7 +70,7 @@ fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn, config
     .select(count(users::id))
     .get_result(&*conn)?;
   if existing_names > 0 {
-    cookies.add(Cookie::new("error", "A user with that username already exists."));
+    cookies.add_private(Cookie::new("error", "A user with that username already exists."));
     return Ok(Redirect::to("/register"));
   }
 

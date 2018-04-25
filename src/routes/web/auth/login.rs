@@ -22,11 +22,11 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Rs
   let ctx = json!({
     "config": &*config,
     // TODO: this can be made into an optional request guard
-    "error": cookies.get("error").map(|x| x.value()),
+    "error": cookies.get_private("error").map(|x| x.value()),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });
-  cookies.remove(Cookie::named("error"));
+  cookies.remove_private(Cookie::named("error"));
   Rst::Template(Template::render("auth/login", ctx))
 }
 
@@ -48,13 +48,13 @@ fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn) -> Res
   let user = match user {
     Some(u) => u,
     None => {
-      cookies.add(Cookie::new("error", "Username not found."));
+      cookies.add_private(Cookie::new("error", "Username not found."));
       return Ok(Redirect::to("/login"));
     },
   };
 
   if !user.check_password(&data.password) {
-    cookies.add(Cookie::new("error", "Incorrect password."));
+    cookies.add_private(Cookie::new("error", "Incorrect password."));
     return Ok(Redirect::to("/login"));
   }
 

@@ -84,7 +84,7 @@ Create a new account.
           </div>
         </div>
       </noscript>
-      <div class="g-recaptcha" data-sitekey="{{ config.recaptcha.site_key }}"></div>
+      <div id="recaptcha" class="g-recaptcha" data-sitekey="{{ config.recaptcha.site_key }}"></div>
     </div>
   </div>
 
@@ -94,4 +94,9 @@ Create a new account.
     </div>
   </div>
 </form>
+<script>
+if (localStorage.getItem('style') === 'dark') {
+  document.getElementById('recaptcha').setAttribute('data-theme', 'dark');
+}
+</script>
 {% endblock main %}

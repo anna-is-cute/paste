@@ -42,7 +42,7 @@ fn id(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
 
 #[get("/<username>/<id>", rank = 10)]
 fn username_id(username: String, id: PasteId) -> Redirect {
-  Redirect::to(&format!("/users/{}, {}", username, id))
+  Redirect::to(&format!("/users/{}/{}", username, id))
 }
 
 #[get("/users/<username>/<id>")]

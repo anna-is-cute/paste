@@ -6,7 +6,7 @@ use database::schema::{pastes, users};
 use errors::*;
 use models::id::PasteId;
 use models::paste::output::{Output, OutputFile, OutputAuthor};
-use routes::web::{Rst, OptionalWebUser};
+use routes::web::{Rst, OptionalWebUser, Session};
 
 use diesel::prelude::*;
 
@@ -46,7 +46,7 @@ fn username_id(username: String, id: PasteId) -> Redirect {
 }
 
 #[get("/users/<username>/<id>")]
-fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
+fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -83,12 +83,20 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
     files,
   );
 
+  let is_owner = user.as_ref().map(|x| x.id()) == *paste.author_id();
+
+  let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
+
   let ctx = json!({
     "paste": output,
     "config": &*config,
     "user": &*user,
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
+    "deletion_key": sess.data.remove("deletion_key"),
+    "is_owner": is_owner,
+    "author_name": author_name,
+    "error": sess.data.remove("error"),
   });
 
   Ok(Rst::Template(Template::render("paste/index", ctx)))

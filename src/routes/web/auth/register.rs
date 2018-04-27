@@ -3,7 +3,7 @@ use database::DbConn;
 use database::models::users::NewUser;
 use database::schema::users;
 use errors::*;
-use routes::web::{Rst, OptionalWebUser};
+use routes::web::{Rst, OptionalWebUser, Session};
 use utils::{ReCaptcha, HashedPassword};
 
 use diesel;
@@ -22,17 +22,16 @@ use unicode_segmentation::UnicodeSegmentation;
 use uuid::Uuid;
 
 #[get("/register")]
-fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Rst {
+fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Rst {
   if user.is_some() {
     return Rst::Redirect(Redirect::to("/"));
   }
   let ctx = json!({
     "config": &*config,
-    "error": cookies.get_private("error").map(|x| x.value().to_string()),
+    "error": sess.data.remove("error"),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });
-  cookies.remove_private(Cookie::named("error"));
   Rst::Template(Template::render("auth/register", ctx))
 }
 
@@ -48,34 +47,34 @@ struct RegistrationData {
 }
 
 #[post("/register", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn, config: State<Config>) -> Result<Redirect> {
+fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, config: State<Config>) -> Result<Redirect> {
   let data = data.into_inner();
 
   if data.username.is_empty() || data.name.is_empty()  || data.email.is_empty() || data.password.is_empty() {
-    cookies.add_private(Cookie::new("error", "No fields can be empty."));
+    sess.data.insert("error".into(), "No fields can be empty.".into());
     return Ok(Redirect::to("/register"));
   }
   if data.username == "anonymous" {
-    cookies.add_private(Cookie::new("error", r#"Username cannot be "anonymous"."#));
+    sess.data.insert("error".into(), r#"Username cannot be "anonymous"."#.into());
     return Ok(Redirect::to("/register"));
   }
 
   if data.password != data.password_verify {
-    cookies.add_private(Cookie::new("error", "Passwords did not match."));
+    sess.data.insert("error".into(), "Passwords did not match.".into());
     return Ok(Redirect::to("/register"));
   }
 
   if data.password.graphemes(true).count() < 10 {
-    cookies.add_private(Cookie::new("error", "Password must be at least 10 characters long."));
+    sess.data.insert("error".into(), "Password must be at least 10 characters long.".into());
     return Ok(Redirect::to("/register"));
   }
   if data.password == data.name || data.password == data.username || data.password == data.email || data.password == "password" {
-    cookies.add_private(Cookie::new("error", r#"Password cannot be the same as your name, username, email, or "password"."#));
+    sess.data.insert("error".into(), r#"Password cannot be the same as your name, username, email, or "password"."#.into());
     return Ok(Redirect::to("/register"));
   }
 
   if !data.recaptcha.verify(&config.recaptcha.secret_key)? {
-    cookies.add_private(Cookie::new("error", "The captcha did not validate. Try again."));
+    sess.data.insert("error".into(), "The captcha did not validate. Try again.".into());
     return Ok(Redirect::to("/register"));
   }
 
@@ -84,7 +83,7 @@ fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn, config
     .select(count(users::id))
     .get_result(&*conn)?;
   if existing_names > 0 {
-    cookies.add_private(Cookie::new("error", "A user with that username already exists."));
+    sess.data.insert("error".into(), "A user with that username already exists.".into());
     return Ok(Redirect::to("/register"));
   }
 

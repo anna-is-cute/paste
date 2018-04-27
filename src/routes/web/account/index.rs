@@ -2,13 +2,12 @@ use config::Config;
 use database::DbConn;
 use database::schema::users;
 use errors::*;
-use routes::web::{Rst, OptionalWebUser};
+use routes::web::{Rst, OptionalWebUser, Session};
 use utils::HashedPassword;
 
 use diesel::dsl::count;
 use diesel::prelude::*;
 
-use rocket::http::{Cookies, Cookie};
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket::State;
@@ -18,7 +17,7 @@ use rocket_contrib::Template;
 use unicode_segmentation::UnicodeSegmentation;
 
 #[get("/account")]
-fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Result<Rst> {
+fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
@@ -27,16 +26,15 @@ fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Re
   let ctx = json!({
     "config": &*config,
     "user": user,
-    "error": cookies.get_private("error").map(|x| x.value().to_string()),
+    "error": sess.data.remove("error"),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });
-  cookies.remove_private(Cookie::named("error"));
   Ok(Rst::Template(Template::render("account/index", ctx)))
 }
 
 #[post("/account", format = "application/x-www-form-urlencoded", data = "<update>")]
-fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut cookies: Cookies, conn: DbConn) -> Result<Redirect> {
+fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let mut user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(Redirect::to("/login")),
@@ -46,12 +44,12 @@ fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut cookies: Cookies
   let update = update.into_inner();
 
   if update.current_password.is_empty() {
-    cookies.add_private(Cookie::new("error", "Current password cannot be empty."));
+    sess.data.insert("error".into(), "Current password cannot be empty.".into());
     return Ok(Redirect::to("/account"));
   }
 
   if !user.check_password(&update.current_password) {
-    cookies.add_private(Cookie::new("error", "Incorrect password."));
+    sess.data.insert("error".into(), "Incorrect password.".into());
     return Ok(Redirect::to("/account"));
   }
 
@@ -70,7 +68,7 @@ fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut cookies: Cookies
       .select(count(users::id))
       .get_result(&*conn)?;
     if existing_names > 0 {
-      cookies.add_private(Cookie::new("error", "A user with that username already exists."));
+      sess.data.insert("error".into(), "A user with that username already exists.".into());
       return Ok(Redirect::to("/account"));
     }
     user.set_username(update.username);
@@ -78,15 +76,15 @@ fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut cookies: Cookies
 
   if !update.password.is_empty() {
     if update.password != update.password_verify {
-      cookies.add_private(Cookie::new("error", "New passwords did not match."));
+      sess.data.insert("error".into(), "New passwords did not match.".into());
       return Ok(Redirect::to("/account"));
     }
     if update.password.graphemes(true).count() < 10 {
-      cookies.add_private(Cookie::new("error", "New password must be at least 10 characters long."));
+      sess.data.insert("error".into(), "New password must be at least 10 characters long.".into());
       return Ok(Redirect::to("/account"));
     }
     if update.password == user.name() || update.password == user.username() || update.password == user.email() || update.password == "password" {
-      cookies.add_private(Cookie::new("error", r#"New password cannot be your name, username, email, or "password"."#));
+      sess.data.insert("error".into(), r#"New password cannot be your name, user, email, or "password"."#.into());
       return Ok(Redirect::to("/account"));
     }
     let hashed = HashedPassword::from(&update.password).into_string();

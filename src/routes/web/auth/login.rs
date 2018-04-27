@@ -3,7 +3,7 @@ use database::DbConn;
 use database::models::users::User;
 use database::schema::users;
 use errors::*;
-use routes::web::{Rst, OptionalWebUser};
+use routes::web::{Rst, OptionalWebUser, Session};
 
 use diesel::prelude::*;
 
@@ -15,18 +15,17 @@ use rocket::response::Redirect;
 use rocket_contrib::Template;
 
 #[get("/login")]
-fn get(config: State<Config>, user: OptionalWebUser, mut cookies: Cookies) -> Rst {
+fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Rst {
   if user.is_some() {
     return Rst::Redirect(Redirect::to("/"));
   }
   let ctx = json!({
     "config": &*config,
     // TODO: this can be made into an optional request guard
-    "error": cookies.get_private("error").map(|x| x.value().to_string()),
+    "error": sess.data.remove("error"),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });
-  cookies.remove_private(Cookie::named("error"));
   Rst::Template(Template::render("auth/login", ctx))
 }
 
@@ -37,7 +36,7 @@ struct RegistrationData {
 }
 
 #[post("/login", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn) -> Result<Redirect> {
+fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn) -> Result<Redirect> {
   let data = data.into_inner();
 
   let user: Option<User> = users::table
@@ -48,13 +47,13 @@ fn post(data: Form<RegistrationData>, mut cookies: Cookies, conn: DbConn) -> Res
   let user = match user {
     Some(u) => u,
     None => {
-      cookies.add_private(Cookie::new("error", "Username not found."));
+      sess.data.insert("error".into(), "Username not found.".into());
       return Ok(Redirect::to("/login"));
     },
   };
 
   if !user.check_password(&data.password) {
-    cookies.add_private(Cookie::new("error", "Incorrect password."));
+    sess.data.insert("error".into(), "Incorrect password.".into());
     return Ok(Redirect::to("/login"));
   }
 

@@ -58,8 +58,8 @@ impl OutputFile {
 
 #[derive(Debug, Serialize)]
 pub struct OutputAuthor {
-  id: SimpleUuid,
-  username: String,
+  pub id: SimpleUuid,
+  pub username: String,
 }
 
 impl OutputAuthor {

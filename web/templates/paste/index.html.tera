@@ -25,6 +25,12 @@
   defer
   src="/static/js/highlight.js"
   integrity="sha384-Eow6BxtNF/i7ypHEeTYp7tJ4IlKewmFioGA2pyd1XsoE2UkKe2RArHvQxVgD0NJS"></script>
+{% if not paste.author %}
+<script
+  defer
+  src="/static/js/anonymous_paste.js"
+  integrity="sha384-nrjg+RRLhRJjf09WxW1dS+aaanBJ+IyngZ6iOG54n6M6SB0O+YOKXwmoZX5h8p8M"></script>
+{% endif %}
 {% endblock head %}
 
 {% block title %}
@@ -36,6 +42,22 @@ untitled paste
 {% endblock title %}
 
 {% block header_title %}
+  {% if is_owner %}
+    <form action="/users/{{ author_name }}/{{ paste.id }}/delete" method="post">
+      <button class="button is-danger is-large is-pulled-right" type="submit">
+        <span class="icon is-large">
+          <i class="fas fa-trash-alt"></i>
+        </span>
+      </button>
+    </form>
+  {% endif %}
+  {% if not paste.author %}
+    <button class="button is-danger is-large is-pulled-right opens-modal">
+      <span class="icon is-large">
+        <i class="fas fa-trash-alt"></i>
+      </span>
+    </button>
+  {% endif %}
   {% if paste.visibility == "public" %}
     <span class="icon is-large">
       <i class="fas fa-globe" title="{{ paste.visibility }}"></i>
@@ -65,6 +87,54 @@ untitled paste
 {% endblock header_subtitle %}
 
 {% block main %}
+{% if not paste.author %}
+<div id="deletion_modal" class="modal">
+  <form action="/users/{{ author_name }}/{{ paste.id }}/delete" method="post">
+    <div class="modal-background closes-modal"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Delete paste</p>
+        <button class="delete closes-modal" aria-label="close" type="button"></button>
+      </header>
+      <section class="modal-card-body">
+        <div class="content">
+          <p>
+            To delete an anonymous paste, you need to use its deletion key. Enter it below and click
+            "Delete" to delete this paste.
+          </p>
+        </div>
+        <input name="key" type="text" class="input" placeholder="Deletion key"/>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-danger" type="submit">Delete</button>
+      </footer>
+    </div>
+  </form>
+</div>
+{% endif %}
+{% if deletion_key %}
+<div class="message is-info">
+  <p class="message-header">
+    Deletion key
+  </p>
+  <div class="message-body">
+    <p>
+      In order to delete this paste, you will need to use the key below. This message will only
+      appear once.
+    </p>
+    <p>
+      <code>{{ deletion_key }}</code>
+    </p>
+  </div>
+</div>
+{% endif %}
+{% if error %}
+<div class="notification is-warning">
+  {# <button class="delete"></button> #}
+  {{ error }}
+</div>
+{% endif %}
+
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
     <li>

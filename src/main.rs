@@ -36,6 +36,8 @@ mod routes;
 mod store;
 mod utils;
 
+use routes::web::fairings;
+
 use rocket::response::NamedFile;
 
 use rocket_contrib::Template;
@@ -78,7 +80,7 @@ fn main() {
   rocket::ignite()
     .manage(database::init_pool())
     .manage(config)
-    .attach(routes::web::LastPage::default())
+    .attach(fairings::LastPage::default())
     .attach(Template::fairing())
     .catch(errors![
       routes::bad_request,
@@ -101,6 +103,7 @@ fn main() {
       routes::web::pastes::get::username_id,
       routes::web::pastes::get::users_username_id,
       routes::web::pastes::post::post,
+      routes::web::pastes::post::delete,
 
       routes::web::account::index::get,
       routes::web::account::index::post,

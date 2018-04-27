@@ -83,7 +83,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
     files,
   );
 
-  let is_owner = user.as_ref().map(|x| x.id()) == *paste.author_id();
+  let is_owner = paste.author_id().is_some() && user.as_ref().map(|x| x.id()) == *paste.author_id();
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
 

@@ -10,7 +10,7 @@ use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Session<'a, 'r> where 'r: 'a {
-  #[serde(skip_serializing, skip_deserializing)]
+  #[serde(skip)]
   pub request: Option<&'a Request<'r>>,
   pub id: Uuid,
   pub data: HashMap<String, String>,

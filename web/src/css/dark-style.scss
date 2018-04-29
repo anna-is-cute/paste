@@ -11,3 +11,7 @@ input[type="text"], input[type="email"], input[type="password"], .select select,
     color: $grey-light;
   }
 }
+
+pre {
+  background-color: darken($background, 10%);
+}

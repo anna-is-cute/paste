@@ -14,7 +14,7 @@
   integrity="sha384-qCkzTmThHbDfraI+HjgoOx0+uVItssyCh6C8chAMN1dT0y7pmRsLBB7vZW4J3ZLg"/>
 <script
   src="/static/js/style.js"
-  integrity="sha384-MQ28rNIRsaJqXuIVhDB+Bzyi+R7alVUh97Xu1vS1Trvi/3iKMQqHSE7buXNt3dYU"></script>
+  integrity="sha384-gIJsa7ipunU0jwSDxUAFcwOg81q8YkNgI2VqbW3VV9+yxXFZUbC3lCuU8HpUFb6c"></script>
 <script
   defer
   src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"

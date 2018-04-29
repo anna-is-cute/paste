@@ -7,6 +7,7 @@ function setActiveStyleSheet(title) {
       }
     }
   }
+  localStorage.setItem('style', getActiveStyleSheet());
   if (typeof paste_editors === 'object') {
     var theme;
     if (title === 'dark') {

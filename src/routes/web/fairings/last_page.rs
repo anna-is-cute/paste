@@ -1,6 +1,6 @@
 use routes::web::Session;
 
-use rocket::{Outcome, Data};
+use rocket::Outcome;
 use rocket::fairing::{Fairing, Info, Kind};
 use rocket::http::{Method, Status as HttpStatus};
 use rocket::http::hyper::header::Location;
@@ -17,20 +17,8 @@ pub struct LastPage {
   map: RwLock<HashMap<Uuid, String>>,
 }
 
-impl Fairing for LastPage {
-  fn info(&self) -> Info {
-    Info {
-      name: "Last page handler",
-      kind: Kind::Request | Kind::Response,
-    }
-  }
-
-  fn on_request(&self, req: &mut Request, _: &Data) {
-    // only work on get requests
-    if req.method() != Method::Get {
-      return;
-    }
-
+impl LastPage {
+  fn store(&self, req: &Request) {
     // get current path
     let path = req.uri().path();
 
@@ -53,8 +41,22 @@ impl Fairing for LastPage {
     // write this path as the last page for this session
     self.map.write().unwrap().insert(sess_id, path.to_string());
   }
+}
+
+impl Fairing for LastPage {
+  fn info(&self) -> Info {
+    Info {
+      name: "Last page handler",
+      kind: Kind::Response,
+    }
+  }
 
   fn on_response(&self, req: &Request, resp: &mut Response) {
+    if req.method() == Method::Get && resp.status() != HttpStatus::SeeOther {
+      self.store(req);
+      return;
+    }
+
     if resp.status() != HttpStatus::SeeOther {
       return;
     }

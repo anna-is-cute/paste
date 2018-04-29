@@ -13,7 +13,7 @@
 <script
   defer
   src="/static/js/editor.js"
-  integrity="sha384-k6kkyJrh4YAcAwp8Jck76hzM/tSvxma5AjCmNNc7UviZEU+q9JCdquNVvIj7L6Kg"></script>
+  integrity="sha384-zHwpfIPO8pPyBqt/4wZ2N27Ey20QtPJ+gTj4y+Hnr0ZS47zvFuNdu4aRylnUnaO7"></script>
 {% endblock head %}
 
 {% block title %}

@@ -6,15 +6,15 @@
   src="https://www.google.com/recaptcha/api.js"></script>
 <script
   async
-  src="/static/js/zxcvbn/zxcvbn.js"
+  src="/static/js/zxcvbn/zxcvbn.js?v={{ resources_version }}"
   integrity="sha384-jhGcGHNZytnBnH1wbEM3KxJYyRDy9Q0QLKjE65xk+aMqXFCdvFuYIjzMWAAWBBtR"></script>
 <script
   defer
-  src="/static/js/register.js"
+  src="/static/js/register.js?v={{ resources_version }}"
   integrity="sha384-mG6dnHkWn30hTgko4Fe60grBcxRpuyFJR3Bl8XoSA0AXKtN3u8YEWtTdZbZD67Ps"></script>
 <script
   defer
-  src="/static/js/password.js"
+  src="/static/js/password.js?v={{ resources_version }}"
   integrity="sha384-21oPii3a3emrkQEvcWrf4Nz8ImQTVcxwscQx6g9Xw8bFZaOPrg3q17eBXwBRW3WP"></script>
 {% endblock head %}
 

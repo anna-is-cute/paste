@@ -9,9 +9,20 @@ addons:
       - cmake
       - libpq-dev
 before_script:
+  - .travis/cache_check.sh
   - . .travis/libsodium.sh
 script:
   - cargo build --verbose --all
+# Remove the local crate's build files, as they only add bloat to the cache.
+# TODO: Remove unused dependency build files
+before_cache:
+  - rm -rfv target/debug/paste.d
+  - rm -rfv target/debug/incremental/paste-*
+  - rm -rfv target/debug/.fingerprint/paste-*
+  - rm -rfv target/debug/build/paste-*
+  - rm -rfv target/debug/deps/paste-*
+  - cargo clean -p paste
+  - . .travis/libsodium.sh
 rust:
   - nightly
 matrix:

@@ -7,7 +7,7 @@ var paste_editors = {};
    */
   function createUpload() {
     var files = [];
-    for (var editor of paste_editors) {
+    for (var editor of Object.values(paste_editors)) {
       var file = {
         'name': editor.container.parentElement.parentElement.parentElement.querySelector('input[name=file_name]').value,
         'content': editor.getValue()

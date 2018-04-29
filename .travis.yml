@@ -22,7 +22,6 @@ before_cache:
   - rm -rfv target/debug/build/paste-*
   - rm -rfv target/debug/deps/paste-*
   - cargo clean -p paste
-  - . .travis/libsodium.sh
 rust:
   - nightly
 matrix:

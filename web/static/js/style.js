@@ -7,11 +7,16 @@ function setActiveStyleSheet(title) {
       }
     }
   }
-  if (typeof paste_editor !== 'undefined') {
+  if (typeof paste_editors === 'object') {
+    var theme;
     if (title === "dark") {
-      paste_editor.setTheme("ace/theme/idle_fingers");
+      theme = "ace/theme/idle_fingers";
     } else if (title === "light") {
-      paste_editor.setTheme("ace/theme/tomorrow");
+      theme = "ace/theme/tomorrow";
+    }
+
+    for (var editor of Object.values(paste_editors)) {
+      editor.setTheme(theme);
     }
   }
 }

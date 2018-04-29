@@ -29,13 +29,6 @@ Create a new account.
 {% endblock header_subtitle %}
 
 {% block main %}
-{% if error %}
-<div class="notification is-warning">
-  {# <button class="delete"></button> #}
-  {{ error }}
-</div>
-{% endif %}
-
 <form method="post" action="/register">
   <div class="field">
     <label class="label">Name</label>

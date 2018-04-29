@@ -6,15 +6,15 @@
   title="dark"
   rel="stylesheet alternate"
   href="/static/css/dark-style.css"
-  integrity="sha384-xu/PySF0XCAXJYHNuWQsDdIe+UycQ3BvXumMupgCgUVhFrpfRlXWHLdRCQVN33GO"/>
+  integrity="sha384-qgNQ/2L/2fLQR1wuvz5LeMnBL/Gvplq0K8zFGrvHP0JDrr+xtH97eE+eWHeMjlMq"/>
 <link
   title="light"
   rel="stylesheet"
   href="/static/css/style.css"
-  integrity="sha384-HjPW0ZPblirZh5ECpqKrlkzkFYwwRomtkQxUyBLWQr/pMY/9w+7K+F7zvkYwuDds"/>
+  integrity="sha384-qCkzTmThHbDfraI+HjgoOx0+uVItssyCh6C8chAMN1dT0y7pmRsLBB7vZW4J3ZLg"/>
 <script
   src="/static/js/style.js"
-  integrity="sha384-hvvioGxWAnnDhHpoKzYgw+qTQE3RsgghrXZ0NBH6TGuXANFCcan+HCTC9osu8Yqu"></script>
+  integrity="sha384-MQ28rNIRsaJqXuIVhDB+Bzyi+R7alVUh97Xu1vS1Trvi/3iKMQqHSE7buXNt3dYU"></script>
 <script
   defer
   src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"
@@ -104,6 +104,12 @@
 
   <main class="section">
     <div class="container">
+      {% if error %}
+      <div class="notification is-warning">
+        {# <button class="delete"></button> #}
+        {{ error }}
+      </div>
+      {% endif %}
 {% block main %}{% endblock main %}
     </div>
   </main>

@@ -13,7 +13,7 @@
 <script
   defer
   src="/static/js/editor.js"
-  integrity="sha384-3P2MZhkP8ePX1GiBa0TbvU8++bUA8/epytd2E2MD8SBrHj5NeuQzL3E1Yzmb8UyE"></script>
+  integrity="sha384-cLJH5DGh9Svp/YW/BdlCJbziDRBLrtPr2llqPfWt+Dzmv4frQfYgSTfo0BRF4xqo"></script>
 {% endblock head %}
 
 {% block title %}
@@ -29,18 +29,15 @@ Create a new paste.
 {% endblock header_subtitle %}
 
 {% block main %}
-{% if error %}
-<div class="notification is-warning">
-  {# <button class="delete"></button> #}
-  {{ error }}
-</div>
-{% endif %}
-
 <form id="paste_upload" action="/pastes" method="post">
   <div class="field is-grouped">
     <div class="control is-expanded">
       <label class="label">Paste name</label>
-      <input class="input" type="text" placeholder="Paste name" name="name"/>
+      <input
+        name="name"
+        class="input"
+        type="text"
+        placeholder="Paste name"/>
     </div>
     <div class="control has-icons-left">
       <label class="label">Visibility</label>
@@ -62,27 +59,44 @@ Create a new paste.
   <div class="field">
     <label class="label">Description</label>
     <div class="control">
-      <input class="input" type="text" placeholder="Paste description" name="description"/>
+      <input
+        name="description"
+        class="input"
+        type="text"
+        placeholder="Paste description"/>
     </div>
   </div>
 
-  <hr/>
+  <div id="base_file" class="requires-no-js field">
+    <hr/>
 
-  <div class="field">
-    <div class="control is-expanded">
-      <input id="file_name" class="input" type="text" placeholder="File name with extension" name="file_name"/>
+    <div name="name_field" class="field">
+      <div class="control is-expanded">
+        <input
+          name="file_name"
+          class="input"
+          type="text"
+          placeholder="File name with extension"/>
+      </div>
+      <div class="requires-js control">
+        <button name="delete_button" type="button" class="button is-danger">
+          <span class="icon">
+            <i class="fas fa-trash-alt"></i>
+          </span>
+        </button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <textarea
+          name="file_content"
+          class="paste textarea"
+          placeholder="fn main() {&#10;  println!(&quot;Hello world!&quot;);&#10;}"></textarea>
+      </div>
     </div>
   </div>
-  <div class="field">
-    <div class="control">
-      <textarea
-        class="textarea"
-        style="font-family: monospace;"
-        placeholder="fn main() {&#10;  println!(&quot;Hello world!&quot;);&#10;}"
-        name="file_content"
-        id="editor"></textarea>
-    </div>
-  </div>
+
+  <div id="end_of_files"></div>
 
   <div class="field is-grouped is-pulled-right">
   {% if user %}
@@ -95,12 +109,10 @@ Create a new paste.
     </div>
   </div>
 
-  <!--
   <div class="field is-grouped">
     <div class="control">
-      <button class="button">Add file</button>
+      <button id="add_file" class="button requires-js" type="button">Add file</button>
     </div>
   </div>
-  -->
 </form>
 {% endblock main %}

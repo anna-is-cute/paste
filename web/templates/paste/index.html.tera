@@ -19,16 +19,16 @@
   crossorigin="anonymous"/>
 <script
   defer
-  src="/static/js/highlight.pack.js"
+  src="/static/js/highlight.pack.js?v={{ resources_version }}"
   integrity="sha384-JRRwtUx7H7KUP+6uHPOfXcRuX+cvNXZdsqluYW0tiu2BNVwdJCEQwOcCqhbmGysx"></script>
 <script
   defer
-  src="/static/js/highlight.js"
+  src="/static/js/highlight.js?v={{ resources_version }}"
   integrity="sha384-Eow6BxtNF/i7ypHEeTYp7tJ4IlKewmFioGA2pyd1XsoE2UkKe2RArHvQxVgD0NJS"></script>
 {% if not paste.author %}
 <script
   defer
-  src="/static/js/anonymous_paste.js"
+  src="/static/js/anonymous_paste.js?v={{ resources_version }}"
   integrity="sha384-nrjg+RRLhRJjf09WxW1dS+aaanBJ+IyngZ6iOG54n6M6SB0O+YOKXwmoZX5h8p8M"></script>
 {% endif %}
 {% endblock head %}

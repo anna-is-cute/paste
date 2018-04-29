@@ -15,13 +15,6 @@ Log in to your account.
 {% endblock header_subtitle %}
 
 {% block main %}
-{% if error %}
-<div class="notification is-warning">
-  {# <button class="delete"></button> #}
-  {{ error }}
-</div>
-{% endif %}
-
 <form method="post" action="/login">
   <div class="field">
     <label class="label">Username</label>

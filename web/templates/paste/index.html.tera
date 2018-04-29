@@ -128,12 +128,6 @@ untitled paste
   </div>
 </div>
 {% endif %}
-{% if error %}
-<div class="notification is-warning">
-  {# <button class="delete"></button> #}
-  {{ error }}
-</div>
-{% endif %}
 
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>

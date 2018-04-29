@@ -13,3 +13,15 @@ div.wrapper {
 .footer {
   background-color: $background;
 }
+
+textarea.paste {
+  font-family: monospace;
+}
+
+html.js .requires-no-js {
+  display: none;
+}
+
+html.no-js .requires-js {
+  display: none;
+}

@@ -16,18 +16,30 @@ use rocket::http::Status as HttpStatus;
 use rocket::request::Form;
 use rocket::response::Redirect;
 
+use serde_json;
+
 use uuid::Uuid;
 
 use std::str::FromStr;
 
+fn handle_non_js(upload: &PasteUpload) -> Vec<MultiFile> {
+  vec![
+    MultiFile {
+      name: upload.file_name.clone(),
+      content: upload.file_content.clone(),
+    },
+  ]
+}
+
+fn handle_js(input: &str) -> Result<Vec<MultiFile>> {
+  let files: Vec<MultiFile> = serde_json::from_str(input)?;
+
+  Ok(files)
+}
+
 #[post("/pastes", format = "application/x-www-form-urlencoded", data = "<paste>")]
 fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let paste = paste.into_inner();
-
-  if paste.file_content.is_empty() {
-    sess.data.insert("error".into(), "File content must not be empty.".into());
-    return Ok(Redirect::to("lastpage"));
-  }
 
   let anonymous = paste.anonymous.is_some();
 
@@ -39,6 +51,22 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
 
   if anonymous && paste.visibility == Visibility::Private {
     sess.data.insert("error".into(), "Cannot make anonymous private pastes.".into());
+    return Ok(Redirect::to("lastpage"));
+  }
+
+  let files = match paste.upload_json {
+    Some(ref json) => match handle_js(json) {
+      Ok(f) => f,
+      Err(_) => {
+        sess.data.insert("error".into(), "Invalid JSON. Did you tamper with the form?".into());
+        return Ok(Redirect::to("lastpage"));
+      },
+    },
+    None => handle_non_js(&paste),
+  };
+
+  if files.iter().any(|x| x.content.is_empty()) {
+    sess.data.insert("error".into(), "File content must not be empty.".into());
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -77,13 +105,15 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     sess.data.insert("deletion_key".into(), key.key().simple().to_string());
   }
 
-  let file_name = if paste.file_name.is_empty() {
-    None
-  } else {
-    Some(paste.file_name)
-  };
+  for file in files {
+    let file_name = if file.name.is_empty() {
+      None
+    } else {
+      Some(file.name)
+    };
 
-  id.create_file(&conn, file_name, Content::Text(paste.file_content))?;
+    id.create_file(&conn, file_name, Content::Text(file.content))?;
+  }
 
   match user {
     Some(ref u) => id.commit(u.name(), u.email(), "create paste via web")?,
@@ -105,7 +135,14 @@ struct PasteUpload {
   description: String,
   file_name: String,
   file_content: String,
+  upload_json: Option<String>,
   anonymous: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct MultiFile {
+  name: String,
+  content: String,
 }
 
 #[post("/users/<username>/<id>/delete", format = "application/x-www-form-urlencoded", data = "<deletion>")]

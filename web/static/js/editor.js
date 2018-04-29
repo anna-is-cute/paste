@@ -1,35 +1,137 @@
-var paste_editor = (function() {
-  var modelist = ace.require('ace/ext/modelist');
+var paste_num = 0;
+var paste_editors = {};
 
-  var theme;
-  if (localStorage.getItem("style") === "dark") {
-    theme = 'ace/theme/idle_fingers';
-  } else {
-    theme = 'ace/theme/tomorrow';
+(function() {
+  /**
+   * Create the upload array for handling multiple files.
+   */
+  function createUpload() {
+    var files = [];
+    for (var editor of paste_editors) {
+      var file = {
+        'name': editor.container.parentElement.parentElement.parentElement.querySelector('input[name=file_name]').value,
+        'content': editor.getValue()
+      };
+      files.push(file);
+    }
+    return files;
   }
 
-  var editor = ace.edit('editor');
+  /**
+   * Create an editor.
+   *
+   * @param {HTMLElement} parent The file container.
+   * @param {HTMLElement} el The element to convert into an editor.
+   */
+  function setUpEditor(parent, el) {
+    var modelist = ace.require('ace/ext/modelist');
 
-  editor.setTheme(theme);
+    var theme;
+    if (localStorage.getItem("style") === "dark") {
+      theme = 'ace/theme/idle_fingers';
+    } else {
+      theme = 'ace/theme/tomorrow';
+    }
 
-  var hidden = document.createElement('input');
-  hidden.type = 'hidden';
-  hidden.name = 'file_content';
-  hidden.id = 'hidden_content';
-  editor.container.insertAdjacentElement('afterend', hidden);
+    var editor = ace.edit(el);
 
-  editor.setOptions({
-    "maxLines": 25,
-    "minLines": 25,
-  });
+    editor.setTheme(theme);
 
-  document.getElementById('file_name').oninput = function(e) {
-    var mode = modelist.getModeForPath(e.target.value).mode;
-    editor.session.setMode(mode);
-  };
+    var hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    hidden.name = 'file_content';
+    hidden.id = 'hidden_content';
+    editor.container.insertAdjacentElement('afterend', hidden);
+
+    editor.setOptions({
+      "maxLines": 25,
+      "minLines": 25,
+    });
+
+    parent.querySelector('input[name=file_name]').oninput = function(e) {
+      var mode = modelist.getModeForPath(e.target.value).mode;
+      editor.session.setMode(mode);
+    };
+
+    paste_editors[paste_num] = editor;
+  }
+
+  function addFile() {
+    // get the base file for cloning (should be invisible if JS is running)
+    var base = document.getElementById('base_file');
+
+    // deep clone the base
+    var clone = base.cloneNode(true);
+
+    // show the editor by removing the requires-no-js class that was on the base
+    clone.classList.remove('requires-no-js');
+
+    paste_num += 1;
+    clone.id = 'file' + paste_num;
+
+    // set up an editor for each textarea in the base (should only be one)
+    for (var ta of clone.getElementsByTagName('textarea')) {
+      setUpEditor(clone, ta);
+    }
+
+    var to_delete = paste_num;
+    clone.querySelector('button[name=delete_button]').onclick = function() {
+      removeFile(to_delete);
+    };
+
+    clone.querySelector('div[name=name_field]').classList.add('is-grouped');
+
+    // add the editor to the dom
+    document.getElementById('end_of_files').insertAdjacentElement('beforebegin', clone);
+
+    updateButtons();
+  }
+
+  /**
+   * Remove a file. Will never remove the last file.
+   *
+   * @param {Number} num The number of the file to remove.
+   */
+  function removeFile(num) {
+    if (Object.keys(paste_editors).length === 1) {
+      return;
+    }
+
+    var file = document.getElementById('file' + num);
+
+    if (file === null) {
+      return;
+    }
+
+    delete paste_editors[num];
+
+    file.remove();
+
+    updateButtons();
+  }
+
+  function updateButtons() {
+    var enabled = Object.keys(paste_editors).length > 1;
+    for (var button of document.getElementsByName('delete_button')) {
+      if (enabled) {
+        button.disabled = false;
+      } else {
+        button.disabled = true;
+      }
+    }
+  }
+
+  document.getElementById('add_file').onclick = addFile;
+
   document.getElementById('paste_upload').onsubmit = function() {
-    document.getElementById('hidden_content').value = editor.session.getValue();
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.value = JSON.stringify(createUpload());
+    input.name = 'upload_json';
+
+    this.appendChild(input);
   };
 
-  return editor;
+  // add the initial file
+  addFile();
 })();

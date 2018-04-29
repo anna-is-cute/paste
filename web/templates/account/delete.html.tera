@@ -33,12 +33,6 @@
 {% endblock header %}
 
 {% block main %}
-{% if error %}
-<div class="notification is-warning">
-  {# <button class="delete"></button> #}
-  {{ error }}
-</div>
-{% endif %}
 <div class="message is-danger">
   <div class="message-header">
     <p>Whoa there!</p>

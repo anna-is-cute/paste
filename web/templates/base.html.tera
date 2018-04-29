@@ -5,15 +5,15 @@
 <link
   title="dark"
   rel="stylesheet alternate"
-  href="/static/css/dark-style.css"
+  href="/static/css/dark-style.css?v={{ resources_version }}"
   integrity="sha384-qgNQ/2L/2fLQR1wuvz5LeMnBL/Gvplq0K8zFGrvHP0JDrr+xtH97eE+eWHeMjlMq"/>
 <link
   title="light"
   rel="stylesheet"
-  href="/static/css/style.css"
+  href="/static/css/style.css?v={{ resources_version }}"
   integrity="sha384-qCkzTmThHbDfraI+HjgoOx0+uVItssyCh6C8chAMN1dT0y7pmRsLBB7vZW4J3ZLg"/>
 <script
-  src="/static/js/style.js"
+  src="/static/js/style.js?v={{ resources_version }}"
   integrity="sha384-gIJsa7ipunU0jwSDxUAFcwOg81q8YkNgI2VqbW3VV9+yxXFZUbC3lCuU8HpUFb6c"></script>
 <script
   defer
@@ -22,7 +22,7 @@
   crossorigin="anonymous"></script>
 <script
   defer
-  src="/static/js/navbar.js"
+  src="/static/js/navbar.js?v={{ resources_version }}"
   integrity="sha384-tuFBG8NY+WtXmhaV8FJGAYrmJONAZEcvJTJu7pTspReMNYVLkRMAPDUGjfJWn5fB"></script>
 
 <link rel="icon" sizes="16x16 32x32 48x48 64x64" href="/static/favicons/favicon.ico"/>

@@ -65,6 +65,11 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     None => handle_non_js(&paste),
   };
 
+  if files.is_empty() {
+    sess.data.insert("error".into(), "You must upload at least one file.".into());
+    return Ok(Redirect::to("lastpage"));
+  }
+
   if files.iter().any(|x| x.content.is_empty()) {
     sess.data.insert("error".into(), "File content must not be empty.".into());
     return Ok(Redirect::to("lastpage"));

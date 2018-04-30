@@ -34,7 +34,7 @@
     <a href="/users/{{ target.username }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
   {% endif %}
   {% if page == last_page %}
-  <a class="pagination-next" disabled>Next</a>
+    <a class="pagination-next" disabled>Next</a>
   {% else %}
     <a href="/users/{{ target.username }}?page={{ page + 1 }}" class="pagination-next">Next</a>
   {% endif %}
@@ -90,7 +90,7 @@
     <a href="/users/{{ target.username }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
   {% endif %}
   {% if page == last_page %}
-  <a class="pagination-next" disabled>Next</a>
+    <a class="pagination-next" disabled>Next</a>
   {% else %}
     <a href="/users/{{ target.username }}?page={{ page + 1 }}" class="pagination-next">Next</a>
   {% endif %}

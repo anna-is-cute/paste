@@ -30,6 +30,7 @@ fn get_page(username: String, page: u32, config: State<Config>, user: OptionalWe
 }
 
 fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+  // TODO: make PositiveNumber struct or similar (could make Positive<num::Integer> or something)
   if page == 0 {
     return Ok(Rst::Status(HttpStatus::NotFound));
   }
@@ -48,21 +49,22 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
       .filter(pastes::visibility.eq(Visibility::Public))
       .get_result(&*conn)?
   };
-  if i64::from((page - 1) * 15) >= total_pastes {
+  let page = i64::from(page);
+  let offset = (page - 1) * 15;
+  if offset >= total_pastes {
     return Ok(Rst::Status(HttpStatus::NotFound));
   }
-  let page = i64::from(page);
   let pastes: Vec<DbPaste> = if Some(target.id()) == user.as_ref().map(|x| x.id()) {
     DbPaste::belonging_to(&target)
       .order_by(pastes::created_at.desc())
-      .offset((page - 1) * 15)
+      .offset(offset)
       .limit(15)
       .load(&*conn)?
   } else {
     DbPaste::belonging_to(&target)
       .filter(pastes::visibility.eq(Visibility::Public))
       .order_by(pastes::created_at.desc())
-      .offset((page - 1) * 15)
+      .offset(offset)
       .limit(15)
       .load(&*conn)?
   };

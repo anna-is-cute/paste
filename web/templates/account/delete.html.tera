@@ -52,6 +52,7 @@
   </div>
 </div>
 <form action="/account/delete" method="post">
+  <input type="hidden" name="_method" value="delete"/>
   <div class="field has-addons">
     <div class="control is-expanded">
       <input name="username" class="input" type="text" placeholder="{{ user.username }}" required/>

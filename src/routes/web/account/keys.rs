@@ -50,7 +50,7 @@ struct NewKey {
   name: String,
 }
 
-#[post("/account/keys/<key>/delete")]
+#[delete("/account/keys/<key>/delete")]
 fn delete(key: UUID, user: OptionalWebUser, conn: DbConn) -> Result<Redirect> {
   let user = match *user {
     Some(ref u) => u,

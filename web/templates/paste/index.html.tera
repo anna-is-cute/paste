@@ -44,6 +44,7 @@ untitled paste
 {% block header_title %}
   {% if is_owner %}
     <form action="/users/{{ author_name }}/{{ paste.id }}/delete" method="post">
+      <input type="hidden" name="_method" value="delete"/>
       <button class="button is-danger is-large is-pulled-right" type="submit">
         <span class="icon is-large">
           <i class="fas fa-trash-alt"></i>
@@ -90,6 +91,7 @@ untitled paste
 {% if not paste.author %}
 <div id="deletion_modal" class="modal">
   <form action="/users/{{ author_name }}/{{ paste.id }}/delete" method="post">
+    <input type="hidden" name="_method" value="delete"/>
     <div class="modal-background closes-modal"></div>
     <div class="modal-card">
       <header class="modal-card-head">

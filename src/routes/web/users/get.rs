@@ -24,9 +24,14 @@ fn get(username: String, config: State<Config>, user: OptionalWebUser, sess: Ses
   _get(1, username, config, user, sess, conn)
 }
 
-#[get("/users/<username>/<page>", rank = 1)]
-fn get_page(username: String, page: u32, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
-  _get(page, username, config, user, sess, conn)
+#[get("/users/<username>?<params>")]
+fn get_page(username: String, params: PageParams, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
+  _get(params.page, username, config, user, sess, conn)
+}
+
+#[derive(Debug, FromForm)]
+struct PageParams {
+  page: u32,
 }
 
 fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
@@ -49,48 +54,54 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
       .filter(pastes::visibility.eq(Visibility::Public))
       .get_result(&*conn)?
   };
-  let page = i64::from(page);
-  let offset = (page - 1) * 15;
-  if offset >= total_pastes {
-    return Ok(Rst::Status(HttpStatus::NotFound));
-  }
-  let pastes: Vec<DbPaste> = if Some(target.id()) == user.as_ref().map(|x| x.id()) {
-    DbPaste::belonging_to(&target)
-      .order_by(pastes::created_at.desc())
-      .offset(offset)
-      .limit(15)
-      .load(&*conn)?
+  let outputs = if total_pastes == 0 && page == 1 {
+    Vec::default()
   } else {
-    DbPaste::belonging_to(&target)
-      .filter(pastes::visibility.eq(Visibility::Public))
-      .order_by(pastes::created_at.desc())
-      .offset(offset)
-      .limit(15)
-      .load(&*conn)?
+    let page = i64::from(page);
+    let offset = (page - 1) * 15;
+    if offset >= total_pastes {
+      return Ok(Rst::Status(HttpStatus::NotFound));
+    }
+    let pastes: Vec<DbPaste> = if Some(target.id()) == user.as_ref().map(|x| x.id()) {
+      DbPaste::belonging_to(&target)
+        .order_by(pastes::created_at.desc())
+        .offset(offset)
+        .limit(15)
+        .load(&*conn)?
+    } else {
+      DbPaste::belonging_to(&target)
+        .filter(pastes::visibility.eq(Visibility::Public))
+        .order_by(pastes::created_at.desc())
+        .offset(offset)
+        .limit(15)
+        .load(&*conn)?
+    };
+
+    let author = OutputAuthor::new(&target.id(), target.username());
+
+    let mut outputs = Vec::with_capacity(pastes.len());
+
+    for paste in pastes {
+      let id = PasteId(paste.id());
+
+      let files: Vec<OutputFile> = id.files(&conn)?
+        .iter()
+        .map(|x| x.as_output_file(false))
+        .collect::<result::Result<_, _>>()?;
+
+      outputs.push(Output::new(
+        paste.id(),
+        Some(author.clone()),
+        paste.name().clone(),
+        paste.description().clone(),
+        paste.visibility(),
+        None,
+        files,
+      ));
+    }
+
+    outputs
   };
-
-  let author = OutputAuthor::new(&target.id(), target.username());
-
-  let mut outputs = Vec::with_capacity(pastes.len());
-
-  for paste in pastes {
-    let id = PasteId(paste.id());
-
-    let files: Vec<OutputFile> = id.files(&conn)?
-      .iter()
-      .map(|x| x.as_output_file(false))
-      .collect::<result::Result<_, _>>()?;
-
-    outputs.push(Output::new(
-      paste.id(),
-      Some(author.clone()),
-      paste.name().clone(),
-      paste.description().clone(),
-      paste.visibility(),
-      None,
-      files,
-    ));
-  }
 
   let ctx = json!({
     "pastes": outputs,

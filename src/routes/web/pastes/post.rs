@@ -55,12 +55,12 @@ fn check_paste(paste: &PasteUpload, files: &[MultiFile]) -> result::Result<(), S
     return Err("Paste name must be less than or equal to 255 graphemes.".into());
   }
 
-  if paste.description.graphemes(true).count() > 255 {
-    return Err("Paste description must be less than or equal to 255 graphemes.".into());
+  if paste.description.len() > MAX_SIZE {
+    return Err("Paste description must be less than 25 KiB.".into());
   }
 
-  if paste.name.len() > MAX_SIZE {
-    return Err("Paste description must be less than 25 KiB.".into());
+  if paste.description.graphemes(true).count() > 255 {
+    return Err("Paste description must be less than or equal to 255 graphemes.".into());
   }
 
   if files.iter().any(|x| x.content.is_empty()) {

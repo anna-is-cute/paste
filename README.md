@@ -28,7 +28,7 @@ highlighting, anonymity, and secure authentication.
 
 ## Usage
 
-- Clone the repo
+- Clone the repo (`--recursive` for submodules)
 - Create a postgres database and user
 - `echo 'DATABASE_URL=postgres://username@/database' > .env`
 - `cargo install diesel_cli --no-default-features --features postgres`
@@ -38,3 +38,18 @@ highlighting, anonymity, and secure authentication.
 - Preferably use `ROCKET_ENV=prod` and set a secret key in `Rocket.toml`
   - See [Rocket docs](https://rocket.rs/guide/configuration/)
 - Reverse proxy and handle `/static/` with a webserver and not the included route
+
+### Usage (docker)
+
+- Clone the repo (`--recursive` for submodules)
+- `echo -e "DATABASE_URL=postgres://paste:paste@db/paste\n\nROCKET_ADDRESS=0.0.0.0" > .env`
+- Copy config.toml to paste.toml and edit `paste.toml`
+- `docker-compose up -d`
+- `docker exec -ti paste_paste_1 sh /root/post-install.sh`
+- `docker exec -ti paste_paste_1 sh /root/start.sh`
+
+To connect to postgres from within docker, run:
+
+```sh
+docker exec -ti paste_paste_1 psql
+```

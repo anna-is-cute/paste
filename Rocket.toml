@@ -6,5 +6,11 @@ template_dir = "web/templates"
 # certs = "path/to/certs.pem"
 # key = "path/to/key.pem"
 
+[global.limits]
+# change the form submit limit (max bytes allowed)
+forms = 524288 # 512 KiB
+# change the api submit limit (max bytes allowed)
+json = 1048576 # 1 MiB
+
 [development]
 secret_key = "gt/gjaCknItthlJK1Cn/WOhpccnW7sD6T3r8OAP4Mxg="

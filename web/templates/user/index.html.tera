@@ -13,7 +13,13 @@
 {% endblock header_title %}
 
 {% block header_subtitle %}
-{{ total }} paste{{ total | pluralize }}
+{# can't use pluralize filter because we're stuck on old Tera, which counts 0 as singular #}
+{{ total }}
+{% if total == 1 %}
+  paste
+{% else %}
+  pastes
+{% endif %}
 {% endblock header_subtitle %}
 
 {% block main %}

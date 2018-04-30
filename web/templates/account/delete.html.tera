@@ -4,7 +4,7 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}Account{% endblock title %}
+{% block title %}Delete account{% endblock title %}
 
 {% block header %}
 <section class="hero is-danger is-bold">
@@ -19,7 +19,7 @@
     </div>
   </div>
   <div class="hero-foot">
-    <nav class="tabs">
+    <nav class="tabs is-boxed">
       <div class="container">
         <ul>
           <li><a href="/account">Settings</a></li>

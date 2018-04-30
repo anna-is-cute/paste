@@ -14,31 +14,23 @@
 
 {% block title %}Account{% endblock title %}
 
-{% block header %}
-<section class="hero is-dark is-bold">
-  <div class="hero-body">
-    <div class="container">
-      <h1 class="title">
-        Account
-      </h1>
-      <h2 class="subtitle">
-        Manage account settings.
-      </h2>
-    </div>
-  </div>
-  <div class="hero-foot">
-    <nav class="tabs">
-      <div class="container">
-        <ul>
-          <li class="is-active"><a href="/account">Settings</a></li>
-          <li><a href="/account/keys">API keys</a></li>
-          <li><a href="/account/delete">Delete</a></li>
-        </ul>
-      </div>
-    </nav>
-  </div>
-</section>
-{% endblock header %}
+{% block header_title %}
+Account
+{% endblock header_title %}
+
+{% block header_subtitle %}
+Manage account settings.
+{% endblock header_subtitle %}
+
+{% block header_foot %}
+<nav class="tabs is-boxed">
+  <ul>
+    <li class="is-active"><a href="/account">Settings</a></li>
+    <li><a href="/account/keys">API keys</a></li>
+    <li><a href="/account/delete">Delete</a></li>
+  </ul>
+</nav>
+{% endblock header_foot %}
 
 {% block main %}
 <form action="/account" method="post">

@@ -6,7 +6,7 @@ use uuid::Uuid;
 use std::fmt::{self, Display, Formatter};
 use std::ops::Deref;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct SimpleUuid(Uuid);
 
 impl SimpleUuid {

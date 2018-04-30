@@ -56,7 +56,7 @@ impl OutputFile {
   }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct OutputAuthor {
   pub id: SimpleUuid,
   pub username: String,

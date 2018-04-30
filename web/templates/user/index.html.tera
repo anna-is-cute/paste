@@ -25,12 +25,12 @@
   {% if page == 1 %}
     <a class="pagination-previous" disabled>Previous</a>
   {% else %}
-    <a href="/users/{{ target.username }}/page/{{ page - 1 }}" class="pagination-previous">Previous</a>
+    <a href="/users/{{ target.username }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
   {% endif %}
   {% if page == last_page %}
   <a class="pagination-next" disabled>Next</a>
   {% else %}
-    <a href="/users/{{ target.username }}/page/{{ page + 1 }}" class="pagination-next">Next</a>
+    <a href="/users/{{ target.username }}?page={{ page + 1 }}" class="pagination-next">Next</a>
   {% endif %}
 </nav>
 
@@ -81,12 +81,12 @@
   {% if page == 1 %}
     <a class="pagination-previous" disabled>Previous</a>
   {% else %}
-    <a href="/users/{{ target.username }}/{{ page - 1 }}" class="pagination-previous">Previous</a>
+    <a href="/users/{{ target.username }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
   {% endif %}
   {% if page == last_page %}
   <a class="pagination-next" disabled>Next</a>
   {% else %}
-    <a href="/users/{{ target.username }}/{{ page + 1 }}" class="pagination-next">Next</a>
+    <a href="/users/{{ target.username }}?page={{ page + 1 }}" class="pagination-next">Next</a>
   {% endif %}
 </nav>
 {% endif %}

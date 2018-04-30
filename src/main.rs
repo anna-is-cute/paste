@@ -103,7 +103,7 @@ fn main() {
       routes::web::pastes::get::username_id,
       routes::web::pastes::get::users_username_id,
       routes::web::pastes::post::post,
-      routes::web::pastes::post::delete,
+      routes::web::pastes::delete::delete,
 
       routes::web::account::index::get,
       routes::web::account::index::post,
@@ -113,7 +113,7 @@ fn main() {
       routes::web::account::keys::delete,
 
       routes::web::account::delete::get,
-      routes::web::account::delete::post,
+      routes::web::account::delete::delete,
 
       routes::web::users::get::get,
       routes::web::users::get::get_page,

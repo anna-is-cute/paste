@@ -26,8 +26,8 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
   Ok(Rst::Template(Template::render("account/delete", ctx)))
 }
 
-#[post("/account/delete", format = "application/x-www-form-urlencoded", data = "<delete>")]
-fn post(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+#[delete("/account/delete", format = "application/x-www-form-urlencoded", data = "<delete>")]
+fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(Redirect::to("/login")),

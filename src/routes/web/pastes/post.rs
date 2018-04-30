@@ -18,8 +18,11 @@ use rocket::response::Redirect;
 
 use serde_json;
 
+use unicode_segmentation::UnicodeSegmentation;
+
 use uuid::Uuid;
 
+use std::result;
 use std::str::FromStr;
 
 fn handle_non_js(upload: &PasteUpload) -> Vec<MultiFile> {
@@ -35,6 +38,44 @@ fn handle_js(input: &str) -> Result<Vec<MultiFile>> {
   let files: Vec<MultiFile> = serde_json::from_str(input)?;
 
   Ok(files)
+}
+
+fn check_paste(paste: &PasteUpload, files: &[MultiFile]) -> result::Result<(), String> {
+  const MAX_SIZE: usize = 25 * 1024;
+
+  if files.is_empty() {
+    return Err("You must upload at least one file.".into());
+  }
+
+  if paste.name.len() > MAX_SIZE {
+    return Err("Paste name must be less than 25 KiB.".into());
+  }
+
+  if paste.name.graphemes(true).count() > 255 {
+    return Err("Paste name must be less than or equal to 255 graphemes.".into());
+  }
+
+  if paste.description.graphemes(true).count() > 255 {
+    return Err("Paste description must be less than or equal to 255 graphemes.".into());
+  }
+
+  if paste.name.len() > MAX_SIZE {
+    return Err("Paste description must be less than 25 KiB.".into());
+  }
+
+  if files.iter().any(|x| x.content.is_empty()) {
+    return Err("File content must not be empty.".into());
+  }
+
+  if files.iter().any(|x| x.name.len() > MAX_SIZE) {
+    return Err("File names must be less than 25 KiB.".into());
+  }
+
+  if files.iter().any(|x| x.name.graphemes(true).count() > 255) {
+    return Err("File names must be less than or equal to 255 graphemes.".into());
+  }
+
+  Ok(())
 }
 
 #[post("/pastes", format = "application/x-www-form-urlencoded", data = "<paste>")]
@@ -70,8 +111,8 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     return Ok(Redirect::to("lastpage"));
   }
 
-  if files.iter().any(|x| x.content.is_empty()) {
-    sess.data.insert("error".into(), "File content must not be empty.".into());
+  if let Err(e) = check_paste(&paste, &files) {
+    sess.data.insert("error".into(), e);
     return Ok(Redirect::to("lastpage"));
   }
 

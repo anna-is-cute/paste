@@ -36,7 +36,7 @@ impl Store {
   }
 
   pub fn validate_files(files: &[PasteFile]) -> result::Result<(), String> {
-    let mut names: Vec<&String> = files.iter().filter_map(|x| x.name.as_ref()).collect();
+    let mut names: Vec<String> = files.iter().filter_map(|x| x.name.as_ref()).map(|x| x.to_string()).collect();
     let len = names.len();
     names.sort();
     names.dedup();

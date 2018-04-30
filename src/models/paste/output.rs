@@ -26,7 +26,7 @@ impl Output {
       author,
       paste: Paste {
         metadata: Metadata {
-          name: name.map(|x| x.as_ref().to_string()),
+          name: name.map(|x| x.as_ref().to_string().into()),
           description: desc.map(|x| x.as_ref().to_string().into()),
           visibility: vis,
         },

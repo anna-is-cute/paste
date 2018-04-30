@@ -51,7 +51,7 @@ fn _get_all(query: Option<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>>
     .map(|x| AllPaste {
       id: x.id().into(),
       metadata: Metadata {
-        name: x.name().clone(),
+        name: x.name().clone().map(Into::into),
         description: x.description().clone().map(Into::into),
         visibility: x.visibility(),
       },

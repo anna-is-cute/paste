@@ -66,17 +66,24 @@
       <div class="navbar-end">
         <a class="navbar-item" href="/about">About</a>
         <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="/account">Account</a>
+        {% if user %}
+          <a
+            class="navbar-link"
+            href="/users/{{ user.username }}">{{ user.username }}</a>
+        {% else %}
+          <a class="navbar-link" href="/login">Log in</a>
+        {% endif %}
           <div class="navbar-dropdown">
           {% if user %}
             <span class="navbar-item">{{ user.name }}</span>
             <span class="navbar-item">{{ user.username }}</span>
             <hr class="navbar-divider"/>
+            <a class="navbar-item" href="/account">Settings</a>
+            <hr class="navbar-divider"/>
             <form action="/logout" method="post" class="navbar-item">
               <input type="submit" class="button" value="Log out"/>
             </form>
           {% else %}
-            <a class="navbar-item" href="/login">Log in</a>
             <a class="navbar-item" href="/register">Register</a>
           {% endif %}
             <hr class="navbar-divider"/>

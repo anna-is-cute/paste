@@ -17,23 +17,29 @@
 {% endblock header_subtitle %}
 
 {% block main %}
+{% set last_page = total / 15 %}
+{% set last_page = last_page | round(method="ceil") %}
+
+{% if last_page > 1 %}
 <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-  {% set last_page = total / 15 %}
-  {% set last_page = last_page | round(method="ceil") %}
   {% if page == 1 %}
     <a class="pagination-previous" disabled>Previous</a>
   {% else %}
-    <a href="/users/{{ target.username }}/{{ page - 1 }}" class="pagination-previous">Previous</a>
+    <a href="/users/{{ target.username }}/page/{{ page - 1 }}" class="pagination-previous">Previous</a>
   {% endif %}
   {% if page == last_page %}
   <a class="pagination-next" disabled>Next</a>
   {% else %}
-    <a href="/users/{{ target.username }}/{{ page + 1 }}" class="pagination-next">Next</a>
+    <a href="/users/{{ target.username }}/page/{{ page + 1 }}" class="pagination-next">Next</a>
   {% endif %}
 </nav>
 
 <hr/>
+{% endif %}
 
+{% if pastes | length == 0 %}
+  <em>It looks like {{ target.username }} has no pastes!</em>
+{% endif %}
 {% for paste in pastes %}
   <div class="box">
   {# {{ paste.id }} #}
@@ -66,6 +72,7 @@
   </div>
 {% endfor %}
 
+{% if last_page > 1 %}
 <hr/>
 
 <nav class="pagination is-centered" role="navigation" aria-label="pagination">
@@ -82,4 +89,5 @@
     <a href="/users/{{ target.username }}/{{ page + 1 }}" class="pagination-next">Next</a>
   {% endif %}
 </nav>
+{% endif %}
 {% endblock main %}

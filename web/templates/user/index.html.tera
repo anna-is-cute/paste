@@ -1,0 +1,85 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}
+{{ target.username }}'s pastes
+{% endblock title %}
+
+{% block header_title %}
+{{ target.username }}'s pastes
+{% endblock header_title %}
+
+{% block header_subtitle %}
+{{ total }} paste{{ total | pluralize }}
+{% endblock header_subtitle %}
+
+{% block main %}
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+  {% set last_page = total / 15 %}
+  {% set last_page = last_page | round(method="ceil") %}
+  {% if page == 1 %}
+    <a class="pagination-previous" disabled>Previous</a>
+  {% else %}
+    <a href="/users/{{ target.username }}/{{ page - 1 }}" class="pagination-previous">Previous</a>
+  {% endif %}
+  {% if page == last_page %}
+  <a class="pagination-next" disabled>Next</a>
+  {% else %}
+    <a href="/users/{{ target.username }}/{{ page + 1 }}" class="pagination-next">Next</a>
+  {% endif %}
+</nav>
+
+<hr/>
+
+{% for paste in pastes %}
+  <div class="box">
+  {# {{ paste.id }} #}
+  <h3 class="title">
+  <span class="icon is-pulled-right">
+  {% if paste.visibility == "public" %}
+    <i class="fas fa-globe" title="{{ paste.visibility }}"></i>
+  {% endif %}
+  {% if paste.visibility == "unlisted" %}
+    <i class="fas fa-eye-slash" title="{{ paste.visibility }}"></i>
+  {% endif %}
+  {% if paste.visibility == "private" %}
+    <i class="fas fa-lock" title="{{ paste.visibility }}"></i>
+  {% endif %}
+  </span>
+    <a href="/users/{{ target.username }}/{{ paste.id }}">
+  {% if paste.name %}
+      {{ paste.name }}
+  {% else %}
+      <em>untitled paste</em>
+  {% endif %}
+    </a>
+  </h3>
+  {% if paste.description %}
+  <h4 class="subtitle">
+    {{ paste.description }}
+  </h4>
+  {% endif %}
+    <em>{{ paste.files | length }} file{{ paste.files | length | pluralize }}</em>
+  </div>
+{% endfor %}
+
+<hr/>
+
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+  {% set last_page = total / 15 %}
+  {% set last_page = last_page | round(method="ceil") %}
+  {% if page == 1 %}
+    <a class="pagination-previous" disabled>Previous</a>
+  {% else %}
+    <a href="/users/{{ target.username }}/{{ page - 1 }}" class="pagination-previous">Previous</a>
+  {% endif %}
+  {% if page == last_page %}
+  <a class="pagination-next" disabled>Next</a>
+  {% else %}
+    <a href="/users/{{ target.username }}/{{ page + 1 }}" class="pagination-next">Next</a>
+  {% endif %}
+</nav>
+{% endblock main %}

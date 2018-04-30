@@ -6,7 +6,7 @@
   title="dark"
   rel="stylesheet alternate"
   href="/static/css/dark-style.css?v={{ resources_version }}"
-  integrity="sha384-ZSdIA8wFKMulLBNHJ4dpsMtSnx3Ho0y+14b79jqt5GTLXb14WqFVwWC6zp8VVT2h"/>
+  integrity="sha384-uPmUj+B1w9uUbfY0RVH87lIxT+ITMRAPmhIrFzGZ4okA+wxovpKBKrn2CUqFbIGU"/>
 <link
   title="light"
   rel="stylesheet"

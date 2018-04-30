@@ -1,6 +1,6 @@
 use database::PostgresPool;
 use database::models::users::User;
-use database::schema::users;
+use database::schema::users as users_db;
 
 use rocket::{State, Outcome};
 use rocket::http::Status as HttpStatus;
@@ -23,6 +23,7 @@ pub mod guards;
 pub mod index;
 pub mod pastes;
 pub mod static_files;
+pub mod users;
 
 pub use self::fairings::*;
 pub use self::guards::*;
@@ -58,7 +59,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for OptionalWebUser {
       Outcome::Forward(()) => return Outcome::Forward(()),
     };
 
-    match users::table.find(id).first(&*conn) {
+    match users_db::table.find(id).first(&*conn) {
       Ok(u) => Outcome::Success(OptionalWebUser(Some(u))),
       Err(_) => Outcome::Success(OptionalWebUser(None)),
     }

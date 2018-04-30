@@ -1,6 +1,6 @@
 #![cfg_attr(feature = "cargo-clippy", allow(option_option))]
 
-use models::paste::{Content, Description, Visibility};
+use models::paste::{Content, CountedText, Visibility};
 
 use serde::de::{Deserialize, Deserializer};
 
@@ -22,7 +22,7 @@ pub struct MetadataUpdate {
   pub name: Option<Option<String>>,
   // double option because description can be removed, changed, or left alone
   #[serde(default, deserialize_with = "double_option")]
-  pub description: Option<Option<Description>>,
+  pub description: Option<Option<CountedText>>,
   // single option because visibility can only be changed or left alone (all pastes must have
   // visibility)
   #[serde(default)]

@@ -29,18 +29,18 @@ pub struct Paste {
 /// Metadata describing a [`Paste`].
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Metadata {
-  pub name: Option<String>,
-  pub description: Option<Description>,
+  pub name: Option<CountedText>,
+  pub description: Option<CountedText>,
   #[serde(default)]
   pub visibility: Visibility,
 }
 
 #[derive(Debug, Clone, Serialize)]
-pub struct Description(String);
+pub struct CountedText(String);
 
-impl Description {
+impl CountedText {
   pub fn new(s: String) -> Self {
-    Description(s)
+    CountedText(s)
   }
 
   pub fn into_inner(self) -> String {
@@ -48,7 +48,7 @@ impl Description {
   }
 }
 
-impl<'de> Deserialize<'de> for Description {
+impl<'de> Deserialize<'de> for CountedText {
   fn deserialize<D>(des: D) -> Result<Self, D::Error>
     where D: Deserializer<'de>,
   {
@@ -64,11 +64,11 @@ impl<'de> Deserialize<'de> for Description {
       return Err(de::Error::invalid_length(graphemes, &"<= 255 extended grapheme clusters"));
     }
 
-    Ok(Description(string))
+    Ok(CountedText(string))
   }
 }
 
-impl Deref for Description {
+impl Deref for CountedText {
   type Target = str;
 
   fn deref(&self) -> &Self::Target {
@@ -76,11 +76,17 @@ impl Deref for Description {
   }
 }
 
-impl<S> From<S> for Description
+impl<S> From<S> for CountedText
   where S: AsRef<str>,
 {
   fn from(s: S) -> Self {
-    Description(s.as_ref().into())
+    CountedText(s.as_ref().into())
+  }
+}
+
+impl ToString for CountedText {
+  fn to_string(&self) -> String {
+    self.0.to_string()
   }
 }
 
@@ -164,7 +170,7 @@ impl<'v> FromFormValue<'v> for Visibility {
 /// A file in a [`Paste`].
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PasteFile {
-  pub name: Option<String>,
+  pub name: Option<CountedText>,
   pub content: Content,
 }
 

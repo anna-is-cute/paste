@@ -40,8 +40,8 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
   // TODO: refactor
   let np = NewPaste::new(
     *id,
-    info.metadata.name.clone(),
-    info.metadata.description.clone().map(|x| x.into_inner()),
+    info.metadata.name.as_ref().map(|x| x.to_string()),
+    info.metadata.description.as_ref().map(|x| x.to_string()),
     info.metadata.visibility,
     user.as_ref().map(|x| x.id()),
     None,
@@ -63,7 +63,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
 
   let files: Vec<DbFile> = info.files
     .into_iter()
-    .map(|x| id.create_file(&conn, x.name, x.content))
+    .map(|x| id.create_file(&conn, x.name.map(|x| x.to_string()), x.content))
     .collect::<Result<_, _>>()?;
 
   match *user {
@@ -84,8 +84,8 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
   let output = Output::new(
     *id,
     author,
-    info.metadata.name.clone(),
-    info.metadata.description.clone().map(|x| x.into_inner()),
+    info.metadata.name.as_ref().map(ToString::to_string),
+    info.metadata.description.as_ref().map(ToString::to_string),
     info.metadata.visibility,
     deletion_key,
     files,

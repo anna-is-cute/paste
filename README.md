@@ -2,6 +2,9 @@
 
 *A sensible pastebin.*
 
+[![build status](https://travis-ci.org/jkcclemens/paste.svg?branch=master)](https://travis-ci.org/jkcclemens/paste)
+[![dependency status](https://deps.rs/repo/github/jkcclemens/paste/status.svg)](https://deps.rs/repo/github/jkcclemens/paste)
+
 ## Unfinished: some features do not work
 
 See the issues.

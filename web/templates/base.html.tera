@@ -24,6 +24,10 @@
   defer
   src="/static/js/navbar.js?v={{ resources_version }}"
   integrity="sha384-tuFBG8NY+WtXmhaV8FJGAYrmJONAZEcvJTJu7pTspReMNYVLkRMAPDUGjfJWn5fB"></script>
+<script
+  defer
+  src="/static/js/notifications.js?v={{ resources_version }}"
+  integrity="sha384-r/COMCXZidHqUxfkz8wbkBh5eExZsD6xMtmHKWNKBD8+X7kEyGIoQFUspLFHtTKQ"></script>
 
 <link rel="icon" sizes="16x16 32x32 48x48 64x64" href="/static/favicons/favicon.ico"/>
 <!--[if IE]><link rel="shortcut icon" href="/static/favicons/favicon.ico"/><![endif]-->
@@ -118,13 +122,13 @@
     <div class="container">
       {% if error %}
       <div class="notification is-warning">
-        {# <button class="delete"></button> #}
+        <button class="delete"></button>
         {{ error }}
       </div>
       {% endif %}
       {% if info %}
       <div class="notification is-info">
-        {# <button class="delete"></button> #}
+        <button class="delete"></button>
         {{ info }}
       </div>
       {% endif %}

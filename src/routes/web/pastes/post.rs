@@ -41,6 +41,19 @@ fn check_paste(paste: &PasteUpload, files: &[MultiFile]) -> result::Result<(), S
     return Err("You must upload at least one file.".into());
   }
 
+  if files.len() > 1 {
+    let mut names: Vec<&str> = files.iter()
+      .filter(|x| !x.name.is_empty())
+      .map(|x| x.name.as_str())
+      .collect();
+    let len = names.len();
+    names.sort();
+    names.dedup();
+    if len != names.len() {
+      return Err("Duplicate file names are not allowed.".into());
+    }
+  }
+
   if paste.name.len() > MAX_SIZE {
     return Err("Paste name must be less than 25 KiB.".into());
   }

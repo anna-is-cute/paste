@@ -102,8 +102,13 @@ fn main() {
       routes::web::pastes::get::id,
       routes::web::pastes::get::username_id,
       routes::web::pastes::get::users_username_id,
+
+      routes::web::pastes::get::edit,
+
       routes::web::pastes::post::post,
+
       routes::web::pastes::delete::delete,
+      routes::web::pastes::patch::patch,
 
       routes::web::account::index::get,
       routes::web::account::index::post,

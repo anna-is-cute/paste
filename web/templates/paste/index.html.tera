@@ -43,14 +43,27 @@ untitled paste
 
 {% block header_title %}
   {% if is_owner %}
-    <form action="/users/{{ author_name }}/{{ paste.id }}/delete" method="post">
-      <input type="hidden" name="_method" value="delete"/>
-      <button class="button is-danger is-large is-pulled-right" type="submit">
-        <span class="icon is-large">
-          <i class="fas fa-trash-alt"></i>
-        </span>
-      </button>
-    </form>
+    <div class="field is-grouped is-pulled-right">
+      <div class="control">
+        <button class="button is-info is-large">
+          <a href="/users/{{ author_name }}/{{ paste.id }}/edit">
+            <span class="icon is-large">
+              <i class="fas fa-pencil-alt"></i>
+            </span>
+          </a>
+        </button>
+      </div>
+      <div class="control">
+        <form action="/users/{{ author_name }}/{{ paste.id }}/delete" method="post">
+          <input type="hidden" name="_method" value="delete"/>
+          <button class="button is-danger is-large" type="submit">
+            <span class="icon is-large">
+              <i class="fas fa-trash-alt"></i>
+            </span>
+          </button>
+        </form>
+      </div>
+    </div>
   {% endif %}
   {% if not paste.author %}
     <button class="button is-danger is-large is-pulled-right opens-modal">

@@ -21,6 +21,8 @@ before_cache:
   - rm -rfv target/debug/.fingerprint/paste-*
   - rm -rfv target/debug/build/paste-*
   - rm -rfv target/debug/deps/paste-*
+  # apparently cargo creates this file now? no reason to reupload the whole cache for it
+  - rm -fv target/.rustc_info.json
   - cargo clean -p paste
 rust:
   - nightly

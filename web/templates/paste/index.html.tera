@@ -131,6 +131,7 @@ untitled paste
 <div class="message is-info">
   <p class="message-header">
     Deletion key
+    <button class="delete" aria-label="delete"></button>
   </p>
   <div class="message-body">
     <p>

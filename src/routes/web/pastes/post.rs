@@ -17,6 +17,7 @@ use serde_json;
 
 use unicode_segmentation::UnicodeSegmentation;
 
+use std::borrow::Cow;
 use std::result;
 
 fn handle_non_js(upload: &PasteUpload) -> Vec<MultiFile> {
@@ -42,9 +43,13 @@ fn check_paste(paste: &PasteUpload, files: &[MultiFile]) -> result::Result<(), S
   }
 
   if files.len() > 1 {
-    let mut names: Vec<&str> = files.iter()
-      .filter(|x| !x.name.is_empty())
-      .map(|x| x.name.as_str())
+    let mut names: Vec<Cow<str>> = files.iter()
+      .enumerate()
+      .map(|(i, x)| if x.name.is_empty() {
+        Cow::Owned(format!("pastefile{}", i + 1))
+      } else {
+        Cow::Borrowed(x.name.as_str())
+      })
       .collect();
     let len = names.len();
     names.sort();

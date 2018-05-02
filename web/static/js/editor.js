@@ -12,6 +12,10 @@ var paste_editors = {};
         'name': editor.container.parentElement.parentElement.parentElement.querySelector('input[name=file_name]').value,
         'content': editor.getValue()
       };
+      var id = editor.container.parentElement.parentElement.parentElement.querySelector('input[name=id]');
+      if (id !== null) {
+        file['id'] = id.value;
+      }
       files.push(file);
     }
     return files;
@@ -53,6 +57,13 @@ var paste_editors = {};
       editor.session.setMode(mode);
     };
 
+    var to_delete = paste_num;
+    parent.querySelector('button[name=delete_button]').onclick = function() {
+      removeFile(to_delete);
+    };
+
+    parent.querySelector('div[name=name_field]').classList.add('is-grouped');
+
     paste_editors[paste_num] = editor;
   }
 
@@ -73,13 +84,6 @@ var paste_editors = {};
     for (var ta of clone.getElementsByTagName('textarea')) {
       setUpEditor(clone, ta);
     }
-
-    var to_delete = paste_num;
-    clone.querySelector('button[name=delete_button]').onclick = function() {
-      removeFile(to_delete);
-    };
-
-    clone.querySelector('div[name=name_field]').classList.add('is-grouped');
 
     // add the editor to the dom
     document.getElementById('end_of_files').insertAdjacentElement('beforebegin', clone);
@@ -121,6 +125,14 @@ var paste_editors = {};
     }
   }
 
+  function createEditors() {
+    for (var editor of document.querySelectorAll('textarea.editor')) {
+      paste_num += 1;
+      setUpEditor(editor.parentElement.parentElement.parentElement, editor);
+    }
+    updateButtons();
+  }
+
   document.getElementById('add_file').onclick = addFile;
 
   document.getElementById('paste_upload').onsubmit = function() {
@@ -132,6 +144,11 @@ var paste_editors = {};
     this.appendChild(input);
   };
 
-  // add the initial file
-  addFile();
+  // create any initial editors
+  createEditors();
+
+  // add an initial file if necessary
+  if (Object.keys(paste_editors).length === 0) {
+    addFile();
+  }
 })();

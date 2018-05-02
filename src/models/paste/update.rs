@@ -18,6 +18,7 @@ pub struct PasteUpdate {
 #[derive(Debug, Deserialize)]
 pub struct MetadataUpdate {
   // double option because name can be removed, changed, or left alone
+  // FIXME: use CountedText
   #[serde(default, deserialize_with = "double_option")]
   pub name: Option<Option<String>>,
   // double option because description can be removed, changed, or left alone

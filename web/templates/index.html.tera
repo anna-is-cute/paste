@@ -13,7 +13,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-zHwpfIPO8pPyBqt/4wZ2N27Ey20QtPJ+gTj4y+Hnr0ZS47zvFuNdu4aRylnUnaO7"></script>
+  integrity="sha384-P5nWRBFaIkYyI4jajiya/75d5Ajad+eIktSJKJcKNuupqyRDX3m2XxPjlnynZFhW"></script>
 {% endblock head %}
 
 {% block title %}
@@ -67,34 +67,7 @@ Create a new paste.
     </div>
   </div>
 
-  <div id="base_file" class="requires-no-js field">
-    <hr/>
-
-    <div name="name_field" class="field">
-      <div class="control is-expanded">
-        <input
-          name="file_name"
-          class="input"
-          type="text"
-          placeholder="File name with extension"/>
-      </div>
-      <div class="requires-js control">
-        <button name="delete_button" type="button" class="button is-danger">
-          <span class="icon">
-            <i class="fas fa-trash-alt"></i>
-          </span>
-        </button>
-      </div>
-    </div>
-    <div class="field">
-      <div class="control">
-        <textarea
-          name="file_content"
-          class="paste textarea"
-          placeholder="fn main() {&#10;  println!(&quot;Hello world!&quot;);&#10;}"></textarea>
-      </div>
-    </div>
-  </div>
+  {% include "paste/base_file" %}
 
   <div id="end_of_files"></div>
 

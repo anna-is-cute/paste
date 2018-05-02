@@ -15,7 +15,7 @@ use uuid::Uuid;
 use std::fs::File as FsFile;
 use std::io::Read;
 
-#[derive(Identifiable, AsChangeset, Queryable, Associations)]
+#[derive(Debug, Identifiable, AsChangeset, Queryable, Associations)]
 #[belongs_to(Paste)]
 pub struct File {
   id: Uuid,

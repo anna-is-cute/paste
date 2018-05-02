@@ -5,6 +5,10 @@ authors = ["Kyle Clemens <git@kyleclemens.com>"]
 
 build = "build.rs"
 
+[badges]
+travis-ci = { repository = "jkcclemens/paste", branch = "master" }
+maintenance = { status = "actively-developed" }
+
 [build-dependencies]
 # getting current commit
 git2 = "0.7"

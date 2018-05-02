@@ -4,6 +4,8 @@
 
 [![build status](https://travis-ci.org/jkcclemens/paste.svg?branch=master)](https://travis-ci.org/jkcclemens/paste)
 [![dependency status](https://deps.rs/repo/github/jkcclemens/paste/status.svg)](https://deps.rs/repo/github/jkcclemens/paste)
+[![patreon](https://img.shields.io/badge/donate-patreon-blue.svg)](https://www.patreon.com/jkcclemens/overview)
+[![paypal](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/jkcclemens)
 
 ## Unfinished: some features do not work
 
@@ -47,3 +49,7 @@ highlighting, anonymity, and secure authentication.
   - See [Rocket docs](https://rocket.rs/guide/configuration/)
 - `~/paste/run/paste config.toml`
 - Reverse proxy and handle `/static/` with a webserver and not the included route
+
+## Contact
+
+Come join IRC! irc.mozilla.org #paste

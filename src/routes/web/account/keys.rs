@@ -20,6 +20,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: Db
     "config": &*config,
     "user": user,
     "error": sess.data.remove("error"),
+    "info": sess.data.remove("info"),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
     "keys": &user.keys(&conn)?,

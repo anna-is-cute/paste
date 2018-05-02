@@ -29,6 +29,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Rst {
   let ctx = json!({
     "config": &*config,
     "error": sess.data.remove("error"),
+    "info": sess.data.remove("info"),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });

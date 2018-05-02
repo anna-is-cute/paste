@@ -20,6 +20,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
     "config": &*config,
     "user": user,
     "error": sess.data.remove("error"),
+    "info": sess.data.remove("info"),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });
@@ -41,6 +42,7 @@ fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Session,
   // TODO: sweep for unowned pastes on the disk and destroy them
   user.delete(&conn)?;
 
+  sess.data.insert("info".into(), "Account deleted".into());
   Ok(Redirect::to("/"))
 }
 

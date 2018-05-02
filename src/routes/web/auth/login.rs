@@ -23,6 +23,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Rst {
     "config": &*config,
     // TODO: this can be made into an optional request guard
     "error": sess.data.remove("error"),
+    "info": sess.data.remove("info"),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });

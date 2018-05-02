@@ -97,6 +97,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
     "is_owner": is_owner,
     "author_name": author_name,
     "error": sess.data.remove("error"),
+    "info": sess.data.remove("info"),
   });
 
   Ok(Rst::Template(Template::render("paste/index", ctx)))

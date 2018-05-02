@@ -17,7 +17,7 @@ script:
 # TODO: Remove unused dependency build files
 before_cache:
   - rm -rfv target/debug/paste.d
-  - rm -rfv target/debug/incremental/paste-*
+  - rm -rfv target/debug/incremental/{paste,build_script_build}-*
   - rm -rfv target/debug/.fingerprint/paste-*
   - rm -rfv target/debug/build/paste-*
   - rm -rfv target/debug/deps/paste-*

@@ -122,6 +122,12 @@
         {{ error }}
       </div>
       {% endif %}
+      {% if info %}
+      <div class="notification is-info">
+        {# <button class="delete"></button> #}
+        {{ info }}
+      </div>
+      {% endif %}
 {% block main %}{% endblock main %}
     </div>
   </main>

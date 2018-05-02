@@ -39,7 +39,6 @@ fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, c
     Some(u) => u,
     None => return Ok(Redirect::to("/login")),
   };
-  println!("{:#?}", update);
 
   let update = update.into_inner();
 

@@ -113,6 +113,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
     "error": sess.data.remove("error"),
+    "info": sess.data.remove("info"),
   });
   Ok(Rst::Template(Template::render("user/index", ctx)))
 }

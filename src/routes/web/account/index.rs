@@ -27,6 +27,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
     "config": &*config,
     "user": user,
     "error": sess.data.remove("error"),
+    "info": sess.data.remove("info"),
     "server_version": ::SERVER_VERSION,
     "resources_version": &*::RESOURCES_VERSION,
   });
@@ -92,6 +93,7 @@ fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, c
 
   user.update(&conn)?;
 
+  sess.data.insert("info".into(), "Account updated.".into());
   Ok(Redirect::to("/account"))
 }
 

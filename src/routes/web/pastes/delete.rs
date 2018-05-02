@@ -85,6 +85,7 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: Op
 
   id.delete(&conn)?;
 
+  sess.data.insert("info".into(), "Paste deleted.".into());
   Ok(Rst::Redirect(Redirect::to("/")))
 }
 

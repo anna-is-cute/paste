@@ -52,4 +52,4 @@ highlighting, anonymity, and secure authentication.
 
 ## Contact
 
-Come join IRC! irc.mozilla.org #paste
+Join the [Discord server](https://discord.gg/EnqSwJK)!

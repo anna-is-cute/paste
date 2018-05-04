@@ -62,7 +62,7 @@ Change this paste<span class="requires-js"> and its files</span>.
   </ul>
 </nav>
 
-<form id="paste_upload" method="post" action="/users/{{ author_name }}/{{ paste.id }}/edit">
+<form id="paste_upload" method="post" action="/users/{{ author_name }}/{{ paste.id }}">
   <input type="hidden" name="_method" value="patch"/>
   <div>
     <div class="field is-grouped">

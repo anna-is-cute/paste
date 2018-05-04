@@ -111,7 +111,7 @@ fn main() {
       routes::web::pastes::patch::patch,
 
       routes::web::account::index::get,
-      routes::web::account::index::post,
+      routes::web::account::index::patch,
 
       routes::web::account::keys::get,
       routes::web::account::keys::post,

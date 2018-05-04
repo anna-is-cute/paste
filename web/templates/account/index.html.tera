@@ -34,6 +34,7 @@ Manage account settings.
 
 {% block main %}
 <form action="/account" method="post">
+  <input type="hidden" name="_method" value="patch"/>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <label class="label">Name</label>

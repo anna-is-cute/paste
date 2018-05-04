@@ -58,7 +58,7 @@ untitled paste
         </button>
       </div>
       <div class="control">
-        <form action="/users/{{ author_name }}/{{ paste.id }}/delete" method="post">
+        <form action="/users/{{ author_name }}/{{ paste.id }}" method="post">
           <input type="hidden" name="_method" value="delete"/>
           <button class="button is-danger is-large" type="submit">
             <span class="icon is-large">
@@ -107,7 +107,7 @@ untitled paste
 {% block main %}
 {% if not paste.author %}
 <div id="deletion_modal" class="modal">
-  <form action="/users/{{ author_name }}/{{ paste.id }}/delete" method="post">
+  <form action="/users/{{ author_name }}/{{ paste.id }}" method="post">
     <input type="hidden" name="_method" value="delete"/>
     <div class="modal-background closes-modal"></div>
     <div class="modal-card">

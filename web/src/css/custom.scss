@@ -18,6 +18,51 @@ textarea.paste {
   font-family: monospace;
 }
 
+button.button-link {
+  &.navbar-item {
+    color: inherit;
+    width: 100%;
+    text-align: left;
+
+    &:active {
+      color: $navbar-dropdown-item-active-color;
+      background-color: $navbar-dropdown-item-active-background-color;
+    }
+
+    &:focus {
+      color: inherit;
+    }
+
+    &:hover {
+      color: $navbar-dropdown-item-hover-color;
+      background-color: $navbar-dropdown-item-hover-background-color;
+    }
+  }
+
+  &:hover {
+    color: $link-hover;
+    border-color: $link-hover-border;
+  }
+
+  &:focus {
+    color: $link-focus;
+    border-color: $link-focus-border;
+  }
+
+  &:active {
+    color: $link-active;
+    border-color: $link-active-border;
+  }
+
+  color: $link;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+  cursor: pointer;
+}
+
 html.js .requires-no-js {
   display: none;
 }

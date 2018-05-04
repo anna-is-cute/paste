@@ -25,3 +25,11 @@ html.js .requires-no-js {
 html.no-js .requires-js {
   display: none;
 }
+
+td.hljs-ln-numbers {
+  text-align: right;
+}
+
+td.hljs-ln-code {
+  padding-left: .5rem !important;
+}

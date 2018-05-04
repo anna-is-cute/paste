@@ -1,2 +1,6 @@
 @import "bulma/bulma";
-@import "custom"
+@import "custom";
+
+td.hljs-ln-numbers {
+  color: hsl(228, 8%, 80%)
+}

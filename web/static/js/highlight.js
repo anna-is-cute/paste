@@ -13,5 +13,6 @@
     }
     pre.classList.add('language-' + suffix);
     hljs.highlightBlock(pre);
+    hljs.lineNumbersBlock(pre);
   }
 })();

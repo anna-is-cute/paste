@@ -72,7 +72,7 @@ impl Paste {
       return Ok(());
     }
     if let Some(ref update) = update.name {
-      self.set_name(update.clone());
+      self.set_name(update.clone().map(|x| x.into_inner()));
     }
     if let Some(ref update) = update.visibility {
       self.set_visibility(*update);

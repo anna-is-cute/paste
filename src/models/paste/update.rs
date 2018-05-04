@@ -20,7 +20,7 @@ pub struct MetadataUpdate {
   // double option because name can be removed, changed, or left alone
   // FIXME: use CountedText
   #[serde(default, deserialize_with = "double_option")]
-  pub name: Option<Option<String>>,
+  pub name: Option<Option<CountedText>>,
   // double option because description can be removed, changed, or left alone
   #[serde(default, deserialize_with = "double_option")]
   pub description: Option<Option<CountedText>>,

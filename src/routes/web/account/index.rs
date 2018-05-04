@@ -34,8 +34,8 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
   Ok(Rst::Template(Template::render("account/index", ctx)))
 }
 
-#[post("/account", format = "application/x-www-form-urlencoded", data = "<update>")]
-fn post(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+#[patch("/account", format = "application/x-www-form-urlencoded", data = "<update>")]
+fn patch(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let mut user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(Redirect::to("/login")),

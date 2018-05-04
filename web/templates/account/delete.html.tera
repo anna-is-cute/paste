@@ -51,7 +51,7 @@
     </p>
   </div>
 </div>
-<form action="/account/delete" method="post">
+<form action="/account" method="post">
   <input type="hidden" name="_method" value="delete"/>
   <div class="field has-addons">
     <div class="control is-expanded">

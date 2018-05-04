@@ -22,7 +22,7 @@ button.button-link {
   &.navbar-item {
     color: inherit;
     width: 100%;
-    text-align: left;
+    text-align: inherit;
 
     &:active {
       color: $navbar-dropdown-item-active-color;

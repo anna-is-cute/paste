@@ -6,12 +6,12 @@
   title="dark"
   rel="stylesheet alternate"
   href="/static/css/dark-style.css?v={{ resources_version }}"
-  integrity="sha384-KilIXOWYgPnz/Xm2DAweAfOjbBRA3xbZ1nyBVitG6dUcHC+iRKshKFVk55XQp4uV"/>
+  integrity="sha384-EveepxywQqd8in8IzSC+WBWyj7WJRBbW5zIa6os3PHYlRgTliFDl+XtuatzG4/TB"/>
 <link
   title="light"
   rel="stylesheet"
   href="/static/css/style.css?v={{ resources_version }}"
-  integrity="sha384-PBn6U13F4b0uzmTbp1y26E3xnwHPb2//EPvF8JnpdqqOvE/FMF/km0FSrjWNeUOK"/>
+  integrity="sha384-Zn0Hri4e2YLZdLN1ql1/sStg9CMJhF0NMHEhKNMcfIfkej1krZA3xUzXwLzxf+BY"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
   integrity="sha384-gIJsa7ipunU0jwSDxUAFcwOg81q8YkNgI2VqbW3VV9+yxXFZUbC3lCuU8HpUFb6c"></script>
@@ -83,9 +83,8 @@
             <span class="navbar-item">{{ user.username }}</span>
             <hr class="navbar-divider"/>
             <a class="navbar-item" href="/account">Settings</a>
-            <hr class="navbar-divider"/>
-            <form action="/logout" method="post" class="navbar-item">
-              <input type="submit" class="button" value="Log out"/>
+            <form action="/logout" method="post">
+              <button type="submit" class="navbar-item button-link">Log out</button>
             </form>
           {% else %}
             <a class="navbar-item" href="/register">Register</a>

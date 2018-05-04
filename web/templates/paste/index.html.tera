@@ -23,8 +23,12 @@
   integrity="sha384-JRRwtUx7H7KUP+6uHPOfXcRuX+cvNXZdsqluYW0tiu2BNVwdJCEQwOcCqhbmGysx"></script>
 <script
   defer
+  src="/static/js/highlightjs-line-numbers/highlightjs-line-numbers.js?v={{ resources_version }}"
+  integrity="sha384-plNgJByMro5ZF548W6rBtkOjm5ahURP5zKSUEW7yl9++jPTSeeD9zB2os+UnWMwn"></script>
+<script
+  defer
   src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-Eow6BxtNF/i7ypHEeTYp7tJ4IlKewmFioGA2pyd1XsoE2UkKe2RArHvQxVgD0NJS"></script>
+  integrity="sha384-3gez50aAkL0ssGxSDd98bdW5kF3FxOxVuQCzhqhNwdtwOxJgFhy9lPHXqRTmh29k"></script>
 {% if not paste.author %}
 <script
   defer

@@ -6,6 +6,83 @@ use serde::de::{Deserialize, Deserializer};
 
 use uuid::Uuid;
 
+use std::fmt::{self, Debug, Formatter};
+
+pub enum Update<V> {
+  Ignore,
+  Set(V),
+  Remove,
+}
+
+impl<V> Update<V> {
+  pub fn is_ignore(&self) -> bool {
+    match *self {
+      Update::Ignore => true,
+      _ => false,
+    }
+  }
+
+  pub fn is_remove(&self) -> bool {
+    match *self {
+      Update::Remove => true,
+      _ => false,
+    }
+  }
+
+  pub fn is_set(&self) -> bool {
+    match *self {
+      Update::Set(_) => true,
+      _ => false,
+    }
+  }
+
+  pub fn unwrap_set(self) -> V {
+    match self {
+      Update::Ignore => panic!("unwrap_set on Ignore"),
+      Update::Set(v) => v,
+      Update::Remove => panic!("unwrap_set on Remove"),
+    }
+  }
+}
+
+impl<V> Default for Update<V> {
+  fn default() -> Self {
+    Update::Ignore
+  }
+}
+
+impl<V> Debug for Update<V>
+  where V: Debug,
+{
+  fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+    match *self {
+      Update::Ignore => f.write_str("Ignore"),
+      Update::Remove => f.write_str("Remove"),
+      Update::Set(ref c) => {
+        f.write_str("Set(")?;
+        Debug::fmt(c, f)?;
+        f.write_str(")")
+      }
+    }
+  }
+}
+
+impl<'de, V> Deserialize<'de> for Update<V>
+  where V: Deserialize<'de>,
+{
+  fn deserialize<D>(de: D) -> Result<Update<V>, D::Error>
+    where D: Deserializer<'de>,
+  {
+    let up = match Option::deserialize(de).map(Some)? {
+      None => Update::Ignore,
+      Some(None) => Update::Remove,
+      Some(Some(v)) => Update::Set(v),
+    };
+
+    Ok(up)
+  }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct PasteUpdate {
   #[serde(flatten)]
@@ -19,11 +96,11 @@ pub struct PasteUpdate {
 pub struct MetadataUpdate {
   // double option because name can be removed, changed, or left alone
   // FIXME: use CountedText
-  #[serde(default, deserialize_with = "double_option")]
-  pub name: Option<Option<CountedText>>,
+  #[serde(default)]
+  pub name: Update<CountedText>,
   // double option because description can be removed, changed, or left alone
-  #[serde(default, deserialize_with = "double_option")]
-  pub description: Option<Option<CountedText>>,
+  #[serde(default)]
+  pub description: Update<CountedText>,
   // single option because visibility can only be changed or left alone (all pastes must have
   // visibility)
   #[serde(default)]
@@ -40,13 +117,6 @@ pub struct PasteFileUpdate {
   #[serde(default)]
   pub name: Option<String>,
   // double option because content can be removed (file deletion), changed, or left alone
-  #[serde(default, deserialize_with = "double_option")]
-  pub content: Option<Option<Content>>,
-}
-
-fn double_option<'de, T, D>(de: D) -> Result<Option<Option<T>>, D::Error>
-  where T: Deserialize<'de>,
-        D: Deserializer<'de>
-{
-  Deserialize::deserialize(de).map(Some)
+  #[serde(default)]
+  pub content: Update<Content>,
 }

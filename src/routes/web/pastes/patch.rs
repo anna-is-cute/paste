@@ -6,7 +6,7 @@ use database::schema::{users, files};
 use errors::*;
 use models::id::PasteId;
 use models::paste::{Visibility, Content};
-use models::paste::update::MetadataUpdate;
+use models::paste::update::{MetadataUpdate, Update};
 use routes::web::{OptionalWebUser, Rst, Session};
 
 use diesel;
@@ -128,8 +128,8 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
   }
 
   let metadata = MetadataUpdate {
-    name: double_opt(update.name, paste.name()),
-    description: double_opt(update.description, paste.description()),
+    name: into_update(update.name, paste.name()),
+    description: into_update(update.description, paste.description()),
     visibility: if update.visibility == paste.visibility() {
       None
     } else {
@@ -248,7 +248,7 @@ struct MultiFile {
   content: String,
 }
 
-fn double_opt<N, O, S>(new: N, old: Option<O>) -> Option<Option<S>>
+fn into_update<N, O, S>(new: N, old: Option<O>) -> Update<S>
   where N: Into<String>,
         O: AsRef<str>,
         S: From<String>,
@@ -256,10 +256,10 @@ fn double_opt<N, O, S>(new: N, old: Option<O>) -> Option<Option<S>>
   let new = new.into();
   let old = old.as_ref().map(|x| x.as_ref());
   if new.is_empty() && old.is_some() {
-    Some(None)
+    Update::Remove
   } else if Some(new.as_str()) == old {
-    None
+    Update::Ignore
   } else {
-    Some(Some(new.into()))
+    Update::Set(new.into())
   }
 }

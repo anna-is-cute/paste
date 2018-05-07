@@ -1,7 +1,7 @@
 use database::DbConn;
 use errors::*;
 use models::id::PasteId;
-use models::paste::update::MetadataUpdate;
+use models::paste::update::{MetadataUpdate, Update};
 use models::paste::Visibility;
 use models::status::ErrorKind;
 use super::super::schema::pastes;
@@ -66,20 +66,24 @@ impl Paste {
   }
 
   pub fn update(&mut self, conn: &DbConn, update: &MetadataUpdate) -> Result<()> {
-    let changed = update.name.is_some()
+    let changed = !update.name.is_ignore()
       || update.visibility.is_some()
-      || update.description.is_some();
+      || !update.description.is_ignore();
     if !changed {
       return Ok(());
     }
-    if let Some(ref update) = update.name {
-      self.set_name(update.clone().map(|x| x.into_inner()));
+    match update.name {
+      Update::Set(ref s) => self.set_name(Some(s.clone().into_inner())),
+      Update::Remove => self.set_name(None::<String>),
+      _ => {},
+    }
+    match update.description {
+      Update::Set(ref s) => self.set_description(Some(s.clone().into_inner())),
+      Update::Remove => self.set_description(None::<String>),
+      _ => {},
     }
     if let Some(ref update) = update.visibility {
       self.set_visibility(*update);
-    }
-    if let Some(ref update) = update.description {
-      self.set_description(update.clone().map(|x| x.into_inner()));
     }
     diesel::update(pastes::table)
       .filter(pastes::id.eq(self.id))

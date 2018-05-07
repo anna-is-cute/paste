@@ -77,7 +77,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     .collect::<Result<_, _>>()?;
 
   let author = match *user {
-    Some(ref user) => Some(OutputAuthor::new(&user.id(), user.username().clone())),
+    Some(ref user) => Some(OutputAuthor::new(&user.id(), user.username())),
     None => None,
   };
 

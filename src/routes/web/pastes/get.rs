@@ -77,8 +77,8 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
   let output = Output::new(
     *id,
     author,
-    paste.name().clone(),
-    paste.description().clone(),
+    paste.name(),
+    paste.description(),
     paste.visibility(),
     None,
     files,
@@ -156,8 +156,8 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
   let output = Output::new(
     *id,
     author,
-    paste.name().clone(),
-    paste.description().clone(),
+    paste.name(),
+    paste.description(),
     paste.visibility(),
     None,
     files,

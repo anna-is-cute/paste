@@ -50,8 +50,8 @@ fn _get_all(query: Option<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>>
     .map(|x| AllPaste {
       id: x.id(),
       metadata: Metadata {
-        name: x.name().clone().map(Into::into),
-        description: x.description().clone().map(Into::into),
+        name: x.name().map(Into::into),
+        description: x.description().map(Into::into),
         visibility: x.visibility(),
       },
     })
@@ -97,7 +97,7 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
   let author = match paste.author_id() {
     Some(author) => {
       let user: User = users::table.find(author).first(&*conn)?;
-      Some(OutputAuthor::new(&author, user.username().clone()))
+      Some(OutputAuthor::new(&author, user.username()))
     },
     None => None
   };
@@ -105,8 +105,8 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
   let output = Output::new(
     *id,
     author,
-    paste.name().clone(),
-    paste.description().clone(),
+    paste.name(),
+    paste.description(),
     paste.visibility(),
     None,
     files,

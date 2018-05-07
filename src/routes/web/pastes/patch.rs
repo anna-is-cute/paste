@@ -1,10 +1,9 @@
 use database::DbConn;
-use database::models::files::File as DbFile;
 use database::models::pastes::Paste as DbPaste;
 use database::models::users::User;
 use database::schema::{users, files};
 use errors::*;
-use models::id::PasteId;
+use models::id::{PasteId, FileId};
 use models::paste::{Visibility, Content};
 use models::paste::update::{MetadataUpdate, Update};
 use routes::web::{OptionalWebUser, Rst, Session};
@@ -19,8 +18,6 @@ use rocket::response::Redirect;
 use serde_json;
 
 use unicode_segmentation::UnicodeSegmentation;
-
-use uuid::Uuid;
 
 use std::borrow::Cow;
 use std::fs::OpenOptions;
@@ -146,7 +143,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
 
   let mut db_files = paste_id.files(&conn)?;
   {
-    let db_files_ids: Vec<Uuid> = db_files.iter().map(|x| x.id()).collect();
+    let db_files_ids: Vec<FileId> = db_files.iter().map(|x| x.id()).collect();
     // verify all files before making changes
     if files.iter().filter_map(|x| x.id).any(|x| !db_files_ids.contains(&x)) {
       sess.data.insert("error".into(), "An invalid file ID was provided.".into());
@@ -154,17 +151,12 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
     }
   }
 
-  {
-    // filter out IDs that are in the updated files to find the removed files
-    let removed: Vec<&DbFile> = db_files
-      .iter()
-      .filter(|x| !files.iter().any(|f| f.id == Some(x.id())))
-      .collect();
-
-    for file in removed {
-      paste_id.delete_file(&conn, file.id())?;
-    }
-  }
+  // filter out IDs that are in the updated files to find the removed files
+  let removed: Vec<FileId> = db_files
+    .iter()
+    .filter(|x| !files.iter().any(|f| f.id == Some(x.id())))
+    .map(|x| x.id())
+    .collect();
 
   {
     let mut names: Vec<Cow<str>> = files
@@ -224,6 +216,10 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
     }
   }
 
+  for file in removed {
+    paste_id.delete_file(&conn, file)?;
+  }
+
   // commit if any files were changed
   // TODO: more descriptive commit message
   paste_id.commit_if_dirty(user.name(), user.email(), "update paste via web")?;
@@ -243,7 +239,7 @@ struct PasteUpdate {
 #[derive(Debug, Deserialize)]
 struct MultiFile {
   #[serde(default)]
-  id: Option<Uuid>,
+  id: Option<FileId>,
   name: String,
   content: String,
 }

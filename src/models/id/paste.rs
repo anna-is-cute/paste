@@ -5,6 +5,7 @@ use database::schema::{files, pastes};
 use errors::*;
 use models::paste::Content;
 use store::Store;
+use super::FileId;
 
 use diesel;
 use diesel::prelude::*;
@@ -113,7 +114,7 @@ impl PasteId {
     Ok(format!("pastefile{}", self.len(conn)? + 1))
   }
 
-  pub fn delete_file(&self, conn: &DbConn, id: Uuid) -> Result<()> {
+  pub fn delete_file(&self, conn: &DbConn, id: FileId) -> Result<()> {
     diesel::delete(files::table.filter(files::id.eq(id))).execute(&**conn)?;
     fs::remove_file(self.files_directory().join(id.simple().to_string()))?;
 

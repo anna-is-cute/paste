@@ -1,6 +1,6 @@
 use database::DbConn;
 use database::schema::files;
-use models::id::PasteId;
+use models::id::{FileId, PasteId};
 use models::paste::update::{PasteFileUpdate, Update};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, RequiredUser};
@@ -11,8 +11,6 @@ use diesel::prelude::*;
 use rocket::http::Status as HttpStatus;
 
 use rocket_contrib::Json;
-
-use uuid::Uuid;
 
 use std::fs::OpenOptions;
 use std::io::Write;
@@ -50,7 +48,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
 
   let mut db_files = paste_id.files(&conn)?;
   {
-    let db_files_ids: Vec<Uuid> = db_files.iter().map(|x| x.id()).collect();
+    let db_files_ids: Vec<FileId> = db_files.iter().map(|x| x.id()).collect();
     let db_files_names: Vec<&str> = db_files.iter().map(|x| x.name()).collect();
     // verify all files before making changes
     if info.iter().filter_map(|x| x.id).any(|x| !db_files_ids.contains(&x)) {

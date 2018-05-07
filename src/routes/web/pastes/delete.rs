@@ -4,7 +4,7 @@ use database::models::pastes::Paste as DbPaste;
 use database::models::users::User;
 use database::schema::{users, deletion_keys};
 use errors::*;
-use models::id::PasteId;
+use models::id::{DeletionKeyId, PasteId};
 use models::paste::Visibility;
 use routes::web::{Rst, OptionalWebUser, Session};
 
@@ -42,7 +42,7 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: Op
   }
 
   match paste.author_id() {
-    Some(author) => if Some(*author) != user.as_ref().map(|x| x.id()) {
+    Some(author) => if Some(author) != user.as_ref().map(|x| x.id()) {
       if paste.visibility() == Visibility::Private {
         return Ok(Rst::Status(HttpStatus::NotFound));
       } else {
@@ -59,7 +59,7 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: Op
       };
 
       let key = match Uuid::from_str(&key) {
-        Ok(k) => k,
+        Ok(k) => DeletionKeyId(k),
         Err(_) => {
           sess.data.insert("error".into(), "Invalid deletion key.".into());
           return Ok(Rst::Redirect(Redirect::to("lastpage")));

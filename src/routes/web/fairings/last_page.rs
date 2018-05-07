@@ -1,3 +1,4 @@
+use models::id::SessionId;
 use routes::web::Session;
 
 use rocket::Outcome;
@@ -7,14 +8,12 @@ use rocket::http::hyper::header::Location;
 use rocket::request::Request;
 use rocket::response::Response;
 
-use uuid::Uuid;
-
 use std::collections::HashMap;
 use std::sync::RwLock;
 
 #[derive(Debug, Default)]
 pub struct LastPage {
-  map: RwLock<HashMap<Uuid, String>>,
+  map: RwLock<HashMap<SessionId, String>>,
 }
 
 impl LastPage {

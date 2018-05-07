@@ -56,7 +56,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
   let (expected_username, author): (String, Option<OutputAuthor>) = match paste.author_id() {
     Some(author) => {
       let user: User = users::table.find(author).first(&*conn)?;
-      (user.username().to_string(), Some(OutputAuthor::new(&author, user.username().to_string())))
+      (user.username().to_string(), Some(OutputAuthor::new(author, user.username().to_string())))
     },
     None => ("anonymous".into(), None),
   };
@@ -75,7 +75,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
     .collect::<result::Result<_, _>>()?;
 
   let output = Output::new(
-    *id,
+    id,
     author,
     paste.name(),
     paste.description(),
@@ -84,7 +84,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
     files,
   );
 
-  let is_owner = paste.author_id().is_some() && user.as_ref().map(|x| x.id()) == *paste.author_id();
+  let is_owner = paste.author_id().is_some() && user.as_ref().map(|x| x.id()) == paste.author_id();
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
 
@@ -119,7 +119,7 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
   let (expected_username, author): (String, Option<OutputAuthor>) = match paste.author_id() {
     Some(author) => {
       let user: User = users::table.find(author).first(&*conn)?;
-      (user.username().to_string(), Some(OutputAuthor::new(&author, user.username().to_string())))
+      (user.username().to_string(), Some(OutputAuthor::new(author, user.username().to_string())))
     },
     None => ("anonymous".into(), None),
   };
@@ -133,7 +133,7 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
   }
 
   match paste.author_id() {
-    Some(author) => if *author != user.id() {
+    Some(author) => if author != user.id() {
       if paste.visibility() == Visibility::Private {
         return Ok(Rst::Status(HttpStatus::NotFound));
       } else {
@@ -154,7 +154,7 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
     .collect::<result::Result<_, _>>()?;
 
   let output = Output::new(
-    *id,
+    id,
     author,
     paste.name(),
     paste.description(),
@@ -163,7 +163,7 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
     files,
   );
 
-  let is_owner = paste.author_id().is_some() && Some(user.id()) == *paste.author_id();
+  let is_owner = paste.author_id().is_some() && Some(user.id()) == paste.author_id();
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
 

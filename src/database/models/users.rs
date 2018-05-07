@@ -1,4 +1,5 @@
 use errors::*;
+use models::id::{ApiKeyId, UserId};
 use super::super::DbConn;
 use super::super::models::api_keys::{ApiKey, NewApiKey};
 use super::super::schema::{users, api_keys};
@@ -12,7 +13,7 @@ use uuid::Uuid;
 
 #[derive(Debug, Serialize, AsChangeset, Identifiable, Queryable)]
 pub struct User {
-  id: Uuid,
+  id: UserId,
   username: String,
   #[serde(skip_serializing)]
   password: String,
@@ -21,7 +22,7 @@ pub struct User {
 }
 
 impl User {
-  pub fn id(&self) -> Uuid {
+  pub fn id(&self) -> UserId {
     self.id
   }
 
@@ -82,14 +83,14 @@ impl User {
   }
 
   pub fn create_key(&self, conn: &DbConn, name: String) -> Result<ApiKey> {
-    let new_key = NewApiKey::new(name, Uuid::new_v4(), self.id);
+    let new_key = NewApiKey::new(name, ApiKeyId(Uuid::new_v4()), self.id);
     let key = diesel::insert_into(api_keys::table)
       .values(&new_key)
       .get_result(&**conn)?;
     Ok(key)
   }
 
-  pub fn delete_key(&self, conn: &DbConn, key: Uuid) -> Result<()> {
+  pub fn delete_key(&self, conn: &DbConn, key: ApiKeyId) -> Result<()> {
     diesel::delete(api_keys::table)
       .filter(api_keys::key.eq(key))
       .execute(&**conn)?;
@@ -107,7 +108,7 @@ impl User {
 #[derive(Debug, Insertable)]
 #[table_name = "users"]
 pub struct NewUser {
-  id: Uuid,
+  id: UserId,
   username: String,
   password: String,
   name: Option<String>,
@@ -116,7 +117,7 @@ pub struct NewUser {
 
 impl NewUser {
   pub fn new(
-    id: Uuid,
+    id: UserId,
     username: String,
     password: String,
     name: Option<String>,

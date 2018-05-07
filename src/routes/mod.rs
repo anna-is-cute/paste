@@ -5,6 +5,7 @@ use database::{PostgresPool, schema};
 use database::models::deletion_keys::DeletionKey;
 use database::models::users::User;
 use errors::*;
+use models::id::ApiKeyId;
 use models::status::Status;
 use routes::web::OptionalWebUser;
 
@@ -159,7 +160,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for RequiredUser {
       return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::BadHeader));
     }
     let uuid = match Uuid::from_str(&auth[4..]) {
-      Ok(u) => u,
+      Ok(u) => ApiKeyId(u),
       Err(_) => return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::Invalid)),
     };
     let conn = match request.guard::<State<PostgresPool>>() {

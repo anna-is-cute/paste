@@ -25,20 +25,23 @@ impl DeletionKey {
 #[derive(Insertable)]
 #[table_name = "deletion_keys"]
 pub struct NewDeletionKey {
-  key: Uuid,
-  paste_id: Uuid,
+  key: DeletionKeyId,
+  paste_id: PasteId,
 }
 
 impl NewDeletionKey {
-  pub fn new(key: Uuid, paste_id: Uuid) -> Self {
+  pub fn new(key: DeletionKeyId, paste_id: PasteId) -> Self {
     NewDeletionKey { key, paste_id }
   }
 
-  pub fn generate(paste_id: Uuid) -> Self {
-    NewDeletionKey::new(Uuid::new_v4(), paste_id)
+  pub fn generate(paste_id: PasteId) -> Self {
+    NewDeletionKey::new(
+      DeletionKeyId(Uuid::new_v4()),
+      paste_id,
+    )
   }
 
-  pub fn key(&self) -> Uuid {
+  pub fn key(&self) -> DeletionKeyId {
     self.key
   }
 }

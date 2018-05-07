@@ -144,7 +144,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
 
   // TODO: refactor
   let np = NewPaste::new(
-    *id,
+    id,
     name,
     description,
     paste.visibility,
@@ -156,7 +156,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     .execute(&*conn)?;
 
   if user.is_none() {
-    let key = NewDeletionKey::generate(*id);
+    let key = NewDeletionKey::generate(id);
     diesel::insert_into(deletion_keys::table)
       .values(&key)
       .execute(&*conn)?;

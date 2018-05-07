@@ -97,13 +97,13 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
   let author = match paste.author_id() {
     Some(author) => {
       let user: User = users::table.find(author).first(&*conn)?;
-      Some(OutputAuthor::new(&author, user.username()))
+      Some(OutputAuthor::new(author, user.username()))
     },
     None => None
   };
 
   let output = Output::new(
-    *id,
+    id,
     author,
     paste.name(),
     paste.description(),

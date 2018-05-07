@@ -1,6 +1,7 @@
 use database::PostgresPool;
 use database::models::users::User;
 use database::schema::users as users_db;
+use models::id::UserId;
 
 use rocket::{State, Outcome};
 use rocket::http::Status as HttpStatus;
@@ -46,7 +47,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for OptionalWebUser {
       .get_private("user_id")
       .and_then(|x| Uuid::parse_str(x.value()).ok());
     let id = match id {
-      Some(id) => id,
+      Some(id) => UserId(id),
       None => return Outcome::Success(OptionalWebUser(None)),
     };
 

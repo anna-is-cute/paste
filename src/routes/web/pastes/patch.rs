@@ -93,7 +93,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
   }
 
   match paste.author_id() {
-    Some(author) => if *author != user.id() {
+    Some(author) => if author != user.id() {
       if paste.visibility() == Visibility::Private {
         return Ok(Rst::Status(HttpStatus::NotFound));
       } else {

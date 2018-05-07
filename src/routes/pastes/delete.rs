@@ -2,14 +2,12 @@ use database::DbConn;
 use database::models::deletion_keys::DeletionKey;
 use database::models::pastes::Paste;
 use database::models::users::User;
-use models::id::PasteId;
+use models::id::{PasteId, UserId};
 use models::paste::Visibility;
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, DeletionAuth};
 
 use rocket::http::Status as HttpStatus;
-
-use uuid::Uuid;
 
 #[delete("/<id>")]
 fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
@@ -43,14 +41,14 @@ fn check_deletion(paste: &Paste, auth: DeletionAuth) -> Option<(HttpStatus, Erro
     if let DeletionAuth::User(ref user) = auth;
     if let Some(id) = author_id;
     then {
-      return check_deletion_user(paste, user, *id);
+      return check_deletion_user(paste, user, id);
     }
   }
 
   None
 }
 
-fn check_deletion_user(paste: &Paste, user: &User, author_id: Uuid) -> Option<(HttpStatus, ErrorKind)> {
+fn check_deletion_user(paste: &Paste, user: &User, author_id: UserId) -> Option<(HttpStatus, ErrorKind)> {
   if user.id() == author_id {
     return None;
   }

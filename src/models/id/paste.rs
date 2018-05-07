@@ -75,7 +75,7 @@ impl PasteId {
 
   pub fn create_file<S: AsRef<str>>(&self, conn: &DbConn, name: Option<S>, content: Content) -> Result<DbFile> {
     // generate file id
-    let id = Uuid::new_v4();
+    let id = FileId(Uuid::new_v4());
 
     // check if content is binary for later
     let binary = content.is_binary();
@@ -91,7 +91,7 @@ impl PasteId {
       .unwrap_or_else(|| id.simple().to_string()); // fall back to uuid if necessary
 
     // add file to the database
-    let new_file = NewFile::new(id, **self, name, Some(binary), None);
+    let new_file = NewFile::new(id, *self, name, Some(binary), None);
     let db_file = diesel::insert_into(files::table).values(&new_file).get_result(&**conn)?;
 
     Ok(db_file)
@@ -142,7 +142,7 @@ impl PasteId {
     Ok(files::table.filter(files::paste_id.eq(self.0)).load(&**conn)?)
   }
 
-  pub fn file(&self, conn: &DbConn, id: Uuid) -> Result<Option<DbFile>> {
+  pub fn file(&self, conn: &DbConn, id: FileId) -> Result<Option<DbFile>> {
     Ok(files::table
       .find(id)
       .filter(files::paste_id.eq(self.0))

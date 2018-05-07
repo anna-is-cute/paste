@@ -248,7 +248,7 @@ struct MultiFile {
   content: String,
 }
 
-fn double_opt<N, O, S>(new: N, old: &Option<O>) -> Option<Option<S>>
+fn double_opt<N, O, S>(new: N, old: Option<O>) -> Option<Option<S>>
   where N: Into<String>,
         O: AsRef<str>,
         S: From<String>,

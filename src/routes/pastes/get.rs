@@ -7,7 +7,6 @@ use models::paste::{Metadata, Visibility};
 use models::paste::output::{Output, OutputFile, OutputAuthor};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
-use utils::SimpleUuid;
 
 use diesel::prelude::*;
 
@@ -17,7 +16,7 @@ use std::cmp::max;
 
 #[derive(Debug, Serialize)]
 struct AllPaste {
-  id: SimpleUuid,
+  id: PasteId,
   #[serde(flatten)]
   metadata: Metadata,
 }
@@ -49,7 +48,7 @@ fn _get_all(query: Option<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>>
   let output = pastes
     .into_iter()
     .map(|x| AllPaste {
-      id: x.id().into(),
+      id: x.id(),
       metadata: Metadata {
         name: x.name().clone().map(Into::into),
         description: x.description().clone().map(Into::into),

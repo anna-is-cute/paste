@@ -1,5 +1,6 @@
 use database::DbConn;
 use errors::*;
+use models::id::PasteId;
 use models::paste::update::MetadataUpdate;
 use models::paste::Visibility;
 use models::status::ErrorKind;
@@ -19,7 +20,7 @@ use uuid::Uuid;
 #[changeset_options(treat_none_as_null = "true")]
 #[belongs_to(User, foreign_key = "author_id")]
 pub struct Paste {
-  id: Uuid,
+  id: PasteId,
   name: Option<String>,
   visibility: Visibility,
   author_id: Option<Uuid>,
@@ -28,7 +29,7 @@ pub struct Paste {
 }
 
 impl Paste {
-  pub fn id(&self) -> Uuid {
+  pub fn id(&self) -> PasteId {
     self.id
   }
 

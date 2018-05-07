@@ -4,7 +4,6 @@ use database::models::pastes::Paste as DbPaste;
 use database::models::users::User;
 use database::schema::{users, pastes};
 use errors::*;
-use models::id::PasteId;
 use models::paste::output::{Output, OutputAuthor, OutputFile};
 use models::paste::Visibility;
 use routes::web::{Rst, OptionalWebUser, Session};
@@ -82,7 +81,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
     let mut outputs = Vec::with_capacity(pastes.len());
 
     for paste in pastes {
-      let id = PasteId(paste.id());
+      let id = paste.id();
 
       let files: Vec<OutputFile> = id.files(&conn)?
         .iter()
@@ -90,7 +89,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
         .collect::<result::Result<_, _>>()?;
 
       outputs.push(Output::new(
-        paste.id(),
+        *paste.id(),
         Some(author.clone()),
         paste.name().clone(),
         paste.description().clone(),

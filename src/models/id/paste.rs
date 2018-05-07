@@ -13,22 +13,16 @@ use git2::{Repository, Signature, DiffOptions};
 
 use uuid::Uuid;
 
-use rocket::http::RawStr;
-use rocket::request::FromParam;
-
-use std::fmt::{self, Display, Formatter};
 use std::fs::{self, File};
 use std::io::Write;
-use std::ops::Deref;
 use std::path::PathBuf;
-use std::result;
-use std::str::FromStr;
 
-/// An ID for a paste, which may or may not exist.
-///
-/// Mostly useful for having Rocket accept only valid IDs in routes.
-#[derive(Debug, Clone, Copy)]
-pub struct PasteId(pub Uuid);
+uuid_wrapper!(
+  /// An ID for a paste, which may or may not exist.
+  ///
+  /// Mostly useful for having Rocket accept only valid IDs in routes.
+  PasteId
+);
 
 impl PasteId {
   pub fn directory(&self) -> PathBuf {
@@ -153,32 +147,5 @@ impl PasteId {
       .filter(files::paste_id.eq(self.0))
       .first(&**conn)
       .optional()?)
-  }
-}
-
-impl Display for PasteId {
-  fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-    write!(f, "{}", self.0.simple())
-  }
-}
-
-// Allow PasteId to be dereferenced into its inner type
-impl Deref for PasteId {
-  type Target = Uuid;
-
-  fn deref(&self) -> &Self::Target {
-    &self.0
-  }
-}
-
-// Allow Rocket to accept PasteId in routes
-impl<'a> FromParam<'a> for PasteId {
-  type Error = &'a RawStr;
-
-  fn from_param(param: &'a RawStr) -> result::Result<Self, &'a RawStr> {
-    match Uuid::from_str(param) {
-      Ok(u) => Ok(PasteId(u)),
-      Err(_) => Err(param)
-    }
   }
 }

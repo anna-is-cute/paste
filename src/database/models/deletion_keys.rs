@@ -1,5 +1,6 @@
-use super::super::schema::deletion_keys;
+use models::id::{DeletionKeyId, PasteId};
 use super::pastes::Paste;
+use super::super::schema::deletion_keys;
 
 use uuid::Uuid;
 
@@ -7,16 +8,16 @@ use uuid::Uuid;
 #[primary_key(key)]
 #[belongs_to(Paste)]
 pub struct DeletionKey {
-  key: Uuid,
-  paste_id: Uuid,
+  key: DeletionKeyId,
+  paste_id: PasteId,
 }
 
 impl DeletionKey {
-  pub fn key(&self) -> Uuid {
+  pub fn key(&self) -> DeletionKeyId {
     self.key
   }
 
-  pub fn paste_id(&self) -> Uuid {
+  pub fn paste_id(&self) -> PasteId {
     self.paste_id
   }
 }

@@ -1,17 +1,17 @@
+use models::id::{DeletionKeyId, PasteId, FileId, UserId};
 use super::{Paste, Metadata, Visibility, Content};
-use utils::SimpleUuid;
 
 use uuid::Uuid;
 
 #[derive(Debug, Serialize)]
 pub struct Output {
-  pub id: SimpleUuid,
+  pub id: PasteId,
   #[serde(skip_serializing_if = "Option::is_none")]
   pub author: Option<OutputAuthor>,
   #[serde(flatten)]
   pub paste: Paste,
   #[serde(skip_serializing_if = "Option::is_none")]
-  pub deletion_key: Option<SimpleUuid>,
+  pub deletion_key: Option<DeletionKeyId>,
   pub files: Vec<OutputFile>,
 }
 
@@ -40,7 +40,7 @@ impl Output {
 
 #[derive(Debug, Serialize)]
 pub struct OutputFile {
-  id: SimpleUuid,
+  id: FileId,
   name: Option<String>,
   #[serde(skip_serializing_if = "Option::is_none")]
   content: Option<Content>,
@@ -58,7 +58,7 @@ impl OutputFile {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct OutputAuthor {
-  pub id: SimpleUuid,
+  pub id: UserId,
   pub username: String,
 }
 

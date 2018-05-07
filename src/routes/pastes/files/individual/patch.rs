@@ -12,8 +12,6 @@ use rocket::http::Status as HttpStatus;
 
 use rocket_contrib::Json;
 
-use uuid::Uuid;
-
 use std::fs::OpenOptions;
 use std::io::Write;
 
@@ -39,7 +37,7 @@ pub fn patch(paste_id: PasteId, file_id: FileId, file: UpdateResult, user: Requi
   }
 
   if let Some(ref id) = file.id {
-    if *id != *file_id {
+    if *id != file_id {
       return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::InvalidFile(Some("IDs must match".into()))));
     }
   }
@@ -51,7 +49,7 @@ pub fn patch(paste_id: PasteId, file_id: FileId, file: UpdateResult, user: Requi
 
   let mut db_files = paste_id.files(&conn)?;
   {
-    let db_files_ids: Vec<Uuid> = db_files.iter().map(|x| x.id()).collect();
+    let db_files_ids: Vec<FileId> = db_files.iter().map(|x| x.id()).collect();
     let db_files_names: Vec<&str> = db_files.iter().map(|x| x.name()).collect();
     // verify all files before making changes
     if_chain! {
@@ -71,7 +69,7 @@ pub fn patch(paste_id: PasteId, file_id: FileId, file: UpdateResult, user: Requi
   }
 
     // file should be present due to check above
-    let db_file = db_files.iter_mut().find(|x| x.id() == *file_id).expect("missing file");
+    let db_file = db_files.iter_mut().find(|x| x.id() == file_id).expect("missing file");
     if let Some(name) = file.name {
       db_file.set_name(name);
       db_changed = true;

@@ -1,7 +1,7 @@
 #![cfg_attr(feature = "cargo-clippy", allow(option_option))]
 
 use errors::*;
-use models::id::PasteId;
+use models::id::{FileId, PasteId};
 use models::paste::Content;
 use models::paste::output::OutputFile;
 
@@ -18,19 +18,19 @@ use std::io::Read;
 #[derive(Debug, Identifiable, AsChangeset, Queryable, Associations)]
 #[belongs_to(Paste)]
 pub struct File {
-  id: Uuid,
-  paste_id: Uuid,
+  id: FileId,
+  paste_id: PasteId,
   name: String,
   is_binary: Option<bool>,
   created_at: NaiveDateTime,
 }
 
 impl File {
-  pub fn id(&self) -> Uuid {
+  pub fn id(&self) -> FileId {
     self.id
   }
 
-  pub fn paste_id(&self) -> Uuid {
+  pub fn paste_id(&self) -> PasteId {
     self.paste_id
   }
 
@@ -51,7 +51,7 @@ impl File {
   }
 
   pub fn as_output_file(&self, with_content: bool) -> Result<OutputFile> {
-    let file_path = PasteId(self.paste_id()).files_directory().join(self.id().simple().to_string());
+    let file_path = self.paste_id().files_directory().join(self.id().simple().to_string());
 
     let mut file = FsFile::open(file_path)?;
     let mut data = Vec::new();

@@ -1,10 +1,9 @@
 #![cfg_attr(feature = "cargo-clippy", allow(option_option))]
 
+use models::id::FileId;
 use models::paste::{Content, CountedText, Visibility};
 
 use serde::de::{Deserialize, Deserializer};
-
-use uuid::Uuid;
 
 use std::fmt::{self, Debug, Formatter};
 
@@ -112,7 +111,7 @@ pub struct PasteFileUpdate {
   // single option because id can be specified to mean "update this file" or omitted to mean "add
   // this file"
   #[serde(default)]
-  pub id: Option<Uuid>,
+  pub id: Option<FileId>,
   // single option because name can only be changed or left alone (all pastes must have name)
   #[serde(default)]
   pub name: Option<String>,

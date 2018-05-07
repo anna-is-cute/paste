@@ -80,7 +80,6 @@
           <div class="navbar-dropdown">
           {% if user %}
             <span class="navbar-item">{{ user.name }}</span>
-            <span class="navbar-item">{{ user.username }}</span>
             <hr class="navbar-divider"/>
             <a class="navbar-item" href="/account">Settings</a>
             <form action="/logout" method="post">

@@ -78,3 +78,16 @@ td.hljs-ln-numbers {
 td.hljs-ln-code {
   padding-left: .5rem !important;
 }
+
+.footer .breadcrumb {
+  -webkit-touch-callout: unset;
+  -webkit-user-select: unset;
+  -moz-user-select: unset;
+  -ms-user-select: unset;
+  user-select: unset;
+
+  a:not([href]) {
+    cursor: text;
+    pointer-events: unset;
+  }
+}

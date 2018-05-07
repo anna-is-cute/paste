@@ -2,8 +2,8 @@
 
 Thanks for reading this and I hope you contribute to paste! It takes some work off of my plate!
 
-If you haven't joined the IRC channel, please do so! It's #paste on irc.mozilla.org. I'd love to
-hear from you and help you with any contributions or issues.
+If you haven't joined the Discord, [please do so](https://discord.gg/EnqSwJK)! I'd love to hear from
+you and help you with any contributions or issues.
 
 ## Pull requests
 

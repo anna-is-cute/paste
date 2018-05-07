@@ -39,7 +39,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
 
   // TODO: refactor
   let np = NewPaste::new(
-    *id,
+    id,
     info.metadata.name.as_ref().map(|x| x.to_string()),
     info.metadata.description.as_ref().map(|x| x.to_string()),
     info.metadata.visibility,
@@ -52,7 +52,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
 
   // TODO: refactor
   let deletion_key = if user.is_none() {
-    let key = NewDeletionKey::generate(*id);
+    let key = NewDeletionKey::generate(id);
     diesel::insert_into(schema::deletion_keys::table)
       .values(&key)
       .execute(&*conn)?;
@@ -77,12 +77,12 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     .collect::<Result<_, _>>()?;
 
   let author = match *user {
-    Some(ref user) => Some(OutputAuthor::new(&user.id(), user.username())),
+    Some(ref user) => Some(OutputAuthor::new(user.id(), user.username())),
     None => None,
   };
 
   let output = Output::new(
-    *id,
+    id,
     author,
     info.metadata.name.as_ref().map(ToString::to_string),
     info.metadata.description.as_ref().map(ToString::to_string),

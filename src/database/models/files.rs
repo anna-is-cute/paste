@@ -10,8 +10,6 @@ use super::super::schema::files;
 
 use chrono::{NaiveDateTime, Utc};
 
-use uuid::Uuid;
-
 use std::fs::File as FsFile;
 use std::io::Read;
 
@@ -69,22 +67,22 @@ impl File {
       None
     };
 
-    Ok(OutputFile::new(&self.id(), Some(self.name()), content))
+    Ok(OutputFile::new(self.id(), Some(self.name()), content))
   }
 }
 
 #[derive(Insertable)]
 #[table_name = "files"]
 pub struct NewFile {
-  id: Uuid,
-  paste_id: Uuid,
+  id: FileId,
+  paste_id: PasteId,
   name: String,
   is_binary: Option<bool>,
   created_at: NaiveDateTime,
 }
 
 impl NewFile {
-  pub fn new(id: Uuid, paste_id: Uuid, name: String, is_binary: Option<bool>, created_at: Option<NaiveDateTime>) -> Self {
+  pub fn new(id: FileId, paste_id: PasteId, name: String, is_binary: Option<bool>, created_at: Option<NaiveDateTime>) -> Self {
     let created_at = created_at.unwrap_or_else(|| Utc::now().naive_utc());
     NewFile { id, paste_id, name, is_binary, created_at }
   }

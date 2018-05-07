@@ -36,7 +36,7 @@ pub fn post(paste_id: PasteId, file: UpdateResult, user: RequiredUser, conn: DbC
   // TODO: more descriptive commit message
   paste_id.commit(user.name(), user.email(), "update paste")?;
 
-  let output = OutputFile::new(&created.id(), Some(created.name().to_string()), None);
+  let output = OutputFile::new(created.id(), Some(created.name().to_string()), None);
 
   Ok(Status::show_success(HttpStatus::Created, output))
 }

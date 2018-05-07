@@ -1,8 +1,6 @@
 use models::id::{DeletionKeyId, PasteId, FileId, UserId};
 use super::{Paste, Metadata, Visibility, Content};
 
-use uuid::Uuid;
-
 #[derive(Debug, Serialize)]
 pub struct Output {
   pub id: PasteId,
@@ -16,13 +14,13 @@ pub struct Output {
 }
 
 impl Output {
-  pub fn new<N, D, F>(paste_id: Uuid, author: Option<OutputAuthor>, name: Option<N>, desc: Option<D>, vis: Visibility, deletion_key: Option<Uuid>, files: F) -> Self
+  pub fn new<N, D, F>(paste_id: PasteId, author: Option<OutputAuthor>, name: Option<N>, desc: Option<D>, vis: Visibility, deletion_key: Option<DeletionKeyId>, files: F) -> Self
     where N: AsRef<str>,
           D: AsRef<str>,
           F: IntoIterator<Item = OutputFile>,
   {
     Output {
-      id: paste_id.into(),
+      id: paste_id,
       author,
       paste: Paste {
         metadata: Metadata {
@@ -47,9 +45,9 @@ pub struct OutputFile {
 }
 
 impl OutputFile {
-  pub fn new<S: Into<String>>(id: &Uuid, name: Option<S>, content: Option<Content>) -> Self {
+  pub fn new<S: Into<String>>(id: FileId, name: Option<S>, content: Option<Content>) -> Self {
     OutputFile {
-      id: (*id).into(),
+      id,
       name: name.map(Into::into),
       content,
     }
@@ -63,9 +61,9 @@ pub struct OutputAuthor {
 }
 
 impl OutputAuthor {
-  pub fn new<S: Into<String>>(id: &Uuid, username: S) -> Self {
+  pub fn new<S: Into<String>>(id: UserId, username: S) -> Self {
     OutputAuthor {
-      id: (*id).into(),
+      id,
       username: username.into(),
     }
   }

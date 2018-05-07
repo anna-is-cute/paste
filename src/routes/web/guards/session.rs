@@ -1,3 +1,5 @@
+use models::id::SessionId;
+
 use rocket::Outcome;
 use rocket::http::Cookie;
 use rocket::request::{self, Request, FromRequest};
@@ -12,12 +14,12 @@ use std::collections::HashMap;
 pub struct Session<'a, 'r> where 'r: 'a {
   #[serde(skip)]
   pub request: Option<&'a Request<'r>>,
-  pub id: Uuid,
+  pub id: SessionId,
   pub data: HashMap<String, String>,
 }
 
 impl<'a, 'r> Session<'a, 'r> {
-  pub fn new(id: Uuid, request: &'a Request<'r>) -> Self {
+  pub fn new(id: SessionId, request: &'a Request<'r>) -> Self {
     Session {
       request: Some(request),
       id,
@@ -45,7 +47,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Session<'a, 'r> {
       // if we're here, there is no valid session, so add one
 
       // create a session with a random id
-      let session = Session::new(Uuid::new_v4(), req);
+      let session = Session::new(SessionId(Uuid::new_v4()), req);
 
       // return the new session
       Outcome::Success(session)

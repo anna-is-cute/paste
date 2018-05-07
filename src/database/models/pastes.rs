@@ -1,6 +1,6 @@
 use database::DbConn;
 use errors::*;
-use models::id::PasteId;
+use models::id::{PasteId, UserId};
 use models::paste::update::{MetadataUpdate, Update};
 use models::paste::Visibility;
 use models::status::ErrorKind;
@@ -14,8 +14,6 @@ use diesel::prelude::*;
 
 use rocket::http::Status as HttpStatus;
 
-use uuid::Uuid;
-
 #[derive(Debug, Identifiable, AsChangeset, Queryable, Associations)]
 #[changeset_options(treat_none_as_null = "true")]
 #[belongs_to(User, foreign_key = "author_id")]
@@ -23,7 +21,7 @@ pub struct Paste {
   id: PasteId,
   name: Option<String>,
   visibility: Visibility,
-  author_id: Option<Uuid>,
+  author_id: Option<UserId>,
   description: Option<String>,
   created_at: NaiveDateTime,
 }
@@ -49,8 +47,8 @@ impl Paste {
     self.visibility = visibility;
   }
 
-  pub fn author_id(&self) -> &Option<Uuid> {
-    &self.author_id
+  pub fn author_id(&self) -> Option<UserId> {
+    self.author_id
   }
 
   pub fn description(&self) -> Option<&str> {
@@ -94,7 +92,7 @@ impl Paste {
   }
 
   pub fn check_access<U>(&self, user: U) -> Option<(HttpStatus, ErrorKind)>
-    where U: Into<Option<Uuid>>,
+    where U: Into<Option<UserId>>,
   {
     let user = user.into();
     let is_private = self.visibility == Visibility::Private;
@@ -112,21 +110,21 @@ impl Paste {
 #[derive(Insertable)]
 #[table_name = "pastes"]
 pub struct NewPaste {
-  id: Uuid,
+  id: PasteId,
   name: Option<String>,
   visibility: Visibility,
-  author_id: Option<Uuid>,
+  author_id: Option<UserId>,
   description: Option<String>,
   created_at: NaiveDateTime,
 }
 
 impl NewPaste {
   pub fn new(
-    id: Uuid,
+    id: PasteId,
     name: Option<String>,
     description: Option<String>,
     visibility: Visibility,
-    author_id: Option<Uuid>,
+    author_id: Option<UserId>,
     created_at: Option<NaiveDateTime>,
   ) -> Self {
     let created_at = created_at.unwrap_or_else(|| Utc::now().naive_utc());

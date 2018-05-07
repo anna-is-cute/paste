@@ -1,13 +1,14 @@
 use config::Config;
 use database::DbConn;
 use errors::*;
+use models::id::ApiKeyId;
 use routes::web::{Rst, OptionalWebUser, Session};
 
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket::State;
 
-use rocket_contrib::{Template, UUID};
+use rocket_contrib::Template;
 
 #[get("/account/keys")]
 fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
@@ -52,13 +53,13 @@ struct NewKey {
 }
 
 #[delete("/account/keys/<key>")]
-fn delete(key: UUID, user: OptionalWebUser, conn: DbConn) -> Result<Redirect> {
+fn delete(key: ApiKeyId, user: OptionalWebUser, conn: DbConn) -> Result<Redirect> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Redirect::to("/login")),
   };
 
-  user.delete_key(&conn, *key)?;
+  user.delete_key(&conn, key)?;
 
   Ok(Redirect::to("/account/keys"))
 }

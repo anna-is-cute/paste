@@ -3,6 +3,7 @@ use database::DbConn;
 use database::models::users::NewUser;
 use database::schema::users;
 use errors::*;
+use models::id::UserId;
 use routes::web::{Rst, OptionalWebUser, Session};
 use utils::{ReCaptcha, HashedPassword};
 
@@ -88,7 +89,7 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     return Ok(Redirect::to("/register"));
   }
 
-  let id = Uuid::new_v4();
+  let id = UserId(Uuid::new_v4());
   let nu = NewUser::new(
     id,
     data.username,

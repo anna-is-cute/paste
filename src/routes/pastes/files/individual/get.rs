@@ -17,7 +17,7 @@ fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn) -> 
     return Ok(Status::show_error(status, kind));
   }
 
-  let db_file = match paste_id.file(&conn, *file_id)? {
+  let db_file = match paste_id.file(&conn, file_id)? {
     Some(f) => f,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingFile)),
   };

@@ -1,7 +1,7 @@
 use database::DbConn;
 use database::schema::files;
 use models::id::PasteId;
-use models::paste::update::PasteFileUpdate;
+use models::paste::update::{PasteFileUpdate, Update};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, RequiredUser};
 
@@ -59,7 +59,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
     if info.iter().filter_map(|x| x.name.as_ref()).any(|x| db_files_names.contains(&x.as_str())) {
       return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::InvalidFile(Some("duplicate file name".into()))));
     }
-    if info.iter().any(|x| x.id.is_none() && (x.content.is_none() || x.content.as_ref().map(|z| z.is_none()) == Some(true))) {
+    if info.iter().any(|x| x.id.is_none() && !x.content.is_set()) {
       return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::InvalidFile(Some("new files must have content".into()))));
     }
   }
@@ -76,7 +76,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
         }
         match file.content {
           // replacing contents
-          Some(Some(content)) => {
+          Update::Set(content) => {
             let mut f = OpenOptions::new()
               .write(true)
               .truncate(true)
@@ -85,14 +85,14 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
             // FIXME: set is_binary field
           },
           // deleting file
-          Some(None) => {
+          Update::Remove => {
             paste_id.delete_file(&conn, db_file.id())?;
             // do not update file in database
             db_changed = false;
             continue;
           },
           // doing nothing
-          None => {},
+          Update::Ignore => {},
         }
 
         if db_changed {
@@ -105,7 +105,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
       },
       // adding file
       None => {
-        let content = file.content.expect("missing content 1").expect("missing content 2");
+        let content = file.content.unwrap_set();
         paste_id.create_file(&conn, file.name, content)?;
       },
     }

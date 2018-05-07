@@ -91,8 +91,8 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
       outputs.push(Output::new(
         *paste.id(),
         Some(author.clone()),
-        paste.name().clone(),
-        paste.description().clone(),
+        paste.name(),
+        paste.description(),
         paste.visibility(),
         None,
         files,

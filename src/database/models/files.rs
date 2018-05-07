@@ -69,7 +69,7 @@ impl File {
       None
     };
 
-    Ok(OutputFile::new(&self.id(), Some(self.name().clone()), content))
+    Ok(OutputFile::new(&self.id(), Some(self.name()), content))
   }
 }
 

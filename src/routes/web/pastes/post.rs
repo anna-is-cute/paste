@@ -179,8 +179,8 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
   }
 
   let username = match user {
-    Some(ref u) => u.username().clone(),
-    None => "anonymous".into(),
+    Some(ref u) => u.username(),
+    None => "anonymous",
   };
 
   Ok(Redirect::to(&format!("/users/{}/{}", username, id.simple())))

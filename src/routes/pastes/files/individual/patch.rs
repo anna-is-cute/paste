@@ -1,7 +1,7 @@
 use database::DbConn;
 use database::schema::files;
 use models::id::{PasteId, FileId};
-use models::paste::update::PasteFileUpdate;
+use models::paste::update::{PasteFileUpdate, Update};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, RequiredUser};
 
@@ -78,7 +78,7 @@ pub fn patch(paste_id: PasteId, file_id: FileId, file: UpdateResult, user: Requi
     }
     match file.content {
       // replacing contents
-      Some(Some(content)) => {
+      Update::Set(content) => {
         let mut f = OpenOptions::new()
           .write(true)
           .truncate(true)
@@ -87,13 +87,13 @@ pub fn patch(paste_id: PasteId, file_id: FileId, file: UpdateResult, user: Requi
         // FIXME: set is_binary field
       },
       // deleting file
-      Some(None) => {
+      Update::Remove => {
         paste_id.delete_file(&conn, db_file.id())?;
         // do not update file in database
         db_changed = false;
       },
       // doing nothing
-      None => {},
+      Update::Ignore => {},
     }
 
     if db_changed {

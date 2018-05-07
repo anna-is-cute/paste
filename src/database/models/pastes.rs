@@ -33,8 +33,8 @@ impl Paste {
     self.id
   }
 
-  pub fn name(&self) -> &Option<String> {
-    &self.name
+  pub fn name(&self) -> Option<&str> {
+    self.name.as_ref().map(|x| x.as_str())
   }
 
   pub fn set_name<S: AsRef<str>>(&mut self, name: Option<S>) {
@@ -53,8 +53,8 @@ impl Paste {
     &self.author_id
   }
 
-  pub fn description(&self) -> &Option<String> {
-    &self.description
+  pub fn description(&self) -> Option<&str> {
+    self.description.as_ref().map(|x| x.as_str())
   }
 
   pub fn set_description<S: AsRef<str>>(&mut self, description: Option<S>) {

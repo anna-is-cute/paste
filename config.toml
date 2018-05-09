@@ -1,5 +1,8 @@
 [general]
 site_name = "paste"
+# Set this to include custom content on the /about page
+# If not set, the About link in the navbar will not be displayed
+# about_file = "about.html"
 
 [recaptcha]
 # https://developers.google.com/recaptcha/docs/faq

@@ -17,6 +17,7 @@ use uuid::Uuid;
 use std::ops::Deref;
 use std::result;
 
+pub mod about;
 pub mod account;
 pub mod auth;
 pub mod fairings;

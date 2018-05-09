@@ -11,6 +11,7 @@ extern crate failure;
 extern crate git2;
 #[macro_use]
 extern crate if_chain;
+extern crate ipnetwork;
 #[macro_use]
 extern crate lazy_static;
 extern crate libflate;

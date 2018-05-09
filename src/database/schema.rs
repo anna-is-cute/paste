@@ -24,6 +24,14 @@ table! {
 }
 
 table! {
+    login_attempts (addr) {
+        addr -> Cidr,
+        timestamp -> Timestamp,
+        attempts -> Int4,
+    }
+}
+
+table! {
     pastes (id) {
         id -> Uuid,
         name -> Nullable<Text>,
@@ -53,6 +61,7 @@ allow_tables_to_appear_in_same_query!(
     api_keys,
     deletion_keys,
     files,
+    login_attempts,
     pastes,
     users,
 );

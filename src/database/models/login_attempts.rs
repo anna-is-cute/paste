@@ -96,24 +96,24 @@ impl LoginAttempt {
 
   pub fn check(&self) -> Result<Option<String>> {
     let attempts = self.attempts();
-    if attempts >= 5 {
-      let expires = DateTime::from_utc(*self.timestamp(), Utc) + Duration::minutes(30);
-      if expires <= Utc::now() {
-        Ok(None)
-      } else {
-        let minutes = expires.signed_duration_since(Utc::now()).num_minutes();
-        if minutes != 0 {
-          Ok(Some(format!(
-            "Please try again in {} minute{}.",
-            minutes,
-            if minutes == 1 { "" } else { "s" }
-          )))
-        } else {
-          Ok(Some("Please try again in a few seconds.".into()))
-        }
-      }
+    if attempts < 5 {
+      return Ok(None);
+    }
+
+    let expires = DateTime::from_utc(*self.timestamp(), Utc) + Duration::minutes(30);
+    if expires <= Utc::now() {
+      return Ok(None);
+    }
+
+    let minutes = expires.signed_duration_since(Utc::now()).num_minutes();
+    if minutes != 0 {
+      Ok(Some(format!(
+        "Please try again in {} minute{}.",
+        minutes,
+        if minutes == 1 { "" } else { "s" }
+      )))
     } else {
-      Ok(None)
+      Ok(Some("Please try again in a few seconds.".into()))
     }
   }
 

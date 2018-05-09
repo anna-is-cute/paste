@@ -68,7 +68,9 @@
         <a class="navbar-item" href="/">New</a>
       </div>
       <div class="navbar-end">
+      {% if config.general.about_file %}
         <a class="navbar-item" href="/about">About</a>
+      {% endif %}
         <div class="navbar-item has-dropdown is-hoverable">
         {% if user %}
           <a

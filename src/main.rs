@@ -91,6 +91,8 @@ fn main() {
     .mount("/", routes![
       routes::web::index::get,
 
+      routes::web::about::get,
+
       routes::web::auth::login::get,
       routes::web::auth::login::post,
 

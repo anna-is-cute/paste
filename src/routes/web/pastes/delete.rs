@@ -18,7 +18,7 @@ use uuid::Uuid;
 
 use std::str::FromStr;
 
-#[delete("/users/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>")]
+#[delete("/pastes/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>")]
 fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,

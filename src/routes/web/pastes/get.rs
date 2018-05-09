@@ -38,15 +38,15 @@ fn id(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
   }
 
   let owner = owner.unwrap_or_else(|| "anonymous".into());
-  Ok(Rst::Redirect(Redirect::to(&format!("/users/{}/{}", owner, id))))
+  Ok(Rst::Redirect(Redirect::to(&format!("/pastes/{}/{}", owner, id))))
 }
 
 #[get("/<username>/<id>", rank = 10)]
 fn username_id(username: String, id: PasteId) -> Redirect {
-  Redirect::to(&format!("/users/{}/{}", username, id))
+  Redirect::to(&format!("/pastes/{}/{}", username, id))
 }
 
-#[get("/users/<username>/<id>")]
+#[get("/pastes/<username>/<id>")]
 fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
@@ -104,7 +104,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
   Ok(Rst::Template(Template::render("paste/index", ctx)))
 }
 
-#[get("/users/<username>/<id>/edit")]
+#[get("/pastes/<username>/<id>/edit")]
 fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let user = match user.into_inner() {
     Some(u) => u,

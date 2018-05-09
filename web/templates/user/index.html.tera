@@ -61,7 +61,7 @@
     <i class="fas fa-lock" title="{{ paste.visibility }}"></i>
   {% endif %}
   </span>
-    <a href="/users/{{ target.username }}/{{ paste.id }}">
+    <a href="/pastes/{{ target.username }}/{{ paste.id }}">
   {% if paste.name %}
       {{ paste.name }}
   {% else %}

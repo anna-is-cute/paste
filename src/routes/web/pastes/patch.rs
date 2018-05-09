@@ -64,7 +64,7 @@ fn check_paste(paste: &PasteUpdate, files: &[MultiFile]) -> result::Result<(), S
   Ok(())
 }
 
-#[patch("/users/<username>/<paste_id>", format = "application/x-www-form-urlencoded", data = "<update>")]
+#[patch("/pastes/<username>/<paste_id>", format = "application/x-www-form-urlencoded", data = "<update>")]
 fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let user = match user.into_inner() {
     Some(u) => u,
@@ -225,7 +225,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
   paste_id.commit_if_dirty(user.name(), user.email(), "update paste via web")?;
 
   sess.data.insert("info".into(), "Paste updated.".into());
-  Ok(Rst::Redirect(Redirect::to(&format!("/users/{}/{}", username, paste_id.simple()))))
+  Ok(Rst::Redirect(Redirect::to(&format!("/pastes/{}/{}", username, paste_id.simple()))))
 }
 
 #[derive(Debug, FromForm)]

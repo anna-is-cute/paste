@@ -183,7 +183,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     None => "anonymous",
   };
 
-  Ok(Redirect::to(&format!("/users/{}/{}", username, id.simple())))
+  Ok(Redirect::to(&format!("/pastes/{}/{}", username, id.simple())))
 }
 
 #[derive(Debug, FromForm)]

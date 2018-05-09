@@ -58,6 +58,9 @@ reqwest = "0.8"
 # configuration files
 toml = "0.4"
 
+# rate limiting
+ipnetwork = "0.12"
+
 # web logic
 [dependencies.rocket]
 version = "0.3"
@@ -77,7 +80,7 @@ features = ["v4", "serde"]
 # database orm
 [dependencies.diesel]
 version = "1"
-features = ["postgres", "uuid", "r2d2", "chrono"]
+features = ["postgres", "uuid", "r2d2", "chrono", "network-address"]
 
 # timestamp handling
 [dependencies.chrono]

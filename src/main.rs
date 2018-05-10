@@ -81,6 +81,7 @@ fn main() {
   rocket::ignite()
     .manage(database::init_pool())
     .manage(config)
+    .attach(fairings::SecurityHeaders)
     .attach(fairings::LastPage::default())
     .attach(Template::fairing())
     .catch(errors![

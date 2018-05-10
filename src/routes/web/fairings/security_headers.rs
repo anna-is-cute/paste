@@ -17,6 +17,6 @@ impl Fairing for SecurityHeaders {
     resp.set_header(Header::new("X-Frame-Options", "SAMEORIGIN"));
     resp.set_header(Header::new("X-XSS-Protection", "1; mode=block"));
     resp.set_header(Header::new("X-Content-Type-Options", "nosniff"));
-    resp.set_header(Header::new("Referrer-Policy", "origin-when-cross-origin"));
+    resp.set_header(Header::new("Referrer-Policy", "strict-origin-when-cross-origin"));
   }
 }

@@ -6,7 +6,7 @@ use database::schema::{users, deletion_keys};
 use errors::*;
 use models::id::{DeletionKeyId, PasteId};
 use models::paste::Visibility;
-use routes::web::{Rst, OptionalWebUser, Session};
+use routes::web::{Rst, AntiCsrfToken, OptionalWebUser, Session};
 
 use diesel::prelude::*;
 
@@ -19,7 +19,14 @@ use uuid::Uuid;
 use std::str::FromStr;
 
 #[delete("/pastes/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>")]
-fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+  let deletion = deletion.into_inner();
+
+  if !csrf.check(&deletion.anti_csrf_token) {
+    sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Rst::Redirect(Redirect::to("lastpage")));
+  }
+
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -50,7 +57,7 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: Op
       }
     },
     None => {
-      let key = match deletion.into_inner().key {
+      let key = match deletion.key {
         Some(k) => k,
         None => {
           sess.data.insert("error".into(), "Anonymous pastes require a deletion key to delete.".into());
@@ -92,4 +99,5 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: Op
 #[derive(Debug, FromForm)]
 struct PasteDeletion {
   key: Option<String>,
+  anti_csrf_token: String,
 }

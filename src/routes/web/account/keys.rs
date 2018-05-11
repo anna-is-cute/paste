@@ -2,7 +2,7 @@ use config::Config;
 use database::DbConn;
 use errors::*;
 use models::id::ApiKeyId;
-use routes::web::{Rst, OptionalWebUser, Session};
+use routes::web::{context, AntiCsrfToken, Rst, OptionalWebUser, Session};
 
 use rocket::request::Form;
 use rocket::response::Redirect;
@@ -17,26 +17,25 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: Db
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
   };
 
-  let ctx = json!({
-    "config": &*config,
-    "user": user,
-    "error": sess.data.remove("error"),
-    "info": sess.data.remove("info"),
-    "server_version": ::SERVER_VERSION,
-    "resources_version": &*::RESOURCES_VERSION,
-    "keys": &user.keys(&conn)?,
-  });
+  let mut ctx = context(&*config, Some(&user), &mut sess);
+  ctx["keys"] = json!(&user.keys(&conn)?);
   Ok(Rst::Template(Template::render("account/keys", ctx)))
 }
 
 #[post("/account/keys", format = "application/x-www-form-urlencoded", data = "<new>")]
-fn post(new: Form<NewKey>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn post(new: Form<NewKey>, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+  let new = new.into_inner();
+
+  if !csrf.check(&new.anti_csrf_token) {
+    sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Redirect::to("/login"));
+  }
+
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Redirect::to("/login")),
   };
 
-  let new = new.into_inner();
   if new.name.is_empty() {
     sess.data.insert("error".into(), "API key name cannot be empty.".into());
     return Ok(Redirect::to("/account/keys"));
@@ -50,10 +49,18 @@ fn post(new: Form<NewKey>, user: OptionalWebUser, mut sess: Session, conn: DbCon
 #[derive(Debug, FromForm)]
 struct NewKey {
   name: String,
+  anti_csrf_token: String,
 }
 
-#[delete("/account/keys/<key>")]
-fn delete(key: ApiKeyId, user: OptionalWebUser, conn: DbConn) -> Result<Redirect> {
+#[delete("/account/keys/<key>", data = "<data>")]
+fn delete(key: ApiKeyId, data: Form<DeleteKey>, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+  let data = data.into_inner();
+
+  if !csrf.check(&data.anti_csrf_token) {
+    sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Redirect::to("/account/keys"));
+  }
+
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Redirect::to("/login")),
@@ -62,4 +69,9 @@ fn delete(key: ApiKeyId, user: OptionalWebUser, conn: DbConn) -> Result<Redirect
   user.delete_key(&conn, key)?;
 
   Ok(Redirect::to("/account/keys"))
+}
+
+#[derive(FromForm)]
+struct DeleteKey {
+  anti_csrf_token: String,
 }

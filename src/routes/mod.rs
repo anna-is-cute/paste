@@ -7,7 +7,7 @@ use database::models::users::User;
 use errors::*;
 use models::id::ApiKeyId;
 use models::status::Status;
-use routes::web::OptionalWebUser;
+use routes::web::{context, OptionalWebUser, Session};
 
 use diesel::prelude::*;
 
@@ -50,12 +50,8 @@ fn error(req: &Request, kind: &str, template: &'static str) -> StringOrTemplate 
   }
   let config: State<Config> = req.guard().unwrap();
   let user: OptionalWebUser = req.guard().unwrap();
-  let ctx = json!({
-    "config": &*config,
-    "user": &*user,
-    "server_version": ::SERVER_VERSION,
-    "resources_version": &*::RESOURCES_VERSION,
-  });
+  let mut session: Session = req.guard().unwrap();
+  let ctx = context(&*config, user.as_ref(), &mut session);
   StringOrTemplate::Template(Template::render(template, ctx))
 }
 

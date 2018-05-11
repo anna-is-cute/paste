@@ -30,6 +30,7 @@ Create a new paste.
 
 {% block main %}
 <form id="paste_upload" action="/pastes" method="post">
+  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div class="field is-grouped">
     <div class="control is-expanded">
       <label class="label">Paste name</label>

@@ -60,6 +60,7 @@ untitled paste
       <div class="control">
         <form action="/pastes/{{ author_name }}/{{ paste.id }}" method="post">
           <input type="hidden" name="_method" value="delete"/>
+          <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
           <button class="button is-danger is-large" type="submit">
             <span class="icon is-large">
               <i class="fas fa-trash-alt"></i>
@@ -109,6 +110,7 @@ untitled paste
 <div id="deletion_modal" class="modal">
   <form action="/pastes/{{ author_name }}/{{ paste.id }}" method="post">
     <input type="hidden" name="_method" value="delete"/>
+    <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
     <div class="modal-background closes-modal"></div>
     <div class="modal-card">
       <header class="modal-card-head">

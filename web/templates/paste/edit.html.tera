@@ -64,6 +64,7 @@ Change this paste<span class="requires-js"> and its files</span>.
 
 <form id="paste_upload" method="post" action="/pastes/{{ author_name }}/{{ paste.id }}">
   <input type="hidden" name="_method" value="patch"/>
+  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div>
     <div class="field is-grouped">
       <div class="control is-expanded">

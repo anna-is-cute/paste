@@ -2,7 +2,7 @@ use config::Config;
 use database::DbConn;
 use database::schema::users;
 use errors::*;
-use routes::web::{Rst, OptionalWebUser, Session};
+use routes::web::{context, AntiCsrfToken, Rst, OptionalWebUser, Session};
 use utils::HashedPassword;
 
 use diesel::dsl::count;
@@ -23,25 +23,24 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
   };
 
-  let ctx = json!({
-    "config": &*config,
-    "user": user,
-    "error": sess.data.remove("error"),
-    "info": sess.data.remove("info"),
-    "server_version": ::SERVER_VERSION,
-    "resources_version": &*::RESOURCES_VERSION,
-  });
+  let ctx = context(&*config, Some(&user), &mut sess);
   Ok(Rst::Template(Template::render("account/index", ctx)))
 }
 
 #[patch("/account", format = "application/x-www-form-urlencoded", data = "<update>")]
-fn patch(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn patch(update: Form<AccountUpdate>, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+  let update = update.into_inner();
+
+  if !csrf.check(&update.anti_csrf_token) {
+    sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Redirect::to("/account"));
+  }
+
   let mut user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(Redirect::to("/login")),
   };
 
-  let update = update.into_inner();
 
   if update.current_password.is_empty() {
     sess.data.insert("error".into(), "Current password cannot be empty.".into());
@@ -105,4 +104,5 @@ struct AccountUpdate {
   password: String,
   password_verify: String,
   current_password: String,
+  anti_csrf_token: String,
 }

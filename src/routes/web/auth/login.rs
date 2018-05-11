@@ -4,7 +4,7 @@ use database::models::login_attempts::LoginAttempt;
 use database::models::users::User;
 use database::schema::users;
 use errors::*;
-use routes::web::{Rst, OptionalWebUser, Session};
+use routes::web::{context, Rst, AntiCsrfToken, OptionalWebUser, Session};
 
 use diesel::prelude::*;
 
@@ -23,14 +23,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Rst {
     return Rst::Redirect(Redirect::to("lastpage"));
   }
 
-  let ctx = json!({
-    "config": &*config,
-    // TODO: this can be made into an optional request guard
-    "error": sess.data.remove("error"),
-    "info": sess.data.remove("info"),
-    "server_version": ::SERVER_VERSION,
-    "resources_version": &*::RESOURCES_VERSION,
-  });
+  let ctx = context(&*config, user.as_ref(), &mut sess);
   Rst::Template(Template::render("auth/login", ctx))
 }
 
@@ -38,16 +31,22 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Rst {
 struct RegistrationData {
   username: String,
   password: String,
+  anti_csrf_token: String,
 }
 
 #[post("/login", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, addr: SocketAddr) -> Result<Redirect> {
+fn post(data: Form<RegistrationData>, csrf: AntiCsrfToken, mut sess: Session, mut cookies: Cookies, conn: DbConn, addr: SocketAddr) -> Result<Redirect> {
+  let data = data.into_inner();
+
+  if !csrf.check(&data.anti_csrf_token) {
+    sess.data.insert("error".into(), "Invalid anti-CSRF token.".into());
+    return Ok(Redirect::to("/login"));
+  }
+
   if let Some(msg) = LoginAttempt::find_check(&conn, addr.ip())? {
     sess.data.insert("error".into(), msg);
     return Ok(Redirect::to("/login"));
   }
-
-  let data = data.into_inner();
 
   let user: Option<User> = users::table
     .filter(users::username.eq(&data.username))

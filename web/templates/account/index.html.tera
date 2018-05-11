@@ -35,6 +35,7 @@ Manage account settings.
 {% block main %}
 <form action="/account" method="post">
   <input type="hidden" name="_method" value="patch"/>
+  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <label class="label">Name</label>

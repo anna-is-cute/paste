@@ -4,7 +4,7 @@ use database::models::users::NewUser;
 use database::schema::users;
 use errors::*;
 use models::id::UserId;
-use routes::web::{Rst, OptionalWebUser, Session};
+use routes::web::{context, AntiCsrfToken, Rst, OptionalWebUser, Session};
 use utils::{ReCaptcha, HashedPassword};
 
 use diesel;
@@ -27,13 +27,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Rst {
   if user.is_some() {
     return Rst::Redirect(Redirect::to("/"));
   }
-  let ctx = json!({
-    "config": &*config,
-    "error": sess.data.remove("error"),
-    "info": sess.data.remove("info"),
-    "server_version": ::SERVER_VERSION,
-    "resources_version": &*::RESOURCES_VERSION,
-  });
+  let ctx = context(&*config, user.as_ref(), &mut sess);
   Rst::Template(Template::render("auth/register", ctx))
 }
 
@@ -46,11 +40,17 @@ struct RegistrationData {
   password_verify: String,
   #[form(field = "g-recaptcha-response")]
   recaptcha: ReCaptcha,
+  anti_csrf_token: String,
 }
 
 #[post("/register", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, config: State<Config>) -> Result<Redirect> {
+fn post(data: Form<RegistrationData>, csrf: AntiCsrfToken, mut sess: Session, mut cookies: Cookies, conn: DbConn, config: State<Config>) -> Result<Redirect> {
   let data = data.into_inner();
+
+  if !csrf.check(&data.anti_csrf_token) {
+    sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Redirect::to("/register"));
+  }
 
   if data.username.is_empty() || data.name.is_empty()  || data.email.is_empty() || data.password.is_empty() {
     sess.data.insert("error".into(), "No fields can be empty.".into());

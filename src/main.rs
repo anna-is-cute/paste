@@ -9,6 +9,7 @@ extern crate dotenv;
 #[macro_use]
 extern crate failure;
 extern crate git2;
+extern crate hex;
 #[macro_use]
 extern crate if_chain;
 extern crate ipnetwork;
@@ -60,6 +61,11 @@ fn index() -> std::io::Result<NamedFile> {
 }
 
 fn main() {
+  if !sodiumoxide::init() {
+    println!("could not initialize libsodium");
+    return;
+  }
+
   dotenv::dotenv().ok();
 
   let config_path = match env::args().nth(1) {
@@ -82,6 +88,7 @@ fn main() {
     .manage(database::init_pool())
     .manage(config)
     .attach(fairings::SecurityHeaders)
+    .attach(fairings::AntiCsrf)
     .attach(fairings::LastPage::default())
     .attach(Template::fairing())
     .catch(errors![

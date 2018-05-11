@@ -7,7 +7,7 @@ use errors::*;
 use models::id::PasteId;
 use models::paste::Visibility;
 use models::paste::output::{Output, OutputFile, OutputAuthor};
-use routes::web::{Rst, OptionalWebUser, Session};
+use routes::web::{context, Rst, OptionalWebUser, Session};
 
 use diesel::prelude::*;
 
@@ -88,18 +88,12 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
 
-  let ctx = json!({
-    "paste": output,
-    "config": &*config,
-    "user": &*user,
-    "server_version": ::SERVER_VERSION,
-    "resources_version": &*::RESOURCES_VERSION,
-    "deletion_key": sess.data.remove("deletion_key"),
-    "is_owner": is_owner,
-    "author_name": author_name,
-    "error": sess.data.remove("error"),
-    "info": sess.data.remove("info"),
-  });
+  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  ctx["paste"] = json!(output);
+  ctx["user"] = json!(*user);
+  ctx["deletion_key"] = json!(sess.data.remove("deletion_key"));
+  ctx["is_owner"] = json!(is_owner);
+  ctx["author_name"] = json!(author_name);
 
   Ok(Rst::Template(Template::render("paste/index", ctx)))
 }
@@ -167,16 +161,10 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
 
-  let ctx = json!({
-    "paste": output,
-    "config": &*config,
-    "user": &user,
-    "server_version": ::SERVER_VERSION,
-    "resources_version": &*::RESOURCES_VERSION,
-    "is_owner": is_owner,
-    "author_name": author_name,
-    "error": sess.data.remove("error"),
-  });
+  let mut ctx = context(&*config, Some(&user), &mut sess);
+  ctx["paste"] = json!(output);
+  ctx["is_owner"] = json!(is_owner);
+  ctx["author_name"] = json!(author_name);
 
   Ok(Rst::Template(Template::render("paste/edit", ctx)))
 }

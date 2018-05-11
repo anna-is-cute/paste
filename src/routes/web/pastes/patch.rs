@@ -6,7 +6,7 @@ use errors::*;
 use models::id::{PasteId, FileId};
 use models::paste::{Visibility, Content};
 use models::paste::update::{MetadataUpdate, Update};
-use routes::web::{OptionalWebUser, Rst, Session};
+use routes::web::{AntiCsrfToken, OptionalWebUser, Rst, Session};
 
 use diesel;
 use diesel::prelude::*;
@@ -65,7 +65,14 @@ fn check_paste(paste: &PasteUpdate, files: &[MultiFile]) -> result::Result<(), S
 }
 
 #[patch("/pastes/<username>/<paste_id>", format = "application/x-www-form-urlencoded", data = "<update>")]
-fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+  let update = update.into_inner();
+
+  if !csrf.check(&update.anti_csrf_token) {
+    sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Rst::Redirect(Redirect::to("lastpage")));
+  }
+
   let user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
@@ -105,8 +112,6 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
       return Ok(Rst::Redirect(Redirect::to("lastpage")));
     },
   }
-
-  let update = update.into_inner();
 
   let files = match update.upload_json {
     Some(ref json) => match handle_js(json) {
@@ -234,6 +239,7 @@ struct PasteUpdate {
   visibility: Visibility,
   description: String,
   upload_json: Option<String>,
+  anti_csrf_token: String,
 }
 
 #[derive(Debug, Deserialize)]

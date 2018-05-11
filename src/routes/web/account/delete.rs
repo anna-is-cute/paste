@@ -1,7 +1,7 @@
 use config::Config;
 use database::DbConn;
 use errors::*;
-use routes::web::{Rst, OptionalWebUser, Session};
+use routes::web::{context, AntiCsrfToken, Rst, OptionalWebUser, Session};
 
 use rocket::request::Form;
 use rocket::response::Redirect;
@@ -16,37 +16,38 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
   };
 
-  let ctx = json!({
-    "config": &*config,
-    "user": user,
-    "error": sess.data.remove("error"),
-    "info": sess.data.remove("info"),
-    "server_version": ::SERVER_VERSION,
-    "resources_version": &*::RESOURCES_VERSION,
-  });
+  let ctx = context(&*config, Some(&user), &mut sess);
   Ok(Rst::Template(Template::render("account/delete", ctx)))
 }
 
 #[delete("/account", format = "application/x-www-form-urlencoded", data = "<delete>")]
-fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn delete(delete: Form<DeleteRequest>, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+  let delete = delete.into_inner();
+
+  if !csrf.check(&delete.anti_csrf_token) {
+    sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Redirect::to("/account/delete"));
+  }
+
   let user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(Redirect::to("/login")),
   };
 
-  if delete.into_inner().username != user.username() {
-    sess.data.insert("error".into(), "That username does not match your username.".into());
+  if delete.username != user.username() {
+    sess.add_data("error", "That username does not match your username.");
     return Ok(Redirect::to("/account/delete"));
   }
 
   // TODO: sweep for unowned pastes on the disk and destroy them
   user.delete(&conn)?;
 
-  sess.data.insert("info".into(), "Account deleted".into());
+  sess.add_data("info", "Account deleted.");
   Ok(Redirect::to("/"))
 }
 
 #[derive(Debug, FromForm)]
 struct DeleteRequest {
   username: String,
+  anti_csrf_token: String,
 }

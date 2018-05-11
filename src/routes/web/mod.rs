@@ -1,7 +1,10 @@
+use config::Config;
 use database::PostgresPool;
 use database::models::users::User;
 use database::schema::users as users_db;
 use models::id::UserId;
+
+use diesel::prelude::*;
 
 use rocket::{State, Outcome};
 use rocket::http::Status as HttpStatus;
@@ -10,7 +13,7 @@ use rocket::response::{Responder, Response, Redirect};
 
 use rocket_contrib::Template;
 
-use diesel::prelude::*;
+use serde_json::Value;
 
 use uuid::Uuid;
 
@@ -29,6 +32,19 @@ pub mod users;
 
 pub use self::fairings::*;
 pub use self::guards::*;
+
+pub fn context(config: &Config, user: Option<&User>, session: &mut Session) -> Value {
+  json!({
+    "config": &config,
+    // TODO: this can be made into an optional request guard
+    "error": session.data.remove("error"),
+    "info": session.data.remove("info"),
+    "user": user,
+    "session": session,
+    "server_version": ::SERVER_VERSION,
+    "resources_version": &*::RESOURCES_VERSION,
+  })
+}
 
 #[derive(Debug)]
 pub struct OptionalWebUser(Option<User>);

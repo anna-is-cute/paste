@@ -26,6 +26,13 @@ impl<'a, 'r> Session<'a, 'r> {
       data: Default::default(),
     }
   }
+
+  pub fn add_data<K, V>(&mut self, key: K, value: V)
+    where K: Into<String>,
+          V: Into<String>,
+  {
+    self.data.insert(key.into(), value.into());
+  }
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for Session<'a, 'r> {

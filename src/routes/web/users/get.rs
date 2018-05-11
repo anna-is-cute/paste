@@ -6,7 +6,7 @@ use database::schema::{users, pastes};
 use errors::*;
 use models::paste::output::{Output, OutputAuthor, OutputFile};
 use models::paste::Visibility;
-use routes::web::{Rst, OptionalWebUser, Session};
+use routes::web::{context, Rst, OptionalWebUser, Session};
 
 use diesel::dsl::count;
 use diesel::prelude::*;
@@ -102,17 +102,10 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
     outputs
   };
 
-  let ctx = json!({
-    "pastes": outputs,
-    "config": &*config,
-    "target": target,
-    "user": &*user,
-    "page": page,
-    "total": total_pastes,
-    "server_version": ::SERVER_VERSION,
-    "resources_version": &*::RESOURCES_VERSION,
-    "error": sess.data.remove("error"),
-    "info": sess.data.remove("info"),
-  });
+  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  ctx["pastes"] = json!(outputs);
+  ctx["target"] = json!(target);
+  ctx["page"] = json!(page);
+  ctx["total"] = json!(total_pastes);
   Ok(Rst::Template(Template::render("user/index", ctx)))
 }

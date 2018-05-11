@@ -61,6 +61,9 @@ toml = "0.4"
 # rate limiting
 ipnetwork = "0.12"
 
+# anti-csrf tokens
+hex = "0.3"
+
 # web logic
 [dependencies.rocket]
 version = "0.3"

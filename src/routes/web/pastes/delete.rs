@@ -60,7 +60,7 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, csrf: An
       let key = match deletion.key {
         Some(k) => k,
         None => {
-          sess.data.insert("error".into(), "Anonymous pastes require a deletion key to delete.".into());
+          sess.add_data("error", "Anonymous pastes require a deletion key to delete.");
           return Ok(Rst::Redirect(Redirect::to("lastpage")));
         },
       };
@@ -68,7 +68,7 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, csrf: An
       let key = match Uuid::from_str(&key) {
         Ok(k) => DeletionKeyId(k),
         Err(_) => {
-          sess.data.insert("error".into(), "Invalid deletion key.".into());
+          sess.add_data("error", "Invalid deletion key.");
           return Ok(Rst::Redirect(Redirect::to("lastpage")));
         },
       };
@@ -76,13 +76,13 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, csrf: An
       let db_key: DeletionKey = match deletion_keys::table.find(&key).first(&*conn).optional()? {
         Some(k) => k,
         None => {
-          sess.data.insert("error".into(), "Invalid deletion key.".into());
+          sess.add_data("error", "Invalid deletion key.");
           return Ok(Rst::Redirect(Redirect::to("lastpage")));
         },
       };
 
       if db_key.paste_id() != paste.id() {
-        sess.data.insert("error".into(), "Invalid deletion key.".into());
+        sess.add_data("error", "Invalid deletion key.");
         return Ok(Rst::Redirect(Redirect::to("lastpage")));
       }
     },
@@ -92,7 +92,7 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, csrf: An
 
   id.delete(&conn)?;
 
-  sess.data.insert("info".into(), "Paste deleted.".into());
+  sess.add_data("info", "Paste deleted.");
   Ok(Rst::Redirect(Redirect::to("/")))
 }
 

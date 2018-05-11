@@ -135,7 +135,7 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
       }
     },
     None => {
-      sess.data.insert("error".into(), "Cannot edit anonymous pastes.".into());
+      sess.add_data("error", "Cannot edit anonymous pastes.");
       return Ok(Rst::Redirect(Redirect::to("lastpage")));
     },
   }

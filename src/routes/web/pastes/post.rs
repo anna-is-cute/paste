@@ -108,7 +108,7 @@ fn post(paste: Form<PasteUpload>, csrf: AntiCsrfToken, user: OptionalWebUser, mu
   };
 
   if anonymous && paste.visibility == Visibility::Private {
-    sess.data.insert("error".into(), "Cannot make anonymous private pastes.".into());
+    sess.add_data("error", "Cannot make anonymous private pastes.");
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -116,7 +116,7 @@ fn post(paste: Form<PasteUpload>, csrf: AntiCsrfToken, user: OptionalWebUser, mu
     Some(ref json) => match handle_js(json) {
       Ok(f) => f,
       Err(_) => {
-        sess.data.insert("error".into(), "Invalid JSON. Did you tamper with the form?".into());
+        sess.add_data("error", "Invalid JSON. Did you tamper with the form?");
         return Ok(Redirect::to("lastpage"));
       },
     },
@@ -124,12 +124,12 @@ fn post(paste: Form<PasteUpload>, csrf: AntiCsrfToken, user: OptionalWebUser, mu
   };
 
   if files.is_empty() {
-    sess.data.insert("error".into(), "You must upload at least one file.".into());
+    sess.add_data("error", "You must upload at least one file.");
     return Ok(Redirect::to("lastpage"));
   }
 
   if let Err(e) = check_paste(&paste, &files) {
-    sess.data.insert("error".into(), e);
+    sess.add_data("error", e);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -165,7 +165,7 @@ fn post(paste: Form<PasteUpload>, csrf: AntiCsrfToken, user: OptionalWebUser, mu
     diesel::insert_into(deletion_keys::table)
       .values(&key)
       .execute(&*conn)?;
-    sess.data.insert("deletion_key".into(), key.key().simple().to_string());
+    sess.add_data("deletion_key", key.key().simple().to_string());
   }
 
   for file in files {

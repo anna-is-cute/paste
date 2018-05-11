@@ -108,7 +108,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
       }
     },
     None => {
-      sess.data.insert("error".into(), "Cannot edit anonymous pastes.".into());
+      sess.add_data("error", "Cannot edit anonymous pastes.");
       return Ok(Rst::Redirect(Redirect::to("lastpage")));
     },
   }
@@ -117,7 +117,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
     Some(ref json) => match handle_js(json) {
       Ok(f) => f,
       Err(_) => {
-        sess.data.insert("error".into(), "Invalid JSON. Did you tamper with the form?".into());
+        sess.add_data("error", "Invalid JSON. Did you tamper with the form?");
         return Ok(Rst::Redirect(Redirect::to("lastpage")));
       },
     },
@@ -125,7 +125,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
   };
 
   if let Err(e) = check_paste(&update, &files) {
-    sess.data.insert("error".into(), e);
+    sess.add_data("error", e);
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 
@@ -151,7 +151,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
     let db_files_ids: Vec<FileId> = db_files.iter().map(|x| x.id()).collect();
     // verify all files before making changes
     if files.iter().filter_map(|x| x.id).any(|x| !db_files_ids.contains(&x)) {
-      sess.data.insert("error".into(), "An invalid file ID was provided.".into());
+      sess.add_data("error", "An invalid file ID was provided.");
       return Ok(Rst::Redirect(Redirect::to("lastpage")));
     }
   }
@@ -177,7 +177,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
     names.sort();
     names.dedup();
     if len != names.len() {
-      sess.data.insert("error".into(), "Duplicate file names are not allowed.".into());
+      sess.add_data("error", "Duplicate file names are not allowed.");
       return Ok(Rst::Redirect(Redirect::to("lastpage")));
     }
   }
@@ -229,7 +229,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
   // TODO: more descriptive commit message
   paste_id.commit_if_dirty(user.name(), user.email(), "update paste via web")?;
 
-  sess.data.insert("info".into(), "Paste updated.".into());
+  sess.add_data("info", "Paste updated.");
   Ok(Rst::Redirect(Redirect::to(&format!("/pastes/{}/{}", username, paste_id.simple()))))
 }
 

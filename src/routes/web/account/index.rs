@@ -43,12 +43,12 @@ fn patch(update: Form<AccountUpdate>, csrf: AntiCsrfToken, user: OptionalWebUser
 
 
   if update.current_password.is_empty() {
-    sess.data.insert("error".into(), "Current password cannot be empty.".into());
+    sess.add_data("error", "Current password cannot be empty.");
     return Ok(Redirect::to("/account"));
   }
 
   if !user.check_password(&update.current_password) {
-    sess.data.insert("error".into(), "Incorrect password.".into());
+    sess.add_data("error", "Incorrect password.");
     return Ok(Redirect::to("/account"));
   }
 
@@ -67,7 +67,7 @@ fn patch(update: Form<AccountUpdate>, csrf: AntiCsrfToken, user: OptionalWebUser
       .select(count(users::id))
       .get_result(&*conn)?;
     if existing_names > 0 {
-      sess.data.insert("error".into(), "A user with that username already exists.".into());
+      sess.add_data("error", "A user with that username already exists.");
       return Ok(Redirect::to("/account"));
     }
     user.set_username(update.username);
@@ -75,15 +75,15 @@ fn patch(update: Form<AccountUpdate>, csrf: AntiCsrfToken, user: OptionalWebUser
 
   if !update.password.is_empty() {
     if update.password != update.password_verify {
-      sess.data.insert("error".into(), "New passwords did not match.".into());
+      sess.add_data("error", "New passwords did not match.");
       return Ok(Redirect::to("/account"));
     }
     if update.password.graphemes(true).count() < 10 {
-      sess.data.insert("error".into(), "New password must be at least 10 characters long.".into());
+      sess.add_data("error", "New password must be at least 10 characters long.");
       return Ok(Redirect::to("/account"));
     }
     if update.password == user.name() || update.password == user.username() || update.password == user.email() || update.password == "password" {
-      sess.data.insert("error".into(), r#"New password cannot be your name, user, email, or "password"."#.into());
+      sess.add_data("error", r#"New password cannot be your name, user, email, or "password"."#);
       return Ok(Redirect::to("/account"));
     }
     let hashed = HashedPassword::from(&update.password).into_string();
@@ -92,7 +92,7 @@ fn patch(update: Form<AccountUpdate>, csrf: AntiCsrfToken, user: OptionalWebUser
 
   user.update(&conn)?;
 
-  sess.data.insert("info".into(), "Account updated.".into());
+  sess.add_data("info", "Account updated.");
   Ok(Redirect::to("/account"))
 }
 

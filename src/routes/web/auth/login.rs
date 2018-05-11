@@ -39,12 +39,12 @@ fn post(data: Form<RegistrationData>, csrf: AntiCsrfToken, mut sess: Session, mu
   let data = data.into_inner();
 
   if !csrf.check(&data.anti_csrf_token) {
-    sess.data.insert("error".into(), "Invalid anti-CSRF token.".into());
+    sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Redirect::to("/login"));
   }
 
   if let Some(msg) = LoginAttempt::find_check(&conn, addr.ip())? {
-    sess.data.insert("error".into(), msg);
+    sess.add_data("error", msg);
     return Ok(Redirect::to("/login"));
   }
 
@@ -60,7 +60,7 @@ fn post(data: Form<RegistrationData>, csrf: AntiCsrfToken, mut sess: Session, mu
         Some(msg) => msg,
         None => "Username not found.".into(),
       };
-      sess.data.insert("error".into(), msg);
+      sess.add_data("error", msg);
       return Ok(Redirect::to("/login"));
     },
   };
@@ -70,7 +70,7 @@ fn post(data: Form<RegistrationData>, csrf: AntiCsrfToken, mut sess: Session, mu
       Some(msg) => msg,
       None => "Incorrect password.".into(),
     };
-    sess.data.insert("error".into(), msg);
+    sess.add_data("error", msg);
     return Ok(Redirect::to("/login"));
   }
 

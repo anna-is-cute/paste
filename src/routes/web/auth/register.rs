@@ -53,30 +53,30 @@ fn post(data: Form<RegistrationData>, csrf: AntiCsrfToken, mut sess: Session, mu
   }
 
   if data.username.is_empty() || data.name.is_empty()  || data.email.is_empty() || data.password.is_empty() {
-    sess.data.insert("error".into(), "No fields can be empty.".into());
+    sess.add_data("error", "No fields can be empty.");
     return Ok(Redirect::to("/register"));
   }
   if data.username == "anonymous" {
-    sess.data.insert("error".into(), r#"Username cannot be "anonymous"."#.into());
+    sess.add_data("error", r#"Username cannot be "anonymous"."#);
     return Ok(Redirect::to("/register"));
   }
 
   if data.password != data.password_verify {
-    sess.data.insert("error".into(), "Passwords did not match.".into());
+    sess.add_data("error", "Passwords did not match.");
     return Ok(Redirect::to("/register"));
   }
 
   if data.password.graphemes(true).count() < 10 {
-    sess.data.insert("error".into(), "Password must be at least 10 characters long.".into());
+    sess.add_data("error", "Password must be at least 10 characters long.");
     return Ok(Redirect::to("/register"));
   }
   if data.password == data.name || data.password == data.username || data.password == data.email || data.password == "password" {
-    sess.data.insert("error".into(), r#"Password cannot be the same as your name, username, email, or "password"."#.into());
+    sess.add_data("error", r#"Password cannot be the same as your name, username, email, or "password"."#);
     return Ok(Redirect::to("/register"));
   }
 
   if !data.recaptcha.verify(&config.recaptcha.secret_key)? {
-    sess.data.insert("error".into(), "The captcha did not validate. Try again.".into());
+    sess.add_data("error", "The captcha did not validate. Try again.");
     return Ok(Redirect::to("/register"));
   }
 
@@ -85,7 +85,7 @@ fn post(data: Form<RegistrationData>, csrf: AntiCsrfToken, mut sess: Session, mu
     .select(count(users::id))
     .get_result(&*conn)?;
   if existing_names > 0 {
-    sess.data.insert("error".into(), "A user with that username already exists.".into());
+    sess.add_data("error", "A user with that username already exists.");
     return Ok(Redirect::to("/register"));
   }
 

@@ -37,7 +37,7 @@ fn post(new: Form<NewKey>, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess:
   };
 
   if new.name.is_empty() {
-    sess.data.insert("error".into(), "API key name cannot be empty.".into());
+    sess.add_data("error", "API key name cannot be empty.");
     return Ok(Redirect::to("/account/keys"));
   }
 

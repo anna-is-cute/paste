@@ -12,7 +12,7 @@ use routes::web::{context, OptionalWebUser, Session};
 use diesel::prelude::*;
 
 use rocket::{Request, State, Outcome};
-use rocket::http::Status as HttpStatus;
+use rocket::http::{Status as HttpStatus, Header};
 use rocket::request::{self, FromRequest};
 use rocket::response::{Responder, Response};
 use rocket::response::status::Custom;
@@ -36,12 +36,12 @@ enum StringOrTemplate {
 }
 
 impl<'r> Responder<'r> for StringOrTemplate {
-    fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
-      match self {
-        StringOrTemplate::String(s) => s.respond_to(request),
-        StringOrTemplate::Template(t) => t.respond_to(request),
-      }
+  fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
+    match self {
+      StringOrTemplate::String(s) => s.respond_to(request),
+      StringOrTemplate::Template(t) => t.respond_to(request),
     }
+  }
 }
 
 fn error(req: &Request, kind: &str, template: &'static str) -> StringOrTemplate {
@@ -233,5 +233,34 @@ impl Deref for OptionalUser {
 
   fn deref(&self) -> &Self::Target {
     &self.0
+  }
+}
+
+// TODO: use Header<'h>
+pub struct AddHeaders<R> {
+  inner: R,
+  headers: Vec<(String, String)>,
+}
+
+impl<R> AddHeaders<R> {
+  pub fn new<I>(inner: R, headers: I) -> Self
+    where I: IntoIterator<Item = (String, String)>,
+  {
+    AddHeaders {
+      inner,
+      headers: headers.into_iter().collect(),
+    }
+  }
+}
+
+impl<'r, R> Responder<'r> for AddHeaders<R>
+  where R: Responder<'r>,
+{
+  fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
+    let mut response = self.inner.respond_to(request)?;
+    for (name, value) in self.headers {
+      response.set_header(Header::new(name, value));
+    }
+    Ok(response)
   }
 }

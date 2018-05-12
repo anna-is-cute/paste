@@ -20,7 +20,7 @@ type UpdateResult = ::std::result::Result<Json<Vec<PasteFileUpdate>>, ::rocket_c
 #[patch("/<paste_id>/files", format = "application/json", data = "<info>")]
 pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
   // TODO: can this be a request guard?
-  let info = match info {
+  let mut info = match info {
     Ok(x) => x.into_inner(),
     Err(e) => {
       let message = format!("could not parse json: {}", e);
@@ -31,6 +31,9 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
   if info.is_empty() {
     return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(Some("array cannot be empty".into()))));
   }
+
+  // sort the updates by content, which will put file removals last
+  info.sort_by(|a, b| a.content.cmp(&b.content));
 
   // verify auth
   let paste = match paste_id.get(&conn)? {

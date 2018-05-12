@@ -41,8 +41,8 @@ impl File {
     self.name = name;
   }
 
-  pub fn is_binary(&self) -> &Option<bool> {
-    &self.is_binary
+  pub fn is_binary(&self) -> Option<bool> {
+    self.is_binary
   }
 
   pub fn created_at(&self) -> &NaiveDateTime {
@@ -69,7 +69,7 @@ impl File {
     let mut data = Vec::new();
     file.read_to_end(&mut data)?;
 
-    if *self.is_binary() == Some(true) {
+    if self.is_binary() == Some(true) {
       Ok(Content::Base64(data))
     } else {
       // FIXME: fall back to base64? this error shouldn't really be possible except for FS

@@ -89,12 +89,12 @@ untitled paste
         <span class="tag">{{ paste.visibility }}</span>
       </div>
     </div>
-    <div class="control">
+    {# <div class="control">
       <div class="tags has-addons">
         <span class="tag is-info">created</span>
         <span class="tag">5 Dec 2017</span>
       </div>
-    </div>
+    </div> #}
   </div>
 {% endblock header_title %}
 

@@ -77,26 +77,25 @@ untitled paste
       </span>
     </button>
   {% endif %}
-  {% if paste.visibility == "public" %}
-    <span class="icon is-large">
-      <i class="fas fa-globe" title="{{ paste.visibility }}"></i>
-    </span>
-  {% endif %}
-  {% if paste.visibility == "unlisted" %}
-    <span class="icon is-large">
-      <i class="fas fa-eye-slash" title="{{ paste.visibility }}"></i>
-    </span>
-  {% endif %}
-  {% if paste.visibility == "private" %}
-    <span class="icon is-large">
-      <i class="fas fa-lock" title="{{ paste.visibility }}"></i>
-    </span>
-  {% endif %}
   {% if paste.name %}
 {{ paste.name }}
   {% else %}
 <em>untitled paste</em>
   {% endif %}
+  <div class="info-tags field is-grouped is-grouped-multiline">
+    <div class="control">
+      <div class="tags has-addons">
+        <span class="tag is-info">visibility</span>
+        <span class="tag">{{ paste.visibility }}</span>
+      </div>
+    </div>
+    <div class="control">
+      <div class="tags has-addons">
+        <span class="tag is-info">created</span>
+        <span class="tag">5 Dec 2017</span>
+      </div>
+    </div>
+  </div>
 {% endblock header_title %}
 
 {% block header_subtitle %}

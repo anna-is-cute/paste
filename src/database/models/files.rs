@@ -12,6 +12,7 @@ use chrono::{NaiveDateTime, Utc};
 
 use std::fs::File as FsFile;
 use std::io::Read;
+use std::path::PathBuf;
 
 #[derive(Debug, Identifiable, AsChangeset, Queryable, Associations)]
 #[belongs_to(Paste)]
@@ -49,25 +50,32 @@ impl File {
   }
 
   pub fn as_output_file(&self, with_content: bool) -> Result<OutputFile> {
-    let file_path = self.paste_id().files_directory().join(self.id().simple().to_string());
-
-    let mut file = FsFile::open(file_path)?;
-    let mut data = Vec::new();
-    file.read_to_end(&mut data)?;
 
     let content = if with_content {
-      if *self.is_binary() == Some(true) {
-        Some(Content::Base64(data))
-      } else {
-        // FIXME: fall back to base64? this error shouldn't really be possible except for FS
-        //        corruption
-        Some(Content::Text(String::from_utf8(data)?))
-      }
+      Some(self.read_content()?)
     } else {
       None
     };
 
     Ok(OutputFile::new(self.id(), Some(self.name()), content))
+  }
+
+  pub fn path(&self) -> PathBuf {
+    self.paste_id().files_directory().join(self.id().simple().to_string())
+  }
+
+  pub fn read_content(&self) -> Result<Content> {
+    let mut file = FsFile::open(self.path())?;
+    let mut data = Vec::new();
+    file.read_to_end(&mut data)?;
+
+    if *self.is_binary() == Some(true) {
+      Ok(Content::Base64(data))
+    } else {
+      // FIXME: fall back to base64? this error shouldn't really be possible except for FS
+      //        corruption
+      Ok(Content::Text(String::from_utf8(data)?))
+    }
   }
 }
 

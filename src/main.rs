@@ -114,6 +114,8 @@ fn main() {
       routes::web::pastes::get::username_id,
       routes::web::pastes::get::users_username_id,
 
+      routes::web::pastes::files::raw::get,
+
       routes::web::pastes::get::edit,
 
       routes::web::pastes::post::post,

@@ -7,6 +7,7 @@ use serde::de::{Deserialize, Deserializer};
 
 use std::fmt::{self, Debug, Formatter};
 
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
 pub enum Update<V> {
   Ignore,
   Set(V),

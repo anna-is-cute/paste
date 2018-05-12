@@ -175,7 +175,7 @@ pub struct PasteFile {
 }
 
 /// The content of a [`PasteFile`].
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 #[serde(tag = "format", content = "value")]
 pub enum Content {

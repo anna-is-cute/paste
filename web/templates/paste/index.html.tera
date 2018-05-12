@@ -82,6 +82,12 @@ untitled paste
   {% else %}
 <em>untitled paste</em>
   {% endif %}
+{% endblock header_title %}
+
+{% block header_subtitle %}
+  {% if paste.description %}
+{{ paste.description }}
+  {% endif %}
   <div class="info-tags field is-grouped is-grouped-multiline">
     <div class="control">
       <div class="tags has-addons">
@@ -96,12 +102,6 @@ untitled paste
       </div>
     </div> #}
   </div>
-{% endblock header_title %}
-
-{% block header_subtitle %}
-  {% if paste.description %}
-{{ paste.description }}
-  {% endif %}
 {% endblock header_subtitle %}
 
 {% block main %}

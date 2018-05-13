@@ -95,3 +95,18 @@ td.hljs-ln-code {
 .subtitle .info-tags {
   margin-top: .75rem;
 }
+
+.paste.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  .left {
+    order: 1;
+  }
+
+  .right {
+    order: 2;
+  }
+}

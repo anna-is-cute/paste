@@ -45,64 +45,75 @@ untitled paste
   {% endif %}
 {% endblock title %}
 
-{% block header_title %}
-  {% if is_owner %}
-    <div class="field is-grouped is-pulled-right">
-      <div class="control">
-        <button class="button is-info is-large">
-          <a href="/pastes/{{ author_name }}/{{ paste.id }}/edit">
-            <span class="icon is-large">
-              <i class="fas fa-pencil-alt"></i>
-            </span>
-          </a>
+{% block header %}
+<section class="hero is-dark is-bold">
+  <div class="hero-body">
+    <div class="paste container">
+      <div class="right">
+      {% if is_owner %}
+        <div class="field is-grouped">
+          <div class="control">
+            <button class="button is-info is-large">
+              <a href="/pastes/{{ author_name }}/{{ paste.id }}/edit">
+                <span class="icon is-large">
+                  <i class="fas fa-pencil-alt"></i>
+                </span>
+              </a>
+            </button>
+          </div>
+          <div class="control">
+            <form action="/pastes/{{ author_name }}/{{ paste.id }}" method="post">
+              <input type="hidden" name="_method" value="delete"/>
+              <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+              <button class="button is-danger is-large" type="submit">
+                <span class="icon is-large">
+                  <i class="fas fa-trash-alt"></i>
+                </span>
+              </button>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+      {% if not paste.author %}
+        <button class="button is-danger is-large is-pulled-right opens-modal">
+          <span class="icon is-large">
+            <i class="fas fa-trash-alt"></i>
+          </span>
         </button>
+      {% endif %}
       </div>
-      <div class="control">
-        <form action="/pastes/{{ author_name }}/{{ paste.id }}" method="post">
-          <input type="hidden" name="_method" value="delete"/>
-          <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
-          <button class="button is-danger is-large" type="submit">
-            <span class="icon is-large">
-              <i class="fas fa-trash-alt"></i>
-            </span>
-          </button>
-        </form>
-      </div>
-    </div>
-  {% endif %}
-  {% if not paste.author %}
-    <button class="button is-danger is-large is-pulled-right opens-modal">
-      <span class="icon is-large">
-        <i class="fas fa-trash-alt"></i>
-      </span>
-    </button>
-  {% endif %}
-  {% if paste.name %}
-{{ paste.name }}
-  {% else %}
-<em>untitled paste</em>
-  {% endif %}
-{% endblock header_title %}
-
-{% block header_subtitle %}
-  {% if paste.description %}
-{{ paste.description }}
-  {% endif %}
-  <div class="info-tags field is-grouped is-grouped-multiline">
-    <div class="control">
-      <div class="tags has-addons">
-        <span class="tag is-info">visibility</span>
-        <span class="tag">{{ paste.visibility }}</span>
+      <div class="left">
+        <h1 class="title">
+        {% if paste.name %}
+          {{ paste.name }}
+        {% else %}
+          <em>untitled paste</em>
+        {% endif %}
+        </h1>
+        <h2 class="subtitle">
+          {% if paste.description %}
+          {{ paste.description }}
+          {% endif %}
+          <div class="info-tags field is-grouped is-grouped-multiline">
+            <div class="control">
+              <div class="tags has-addons">
+                <span class="tag is-info">visibility</span>
+                <span class="tag">{{ paste.visibility }}</span>
+              </div>
+            </div>
+            {# <div class="control">
+              <div class="tags has-addons">
+                <span class="tag is-info">created</span>
+                <span class="tag">5 Dec 2017</span>
+              </div>
+            </div> #}
+          </div>
+        </h2>
       </div>
     </div>
-    {# <div class="control">
-      <div class="tags has-addons">
-        <span class="tag is-info">created</span>
-        <span class="tag">5 Dec 2017</span>
-      </div>
-    </div> #}
   </div>
-{% endblock header_subtitle %}
+</section>
+{% endblock header %}
 
 {% block main %}
 {% if not paste.author %}

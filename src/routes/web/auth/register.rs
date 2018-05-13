@@ -7,12 +7,14 @@ use models::id::UserId;
 use routes::web::{context, AntiCsrfToken, Rst, OptionalWebUser, Session};
 use utils::{ReCaptcha, HashedPassword};
 
+use cookie::{Cookie, SameSite};
+
 use diesel;
 use diesel::dsl::count;
 use diesel::prelude::*;
 
 use rocket::State;
-use rocket::http::{Cookies, Cookie};
+use rocket::http::Cookies;
 use rocket::request::Form;
 use rocket::response::Redirect;
 
@@ -100,7 +102,12 @@ fn post(data: Form<RegistrationData>, csrf: AntiCsrfToken, mut sess: Session, mu
 
   diesel::insert_into(users::table).values(&nu).execute(&*conn)?;
 
-  cookies.add_private(Cookie::new("user_id", id.simple().to_string()));
+  let cookie = Cookie::build("user_id", id.simple().to_string())
+    .secure(true)
+    .http_only(true)
+    .same_site(SameSite::Lax)
+    .finish();
+  cookies.add_private(cookie);
 
   Ok(Redirect::to("lastpage"))
 }

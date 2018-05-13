@@ -64,6 +64,9 @@ ipnetwork = "0.12"
 # anti-csrf tokens
 hex = "0.3"
 
+# custom cookies
+cookie = "0.9"
+
 # web logic
 [dependencies.rocket]
 version = "0.3"

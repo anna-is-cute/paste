@@ -3,6 +3,7 @@
 
 extern crate base64;
 extern crate chrono;
+extern crate cookie;
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;

@@ -1,2 +1,4 @@
 /target
 **/*.rs.bk
+/Rocket.toml
+/config.toml

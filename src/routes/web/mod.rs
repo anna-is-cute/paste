@@ -36,7 +36,6 @@ pub use self::guards::*;
 pub fn context(config: &Config, user: Option<&User>, session: &mut Session) -> Value {
   json!({
     "config": &config,
-    // TODO: this can be made into an optional request guard
     "error": session.data.remove("error"),
     "info": session.data.remove("info"),
     "user": user,

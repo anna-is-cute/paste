@@ -95,7 +95,6 @@ pub struct PasteUpdate {
 #[derive(Debug, Deserialize)]
 pub struct MetadataUpdate {
   // double option because name can be removed, changed, or left alone
-  // FIXME: use CountedText
   #[serde(default)]
   pub name: Update<CountedText>,
   // double option because description can be removed, changed, or left alone

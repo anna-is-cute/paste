@@ -62,7 +62,7 @@ fn get(username: String, paste_id: PasteId, file_id: FileId, user: OptionalWebUs
   let h = if file.is_binary() == Some(true) {
     ("Content-Disposition".into(), "attachment".into())
   } else {
-    ("Content-Type".into(), "text/plain".into())
+    ("Content-Type".into(), "text/plain; charset=utf-8".into())
   };
 
   Ok(As::Add(AddHeaders::new(

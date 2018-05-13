@@ -1,6 +1,6 @@
 use config::Config;
 use errors::*;
-use routes::web::{OptionalWebUser, Session};
+use routes::web::{context, OptionalWebUser, Session};
 
 use rocket::State;
 
@@ -14,14 +14,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
     Some(ref f) => Some(read_to_string(f)?),
     None => None,
   };
-  let ctx = json!({
-    "config": &*config,
-    "user": &*user,
-    "error": sess.data.remove("error"),
-    "info": sess.data.remove("info"),
-    "server_version": ::SERVER_VERSION,
-    "resources_version": &*::RESOURCES_VERSION,
-    "about": about,
-  });
+  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  ctx["about"] = json!(about);
   Ok(Template::render("about", ctx))
 }

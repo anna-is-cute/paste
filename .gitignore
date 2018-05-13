@@ -2,3 +2,4 @@
 **/*.rs.bk
 /Rocket.toml
 /config.toml
+/.env

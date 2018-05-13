@@ -6,10 +6,12 @@ use database::schema::users;
 use errors::*;
 use routes::web::{context, Rst, AntiCsrfToken, OptionalWebUser, Session};
 
+use cookie::{Cookie, SameSite};
+
 use diesel::prelude::*;
 
 use rocket::State;
-use rocket::http::{Cookies, Cookie};
+use rocket::http::Cookies;
 use rocket::request::Form;
 use rocket::response::Redirect;
 
@@ -74,7 +76,12 @@ fn post(data: Form<RegistrationData>, csrf: AntiCsrfToken, mut sess: Session, mu
     return Ok(Redirect::to("/login"));
   }
 
-  cookies.add_private(Cookie::new("user_id", user.id().simple().to_string()));
+  let cookie = Cookie::build("user_id", user.id().simple().to_string())
+    .secure(true)
+    .http_only(true)
+    .same_site(SameSite::Lax)
+    .finish();
+  cookies.add_private(cookie);
 
   Ok(Redirect::to("lastpage"))
 }

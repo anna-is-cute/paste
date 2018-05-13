@@ -1,7 +1,8 @@
 use models::id::SessionId;
 
+use cookie::{Cookie, SameSite};
+
 use rocket::Outcome;
-use rocket::http::Cookie;
 use rocket::request::{self, Request, FromRequest};
 
 use serde_json;
@@ -72,7 +73,12 @@ impl<'a, 'r> Drop for Session<'a, 'r> {
         },
       };
       // FIXME: don't set cookie unless changed
-      req.cookies().add_private(Cookie::new("session", json));
+      let cookie = Cookie::build("session", json)
+        .secure(true)
+        .http_only(true)
+        .same_site(SameSite::Lax)
+        .finish();
+      req.cookies().add_private(cookie);
     }
   }
 }

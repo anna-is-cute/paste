@@ -134,7 +134,14 @@ untitled paste
             "Delete" to delete this paste.
           </p>
         </div>
-        <input name="key" type="text" class="input" placeholder="Deletion key"/>
+        <input
+          required
+          name="key"
+          type="text"
+          autocorrect="off"
+          autocapitalize="off"
+          class="input"
+          placeholder="Deletion key"/>
       </section>
       <footer class="modal-card-foot">
         <button class="button is-danger" type="submit">Delete</button>

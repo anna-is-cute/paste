@@ -22,6 +22,8 @@
       <textarea
         name="file_content"
         class="paste textarea"
+        autocorrect="off"
+        autocapitalize="off"
         placeholder="fn main() {&#10;  println!(&quot;Hello world!&quot;);&#10;}"></textarea>
     </div>
   </div>

@@ -150,7 +150,10 @@ Change this paste<span class="requires-js"> and its files</span>.
       <input type="hidden" name="id" value="{{ file.id }}"/>
       <div class="field">
         <div class="control">
-          <textarea class="editor">{{ file.content.value }}</textarea>
+          <textarea
+            autocorrect="off"
+            autocapitalize="off"
+            class="editor">{{ file.content.value }}</textarea>
         </div>
       </div>
       {% else %}

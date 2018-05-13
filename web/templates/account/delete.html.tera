@@ -56,7 +56,14 @@
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div class="field has-addons">
     <div class="control is-expanded">
-      <input name="username" class="input" type="text" placeholder="{{ user.username }}" required/>
+      <input
+        name="username"
+        class="input"
+        type="text"
+        placeholder="{{ user.username }}"
+        autocorrect="off"
+        autocapitalize="off"
+        required/>
       <p class="help">
         Type your username to confirm account deletion.
       </p>

@@ -65,6 +65,8 @@ Manage account settings.
             name="username"
             class="input"
             type="text"
+            autocorrect="off"
+            autocapitalize="off"
             placeholder="{{ user.username }}"/>
         </div>
         <p class="help">

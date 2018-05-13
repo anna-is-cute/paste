@@ -20,7 +20,14 @@ Log in to your account.
   <div class="field">
     <label class="label">Username</label>
     <div class="control has-icons-left">
-      <input name="username" class="input" type="text" placeholder="jimbo32" required/>
+      <input
+        name="username"
+        class="input"
+        type="text"
+        placeholder="jimbo32"
+        autocorrect="off"
+        autocapitalize="off"
+        required/>
       <span class="icon is-small is-left">
         <i class="fas fa-user"></i>
       </span>
@@ -30,7 +37,12 @@ Log in to your account.
   <div class="field">
     <label class="label">Password</label>
     <div class="control has-icons-left">
-      <input name="password" class="input" type="password" placeholder="Your secure password" required/>
+      <input
+        name="password"
+        class="input"
+        type="password"
+        placeholder="Your secure password"
+        required/>
       <span class="icon is-small is-left">
         <i class="fas fa-asterisk"></i>
       </span>

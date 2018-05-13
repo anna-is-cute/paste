@@ -79,7 +79,7 @@
         {% else %}
           <a class="navbar-link" href="/login">Log in</a>
         {% endif %}
-          <div class="navbar-dropdown">
+          <div class="navbar-dropdown is-right">
           {% if user %}
             <span class="navbar-item">{{ user.name }}</span>
             <hr class="navbar-divider"/>

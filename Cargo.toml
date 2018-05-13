@@ -58,13 +58,13 @@ reqwest = "0.8"
 # configuration files
 toml = "0.4"
 
-# rate limiting
+# rate limiting (has to be outdated because this is the version diesel uses)
 ipnetwork = "0.12"
 
 # anti-csrf tokens
 hex = "0.3"
 
-# custom cookies
+# custom cookies (has to be outdated because this is the version Rocket uses)
 cookie = "0.9"
 
 # web logic

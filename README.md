@@ -35,19 +35,16 @@ highlighting, anonymity, and secure authentication.
 
 - Clone the repo (`--recursive` for submodules)
 - `cargo install diesel_cli --no-default-features --features postgres`
-- Make a directory, preferably outside of the repository, where you can store the binary and config
-  files. We'll call it `~/paste/run`
-- Copy `Rocket.toml` and `config.toml` into `~/paste/run`
+- Copy the example config files
+  - `cp Rocket{.example,}.toml; cp config{.example,}.toml`
+- Edit the config files
 - `cargo build --release`
-- Copy `target/release/paste` into `~/paste/run`
 - Create a postgres database and user
-- `echo 'DATABASE_URL=postgres://username@/database' > ~/paste/run/.env`
-- `cd ~/paste/run`
-- `diesel migration run --migration-dir=path/to/repo/migrations`
-- Edit `~/paste/run/config.toml`
-- Preferably use `ROCKET_ENV=prod` and set a secret key in `~/paste/run/Rocket.toml`
+- `echo 'DATABASE_URL=postgres://username@/database' > .env`
+- `diesel migration run`
+- Preferably use `ROCKET_ENV=prod` and set a secret key in `Rocket.toml`
   - See [Rocket docs](https://rocket.rs/guide/configuration/)
-- `~/paste/run/paste config.toml`
+- `target/release/paste config.toml`
 - Reverse proxy and handle `/static/` with a webserver and not the included route
 
 ## Contact

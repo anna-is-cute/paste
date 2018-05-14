@@ -18,6 +18,8 @@ extern crate ipnetwork;
 extern crate lazy_static;
 extern crate libflate;
 extern crate percent_encoding;
+extern crate r2d2_redis;
+extern crate redis;
 extern crate reqwest;
 extern crate rocket_contrib;
 extern crate rocket;
@@ -36,6 +38,7 @@ mod config;
 mod database;
 mod errors;
 mod models;
+mod redis_store;
 mod routes;
 mod store;
 mod utils;
@@ -88,6 +91,7 @@ fn main() {
 
   rocket::ignite()
     .manage(database::init_pool())
+    .manage(redis_store::init_pool())
     .manage(config)
     .attach(fairings::SecurityHeaders)
     .attach(fairings::AntiCsrf)

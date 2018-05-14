@@ -2,7 +2,7 @@ use config::Config;
 use database::DbConn;
 use errors::*;
 use models::id::ApiKeyId;
-use routes::web::{context, AntiCsrfToken, Rst, OptionalWebUser, Session};
+use routes::web::{context, Rst, OptionalWebUser, Session};
 
 use rocket::request::Form;
 use rocket::response::Redirect;
@@ -23,10 +23,10 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: Db
 }
 
 #[post("/account/keys", format = "application/x-www-form-urlencoded", data = "<new>")]
-fn post(new: Form<NewKey>, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn post(new: Form<NewKey>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let new = new.into_inner();
 
-  if !csrf.check(&new.anti_csrf_token) {
+  if !sess.check_token(&new.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Redirect::to("/login"));
   }
@@ -53,10 +53,10 @@ struct NewKey {
 }
 
 #[delete("/account/keys/<key>", data = "<data>")]
-fn delete(key: ApiKeyId, data: Form<DeleteKey>, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn delete(key: ApiKeyId, data: Form<DeleteKey>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let data = data.into_inner();
 
-  if !csrf.check(&data.anti_csrf_token) {
+  if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Redirect::to("/account/keys"));
   }

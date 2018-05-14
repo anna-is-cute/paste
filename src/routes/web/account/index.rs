@@ -2,7 +2,7 @@ use config::Config;
 use database::DbConn;
 use database::schema::users;
 use errors::*;
-use routes::web::{context, AntiCsrfToken, Rst, OptionalWebUser, Session};
+use routes::web::{context, Rst, OptionalWebUser, Session};
 use utils::HashedPassword;
 
 use diesel::dsl::count;
@@ -28,10 +28,10 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
 }
 
 #[patch("/account", format = "application/x-www-form-urlencoded", data = "<update>")]
-fn patch(update: Form<AccountUpdate>, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn patch(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let update = update.into_inner();
 
-  if !csrf.check(&update.anti_csrf_token) {
+  if !sess.check_token(&update.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Redirect::to("/account"));
   }

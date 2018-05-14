@@ -4,7 +4,7 @@ use database::models::login_attempts::LoginAttempt;
 use database::models::users::User;
 use database::schema::users;
 use errors::*;
-use routes::web::{context, Rst, AntiCsrfToken, OptionalWebUser, Session};
+use routes::web::{context, Rst, OptionalWebUser, Session};
 
 use cookie::{Cookie, SameSite};
 
@@ -37,10 +37,10 @@ struct RegistrationData {
 }
 
 #[post("/login", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, csrf: AntiCsrfToken, mut sess: Session, mut cookies: Cookies, conn: DbConn, addr: SocketAddr) -> Result<Redirect> {
+fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, addr: SocketAddr) -> Result<Redirect> {
   let data = data.into_inner();
 
-  if !csrf.check(&data.anti_csrf_token) {
+  if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Redirect::to("/login"));
   }

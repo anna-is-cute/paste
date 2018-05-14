@@ -4,7 +4,7 @@ use database::models::users::NewUser;
 use database::schema::users;
 use errors::*;
 use models::id::UserId;
-use routes::web::{context, AntiCsrfToken, Rst, OptionalWebUser, Session};
+use routes::web::{context, Rst, OptionalWebUser, Session};
 use utils::{ReCaptcha, HashedPassword};
 
 use cookie::{Cookie, SameSite};
@@ -46,10 +46,10 @@ struct RegistrationData {
 }
 
 #[post("/register", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, csrf: AntiCsrfToken, mut sess: Session, mut cookies: Cookies, conn: DbConn, config: State<Config>) -> Result<Redirect> {
+fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, config: State<Config>) -> Result<Redirect> {
   let data = data.into_inner();
 
-  if !csrf.check(&data.anti_csrf_token) {
+  if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Redirect::to("/register"));
   }

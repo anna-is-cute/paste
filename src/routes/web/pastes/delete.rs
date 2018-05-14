@@ -6,7 +6,7 @@ use database::schema::{users, deletion_keys};
 use errors::*;
 use models::id::{DeletionKeyId, PasteId};
 use models::paste::Visibility;
-use routes::web::{Rst, AntiCsrfToken, OptionalWebUser, Session};
+use routes::web::{Rst, OptionalWebUser, Session};
 
 use diesel::prelude::*;
 
@@ -19,10 +19,10 @@ use uuid::Uuid;
 use std::str::FromStr;
 
 #[delete("/pastes/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>")]
-fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let deletion = deletion.into_inner();
 
-  if !csrf.check(&deletion.anti_csrf_token) {
+  if !sess.check_token(&deletion.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }

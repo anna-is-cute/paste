@@ -48,33 +48,40 @@
 {% endif %}
 {% for paste in pastes %}
   <div class="box">
-  {# {{ paste.id }} #}
-  <h3 class="title">
-  <span class="icon is-pulled-right">
-  {% if paste.visibility == "public" %}
-    <i class="fas fa-globe" title="{{ paste.visibility }}"></i>
-  {% endif %}
-  {% if paste.visibility == "unlisted" %}
-    <i class="fas fa-eye-slash" title="{{ paste.visibility }}"></i>
-  {% endif %}
-  {% if paste.visibility == "private" %}
-    <i class="fas fa-lock" title="{{ paste.visibility }}"></i>
-  {% endif %}
-  </span>
-    <a href="/pastes/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
-  {% if paste.name %}
-      {{ paste.name }}
-  {% else %}
-      <em>untitled paste</em>
-  {% endif %}
-    </a>
-  </h3>
-  {% if paste.description %}
-  <h4 class="subtitle">
-    {{ paste.description }}
-  </h4>
-  {% endif %}
-    <em>{{ paste.files | length }} file{{ paste.files | length | pluralize }}</em>
+    <h3 class="title">
+      <a href="/pastes/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
+    {% if paste.name %}
+        {{ paste.name }}
+    {% else %}
+        <em>untitled paste</em>
+    {% endif %}
+      </a>
+    </h3>
+    {% if paste.description %}
+    <h4 class="subtitle">
+      {{ paste.description }}
+    </h4>
+    {% endif %}
+    <div class="info-tags field is-grouped is-grouped-multiline">
+      <div class="control">
+        <div class="tags has-addons">
+          <span class="tag is-dark">visibility</span>
+          <span class="tag is-info">{{ paste.visibility }}</span>
+        </div>
+      </div>
+      <div class="control">
+        <div class="tags has-addons">
+          <span class="tag is-dark">files</span>
+          <span class="tag is-info">{{ paste.files | length }}</span>
+        </div>
+      </div>
+      {# <div class="control">
+        <div class="tags has-addons">
+          <span class="tag is-dark">created</span>
+          <span class="tag is-info">5 Dec 2017</span>
+        </div>
+      </div> #}
+    </div>
   </div>
 {% endfor %}
 

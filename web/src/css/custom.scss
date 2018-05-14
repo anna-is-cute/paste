@@ -92,8 +92,8 @@ td.hljs-ln-code {
   }
 }
 
-.subtitle .info-tags {
-  margin-top: .75rem;
+.title + .info-tags, .subtitle + .info-tags {
+  margin-top: -0.75rem;
 }
 
 .paste.container {

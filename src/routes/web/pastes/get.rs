@@ -11,6 +11,8 @@ use routes::web::{context, Rst, OptionalWebUser, Session};
 
 use diesel::prelude::*;
 
+use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
+
 use rocket::http::Status as HttpStatus;
 use rocket::response::Redirect;
 use rocket::State;
@@ -37,12 +39,17 @@ fn id(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
     return Ok(Rst::Status(status));
   }
 
-  let owner = owner.unwrap_or_else(|| "anonymous".into());
+  let username = owner.unwrap_or_else(|| "anonymous".into());
+  let owner = utf8_percent_encode(
+    &username,
+    PATH_SEGMENT_ENCODE_SET,
+  );
   Ok(Rst::Redirect(Redirect::to(&format!("/pastes/{}/{}", owner, id))))
 }
 
 #[get("/<username>/<id>", rank = 10)]
 fn username_id(username: String, id: PasteId) -> Redirect {
+  let username = utf8_percent_encode(&username, PATH_SEGMENT_ENCODE_SET);
   Redirect::to(&format!("/pastes/{}/{}", username, id))
 }
 

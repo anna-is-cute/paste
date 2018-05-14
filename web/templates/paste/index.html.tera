@@ -75,7 +75,7 @@ untitled paste
         </div>
       {% endif %}
       {% if not paste.author %}
-        <button class="button is-danger is-large is-pulled-right opens-modal">
+        <button class="button is-danger is-large opens-modal">
           <span class="icon is-large">
             <i class="fas fa-trash-alt"></i>
           </span>

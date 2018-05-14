@@ -165,15 +165,17 @@ Change this paste<span class="requires-js"> and its files</span>.
     <div id="end_of_files"></div>
   </div>
 
-  <div class="field is-grouped is-pulled-right">
-    <div class="control">
-      <button class="button is-link" type="submit">Edit</button>
+  <div class="paste-submit-buttons">
+    <div class="field is-grouped">
+      <div class="control">
+        <button id="add_file" class="button requires-js" type="button">Add file</button>
+      </div>
     </div>
-  </div>
 
-  <div class="field is-grouped">
-    <div class="control">
-      <button id="add_file" class="button requires-js" type="button">Add file</button>
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-link" type="submit">Edit</button>
+      </div>
     </div>
   </div>
 </form>

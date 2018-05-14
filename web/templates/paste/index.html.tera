@@ -90,25 +90,25 @@ untitled paste
           <em>untitled paste</em>
         {% endif %}
         </h1>
+        {% if paste.description %}
         <h2 class="subtitle">
-          {% if paste.description %}
           {{ paste.description }}
-          {% endif %}
-          <div class="info-tags field is-grouped is-grouped-multiline">
-            <div class="control">
-              <div class="tags has-addons">
-                <span class="tag is-info">visibility</span>
-                <span class="tag">{{ paste.visibility }}</span>
-              </div>
-            </div>
-            {# <div class="control">
-              <div class="tags has-addons">
-                <span class="tag is-info">created</span>
-                <span class="tag">5 Dec 2017</span>
-              </div>
-            </div> #}
-          </div>
         </h2>
+        {% endif %}
+        <div class="info-tags field is-grouped is-grouped-multiline">
+          <div class="control">
+            <div class="tags has-addons">
+              <span class="tag">visibility</span>
+              <span class="tag is-info">{{ paste.visibility }}</span>
+            </div>
+          </div>
+          {# <div class="control">
+            <div class="tags has-addons">
+              <span class="tag">created</span>
+              <span class="tag is-info">5 Dec 2017</span>
+            </div>
+          </div> #}
+        </div>
       </div>
     </div>
   </div>

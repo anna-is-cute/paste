@@ -22,7 +22,7 @@ fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn) -> 
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingFile)),
   };
 
-  let pf = db_file.as_output_file(true)?;
+  let pf = db_file.as_output_file(true, &paste)?;
 
   Ok(Status::show_success(HttpStatus::Ok, pf))
 }

@@ -66,7 +66,7 @@ fn get(username: String, paste_id: PasteId, file_id: FileId, user: OptionalWebUs
   };
 
   Ok(As::Add(AddHeaders::new(
-    File::open(file.path())?,
+    File::open(file.path(&paste))?,
     vec![h],
   )))
 }

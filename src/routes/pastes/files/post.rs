@@ -30,11 +30,11 @@ pub fn post(paste_id: PasteId, file: UpdateResult, user: RequiredUser, conn: DbC
     return Ok(Status::show_error(status, kind));
   }
 
-  let created = paste_id.create_file(&conn, file.name.map(|x| x.to_string()), file.content)?;
+  let created = paste.create_file(&conn, file.name.map(|x| x.to_string()), file.content)?;
 
   // commit
   // TODO: more descriptive commit message
-  paste_id.commit(user.name(), user.email(), "update paste")?;
+  paste.commit(user.name(), user.email(), "update paste")?;
 
   let output = OutputFile::new(created.id(), Some(created.name().to_string()), None);
 

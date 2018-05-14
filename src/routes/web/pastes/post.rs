@@ -1,6 +1,6 @@
 use database::DbConn;
 use database::models::deletion_keys::NewDeletionKey;
-use database::models::pastes::NewPaste;
+use database::models::pastes::{Paste, NewPaste};
 use database::schema::{pastes, deletion_keys};
 use errors::*;
 use models::paste::{Visibility, Content};
@@ -133,7 +133,7 @@ fn post(paste: Form<PasteUpload>, csrf: AntiCsrfToken, user: OptionalWebUser, mu
     return Ok(Redirect::to("lastpage"));
   }
 
-  let id = Store::new_paste()?;
+  let id = Store::new_paste(user.as_ref().map(|x| x.id()))?;
 
   let name = if paste.name.is_empty() {
     None
@@ -156,9 +156,9 @@ fn post(paste: Form<PasteUpload>, csrf: AntiCsrfToken, user: OptionalWebUser, mu
     user.as_ref().map(|x| x.id()),
     None,
   );
-  diesel::insert_into(pastes::table)
+  let paste: Paste = diesel::insert_into(pastes::table)
     .values(&np)
-    .execute(&*conn)?;
+    .get_result(&*conn)?;
 
   if user.is_none() {
     let key = NewDeletionKey::generate(id);
@@ -175,12 +175,12 @@ fn post(paste: Form<PasteUpload>, csrf: AntiCsrfToken, user: OptionalWebUser, mu
       Some(file.name)
     };
 
-    id.create_file(&conn, file_name, Content::Text(file.content))?;
+    paste.create_file(&conn, file_name, Content::Text(file.content))?;
   }
 
   match user {
-    Some(ref u) => id.commit(u.name(), u.email(), "create paste via web")?,
-    None => id.commit("Anonymous", "none", "create paste via web")?,
+    Some(ref u) => paste.commit(u.name(), u.email(), "create paste via web")?,
+    None => paste.commit("Anonymous", "none", "create paste via web")?,
   }
 
   let username = match user {

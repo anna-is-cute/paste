@@ -144,7 +144,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
   let mut db_changed = false;
   // TODO: this needs much refactor love
   // update files and database if necessary
-  let files_directory = paste_id.files_directory();
+  let files_directory = paste.files_directory();
 
   let mut db_files = paste_id.files(&conn)?;
   {
@@ -216,18 +216,18 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
           Some(file.name)
         };
         let content = Content::Text(file.content);
-        paste_id.create_file(&conn, name, content)?;
+        paste.create_file(&conn, name, content)?;
       },
     }
   }
 
   for file in removed {
-    paste_id.delete_file(&conn, file)?;
+    paste.delete_file(&conn, file)?;
   }
 
   // commit if any files were changed
   // TODO: more descriptive commit message
-  paste_id.commit_if_dirty(user.name(), user.email(), "update paste via web")?;
+  paste.commit_if_dirty(user.name(), user.email(), "update paste via web")?;
 
   sess.add_data("info", "Paste updated.");
   Ok(Rst::Redirect(Redirect::to(&format!("/pastes/{}/{}", username, paste_id.simple()))))

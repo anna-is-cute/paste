@@ -20,7 +20,7 @@ fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
   }
   // should be validated beyond this point
 
-  id.delete(&conn)?;
+  paste.delete(&conn)?;
 
   // FIXME:
   // Error: Failed to write response: Custom { kind: WriteZero, error: StringError("failed to write

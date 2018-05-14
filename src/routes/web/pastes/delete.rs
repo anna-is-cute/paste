@@ -90,7 +90,7 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, csrf: An
 
   // should be authed beyond this point
 
-  id.delete(&conn)?;
+  paste.delete(&conn)?;
 
   sess.add_data("info", "Paste deleted.");
   Ok(Rst::Redirect(Redirect::to("/")))

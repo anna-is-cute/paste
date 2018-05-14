@@ -110,3 +110,9 @@ td.hljs-ln-code {
     order: 2;
   }
 }
+
+.paste-submit-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}

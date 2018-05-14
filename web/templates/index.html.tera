@@ -72,20 +72,22 @@ Create a new paste.
 
   <div id="end_of_files"></div>
 
-  <div class="field is-grouped is-pulled-right">
-  {% if user %}
-    <div class="control">
-      <button class="button" name="anonymous" type="submit">Submit anonymously</button>
+  <div class="paste-submit-buttons">
+    <div class="field is-grouped">
+      <div class="control">
+        <button id="add_file" class="button requires-js" type="button">Add file</button>
+      </div>
     </div>
-  {% endif %}
-    <div class="control">
-      <button class="button is-link" type="submit">Submit</button>
-    </div>
-  </div>
 
-  <div class="field is-grouped">
-    <div class="control">
-      <button id="add_file" class="button requires-js" type="button">Add file</button>
+    <div class="field is-grouped is-pulled-right">
+    {% if user %}
+      <div class="control">
+        <button class="button" name="anonymous" type="submit">Submit anonymously</button>
+      </div>
+    {% endif %}
+      <div class="control">
+        <button class="button is-link" type="submit">Submit</button>
+      </div>
     </div>
   </div>
 </form>

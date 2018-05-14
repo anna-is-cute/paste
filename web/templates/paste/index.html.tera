@@ -54,7 +54,7 @@ untitled paste
         <div class="field is-grouped">
           <div class="control">
             <button class="button is-info is-large">
-              <a href="/pastes/{{ author_name }}/{{ paste.id }}/edit">
+              <a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/edit">
                 <span class="icon is-large">
                   <i class="fas fa-pencil-alt"></i>
                 </span>
@@ -62,7 +62,7 @@ untitled paste
             </button>
           </div>
           <div class="control">
-            <form action="/pastes/{{ author_name }}/{{ paste.id }}" method="post">
+            <form action="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}" method="post">
               <input type="hidden" name="_method" value="delete"/>
               <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
               <button class="button is-danger is-large" type="submit">
@@ -118,7 +118,7 @@ untitled paste
 {% block main %}
 {% if not paste.author %}
 <div id="deletion_modal" class="modal">
-  <form action="/pastes/{{ author_name }}/{{ paste.id }}" method="post">
+  <form action="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}" method="post">
     <input type="hidden" name="_method" value="delete"/>
     <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
     <div class="modal-background closes-modal"></div>
@@ -191,7 +191,7 @@ untitled paste
 <div class="box">
   {% if file.name %}
   <h2 id="{{ file.id }}-title" class="title">
-    <a class="is-pulled-right button" href="/pastes/{{ author_name }}/{{ paste.id }}/files/{{ file.id }}/raw">Raw</a>
+    <a class="is-pulled-right button" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/files/{{ file.id }}/raw">Raw</a>
     {{ file.name }}
   </h2>
   {% endif %}

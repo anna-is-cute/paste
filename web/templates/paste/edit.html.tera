@@ -51,9 +51,9 @@ Change this paste<span class="requires-js"> and its files</span>.
     </li>
     <li>
   {% if paste.name %}
-      <a href="/pastes/{{ author_name }}/{{ paste.id }}">{{ paste.name }}</a>
+      <a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">{{ paste.name }}</a>
   {% else %}
-      <a href="/pastes/{{ author_name }}/{{ paste.id }}"><em>untitled paste</em></a>
+      <a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}"><em>untitled paste</em></a>
   {% endif %}
     </li>
     <li class="is-active">
@@ -62,7 +62,7 @@ Change this paste<span class="requires-js"> and its files</span>.
   </ul>
 </nav>
 
-<form id="paste_upload" method="post" action="/pastes/{{ author_name }}/{{ paste.id }}">
+<form id="paste_upload" method="post" action="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">
   <input type="hidden" name="_method" value="patch"/>
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div>

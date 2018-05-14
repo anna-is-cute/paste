@@ -62,6 +62,10 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     sess.add_data("error", r#"Username cannot be "anonymous"."#);
     return Ok(Redirect::to("/register"));
   }
+  if data.username == ".." {
+    sess.add_data("error", r#"Username cannot be ".."."#);
+    return Ok(Redirect::to("/register"));
+  }
 
   if data.password != data.password_verify {
     sess.add_data("error", "Passwords did not match.");

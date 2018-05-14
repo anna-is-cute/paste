@@ -42,6 +42,7 @@ highlighting, anonymity, and secure authentication.
 - Create a postgres database and user
 - `echo 'DATABASE_URL=postgres://username@/database' > .env`
 - `diesel migration run`
+- Make sure a redis server is running and set the URL in `.env`
 - Preferably use `ROCKET_ENV=prod` and set a secret key in `Rocket.toml`
   - See [Rocket docs](https://rocket.rs/guide/configuration/)
 - `target/release/paste config.toml`

@@ -70,6 +70,12 @@ cookie = "0.9"
 # sanitizing urls
 percent-encoding = "1"
 
+# in-memory data store
+redis = "0.8"
+
+# redis connection pooling
+r2d2_redis = "0.7"
+
 # web logic
 [dependencies.rocket]
 version = "0.3"

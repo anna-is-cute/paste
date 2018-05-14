@@ -6,7 +6,7 @@ use errors::*;
 use models::id::{PasteId, FileId};
 use models::paste::{Visibility, Content};
 use models::paste::update::{MetadataUpdate, Update};
-use routes::web::{AntiCsrfToken, OptionalWebUser, Rst, Session};
+use routes::web::{OptionalWebUser, Rst, Session};
 
 use diesel;
 use diesel::prelude::*;
@@ -67,10 +67,10 @@ fn check_paste(paste: &PasteUpdate, files: &[MultiFile]) -> result::Result<(), S
 }
 
 #[patch("/pastes/<username>/<paste_id>", format = "application/x-www-form-urlencoded", data = "<update>")]
-fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let update = update.into_inner();
 
-  if !csrf.check(&update.anti_csrf_token) {
+  if !sess.check_token(&update.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }

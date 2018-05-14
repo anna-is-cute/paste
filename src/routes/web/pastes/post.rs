@@ -4,7 +4,7 @@ use database::models::pastes::{Paste, NewPaste};
 use database::schema::{pastes, deletion_keys};
 use errors::*;
 use models::paste::{Visibility, Content};
-use routes::web::{AntiCsrfToken, OptionalWebUser, Session};
+use routes::web::{OptionalWebUser, Session};
 use store::Store;
 
 use diesel;
@@ -93,10 +93,10 @@ fn check_paste(paste: &PasteUpload, files: &[MultiFile]) -> result::Result<(), S
 }
 
 #[post("/pastes", format = "application/x-www-form-urlencoded", data = "<paste>")]
-fn post(paste: Form<PasteUpload>, csrf: AntiCsrfToken, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let paste = paste.into_inner();
 
-  if !csrf.check(&paste.anti_csrf_token) {
+  if !sess.check_token(&paste.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Redirect::to("lastpage"));
   }

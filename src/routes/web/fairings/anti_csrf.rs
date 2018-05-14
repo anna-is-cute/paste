@@ -24,7 +24,10 @@ impl AntiCsrf {
       _ => return,
     };
 
+    session.purge_tokens();
+
     let token = hex::encode(randombytes::randombytes(64));
+    session.add_token(token.as_str());
     session.data.insert("anti_csrf_token".into(), token);
   }
 }

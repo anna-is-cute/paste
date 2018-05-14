@@ -1,13 +1,13 @@
-use routes::web::{AntiCsrfToken, Session};
+use routes::web::Session;
 
 use rocket::http::{Cookies, Cookie};
 use rocket::request::Form;
 use rocket::response::Redirect;
 
 #[post("/logout", data = "<data>")]
-fn post(data: Form<Logout>, csrf: AntiCsrfToken, mut sess: Session, mut cookies: Cookies) -> Redirect {
+fn post(data: Form<Logout>, mut sess: Session, mut cookies: Cookies) -> Redirect {
   let data = data.into_inner();
-  if !csrf.check(&data.anti_csrf_token) {
+  if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Redirect::to("lastpage");
   }

@@ -11,6 +11,8 @@ use routes::web::{AntiCsrfToken, OptionalWebUser, Rst, Session};
 use diesel;
 use diesel::prelude::*;
 
+use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
+
 use rocket::http::Status as HttpStatus;
 use rocket::request::LenientForm;
 use rocket::response::Redirect;
@@ -230,6 +232,8 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
   paste.commit_if_dirty(user.name(), user.email(), "update paste via web")?;
 
   sess.add_data("info", "Paste updated.");
+
+  let username = utf8_percent_encode(&username, PATH_SEGMENT_ENCODE_SET);
   Ok(Rst::Redirect(Redirect::to(&format!("/pastes/{}/{}", username, paste_id.simple()))))
 }
 

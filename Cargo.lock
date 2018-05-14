@@ -826,6 +826,7 @@ dependencies = [
  "ipnetwork 0.12.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "libflate 0.1.14 (registry+https://github.com/rust-lang/crates.io-index)",
+ "percent-encoding 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "reqwest 0.8.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.3.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_codegen 0.3.10 (registry+https://github.com/rust-lang/crates.io-index)",

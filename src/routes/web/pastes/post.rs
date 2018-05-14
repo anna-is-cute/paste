@@ -10,6 +10,8 @@ use store::Store;
 use diesel;
 use diesel::prelude::*;
 
+use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
+
 use rocket::request::Form;
 use rocket::response::Redirect;
 
@@ -188,6 +190,7 @@ fn post(paste: Form<PasteUpload>, csrf: AntiCsrfToken, user: OptionalWebUser, mu
     None => "anonymous",
   };
 
+  let username = utf8_percent_encode(username, PATH_SEGMENT_ENCODE_SET);
   Ok(Redirect::to(&format!("/pastes/{}/{}", username, id.simple())))
 }
 

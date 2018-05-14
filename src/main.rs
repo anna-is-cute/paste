@@ -17,6 +17,7 @@ extern crate ipnetwork;
 #[macro_use]
 extern crate lazy_static;
 extern crate libflate;
+extern crate percent_encoding;
 extern crate reqwest;
 extern crate rocket_contrib;
 extern crate rocket;

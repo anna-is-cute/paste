@@ -85,7 +85,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
 
       let files: Vec<OutputFile> = id.files(&conn)?
         .iter()
-        .map(|x| x.as_output_file(false))
+        .map(|x| x.as_output_file(false, &paste))
         .collect::<result::Result<_, _>>()?;
 
       outputs.push(Output::new(

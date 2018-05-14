@@ -49,10 +49,9 @@ impl File {
     &self.created_at
   }
 
-  pub fn as_output_file(&self, with_content: bool) -> Result<OutputFile> {
-
+  pub fn as_output_file(&self, with_content: bool, paste: &Paste) -> Result<OutputFile> {
     let content = if with_content {
-      Some(self.read_content()?)
+      Some(self.read_content(paste)?)
     } else {
       None
     };
@@ -60,12 +59,12 @@ impl File {
     Ok(OutputFile::new(self.id(), Some(self.name()), content))
   }
 
-  pub fn path(&self) -> PathBuf {
-    self.paste_id().files_directory().join(self.id().simple().to_string())
+  pub fn path(&self, paste: &Paste) -> PathBuf {
+    paste.files_directory().join(self.id().simple().to_string())
   }
 
-  pub fn read_content(&self) -> Result<Content> {
-    let mut file = FsFile::open(self.path())?;
+  pub fn read_content(&self, paste: &Paste) -> Result<Content> {
+    let mut file = FsFile::open(self.path(paste))?;
     let mut data = Vec::new();
     file.read_to_end(&mut data)?;
 

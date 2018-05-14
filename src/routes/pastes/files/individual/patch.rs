@@ -45,7 +45,7 @@ pub fn patch(paste_id: PasteId, file_id: FileId, file: UpdateResult, user: Requi
   let mut db_changed = false;
   // TODO: this needs much refactor love
   // update files and database if necessary
-  let files_directory = paste_id.files_directory();
+  let files_directory = paste.files_directory();
 
   let mut db_files = paste_id.files(&conn)?;
   {
@@ -86,7 +86,7 @@ pub fn patch(paste_id: PasteId, file_id: FileId, file: UpdateResult, user: Requi
       },
       // deleting file
       Update::Remove => {
-        paste_id.delete_file(&conn, db_file.id())?;
+        paste.delete_file(&conn, db_file.id())?;
         // do not update file in database
         db_changed = false;
       },
@@ -103,7 +103,7 @@ pub fn patch(paste_id: PasteId, file_id: FileId, file: UpdateResult, user: Requi
 
   // commit if any files were changed
   // TODO: more descriptive commit message
-  paste_id.commit_if_dirty(user.name(), user.email(), "update paste")?;
+  paste.commit_if_dirty(user.name(), user.email(), "update paste")?;
 
   Ok(Status::show_success(HttpStatus::NoContent, ()))
 }

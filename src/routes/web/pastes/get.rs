@@ -71,7 +71,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
 
   let files: Vec<OutputFile> = id.files(&conn)?
     .iter()
-    .map(|x| x.as_output_file(true))
+    .map(|x| x.as_output_file(true, &paste))
     .collect::<result::Result<_, _>>()?;
 
   let output = Output::new(
@@ -144,7 +144,7 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
 
   let files: Vec<OutputFile> = id.files(&conn)?
     .iter()
-    .map(|x| x.as_output_file(true))
+    .map(|x| x.as_output_file(true, &paste))
     .collect::<result::Result<_, _>>()?;
 
   let output = Output::new(

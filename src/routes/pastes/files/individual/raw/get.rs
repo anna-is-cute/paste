@@ -24,7 +24,7 @@ fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn) -> 
     return Ok(FileOrError::Error(Status::show_error(status, kind)));
   }
 
-  let path = paste_id.files_directory().join(file_id.simple().to_string());
+  let path = paste.files_directory().join(file_id.simple().to_string());
 
   // TODO: specials headers?
   Ok(FileOrError::File(NamedFile::open(path)?))

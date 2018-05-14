@@ -1,7 +1,7 @@
 use database::{DbConn, schema};
 use database::models::deletion_keys::NewDeletionKey;
 use database::models::files::File as DbFile;
-use database::models::pastes::NewPaste;
+use database::models::pastes::{Paste as DbPaste, NewPaste};
 use models::paste::Paste;
 use models::paste::output::{Output, OutputFile, OutputAuthor};
 use models::status::{Status, ErrorKind};
@@ -35,7 +35,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
   }
   // move this to PasteId::create?
   // rocket has already verified the paste info is valid, so create a paste
-  let id = Store::new_paste()?;
+  let id = Store::new_paste(user.as_ref().map(|x| x.id()))?;
 
   // TODO: refactor
   let np = NewPaste::new(
@@ -46,9 +46,9 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     user.as_ref().map(|x| x.id()),
     None,
   );
-  diesel::insert_into(schema::pastes::table)
+  let paste: DbPaste = diesel::insert_into(schema::pastes::table)
     .values(&np)
-    .execute(&*conn)?;
+    .get_result(&*conn)?;
 
   // TODO: refactor
   let deletion_key = if user.is_none() {
@@ -63,17 +63,17 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
 
   let files: Vec<DbFile> = info.files
     .into_iter()
-    .map(|x| id.create_file(&conn, x.name.map(|x| x.to_string()), x.content))
+    .map(|x| paste.create_file(&conn, x.name.map(|x| x.to_string()), x.content))
     .collect::<Result<_, _>>()?;
 
   match *user {
-    Some(ref u) => id.commit(u.name(), u.email(), "create paste")?,
-    None => id.commit("Anonymous", "none", "create paste")?,
+    Some(ref u) => paste.commit(u.name(), u.email(), "create paste")?,
+    None => paste.commit("Anonymous", "none", "create paste")?,
   }
 
   let files: Vec<OutputFile> = files
     .into_iter()
-    .map(|x| x.as_output_file(false))
+    .map(|x| x.as_output_file(false, &paste))
     .collect::<Result<_, _>>()?;
 
   let author = match *user {

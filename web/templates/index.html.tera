@@ -79,7 +79,7 @@ Create a new paste.
       </div>
     </div>
 
-    <div class="field is-grouped is-pulled-right">
+    <div class="field is-grouped">
     {% if user %}
       <div class="control">
         <button class="button" name="anonymous" type="submit">Submit anonymously</button>

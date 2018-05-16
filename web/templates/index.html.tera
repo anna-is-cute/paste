@@ -16,9 +16,7 @@
   integrity="sha384-P5nWRBFaIkYyI4jajiya/75d5Ajad+eIktSJKJcKNuupqyRDX3m2XxPjlnynZFhW"></script>
 {% endblock head %}
 
-{% block title %}
-New
-{% endblock title %}
+{% block title %}New{% endblock title %}
 
 {% block header_title %}
 New paste

@@ -38,7 +38,7 @@ Manage account settings.
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">Name</label>
+      <label class="label">Display name</label>
     </div>
     <div class="field-body">
       <div class="field">

@@ -5,11 +5,11 @@
 {% endblock head %}
 
 {% block title %}
-{{ target.username }}'s pastes
+{{ target.name }}'s pastes
 {% endblock title %}
 
 {% block header_title %}
-{{ target.username }}'s pastes
+{{ target.name }}'s pastes
 {% endblock header_title %}
 
 {% block header_subtitle %}
@@ -44,7 +44,7 @@
 {% endif %}
 
 {% if pastes | length == 0 %}
-  <em>It looks like {{ target.username }} has no pastes!</em>
+  <em>It looks like {{ target.name }} has no pastes!</em>
 {% endif %}
 {% for paste in pastes %}
   <div class="box">

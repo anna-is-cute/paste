@@ -5,7 +5,7 @@ use database::schema::users;
 use errors::*;
 use models::id::UserId;
 use routes::web::{context, Rst, OptionalWebUser, Session};
-use utils::{ReCaptcha, HashedPassword};
+use utils::{ReCaptcha, HashedPassword, Validator};
 
 use cookie::{Cookie, SameSite};
 
@@ -58,14 +58,20 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     sess.add_data("error", "No fields can be empty.");
     return Ok(Redirect::to("/register"));
   }
-  if data.username == "anonymous" {
-    sess.add_data("error", r#"Username cannot be "anonymous"."#);
-    return Ok(Redirect::to("/register"));
-  }
-  if data.username == ".." || data.username == "." {
-    sess.add_data("error", r#"Username cannot be ".." or "."."#);
-    return Ok(Redirect::to("/register"));
-  }
+  let username = match Validator::validate_username(&data.username) {
+    Ok(u) => u,
+    Err(e) => {
+      sess.add_data("error", format!("Invalid username: {}.", e));
+      return Ok(Redirect::to("/register"));
+    },
+  };
+  let display_name = match Validator::validate_display_name(&data.name) {
+    Ok(d) => d,
+    Err(e) => {
+      sess.add_data("error", format!("Invalid display name: {}.", e));
+      return Ok(Redirect::to("/register"));
+    },
+  };
 
   if data.password != data.password_verify {
     sess.add_data("error", "Passwords did not match.");
@@ -87,7 +93,7 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
   }
 
   let existing_names: i64 = users::table
-    .filter(users::username.eq(&data.username))
+    .filter(users::username.eq(&username))
     .select(count(users::id))
     .get_result(&*conn)?;
   if existing_names > 0 {
@@ -98,9 +104,9 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
   let id = UserId(Uuid::new_v4());
   let nu = NewUser::new(
     id,
-    data.username,
+    username.into_owned(),
     HashedPassword::from(data.password).into_string(),
-    Some(data.name),
+    Some(display_name.into_owned()),
     Some(data.email),
   );
 

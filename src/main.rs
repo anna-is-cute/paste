@@ -1,4 +1,4 @@
-#![feature(plugin, custom_derive)]
+#![feature(plugin, custom_derive, macro_at_most_once_rep)]
 #![plugin(rocket_codegen)]
 
 extern crate base64;
@@ -30,6 +30,7 @@ extern crate serde_json;
 extern crate serde;
 extern crate sodiumoxide;
 extern crate toml;
+extern crate unicode_categories;
 extern crate unicode_segmentation;
 extern crate uuid;
 extern crate xz2;

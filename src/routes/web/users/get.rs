@@ -76,7 +76,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
         .load(&*conn)?
     };
 
-    let author = OutputAuthor::new(target.id(), target.username());
+    let author = OutputAuthor::new(target.id(), target.username(), target.name());
 
     let mut outputs = Vec::with_capacity(pastes.len());
 

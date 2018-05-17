@@ -63,7 +63,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
   let (expected_username, author): (String, Option<OutputAuthor>) = match paste.author_id() {
     Some(author) => {
       let user: User = users::table.find(author).first(&*conn)?;
-      (user.username().to_string(), Some(OutputAuthor::new(author, user.username().to_string())))
+      (user.username().to_string(), Some(OutputAuthor::new(author, user.username(), user.name())))
     },
     None => ("anonymous".into(), None),
   };
@@ -120,7 +120,7 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
   let (expected_username, author): (String, Option<OutputAuthor>) = match paste.author_id() {
     Some(author) => {
       let user: User = users::table.find(author).first(&*conn)?;
-      (user.username().to_string(), Some(OutputAuthor::new(author, user.username().to_string())))
+      (user.username().to_string(), Some(OutputAuthor::new(author, user.username(), user.name())))
     },
     None => ("anonymous".into(), None),
   };

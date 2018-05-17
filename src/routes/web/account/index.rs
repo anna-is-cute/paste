@@ -3,7 +3,7 @@ use database::DbConn;
 use database::schema::users;
 use errors::*;
 use routes::web::{context, Rst, OptionalWebUser, Session};
-use utils::HashedPassword;
+use utils::{HashedPassword, Validator};
 
 use diesel::dsl::count;
 use diesel::prelude::*;
@@ -57,20 +57,34 @@ fn patch(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, 
   }
 
   if !update.name.is_empty() {
-    user.set_name(update.name);
+    let name = match Validator::validate_display_name(&update.name) {
+      Ok(n) => n,
+      Err(e) => {
+        sess.add_data("error", format!("Invalid display name: {}.", e));
+        return Ok(Redirect::to("/account"));
+      },
+    };
+    user.set_name(name.into_owned());
   }
 
   if !update.username.is_empty() {
+    let username = match Validator::validate_username(&update.username) {
+      Ok(n) => n,
+      Err(e) => {
+        sess.add_data("error", format!("Invalid username: {}.", e));
+        return Ok(Redirect::to("/account"));
+      },
+    };
     // FIXME: refactor this logic out
     let existing_names: i64 = users::table
-      .filter(users::username.eq(&update.username))
+      .filter(users::username.eq(&username))
       .select(count(users::id))
       .get_result(&*conn)?;
     if existing_names > 0 {
       sess.add_data("error", "A user with that username already exists.");
       return Ok(Redirect::to("/account"));
     }
-    user.set_username(update.username);
+    user.set_username(username.into_owned());
   }
 
   if !update.password.is_empty() {

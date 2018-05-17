@@ -58,13 +58,18 @@ impl OutputFile {
 pub struct OutputAuthor {
   pub id: UserId,
   pub username: String,
+  pub name: String,
 }
 
 impl OutputAuthor {
-  pub fn new<S: Into<String>>(id: UserId, username: S) -> Self {
+  pub fn new<U, S>(id: UserId, username: U, name: S) -> Self
+    where U: Into<String>,
+          S: Into<String>,
+  {
     OutputAuthor {
       id,
       username: username.into(),
+      name: name.into(),
     }
   }
 }

@@ -171,8 +171,10 @@ untitled paste
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
     <li>
-  {% if paste.author.username %}
-    <a href="/users/{{ paste.author.username | urlencode(safe="") }}">{{ paste.author.username }}</a>
+  {% if paste.author.username and paste.author.name %}
+    <a href="/users/{{ paste.author.username | urlencode(safe="") }}">
+      {{ paste.author.name }}
+    </a>
   {% else %}
     <a>anonymous</a>
   {% endif %}

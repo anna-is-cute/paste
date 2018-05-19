@@ -41,7 +41,7 @@ xz2 = "0.1"
 sodiumoxide = "0.0.16"
 
 # environment variable loading
-dotenv = "0.11"
+dotenv = "0.12"
 
 # lazy statics
 lazy_static = "1"

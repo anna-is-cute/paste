@@ -25,7 +25,7 @@ before_cache:
   - rm -fv target/.rustc_info.json
   - cargo clean -p paste
 rust:
-  - nightly
+  - nightly-2018-05-07
 matrix:
   fast_finish: true
 notifications:

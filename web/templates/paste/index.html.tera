@@ -53,13 +53,11 @@ untitled paste
       {% if is_owner %}
         <div class="field is-grouped">
           <div class="control">
-            <button class="button is-info is-large">
-              <a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/edit">
-                <span class="icon is-large">
-                  <i class="fas fa-pencil-alt"></i>
-                </span>
-              </a>
-            </button>
+            <a class="button is-info is-large" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/edit">
+              <span class="icon is-large">
+                <i class="fas fa-pencil-alt"></i>
+              </span>
+            </a>
           </div>
           <div class="control">
             <form action="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}" method="post">

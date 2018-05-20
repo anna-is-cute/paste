@@ -3,7 +3,7 @@ use database::DbConn;
 use database::schema::users;
 use errors::*;
 use routes::web::{context, Rst, OptionalWebUser, Session};
-use utils::{HashedPassword, Validator};
+use utils::{email, HashedPassword, Validator};
 
 use diesel::dsl::count;
 use diesel::prelude::*;
@@ -41,7 +41,6 @@ fn patch(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, 
     None => return Ok(Redirect::to("/login")),
   };
 
-
   if update.current_password.is_empty() {
     sess.add_data("error", "Current password cannot be empty.");
     return Ok(Redirect::to("/account"));
@@ -53,6 +52,10 @@ fn patch(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, 
   }
 
   if !update.email.is_empty() {
+    if !email::check_email(&update.email) {
+      sess.add_data("error", "Invalid email.");
+      return Ok(Redirect::to("/account"));
+    }
     user.set_email(update.email);
   }
 

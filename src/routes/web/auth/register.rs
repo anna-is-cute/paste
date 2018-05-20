@@ -5,7 +5,7 @@ use database::schema::users;
 use errors::*;
 use models::id::UserId;
 use routes::web::{context, Rst, OptionalWebUser, Session};
-use utils::{ReCaptcha, HashedPassword, Validator};
+use utils::{email, ReCaptcha, HashedPassword, Validator};
 
 use cookie::{Cookie, SameSite};
 
@@ -72,6 +72,11 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
       return Ok(Redirect::to("/register"));
     },
   };
+
+  if !email::check_email(&data.email) {
+    sess.add_data("error", "Invalid email.");
+    return Ok(Redirect::to("/register"));
+  }
 
   if data.password != data.password_verify {
     sess.add_data("error", "Passwords did not match.");

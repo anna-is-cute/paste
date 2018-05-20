@@ -1,4 +1,4 @@
-use diesel::r2d2::{Pool, PooledConnection};
+use r2d2::{Pool, PooledConnection};
 
 use r2d2_redis::RedisConnectionManager;
 
@@ -8,6 +8,8 @@ use rocket::http::Status;
 use rocket::request::{self, FromRequest};
 use rocket::{Request, State, Outcome};
 
+use sidekiq;
+
 use std::env;
 use std::ops::Deref;
 
@@ -15,10 +17,19 @@ pub type RedisPool = Pool<RedisConnectionManager>;
 
 lazy_static! {
   static ref REDIS_URL: String = env::var("REDIS_URL").expect("missing REDIS_URL env var");
+  static ref SIDEKIQ_URL: String = env::var("SIDEKIQ_URL").expect("missing SIDEKIQ_URL env var");
 }
 
 pub fn init_pool() -> RedisPool {
-  let manager = RedisConnectionManager::new(REDIS_URL.as_str()).expect("could not connect to redis");
+  pool(REDIS_URL.as_str())
+}
+
+pub fn init_sidekiq() -> sidekiq::Client {
+  sidekiq::Client::new(pool(SIDEKIQ_URL.as_str()), Default::default())
+}
+
+fn pool(path: &str) -> RedisPool {
+  let manager = RedisConnectionManager::new(path).expect("could not connect to redis");
   Pool::new(manager).expect("redis pool")
 }
 

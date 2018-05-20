@@ -18,6 +18,7 @@ extern crate ipnetwork;
 extern crate lazy_static;
 extern crate libflate;
 extern crate percent_encoding;
+extern crate r2d2;
 extern crate r2d2_redis;
 extern crate redis;
 extern crate reqwest;
@@ -28,6 +29,7 @@ extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 extern crate serde;
+extern crate sidekiq;
 extern crate sodiumoxide;
 extern crate toml;
 extern crate unicode_categories;
@@ -41,6 +43,7 @@ mod errors;
 mod models;
 mod redis_store;
 mod routes;
+mod sidekiq_;
 mod store;
 mod utils;
 
@@ -93,6 +96,7 @@ fn main() {
   rocket::ignite()
     .manage(database::init_pool())
     .manage(redis_store::init_pool())
+    .manage(redis_store::init_sidekiq())
     .manage(config)
     .attach(fairings::SecurityHeaders)
     .attach(fairings::AntiCsrf)

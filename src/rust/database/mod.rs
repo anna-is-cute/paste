@@ -1,5 +1,7 @@
 use diesel::pg::PgConnection;
-use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
+use diesel::r2d2::ConnectionManager;
+
+use r2d2::{Pool, PooledConnection};
 
 use rocket::http::Status;
 use rocket::request::{self, FromRequest};

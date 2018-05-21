@@ -101,7 +101,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     return Ok(Redirect::to("/"));
   }
 
-  let anonymous = paste.anonymous.is_some();
+  let anonymous = paste.anonymous.is_some() || user.is_none();
 
   let user = if anonymous {
     None

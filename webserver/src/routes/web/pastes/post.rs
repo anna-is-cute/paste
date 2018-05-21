@@ -98,7 +98,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
 
   if !sess.check_token(&paste.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
-    return Ok(Redirect::to("lastpage"));
+    return Ok(Redirect::to("/"));
   }
 
   let anonymous = paste.anonymous.is_some();
@@ -111,7 +111,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
 
   if anonymous && paste.visibility == Visibility::Private {
     sess.add_data("error", "Cannot make anonymous private pastes.");
-    return Ok(Redirect::to("lastpage"));
+    return Ok(Redirect::to("/"));
   }
 
   let files = match paste.upload_json {
@@ -119,7 +119,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
       Ok(f) => f,
       Err(_) => {
         sess.add_data("error", "Invalid JSON. Did you tamper with the form?");
-        return Ok(Redirect::to("lastpage"));
+        return Ok(Redirect::to("/"));
       },
     },
     None => handle_non_js(&paste),
@@ -127,12 +127,12 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
 
   if files.is_empty() {
     sess.add_data("error", "You must upload at least one file.");
-    return Ok(Redirect::to("lastpage"));
+    return Ok(Redirect::to("/"));
   }
 
   if let Err(e) = check_paste(&paste, &files) {
     sess.add_data("error", e);
-    return Ok(Redirect::to("lastpage"));
+    return Ok(Redirect::to("/"));
   }
 
   let id = Store::new_paste(user.as_ref().map(|x| x.id()))?;

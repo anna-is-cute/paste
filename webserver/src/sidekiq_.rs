@@ -5,12 +5,19 @@ use sidekiq::{self, Value, JobOpts};
 
 pub enum Job {
   DeleteAllPastes(UserId),
+  Email {
+    email: String,
+    name: String,
+    subject: String,
+    content: String,
+  },
 }
 
 impl Job {
   fn class(&self) -> &str {
     match *self {
       Job::DeleteAllPastes(_) => "DeleteAllPastes",
+      Job::Email { .. } => "Email",
     }
   }
 
@@ -27,6 +34,12 @@ impl Job {
           Value::String(path),
         ]
       },
+      Job::Email { ref email, ref name, ref subject, ref content } => vec![
+        Value::String(email.to_string()),
+        Value::String(name.to_string()),
+        Value::String(subject.to_string()),
+        Value::String(content.to_string()),
+      ],
     }
   }
 
@@ -36,6 +49,7 @@ impl Job {
         queue: "low".into(),
         .. Default::default()
       },
+      Job::Email { .. } => Default::default(),
     }
   }
 }

@@ -93,6 +93,18 @@ fn main() {
     }
   };
 
+  #[get("/kek")]
+  fn kek(user: routes::web::OptionalWebUser, sidekiq: rocket::State<sidekiq::Client>) {
+    if let Some(u) = user.into_inner() {
+      sidekiq.push(sidekiq_::Job::Email {
+        name: u.name().to_string(),
+        email: u.email().to_string(),
+        subject: "Verify your email".into(),
+        content: "pls do it bb".into(),
+      }.into()).unwrap();
+    }
+  }
+
   rocket::ignite()
     .manage(database::init_pool())
     .manage(redis_store::init_pool())
@@ -109,6 +121,7 @@ fn main() {
       routes::not_found,
     ])
     .mount("/", routes![
+      kek,
       routes::web::index::get,
 
       routes::web::about::get,

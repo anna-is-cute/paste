@@ -14,8 +14,17 @@ site_domain = "paste.gg"
 site_key = "<site_key>"
 secret_key = "<secret_key>"
 
-[email]
+# Sender information for emails sent from the server
+[email.sender]
+name = ""
+from = ""
+
+# SMTP information for emails sent from the server
+# paste enforces TLS without negotiation
+[email.smtp]
+# address for smtp
 address = ""
+# domain for validating cert
 domain = ""
 port = 0
 username = ""

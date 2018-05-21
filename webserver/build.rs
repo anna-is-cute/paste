@@ -19,7 +19,7 @@ fn main() {
 }
 
 fn version() -> Option<String> {
-  let repo = Repository::open(".").ok()?;
+  let repo = Repository::open("..").ok()?;
   let revparse = repo.revparse_single("HEAD").ok()?;
   Some(revparse.id().to_string())
 }

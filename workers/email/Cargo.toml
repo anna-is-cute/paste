@@ -1,0 +1,11 @@
+[package]
+name = "worker_email"
+version = "0.1.0"
+authors = ["Kyle Clemens <git@kyleclemens.com>"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+lettre = "0.8"
+lettre_email = "0.8"

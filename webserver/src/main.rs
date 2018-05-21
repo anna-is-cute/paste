@@ -31,6 +31,7 @@ extern crate serde_json;
 extern crate serde;
 extern crate sidekiq;
 extern crate sodiumoxide;
+extern crate tera;
 extern crate toml;
 extern crate unicode_categories;
 extern crate unicode_segmentation;
@@ -51,6 +52,8 @@ use routes::web::fairings;
 
 use rocket_contrib::Template;
 
+use tera::Tera;
+
 use std::env;
 use std::path::PathBuf;
 
@@ -61,19 +64,11 @@ lazy_static! {
     .and_then(|r| r.revparse_single("HEAD").map(|p| p.id()))
     .map(|r| r.to_string())
     .ok();
-}
 
-#[get("/kek")]
-fn kek(user: routes::web::OptionalWebUser, config: rocket::State<config::Config>, sidekiq: rocket::State<sidekiq::Client>) {
-  if let Some(u) = user.into_inner() {
-    sidekiq.push(sidekiq_::Job::Email {
-      config_path: config._path.clone().unwrap(),
-      name: u.name().to_string(),
-      email: u.email().to_string(),
-      subject: "Verify your email".into(),
-      content: "pls do it bb".into(),
-    }.into()).unwrap();
-  }
+  pub static ref EMAIL_TERA: Tera = {
+    let path = env::var("EMAIL_TEMPLATES").expect("missing EMAIL_TEMPLATES environment variable");
+    Tera::new(&path).expect("could not create tempating engine")
+  };
 }
 
 fn main() {
@@ -110,6 +105,8 @@ fn main() {
     }
   };
 
+  lazy_static::initialize(&EMAIL_TERA);
+
   rocket::ignite()
     .manage(database::init_pool())
     .manage(redis_store::init_pool())
@@ -126,7 +123,6 @@ fn main() {
       routes::not_found,
     ])
     .mount("/", routes![
-      kek,
       routes::web::index::get,
 
       routes::web::about::get,
@@ -161,6 +157,9 @@ fn main() {
 
       routes::web::account::delete::get,
       routes::web::account::delete::delete,
+
+      routes::web::account::verify::get,
+      routes::web::account::verify::resend,
 
       routes::web::users::get::get,
       routes::web::users::get::get_page,

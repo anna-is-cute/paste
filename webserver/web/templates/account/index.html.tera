@@ -33,6 +33,18 @@ Manage account settings.
 {% endblock header_foot %}
 
 {% block main %}
+{% if not user.email_verified %}
+<div class="message is-warning">
+  <p class="message-header">
+    Your email is not verified!
+    <button class="delete" aria-label="delete"></button>
+  </p>
+  <p class="message-body">
+    Click <a href="/account/send_verification">here</a> to resend a verification email.
+  </p>
+</div>
+{% endif %}
+
 <form action="/account" method="post">
   <input type="hidden" name="_method" value="patch"/>
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>

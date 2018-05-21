@@ -1,11 +1,13 @@
 use config::Config;
 use database::DbConn;
-use database::models::users::NewUser;
+use database::models::users::{User, NewUser};
 use database::schema::users;
 use errors::*;
 use models::id::UserId;
 use routes::web::{context, Rst, OptionalWebUser, Session};
 use utils::{email, ReCaptcha, HashedPassword, Validator};
+
+use chrono::Utc;
 
 use cookie::{Cookie, SameSite};
 
@@ -19,6 +21,8 @@ use rocket::request::Form;
 use rocket::response::Redirect;
 
 use rocket_contrib::Template;
+
+use sidekiq::Client as SidekiqClient;
 
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -46,7 +50,7 @@ struct RegistrationData {
 }
 
 #[post("/register", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, config: State<Config>) -> Result<Redirect> {
+fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, config: State<Config>, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
   let data = data.into_inner();
 
   if !sess.check_token(&data.anti_csrf_token) {
@@ -66,7 +70,7 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     },
   };
   let display_name = match Validator::validate_display_name(&data.name) {
-    Ok(d) => d,
+    Ok(d) => d.into_owned(),
     Err(e) => {
       sess.add_data("error", format!("Invalid display name: {}.", e));
       return Ok(Redirect::to("/register"));
@@ -107,15 +111,22 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
   }
 
   let id = UserId(Uuid::new_v4());
+
   let nu = NewUser::new(
     id,
     username.into_owned(),
     HashedPassword::from(data.password).into_string(),
-    Some(display_name.into_owned()),
+    Some(display_name),
     Some(data.email),
   );
 
-  diesel::insert_into(users::table).values(&nu).execute(&*conn)?;
+  let user: User = diesel::insert_into(users::table)
+    .values(&nu)
+    .get_result(&*conn)?;
+
+  let ver = user.create_email_verification(&conn, Some(Utc::now().naive_utc()))?;
+
+  sidekiq.push(ver.job(&*config, &user)?.into())?;
 
   let cookie = Cookie::build("user_id", id.simple().to_string())
     .secure(true)

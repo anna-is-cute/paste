@@ -82,6 +82,9 @@ r2d2_redis = "0.7"
 # username validation
 unicode_categories = "0.1"
 
+# email templates
+tera = "0.11"
+
 # web logic
 [dependencies.rocket]
 version = "0.3"

@@ -1,8 +1,11 @@
 use errors::*;
 use models::id::{ApiKeyId, UserId};
+use super::api_keys::{ApiKey, NewApiKey};
+use super::email_verifications::{EmailVerification, NewEmailVerification};
 use super::super::DbConn;
-use super::super::models::api_keys::{ApiKey, NewApiKey};
-use super::super::schema::{users, api_keys};
+use super::super::schema::{users, api_keys, email_verifications};
+
+use chrono::NaiveDateTime;
 
 use diesel;
 use diesel::prelude::*;
@@ -19,6 +22,7 @@ pub struct User {
   password: String,
   name: String,
   email: String,
+  email_verified: bool,
 }
 
 impl User {
@@ -56,6 +60,26 @@ impl User {
 
   pub fn set_email(&mut self, email: String) {
     self.email = email;
+  }
+
+  pub fn email_verified(&self) -> bool {
+    self.email_verified
+  }
+
+  pub fn set_email_verified(&mut self, verified: bool) {
+    self.email_verified = verified;
+  }
+
+  pub fn create_email_verification(&self, conn: &DbConn, last_sent: Option<NaiveDateTime>) -> Result<EmailVerification> {
+    let nv = NewEmailVerification::new(
+      self.email(),
+      self.id(),
+      last_sent,
+    );
+    let ver = diesel::insert_into(email_verifications::table)
+      .values(&nv)
+      .get_result(&**conn)?;
+    Ok(ver)
   }
 
   pub fn check_password(&self, pass: &str) -> bool {
@@ -113,6 +137,7 @@ pub struct NewUser {
   password: String,
   name: Option<String>,
   email: Option<String>,
+  email_verified: bool,
 }
 
 impl NewUser {
@@ -123,6 +148,13 @@ impl NewUser {
     name: Option<String>,
     email: Option<String>,
   ) -> Self {
-    NewUser { id, username, password, name, email }
+    NewUser {
+      id,
+      username,
+      password,
+      name,
+      email,
+      email_verified: false,
+    }
   }
 }

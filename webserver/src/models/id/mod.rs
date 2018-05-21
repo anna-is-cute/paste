@@ -54,6 +54,18 @@ macro_rules! uuid_wrapper {
       }
     }
 
+    impl<'a> ::rocket::request::FromFormValue<'a> for $name {
+      type Error = &'a ::rocket::http::RawStr;
+
+      fn from_form_value(param: &'a ::rocket::http::RawStr) -> ::std::result::Result<Self, &'a ::rocket::http::RawStr> {
+        use ::std::str::FromStr;
+        match ::uuid::Uuid::from_str(param) {
+          Ok(u) => Ok(u.into()),
+          Err(_) => Err(param)
+        }
+      }
+    }
+
     impl ::diesel::serialize::ToSql<::diesel::sql_types::Uuid, ::diesel::pg::Pg> for $name {
       fn to_sql<W: ::std::io::Write>(&self, out: &mut ::diesel::serialize::Output<W, ::diesel::pg::Pg>) -> ::diesel::serialize::Result {
         <::uuid::Uuid as ::diesel::serialize::ToSql<::diesel::sql_types::Uuid, ::diesel::pg::Pg>>::to_sql(&self.0, out)
@@ -76,6 +88,7 @@ macro_rules! uuid_wrapper {
 
 pub mod api_key;
 pub mod deletion_key;
+pub mod email_verification;
 pub mod file;
 pub mod paste;
 pub mod session;
@@ -83,6 +96,7 @@ pub mod user;
 
 pub use self::api_key::ApiKeyId;
 pub use self::deletion_key::DeletionKeyId;
+pub use self::email_verification::{EmailVerificationId, EmailVerificationKey};
 pub use self::file::FileId;
 pub use self::paste::PasteId;
 pub use self::session::SessionId;

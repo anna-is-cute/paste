@@ -5,6 +5,8 @@ use errors::*;
 use routes::web::{context, Rst, OptionalWebUser, Session};
 use utils::{email, HashedPassword, Validator};
 
+use chrono::Utc;
+
 use diesel::dsl::count;
 use diesel::prelude::*;
 
@@ -13,6 +15,8 @@ use rocket::response::Redirect;
 use rocket::State;
 
 use rocket_contrib::Template;
+
+use sidekiq::Client as SidekiqClient;
 
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -28,7 +32,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
 }
 
 #[patch("/account", format = "application/x-www-form-urlencoded", data = "<update>")]
-fn patch(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
   let update = update.into_inner();
 
   if !sess.check_token(&update.anti_csrf_token) {
@@ -51,12 +55,15 @@ fn patch(update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, 
     return Ok(Redirect::to("/account"));
   }
 
-  if !update.email.is_empty() {
+  if !update.email.is_empty() && update.email != user.email() {
     if !email::check_email(&update.email) {
       sess.add_data("error", "Invalid email.");
       return Ok(Redirect::to("/account"));
     }
     user.set_email(update.email);
+    user.set_email_verified(false);
+    let ver = user.create_email_verification(&conn, Some(Utc::now().naive_utc()))?;
+    sidekiq.push(ver.job(&*config, &user)?.into())?;
   }
 
   if !update.name.is_empty() {

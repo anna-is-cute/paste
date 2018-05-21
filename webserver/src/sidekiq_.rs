@@ -1,5 +1,8 @@
+use errors::*;
 use models::id::UserId;
 use store::Store;
+
+use serde::Serialize;
 
 use sidekiq::{self, Value, JobOpts};
 
@@ -17,6 +20,27 @@ pub enum Job {
 }
 
 impl Job {
+  pub fn email<T, C, P, E, N, S>(template: T, context: C, path: P, email: E, name: N, subject: S) -> Result<Job>
+    where T: AsRef<str>,
+          C: Serialize,
+          P: Into<PathBuf>,
+          E: Into<String>,
+          N: Into<String>,
+          S: Into<String>,
+  {
+    let rendered = ::EMAIL_TERA
+      .render(template.as_ref(), &context)
+      .map_err(|e| format_err!("tera error: {}", e))?;
+
+    Ok(Job::Email {
+      config_path: path.into(),
+      email: email.into(),
+      name: name.into(),
+      subject: subject.into(),
+      content: rendered,
+    })
+  }
+
   fn class(&self) -> &str {
     match *self {
       Job::DeleteAllPastes(_) => "DeleteAllPastes",

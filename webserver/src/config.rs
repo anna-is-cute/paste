@@ -17,6 +17,7 @@ pub struct Config {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct General {
   pub site_name: String,
+  pub site_domain: String,
   #[serde(default)]
   pub about_file: Option<String>,
 }

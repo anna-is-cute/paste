@@ -1,5 +1,6 @@
 [general]
 site_name = "paste"
+site_domain = "paste.gg"
 # Set this to include custom content on the /about page
 # If not set, the About link in the navbar will not be displayed
 # about_file = "about.html"
@@ -12,3 +13,10 @@ site_name = "paste"
 # secret key: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe6LeIxAcTAAAAAGG
 site_key = "<site_key>"
 secret_key = "<secret_key>"
+
+[email]
+address = ""
+domain = ""
+port = 0
+username = ""
+password = ""

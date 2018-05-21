@@ -4,9 +4,12 @@ use toml;
 
 use std::fs::File;
 use std::io::Read;
+use std::path::PathBuf;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
+  #[serde(skip_deserializing)]
+  pub _path: Option<PathBuf>,
   pub general: General,
   pub recaptcha: ReCaptcha,
 }

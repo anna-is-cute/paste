@@ -2031,6 +2031,10 @@ version = "0.1.0"
 dependencies = [
  "lettre 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "lettre_email 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "native-tls 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.58 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_derive 1.0.58 (registry+https://github.com/rust-lang/crates.io-index)",
+ "toml 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

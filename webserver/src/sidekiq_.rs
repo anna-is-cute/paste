@@ -3,9 +3,12 @@ use store::Store;
 
 use sidekiq::{self, Value, JobOpts};
 
+use std::path::PathBuf;
+
 pub enum Job {
   DeleteAllPastes(UserId),
   Email {
+    config_path: PathBuf,
     email: String,
     name: String,
     subject: String,
@@ -34,7 +37,8 @@ impl Job {
           Value::String(path),
         ]
       },
-      Job::Email { ref email, ref name, ref subject, ref content } => vec![
+      Job::Email { ref config_path, ref email, ref name, ref subject, ref content } => vec![
+        Value::String(config_path.to_string_lossy().into_owned()),
         Value::String(email.to_string()),
         Value::String(name.to_string()),
         Value::String(subject.to_string()),

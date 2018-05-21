@@ -49,11 +49,10 @@ mod utils;
 
 use routes::web::fairings;
 
-use rocket::response::NamedFile;
-
 use rocket_contrib::Template;
 
 use std::env;
+use std::path::PathBuf;
 
 pub static SERVER_VERSION: Option<&'static str> = include!(concat!(env!("OUT_DIR"), "/version"));
 
@@ -64,9 +63,17 @@ lazy_static! {
     .ok();
 }
 
-#[get("/")]
-fn index() -> std::io::Result<NamedFile> {
-  NamedFile::open("index.html")
+#[get("/kek")]
+fn kek(user: routes::web::OptionalWebUser, config: rocket::State<config::Config>, sidekiq: rocket::State<sidekiq::Client>) {
+  if let Some(u) = user.into_inner() {
+    sidekiq.push(sidekiq_::Job::Email {
+      config_path: config._path.clone().unwrap(),
+      name: u.name().to_string(),
+      email: u.email().to_string(),
+      subject: "Verify your email".into(),
+      content: "pls do it bb".into(),
+    }.into()).unwrap();
+  }
 }
 
 fn main() {
@@ -86,24 +93,22 @@ fn main() {
   };
 
   let config = match config::load_config(&config_path) {
-    Ok(c) => c,
+    Ok(mut c) => {
+      let path = match PathBuf::from(config_path).canonicalize() {
+        Ok(p) => p,
+        Err(e) => {
+          println!("could not canonicalize config path: {}", e);
+          return;
+        },
+      };
+      c._path = Some(path);
+      c
+    },
     Err(e) => {
       println!("could not load config.toml: {}", e);
       return;
     }
   };
-
-  #[get("/kek")]
-  fn kek(user: routes::web::OptionalWebUser, sidekiq: rocket::State<sidekiq::Client>) {
-    if let Some(u) = user.into_inner() {
-      sidekiq.push(sidekiq_::Job::Email {
-        name: u.name().to_string(),
-        email: u.email().to_string(),
-        subject: "Verify your email".into(),
-        content: "pls do it bb".into(),
-      }.into()).unwrap();
-    }
-  }
 
   rocket::ignite()
     .manage(database::init_pool())

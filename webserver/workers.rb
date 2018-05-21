@@ -18,13 +18,13 @@ end
 class EmailLib
   extend FFI::Library
   ffi_lib 'libworker_email'
-  attach_function :email, [ :string, :string, :string, :string ], :void
+  attach_function :email, [ :string, :string, :string, :string, :string ], :void
 end
 
 class Email
   include Sidekiq::Worker
 
-  def perform(email, name, subject, content)
-    EmailLib.email(email, name, subject, content)
+  def perform(config_path, email, name, subject, content)
+    EmailLib.email(config_path, email, name, subject, content)
   end
 end

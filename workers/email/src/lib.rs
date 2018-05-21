@@ -42,7 +42,7 @@ fn do_email(path: &str, email: &str, name: &str, subject: &str, content: &str) {
     .from((config.sender.from, config.sender.name))
     .to((email, name))
     .subject(subject)
-    .text(content)
+    .html(content)
     .build();
 
   let email = match email {

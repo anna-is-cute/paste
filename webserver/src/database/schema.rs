@@ -42,6 +42,15 @@ table! {
 }
 
 table! {
+    password_resets (id) {
+        id -> Uuid,
+        secret -> Text,
+        expiry -> Timestamp,
+        user_id -> Uuid,
+    }
+}
+
+table! {
     pastes (id) {
         id -> Uuid,
         name -> Nullable<Text>,
@@ -67,6 +76,7 @@ joinable!(api_keys -> users (user_id));
 joinable!(deletion_keys -> pastes (paste_id));
 joinable!(email_verifications -> users (user_id));
 joinable!(files -> pastes (paste_id));
+joinable!(password_resets -> users (user_id));
 joinable!(pastes -> users (author_id));
 
 allow_tables_to_appear_in_same_query!(
@@ -75,6 +85,7 @@ allow_tables_to_appear_in_same_query!(
     email_verifications,
     files,
     login_attempts,
+    password_resets,
     pastes,
     users,
 );

@@ -161,6 +161,10 @@ fn main() {
       routes::web::account::verify::get,
       routes::web::account::verify::resend,
 
+      routes::web::account::reset_password::get,
+      routes::web::account::reset_password::post,
+      routes::web::account::reset_password::reset,
+
       routes::web::users::get::get,
       routes::web::users::get::get_page,
     ])

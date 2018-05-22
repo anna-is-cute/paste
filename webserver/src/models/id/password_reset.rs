@@ -1,0 +1,1 @@
+uuid_wrapper!(PasswordResetId);

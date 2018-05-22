@@ -4,4 +4,5 @@ pub mod email_verifications;
 pub mod files;
 pub mod login_attempts;
 pub mod pastes;
+pub mod password_resets;
 pub mod users;

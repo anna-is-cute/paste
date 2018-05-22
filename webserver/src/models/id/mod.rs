@@ -91,6 +91,7 @@ pub mod deletion_key;
 pub mod email_verification;
 pub mod file;
 pub mod paste;
+pub mod password_reset;
 pub mod session;
 pub mod user;
 
@@ -99,5 +100,6 @@ pub use self::deletion_key::DeletionKeyId;
 pub use self::email_verification::{EmailVerificationId, EmailVerificationKey};
 pub use self::file::FileId;
 pub use self::paste::PasteId;
+pub use self::password_reset::PasswordResetId;
 pub use self::session::SessionId;
 pub use self::user::UserId;

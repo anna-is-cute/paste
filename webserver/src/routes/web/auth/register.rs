@@ -5,7 +5,7 @@ use database::schema::users;
 use errors::*;
 use models::id::UserId;
 use routes::web::{context, Rst, OptionalWebUser, Session};
-use utils::{email, ReCaptcha, HashedPassword, Validator};
+use utils::{email, PasswordContext, ReCaptcha, HashedPassword, Validator};
 
 use chrono::Utc;
 
@@ -23,8 +23,6 @@ use rocket::response::Redirect;
 use rocket_contrib::Template;
 
 use sidekiq::Client as SidekiqClient;
-
-use unicode_segmentation::UnicodeSegmentation;
 
 use uuid::Uuid;
 
@@ -82,18 +80,18 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     return Ok(Redirect::to("/register"));
   }
 
-  if data.password != data.password_verify {
-    sess.add_data("error", "Passwords did not match.");
-    return Ok(Redirect::to("/register"));
-  }
-
-  if data.password.graphemes(true).count() < 10 {
-    sess.add_data("error", "Password must be at least 10 characters long.");
-    return Ok(Redirect::to("/register"));
-  }
-  if data.password == data.name || data.password == data.username || data.password == data.email || data.password == "password" {
-    sess.add_data("error", r#"Password cannot be the same as your name, username, email, or "password"."#);
-    return Ok(Redirect::to("/register"));
+  {
+    let pw_ctx = PasswordContext::new(
+      &data.password,
+      &data.password_verify,
+      &data.name,
+      &data.username,
+      &data.email,
+    );
+    if let Err(e) = pw_ctx.validate() {
+      sess.add_data("error", e);
+      return Ok(Redirect::to("/register"));
+    }
   }
 
   if !data.recaptcha.verify(&config.recaptcha.secret_key)? {

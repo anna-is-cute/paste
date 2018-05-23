@@ -42,7 +42,7 @@ impl User {
     &self.password
   }
 
-  pub fn set_password(&mut self, password: String) {
+  pub fn set_hashed_password(&mut self, password: String) {
     self.password = password;
   }
 

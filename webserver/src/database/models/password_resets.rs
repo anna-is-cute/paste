@@ -21,11 +21,31 @@ pub struct PasswordReset {
 }
 
 impl PasswordReset {
+  pub fn id(&self) -> PasswordResetId {
+    self.id
+  }
+
+  pub fn secret(&self) -> &str {
+    &self.secret
+  }
+
+  pub fn expiry(&self) -> NaiveDateTime {
+    self.expiry
+  }
+
+  pub fn user_id(&self) -> UserId {
+    self.user_id
+  }
+
   pub fn check(&self, bytes: &[u8]) -> bool {
-    let pw = match PwhashPassword::from_slice(self.secret.as_bytes()) {
+    let mut secret = self.secret.as_bytes().to_vec();
+    secret.push(0x00);
+
+    let pw = match PwhashPassword::from_slice(&secret) {
       Some(p) => p,
       None => return false,
     };
+
     pwhash_verify(&pw, bytes)
   }
 }

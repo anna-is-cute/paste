@@ -111,7 +111,7 @@ fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalWebUs
       return Ok(Redirect::to("/account"));
     }
     let hashed = HashedPassword::from(&update.password).into_string();
-    user.set_password(hashed);
+    user.set_hashed_password(hashed);
   }
 
   user.update(&conn)?;

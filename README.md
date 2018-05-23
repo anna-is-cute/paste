@@ -45,11 +45,9 @@ highlighting, anonymity, and secure authentication.
 - `echo -e "DATABASE_URL=postgres://paste:paste@db/paste\n\nROCKET_ADDRESS=0.0.0.0" > .env`
 - Copy config.toml to paste.toml and edit `paste.toml`
 - `docker-compose up -d`
-- `docker exec -ti paste_paste_1 sh /root/post-install.sh`
-- `docker exec -ti paste_paste_1 sh /root/start.sh`
 
 To connect to postgres from within docker, run:
 
 ```sh
-docker exec -ti paste_paste_1 psql
+docker exec -ti paste_paste_1 psql paste
 ```

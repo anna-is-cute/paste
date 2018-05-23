@@ -12,9 +12,12 @@ use base64;
 
 use chrono::{DateTime, Utc};
 
+use cookie::{Cookie, SameSite};
+
 use diesel;
 use diesel::prelude::*;
 
+use rocket::http::Cookies;
 use rocket::request::Form;
 use rocket::response::Redirect;
 use rocket::State;
@@ -113,7 +116,7 @@ fn reset_get(data: ResetPassword, config: State<Config>, user: OptionalWebUser, 
 }
 
 #[post("/account/reset_password", data = "<data>")]
-fn reset_post(data: Form<Reset>, config: State<Config>, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn reset_post(data: Form<Reset>, config: State<Config>, mut sess: Session, mut cookies: Cookies, conn: DbConn) -> Result<Redirect> {
   let data = data.into_inner();
 
   let url = format!("/account/reset_password?id={}&secret={}", data.id.simple(), data.secret);
@@ -173,7 +176,15 @@ fn reset_post(data: Form<Reset>, config: State<Config>, mut sess: Session, conn:
   user.update(&conn)?;
 
   sess.add_data("info", "Password updated.");
-  Ok(Redirect::to("/login"))
+
+  let cookie = Cookie::build("user_id", user.id().simple().to_string())
+    .secure(true)
+    .http_only(true)
+    .same_site(SameSite::Lax)
+    .finish();
+  cookies.add_private(cookie);
+
+  Ok(Redirect::to("lastpage"))
 }
 
 fn check_reset(conn: &DbConn, id: Uuid, secret: &str) -> Option<PasswordReset> {

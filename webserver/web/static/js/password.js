@@ -22,16 +22,26 @@
   function passwordStrength(pw) {
     checkMatch(pw, document.getElementById('password_verify'));
 
-    var values = [
-      document.getElementById('name').value,
-      document.getElementById('username').value,
-      document.getElementById('email').value,
-    ];
+    const values = [];
+    {
+      const name = document.getElementById('name');
+      if (name) {
+        values.push(name.value);
+      }
+      const username = document.getElementById('username');
+      if (username) {
+        values.push(username.value);
+      }
+      const email = document.getElementById('email');
+      if (email) {
+        values.push(email.value);
+      }
+    }
 
-    var password = pw.value;
-    var strength = document.getElementById('strength');
-    var progress = document.getElementById('strength_progress');
-    var warning = document.getElementById('strength_warning');
+    const password = pw.value;
+    const strength = document.getElementById('strength');
+    const progress = document.getElementById('strength_progress');
+    const warning = document.getElementById('strength_warning');
 
     if (pw.getAttribute('data-bar') === 'hidden') {
       doHides(pw, strength_progress);
@@ -46,7 +56,7 @@
       return;
     }
 
-    var z = zxcvbn(password, values);
+    const z = zxcvbn(password, values);
 
     var message = 'Time to crack your password: ' + z.crack_times_display.offline_slow_hashing_1e4_per_second;
     message += ' <small><span class="has-text-grey-light tooltip is-tooltip-multiline" style="text-decoration: dotted underline;" data-tooltip="This is the time it would take an attacker to successfully guess your password. Increase your password complexity until you\'re comfortable with the amount of time.">What is this?</i></small>';
@@ -73,7 +83,7 @@
         break;
     }
 
-    var classes = progress.classList;
+    const classes = progress.classList;
     progress.classList.remove(progress.className.split(' ').pop());
     progress.classList.add(color);
   }

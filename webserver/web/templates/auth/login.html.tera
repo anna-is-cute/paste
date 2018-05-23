@@ -47,6 +47,9 @@ Log in to your account.
         <i class="fas fa-asterisk"></i>
       </span>
     </div>
+    <p class="help">
+      <a href="/account/forgot_password">Forgot your password?</a>
+    </p>
   </div>
 
   <div class="field">

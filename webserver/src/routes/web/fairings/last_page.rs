@@ -22,7 +22,12 @@ impl LastPage {
     let path = req.uri().path();
 
     // don't track auth pages
-    if path == "/login" || path == "/register" || path == "/favicon.ico" || path.starts_with("/static/") {
+    if path == "/login"
+      || path == "/register"
+      || path == "/favicon.ico"
+      || path.starts_with("/static/")
+      || path.starts_with("/account/reset_password")
+    {
       return;
     }
 

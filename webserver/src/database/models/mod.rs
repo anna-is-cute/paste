@@ -5,4 +5,5 @@ pub mod files;
 pub mod login_attempts;
 pub mod pastes;
 pub mod password_resets;
+pub mod password_reset_attempts;
 pub mod users;

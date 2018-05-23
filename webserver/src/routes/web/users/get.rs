@@ -42,17 +42,15 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
     Some(u) => u,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
   };
-  // TODO: there must be a way to do this better
-  let total_pastes: i64 = if Some(target.id()) == user.as_ref().map(|x| x.id()) {
-    DbPaste::belonging_to(&target)
-      .select(count(pastes::id))
-      .get_result(&*conn)?
-  } else {
-    DbPaste::belonging_to(&target)
-      .select(count(pastes::id))
-      .filter(pastes::visibility.eq(Visibility::Public))
-      .get_result(&*conn)?
-  };
+
+  let mut query = DbPaste::belonging_to(&target)
+    .select(count(pastes::id))
+    .into_boxed();
+  if Some(target.id()) != user.as_ref().map(|x| x.id()) {
+    query = query.filter(pastes::visibility.eq(Visibility::Public));
+  }
+  let total_pastes: i64 = query.get_result(&*conn)?;
+
   let outputs = if total_pastes == 0 && page == 1 {
     Vec::default()
   } else {

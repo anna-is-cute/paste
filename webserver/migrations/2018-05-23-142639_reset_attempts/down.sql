@@ -1,0 +1,2 @@
+drop table password_reset_attempts;
+drop function password_reset_attempts_delete_old_rows;

@@ -1,12 +1,13 @@
 use config::Config;
 use database::DbConn;
+use database::models::password_reset_attempts::PasswordResetAttempt;
 use database::models::password_resets::{PasswordReset, NewPasswordReset};
 use database::models::users::User;
 use database::schema::{users, password_resets};
 use errors::*;
 use routes::web::{context, Session, Rst, OptionalWebUser};
 use sidekiq_::Job;
-use utils::{ReCaptcha, PasswordContext, HashedPassword};
+use utils::{email, PasswordContext, HashedPassword};
 
 use base64;
 
@@ -28,6 +29,8 @@ use sidekiq::Client as SidekiqClient;
 
 use uuid::Uuid;
 
+use std::net::SocketAddr;
+
 #[get("/account/forgot_password")]
 fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Template {
   let ctx = context(&*config, user.as_ref(), &mut sess);
@@ -35,7 +38,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Templ
 }
 
 #[post("/account/forgot_password", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, addr: SocketAddr) -> Result<Redirect> {
   let data = data.into_inner();
 
   let res = Ok(Redirect::to("/account/forgot_password"));
@@ -45,8 +48,13 @@ fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn
     return res;
   }
 
-  if !data.recaptcha.verify(&config.recaptcha.secret_key)? {
-    sess.add_data("error", "The captcha did not validate. Try again.");
+  if !email::check_email(&data.email) {
+    sess.add_data("error", "Invalid email.");
+    return res;
+  }
+
+  if let Some(msg) = PasswordResetAttempt::find_check(&conn, addr.ip())? {
+    sess.add_data("error", msg);
     return res;
   }
 
@@ -63,7 +71,11 @@ fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn
   let user = match user {
     Some(u) => u,
     None => {
-      sess.add_data("info", msg);
+      let (k, m) = match PasswordResetAttempt::find_increment(&conn, addr.ip())? {
+        Some(m) => ("error", m),
+        None => ("info", msg),
+      };
+      sess.add_data(k, m);
       return res;
     },
   };
@@ -116,7 +128,7 @@ fn reset_get(data: ResetPassword, config: State<Config>, user: OptionalWebUser, 
 }
 
 #[post("/account/reset_password", data = "<data>")]
-fn reset_post(data: Form<Reset>, config: State<Config>, mut sess: Session, mut cookies: Cookies, conn: DbConn) -> Result<Redirect> {
+fn reset_post(data: Form<Reset>, mut sess: Session, mut cookies: Cookies, conn: DbConn) -> Result<Redirect> {
   let data = data.into_inner();
 
   let url = format!("/account/reset_password?id={}&secret={}", data.id.simple(), data.secret);
@@ -124,11 +136,6 @@ fn reset_post(data: Form<Reset>, config: State<Config>, mut sess: Session, mut c
 
   if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
-    return res;
-  }
-
-  if !data.recaptcha.verify(&config.recaptcha.secret_key)? {
-    sess.add_data("error", "The captcha did not validate. Try again.");
     return res;
   }
 
@@ -211,8 +218,6 @@ fn check_reset(conn: &DbConn, id: Uuid, secret: &str) -> Option<PasswordReset> {
 struct ResetRequest {
   anti_csrf_token: String,
   email: String,
-  #[form(field = "g-recaptcha-response")]
-  recaptcha: ReCaptcha,
 }
 
 #[derive(FromForm)]
@@ -227,7 +232,5 @@ struct Reset {
   secret: String,
   password: String,
   password_verify: String,
-  #[form(field = "g-recaptcha-response")]
-  recaptcha: ReCaptcha,
   anti_csrf_token: String,
 }

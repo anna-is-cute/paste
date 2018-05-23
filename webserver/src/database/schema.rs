@@ -42,6 +42,14 @@ table! {
 }
 
 table! {
+    password_reset_attempts (addr) {
+        addr -> Cidr,
+        timestamp -> Timestamp,
+        attempts -> Int4,
+    }
+}
+
+table! {
     password_resets (id) {
         id -> Uuid,
         secret -> Text,
@@ -85,6 +93,7 @@ allow_tables_to_appear_in_same_query!(
     email_verifications,
     files,
     login_attempts,
+    password_reset_attempts,
     password_resets,
     pastes,
     users,

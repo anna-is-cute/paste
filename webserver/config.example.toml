@@ -1,0 +1,31 @@
+[general]
+site_name = "paste"
+site_domain = "paste.gg"
+# Set this to include custom content on the /about page
+# If not set, the About link in the navbar will not be displayed
+# about_file = "about.html"
+
+[recaptcha]
+# https://developers.google.com/recaptcha/docs/faq
+# With the following test keys, you will always get No CAPTCHA and all verification requests will
+# pass.
+# site key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+# secret key: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe6LeIxAcTAAAAAGG
+site_key = "<site_key>"
+secret_key = "<secret_key>"
+
+# Sender information for emails sent from the server
+[email.sender]
+name = ""
+from = ""
+
+# SMTP information for emails sent from the server
+# paste enforces TLS without negotiation
+[email.smtp]
+# address for smtp
+address = ""
+# domain for validating cert
+domain = ""
+port = 0
+username = ""
+password = ""

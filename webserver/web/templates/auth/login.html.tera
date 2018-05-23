@@ -1,0 +1,58 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}Log in{% endblock title %}
+
+{% block header_title %}
+Log in
+{% endblock header_title %}
+
+{% block header_subtitle %}
+Log in to your account.
+{% endblock header_subtitle %}
+
+{% block main %}
+<form method="post" action="/login">
+  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+  <div class="field">
+    <label class="label">Username</label>
+    <div class="control has-icons-left">
+      <input
+        name="username"
+        class="input"
+        type="text"
+        placeholder="jimbo32"
+        autocorrect="off"
+        autocapitalize="off"
+        required/>
+      <span class="icon is-small is-left">
+        <i class="fas fa-user"></i>
+      </span>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="label">Password</label>
+    <div class="control has-icons-left">
+      <input
+        name="password"
+        class="input"
+        type="password"
+        placeholder="Your secure password"
+        required/>
+      <span class="icon is-small is-left">
+        <i class="fas fa-asterisk"></i>
+      </span>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="control">
+      <input type="submit" class="button is-link" value="Submit"/>
+    </div>
+  </div>
+</form>
+{% endblock main %}

@@ -1,2 +1,6 @@
 /target
 **/*.rs.bk
+/Rocket.toml
+/config.toml
+/.env
+/sidekiq.yml

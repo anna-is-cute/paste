@@ -1,0 +1,24 @@
+@import "bulmaswatch/superhero/variables";
+@import "bulma/sass/utilities/initial-variables";
+@import "bulma/sass/utilities/functions";
+@import "bulma/sass/utilities/derived-variables";
+
+$pagination-color: $grey-lighter;
+$pagination-border-color: $grey;
+
+@import "bulma/bulma";
+@import "bulmaswatch/superhero/overrides";
+@import "custom";
+
+input[type="text"], input[type="email"], input[type="password"], .select select, textarea {
+  background-color: $dark;
+  color: $white-ter;
+  border-color: $grey-dark;
+  &::placeholder {
+    color: $grey-light;
+  }
+}
+
+td.hljs-ln-numbers {
+  color: hsl(219, 14%, 35%);
+}

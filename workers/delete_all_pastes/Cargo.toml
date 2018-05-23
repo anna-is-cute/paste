@@ -1,0 +1,9 @@
+[package]
+name = "worker_delete_all_pastes"
+version = "0.1.0"
+authors = ["Kyle Clemens <git@kyleclemens.com>"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]

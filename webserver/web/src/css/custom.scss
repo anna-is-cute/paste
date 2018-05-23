@@ -1,0 +1,118 @@
+@import "bulma-tooltip/src/extension";
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+div.wrapper {
+  flex: 1;
+}
+
+.footer {
+  background-color: $background;
+}
+
+textarea.paste {
+  font-family: monospace;
+}
+
+button.button-link {
+  &.navbar-item {
+    color: inherit;
+    width: 100%;
+    text-align: inherit;
+
+    &:active {
+      color: $navbar-dropdown-item-active-color;
+      background-color: $navbar-dropdown-item-active-background-color;
+    }
+
+    &:focus {
+      color: inherit;
+    }
+
+    &:hover {
+      color: $navbar-dropdown-item-hover-color;
+      background-color: $navbar-dropdown-item-hover-background-color;
+    }
+  }
+
+  &:hover {
+    color: $link-hover;
+    border-color: $link-hover-border;
+  }
+
+  &:focus {
+    color: $link-focus;
+    border-color: $link-focus-border;
+  }
+
+  &:active {
+    color: $link-active;
+    border-color: $link-active-border;
+  }
+
+  color: $link;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+html.js .requires-no-js {
+  display: none;
+}
+
+html.no-js .requires-js {
+  display: none;
+}
+
+td.hljs-ln-numbers {
+  text-align: right;
+}
+
+td.hljs-ln-code {
+  padding-left: .5rem !important;
+}
+
+.footer .breadcrumb {
+  -webkit-touch-callout: unset;
+  -webkit-user-select: unset;
+  -moz-user-select: unset;
+  -ms-user-select: unset;
+  user-select: unset;
+
+  a:not([href]) {
+    cursor: text;
+    pointer-events: unset;
+  }
+}
+
+.title + .info-tags, .subtitle + .info-tags {
+  margin-top: -0.75rem;
+}
+
+.paste.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  .left {
+    order: 1;
+  }
+
+  .right {
+    order: 2;
+  }
+}
+
+.paste-submit-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}

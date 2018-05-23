@@ -1,0 +1,106 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}
+{{ target.name }}'s pastes
+{% endblock title %}
+
+{% block header_title %}
+{{ target.name }}'s pastes
+{% endblock header_title %}
+
+{% block header_subtitle %}
+{# can't use pluralize filter because we're stuck on old Tera, which counts 0 as singular #}
+{{ total }}
+{% if total == 1 %}
+  paste.
+{% else %}
+  pastes.
+{% endif %}
+{% endblock header_subtitle %}
+
+{% block main %}
+{% set last_page = total / 15 %}
+{% set last_page = last_page | round(method="ceil") %}
+
+{% if last_page > 1 %}
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+  {% if page == 1 %}
+    <a class="pagination-previous" disabled>Previous</a>
+  {% else %}
+    <a href="/users/{{ target.username | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
+  {% endif %}
+  {% if page == last_page %}
+    <a class="pagination-next" disabled>Next</a>
+  {% else %}
+    <a href="/users/{{ target.username | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
+  {% endif %}
+</nav>
+
+<hr/>
+{% endif %}
+
+{% if pastes | length == 0 %}
+  <em>It looks like {{ target.name }} has no pastes!</em>
+{% endif %}
+{% for paste in pastes %}
+  <div class="box">
+    <h3 class="title">
+      <a href="/pastes/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
+    {% if paste.name %}
+        {{ paste.name }}
+    {% else %}
+        <em>untitled paste</em>
+    {% endif %}
+      </a>
+    </h3>
+    {% if paste.description %}
+    <h4 class="subtitle">
+      {{ paste.description }}
+    </h4>
+    {% endif %}
+    <div class="info-tags field is-grouped is-grouped-multiline">
+      <div class="control">
+        <div class="tags has-addons">
+          <span class="tag is-dark">visibility</span>
+          <span class="tag is-info">{{ paste.visibility }}</span>
+        </div>
+      </div>
+      <div class="control">
+        <div class="tags has-addons">
+          <span class="tag is-dark">files</span>
+          <span class="tag is-info">{{ paste.files | length }}</span>
+        </div>
+      </div>
+      {# <div class="control">
+        <div class="tags has-addons">
+          <span class="tag is-dark">created</span>
+          <span class="tag is-info">5 Dec 2017</span>
+        </div>
+      </div> #}
+    </div>
+  </div>
+{% endfor %}
+
+{% if last_page > 1 %}
+<hr/>
+
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+  {% set last_page = total / 15 %}
+  {% set last_page = last_page | round(method="ceil") %}
+  {% if page == 1 %}
+    <a class="pagination-previous" disabled>Previous</a>
+  {% else %}
+    <a href="/users/{{ target.username | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
+  {% endif %}
+  {% if page == last_page %}
+    <a class="pagination-next" disabled>Next</a>
+  {% else %}
+    <a href="/users/{{ target.username | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock main %}

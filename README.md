@@ -2,6 +2,11 @@
 
 *A sensible pastebin.*
 
+[![build status](https://travis-ci.org/jkcclemens/paste.svg?branch=master)](https://travis-ci.org/jkcclemens/paste)
+[![dependency status](https://deps.rs/repo/github/jkcclemens/paste/status.svg)](https://deps.rs/repo/github/jkcclemens/paste)
+[![patreon](https://img.shields.io/badge/donate-patreon-blue.svg)](https://www.patreon.com/jkcclemens/overview)
+[![paypal](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/jkcclemens)
+
 ## Unfinished: some features do not work
 
 See the issues.
@@ -31,12 +36,11 @@ highlighting, anonymity, and secure authentication.
 - Clone the repo (`--recursive` for submodules)
 - Create a postgres database and user
 - `echo 'DATABASE_URL=postgres://username@/database' > .env`
-- `cargo install diesel_cli --no-default-features --features postgres`
 - `diesel migration run`
-- Edit `config.toml`
-- `cargo run --release path/to/config.toml`
+- Make sure a redis server is running and set the URL in `.env`
 - Preferably use `ROCKET_ENV=prod` and set a secret key in `Rocket.toml`
   - See [Rocket docs](https://rocket.rs/guide/configuration/)
+- `target/release/paste config.toml`
 - Reverse proxy and handle `/static/` with a webserver and not the included route
 
 ### Usage (docker)
@@ -51,3 +55,7 @@ To connect to postgres from within docker, run:
 ```sh
 docker exec -ti paste_paste_1 psql paste
 ```
+=======
+## Contact
+
+Join the [Discord server](https://discord.gg/EnqSwJK)!

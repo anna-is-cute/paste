@@ -1,0 +1,20 @@
+[package]
+name = "worker_email"
+version = "0.1.0"
+authors = ["Kyle Clemens <git@kyleclemens.com>"]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# sending and creating emails
+lettre = "0.8"
+lettre_email = "0.8"
+native-tls = "0.1"
+
+# deserializing config
+serde = "1"
+serde_derive = "1"
+
+# config format
+toml = "0.4"

@@ -9,11 +9,25 @@ addons:
       - cmake
       - libpq-dev
 before_script:
+  - .travis/cache_check.sh
   - . .travis/libsodium.sh
 script:
   - cargo build --verbose --all
+# Remove the local crate's build files, as they only add bloat to the cache.
+# TODO: Remove unused dependency build files
+before_cache:
+  - rm -rfv target/debug/{webserver,libdelete_all_pastes,libemail}.d
+  - rm -rfv target/debug/incremental/{build_script_build,webserver,worker_delete_all_pastes,worker_email}-*
+  - rm -rfv target/debug/.fingerprint/{webserver,worker_delete_all_pastes,worker_email}-*
+  - rm -rfv target/debug/build/{webserver,worker_delete_all_pastes,worker_email}-*
+  - rm -rfv target/debug/deps/{webserver,worker_delete_all_pastes,worker_email}-*
+  # apparently cargo creates this file now? no reason to reupload the whole cache for it
+  - rm -fv target/.rustc_info.json
+  - cargo clean -p webserver
+  - cargo clean -p worker_delete_all_pastes
+  - cargo clean -p worker_email
 rust:
-  - nightly
+  - nightly-2018-05-07
 matrix:
   fast_finish: true
 notifications:

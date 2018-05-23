@@ -1,0 +1,151 @@
+{% extends "frame" %}
+
+{% block head %}
+{{ super() }}
+<link
+  title="dark"
+  rel="stylesheet alternate"
+  href="/static/css/dark-style.css?v={{ resources_version }}"
+  integrity="sha384-6KQS6Zyyg7Q9cNiQBTP55fYNa3Jd3cPX4r71XnqrkG9a/eR9M84XPhoyfWdRmrxp"/>
+<link
+  title="light"
+  rel="stylesheet"
+  href="/static/css/style.css?v={{ resources_version }}"
+  integrity="sha384-LjcPHEd+e9b4v9aKJ7t3XUULk16q6lIfKpKeywb9BmmRoKJekrnfN34s8dDO6YpH"/>
+<script
+  src="/static/js/style.js?v={{ resources_version }}"
+  integrity="sha384-gIJsa7ipunU0jwSDxUAFcwOg81q8YkNgI2VqbW3VV9+yxXFZUbC3lCuU8HpUFb6c"></script>
+<script
+  defer
+  src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"
+  integrity="sha384-NM4GHvd8vowDIel+2LNoo7mgwJN5e3Uj5WODAko2Eqg0LUP7eyZ+W1pjSfjbnYXt"
+  crossorigin="anonymous"></script>
+<script
+  defer
+  src="/static/js/navbar.js?v={{ resources_version }}"
+  integrity="sha384-tuFBG8NY+WtXmhaV8FJGAYrmJONAZEcvJTJu7pTspReMNYVLkRMAPDUGjfJWn5fB"></script>
+<script
+  defer
+  src="/static/js/notifications.js?v={{ resources_version }}"
+  integrity="sha384-r/COMCXZidHqUxfkz8wbkBh5eExZsD6xMtmHKWNKBD8+X7kEyGIoQFUspLFHtTKQ"></script>
+
+<link rel="icon" sizes="16x16 32x32 48x48 64x64" href="/static/favicons/favicon.ico"/>
+<!--[if IE]><link rel="shortcut icon" href="/static/favicons/favicon.ico"/><![endif]-->
+<link rel="apple-touch-icon-precomposed" href="/static/favicons/favicon-152.png"/>
+<meta name="msapplication-TileColor" content="#FFFFFF"/>
+<meta name="msapplication-TileImage" content="/static/favicons/favicon-144.png"/>
+<meta name="msapplication-square70x70logo" content="/static/favicons/favicon-70.png"/>
+<meta name="msapplication-square150x150logo" content="/static/favicons/favicon-150.png"/>
+<meta name="msapplication-square310x310logo" content="/static/favicons/favicon-310.png"/>
+<link rel="apple-touch-icon-precomposed" sizes="152x152" href="/static/favicons/favicon-152.png"/>
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/favicons/favicon-144.png"/>
+<link rel="apple-touch-icon-precomposed" sizes="120x120" href="/static/favicons/favicon-120.png"/>
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/favicons/favicon-114.png"/>
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/favicons/favicon-72.png"/>
+<link rel="apple-touch-icon-precomposed" href="/static/favicons/favicon-57.png"/>
+{% endblock head %}
+
+{% block body %}
+<div class="wrapper">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item">
+        <a class="button is-primary" href="/">
+          <span class="icon">
+            <i class="fas fa-paste"></i>
+          </span>
+          <span>{{ config.general.site_name }}</span>
+        </a>
+      </div>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="menu">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div id="menu" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="/">New</a>
+      </div>
+      <div class="navbar-end">
+      {% if config.general.about_file %}
+        <a class="navbar-item" href="/about">About</a>
+      {% endif %}
+        <div class="navbar-item has-dropdown is-hoverable">
+        {% if user %}
+          <a
+            class="navbar-link"
+            href="/users/{{ user.username | urlencode(safe="") }}">{{ user.name }}</a>
+        {% else %}
+          <a class="navbar-link" href="/login">Log in</a>
+        {% endif %}
+          <div class="navbar-dropdown is-right">
+          {% if user %}
+            <span class="navbar-item">{{ user.username }}</span>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="/account">Settings</a>
+            <form action="/logout" method="post">
+              <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+              <button type="submit" class="navbar-item button-link">Log out</button>
+            </form>
+          {% else %}
+            <a class="navbar-item" href="/register">Register</a>
+          {% endif %}
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" onclick="swapTheme()">Swap theme</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+{% block header %}
+  <section class="hero is-dark is-bold">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          {% block header_title %}{% endblock header_title %}
+        </h1>
+        <h2 class="subtitle">
+          {% block header_subtitle %}{% endblock header_subtitle %}
+        </h2>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <div class="container">
+        {% block header_foot %}{% endblock header_foot %}
+      </div>
+    </div>
+  </section>
+{% endblock header %}
+
+  <main class="section">
+    <div class="container">
+      {% if error %}
+      <div class="notification is-warning">
+        <button class="delete"></button>
+        {{ error }}
+      </div>
+      {% endif %}
+      {% if info %}
+      <div class="notification is-info">
+        <button class="delete"></button>
+        {{ info }}
+      </div>
+      {% endif %}
+{% block main %}{% endblock main %}
+    </div>
+  </main>
+
+</div>
+<footer class="footer">
+  <nav class="breadcrumb is-centered has-bullet-separator" aria-label="breadcrumbs">
+    <ul>
+      <li><a href="https://github.com/jkcclemens/paste">code</a></li>
+      <li><a href="https://github.com/jkcclemens/paste/commit/{{ server_version }}">server: {{ server_version | truncate(length=7) | replace(from="…", to="") }}</a></li>
+      <li><a href="https://github.com/jkcclemens/paste/commit/{{ resources_version }}">resources: {{ resources_version | truncate(length=7) | replace(from="…", to="") }}</a></li>
+      <li class="is-active"><a>&copy; 2018</a></li>
+    </ul>
+  </nav>
+</footer>
+{% endblock body %}

@@ -1,0 +1,63 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}API keys{% endblock title %}
+
+{% block header_title %}
+API keys
+{% endblock header_title %}
+
+{% block header_subtitle %}
+Manage API keys.
+{% endblock header_subtitle %}
+
+{% block header_foot %}
+<nav class="tabs is-boxed">
+  <ul>
+    <li><a href="/account">Settings</a></li>
+    <li class="is-active"><a href="/account/keys">API keys</a></li>
+    <li><a href="/account/delete">Delete</a></li>
+  </ul>
+</nav>
+{% endblock header_foot %}
+
+{% block main %}
+<table class="table is-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Key</th>
+      <th></th>
+    </tr>
+  </thead>
+{% for key in keys %}
+  <tr>
+    <td>{{ key.name }}</td>
+    <td><code>{{ key.key | replace(from="-", to="") }}</code></td>
+    <td>
+      <form action="/account/keys/{{ key.key }}" method="post">
+        <input type="hidden" name="_method" value="delete"/>
+        <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+        <button class="button is-small is-danger">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </form>
+    </td>
+  </tr>
+{% endfor %}
+</table>
+<form action="/account/keys" method="post">
+  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+  <div class="field has-addons">
+    <div class="control">
+      <input class="input" type="text" name="name" placeholder="Key name" required/>
+    </div>
+    <div class="control">
+      <input class="button is-link" type="submit" value="Add"/>
+    </div>
+  </div>
+</form>
+{% endblock main %}

@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:10-alpine
+    volumes:
+      - ./var/data/pgsql/:/var/lib/postgresql
+    env_file: '.docker/paste/postgres_env'
+  paste:
+    build: ./.docker/paste
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+  nginx:
+    build: ./.docker/nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./var/log/nginx:/var/log/nginx
+      - .:/app
+    depends_on:
+      - paste

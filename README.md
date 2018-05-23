@@ -34,11 +34,6 @@ highlighting, anonymity, and secure authentication.
 ## Usage
 
 - Clone the repo (`--recursive` for submodules)
-- `cargo install diesel_cli --no-default-features --features postgres`
-- Copy the example config files
-  - `cp Rocket{.example,}.toml; cp config{.example,}.toml`
-- Edit the config files
-- `cargo build --release`
 - Create a postgres database and user
 - `echo 'DATABASE_URL=postgres://username@/database' > .env`
 - `diesel migration run`
@@ -48,6 +43,19 @@ highlighting, anonymity, and secure authentication.
 - `target/release/paste config.toml`
 - Reverse proxy and handle `/static/` with a webserver and not the included route
 
+### Usage (docker)
+
+- Clone the repo (`--recursive` for submodules)
+- `echo -e "DATABASE_URL=postgres://paste:paste@db/paste\n\nROCKET_ADDRESS=0.0.0.0" > .env`
+- Copy config.toml to paste.toml and edit `paste.toml`
+- `docker-compose up -d`
+
+To connect to postgres from within docker, run:
+
+```sh
+docker exec -ti paste_paste_1 psql paste
+```
+=======
 ## Contact
 
 Join the [Discord server](https://discord.gg/EnqSwJK)!

@@ -67,7 +67,9 @@ lazy_static! {
 
   pub static ref EMAIL_TERA: Tera = {
     let path = env::var("EMAIL_TEMPLATES").expect("missing EMAIL_TEMPLATES environment variable");
-    Tera::new(&path).expect("could not create tempating engine")
+    let mut tera = Tera::new(&path).expect("could not create tempating engine");
+    tera.autoescape_on(vec![".html", ".htm", ".xml", ".html.tera"]);
+    tera
   };
 }
 

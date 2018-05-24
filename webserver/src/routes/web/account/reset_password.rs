@@ -105,7 +105,6 @@ fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn
     }),
     config._path.as_ref().unwrap(),
     user.email(),
-    user.name(),
     "Password reset",
   )?.into())?;
 

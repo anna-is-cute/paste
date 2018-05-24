@@ -40,7 +40,6 @@ impl EmailVerification {
       }),
       config._path.as_ref().unwrap(),
       self.email.as_str(),
-      user.name(),
       "Verify your email",
     )
   }

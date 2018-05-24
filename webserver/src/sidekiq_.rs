@@ -13,19 +13,17 @@ pub enum Job {
   Email {
     config_path: PathBuf,
     email: String,
-    name: String,
     subject: String,
     content: String,
   },
 }
 
 impl Job {
-  pub fn email<T, C, P, E, N, S>(template: T, context: C, path: P, email: E, name: N, subject: S) -> Result<Job>
+  pub fn email<T, C, P, E, S>(template: T, context: C, path: P, email: E, subject: S) -> Result<Job>
     where T: AsRef<str>,
           C: Serialize,
           P: Into<PathBuf>,
           E: Into<String>,
-          N: Into<String>,
           S: Into<String>,
   {
     let rendered = ::EMAIL_TERA
@@ -35,7 +33,6 @@ impl Job {
     Ok(Job::Email {
       config_path: path.into(),
       email: email.into(),
-      name: name.into(),
       subject: subject.into(),
       content: rendered,
     })
@@ -61,10 +58,9 @@ impl Job {
           Value::String(path),
         ]
       },
-      Job::Email { ref config_path, ref email, ref name, ref subject, ref content } => vec![
+      Job::Email { ref config_path, ref email, ref subject, ref content } => vec![
         Value::String(config_path.to_string_lossy().into_owned()),
         Value::String(email.to_string()),
-        Value::String(name.to_string()),
         Value::String(subject.to_string()),
         Value::String(content.to_string()),
       ],

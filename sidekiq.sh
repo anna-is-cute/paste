@@ -5,7 +5,7 @@
 # The environment to start sidekiq in. "development" "beta" "production"
 SIDEKIQ_ENV="development"
 # Either "debug" or "release" – whichever you chose when compiling the workers
-RUST_ENV="release"
+RUST_ENV="debug"
 # The sidekiq config file path
 CONF="sidekiq.yml"
 # The .env file path with SIDEKIQ_URL defined

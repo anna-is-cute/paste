@@ -39,9 +39,15 @@ Manage account settings.
     Your email is not verified!
     <button class="delete" aria-label="delete"></button>
   </p>
-  <p class="message-body">
-    Click <a href="/account/send_verification">here</a> to resend a verification email.
-  </p>
+  <div class="message-body">
+    <p>
+      Click the button below to resend a verification email.
+    </p>
+    <form action="/account/send_verification" method="post">
+      <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+      <button type="submit" class="button is-link">Send verification email</button>
+    </form>
+  </div>
 </div>
 {% endif %}
 

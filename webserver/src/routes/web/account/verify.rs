@@ -12,12 +12,20 @@ use diesel;
 use diesel::prelude::*;
 
 use rocket::State;
+use rocket::request::Form;
 use rocket::response::Redirect;
 
 use sidekiq::Client as SidekiqClient;
 
-#[get("/account/send_verification")]
-fn resend(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+#[post("/account/send_verification", format = "application/x-www-form-urlencoded", data = "<data>")]
+fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+  let data = data.into_inner();
+
+  if !sess.check_token(&data.anti_csrf_token) {
+    sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Redirect::to("/account/delete"));
+  }
+
   let user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(Redirect::to("/login")),
@@ -92,4 +100,9 @@ fn get(data: Verification, user: OptionalWebUser, mut sess: Session, conn: DbCon
 struct Verification {
   id: EmailVerificationId,
   key: EmailVerificationKey,
+}
+
+#[derive(Debug, FromForm)]
+struct Resend {
+  anti_csrf_token: String,
 }

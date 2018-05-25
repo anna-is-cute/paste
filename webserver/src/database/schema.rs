@@ -20,6 +20,7 @@ table! {
         user_id -> Uuid,
         key -> Text,
         last_sent -> Nullable<Timestamp>,
+        expiry -> Timestamp,
     }
 }
 

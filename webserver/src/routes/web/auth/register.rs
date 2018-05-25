@@ -122,9 +122,9 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     .values(&nu)
     .get_result(&*conn)?;
 
-  let ver = user.create_email_verification(&conn, Some(Utc::now().naive_utc()))?;
+  let (ver, secret) = user.create_email_verification(&conn, Some(Utc::now().naive_utc()))?;
 
-  sidekiq.push(ver.job(&*config, &user)?.into())?;
+  sidekiq.push(ver.job(&*config, &user, &secret)?.into())?;
 
   let cookie = Cookie::build("user_id", id.simple().to_string())
     .secure(true)

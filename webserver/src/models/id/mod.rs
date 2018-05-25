@@ -97,7 +97,7 @@ pub mod user;
 
 pub use self::api_key::ApiKeyId;
 pub use self::deletion_key::DeletionKeyId;
-pub use self::email_verification::{EmailVerificationId, EmailVerificationKey};
+pub use self::email_verification::EmailVerificationId;
 pub use self::file::FileId;
 pub use self::paste::PasteId;
 pub use self::password_reset::PasswordResetId;

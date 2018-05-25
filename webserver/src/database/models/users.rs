@@ -70,8 +70,8 @@ impl User {
     self.email_verified = verified;
   }
 
-  pub fn create_email_verification(&self, conn: &DbConn, last_sent: Option<NaiveDateTime>) -> Result<EmailVerification> {
-    let nv = NewEmailVerification::new(
+  pub fn create_email_verification(&self, conn: &DbConn, last_sent: Option<NaiveDateTime>) -> Result<(EmailVerification, Vec<u8>)> {
+    let (nv, secret) = NewEmailVerification::new(
       self.email(),
       self.id(),
       last_sent,
@@ -79,7 +79,7 @@ impl User {
     let ver = diesel::insert_into(email_verifications::table)
       .values(&nv)
       .get_result(&**conn)?;
-    Ok(ver)
+    Ok((ver, secret))
   }
 
   pub fn check_password(&self, pass: &str) -> bool {

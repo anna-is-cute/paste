@@ -5,7 +5,7 @@
   Please click the link below to verify your email on <strong>{{ config.general.site_name }}</strong>.
 </p>
 <p>
-  <a href="{{ verify_url | safe }}">Verify</a>
+  <a href="{{ verify_url | safe }}">Verify</a> (expires in 24 hours)
 </p>
 <p>
   Thanks!

@@ -28,6 +28,7 @@ pub struct EmailVerification {
   user_id: UserId,
   key: String,
   last_sent: Option<NaiveDateTime>,
+  expiry: NaiveDateTime,
 }
 
 impl EmailVerification {
@@ -84,6 +85,10 @@ impl EmailVerification {
   }
 
   pub fn check(&self, bytes: &[u8]) -> bool {
+    if DateTime::from_utc(self.expiry, Utc) < Utc::now() {
+      return false;
+    }
+
     let mut secret = self.key.as_bytes().to_vec();
     secret.push(0x00);
 
@@ -104,6 +109,7 @@ pub struct NewEmailVerification {
   pub user_id: UserId,
   pub key: String,
   pub last_sent: Option<NaiveDateTime>,
+  pub expiry: NaiveDateTime,
 }
 
 impl NewEmailVerification {
@@ -119,6 +125,7 @@ impl NewEmailVerification {
       user_id,
       last_sent,
       email: email.into(),
+      expiry: Utc::now().naive_utc() + Duration::days(1),
     };
 
     (nev, secret)

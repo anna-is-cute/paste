@@ -3,8 +3,11 @@ use database::DbConn;
 use database::schema::email_verifications;
 use database::models::email_verifications::EmailVerification;
 use errors::*;
-use models::id::{EmailVerificationId, EmailVerificationKey};
+use models::id::EmailVerificationId;
 use routes::web::{OptionalWebUser, Session};
+use utils::HashedPassword;
+
+use base64;
 
 use chrono::Utc;
 
@@ -16,6 +19,8 @@ use rocket::request::Form;
 use rocket::response::Redirect;
 
 use sidekiq::Client as SidekiqClient;
+
+use sodiumoxide::randombytes;
 
 #[post("/account/send_verification", format = "application/x-www-form-urlencoded", data = "<data>")]
 fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
@@ -42,9 +47,12 @@ fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, mut 
     .first(&*conn)
     .optional()?;
 
-  let mut ver = match ver {
-    Some(v) => v,
-    None => user.create_email_verification(&conn, None)?,
+  let (mut ver, secret) = match ver {
+    Some(v) => (v, None),
+    None => {
+      let (v, s) = user.create_email_verification(&conn, None)?;
+      (v, Some(s))
+    },
   };
 
   if !ver.can_send_again() {
@@ -52,9 +60,22 @@ fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, mut 
     return Ok(Redirect::to("/account"));
   }
 
+  let secret = match secret {
+    Some(s) => s,
+    None => {
+      let s = randombytes::randombytes(32);
+      let key = HashedPassword::from(&s).into_string();
+
+      ver.set_key(key);
+      ver.update(&conn)?;
+
+      s
+    },
+  };
+
   ver.update_last_sent(&conn, Utc::now().naive_utc())?;
 
-  sidekiq.push(ver.job(&config, &user)?.into())?;
+  sidekiq.push(ver.job(&config, &user, &secret)?.into())?;
 
   sess.add_data("info", "Email sent.");
   Ok(Redirect::to("/account"))
@@ -62,6 +83,14 @@ fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, mut 
 
 #[get("/account/verify?<data>")]
 fn get(data: Verification, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+  let key = match base64::decode_config(&data.key, base64::URL_SAFE) {
+    Ok(k) => k,
+    Err(_) => {
+      sess.add_data("error", "Invalid email verification.");
+      return Ok(Redirect::to("/account"));
+    },
+  };
+
   let mut user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(Redirect::to("/login")),
@@ -74,8 +103,7 @@ fn get(data: Verification, user: OptionalWebUser, mut sess: Session, conn: DbCon
 
   let verification: Option<EmailVerification> = email_verifications::table
     .find(*data.id)
-    .filter(email_verifications::key.eq(*data.key)
-      .and(email_verifications::email.eq(user.email())))
+    .filter(email_verifications::email.eq(user.email()))
     .first(&*conn)
     .optional()?;
 
@@ -86,6 +114,11 @@ fn get(data: Verification, user: OptionalWebUser, mut sess: Session, conn: DbCon
       return Ok(Redirect::to("/account"));
     },
   };
+
+  if !verification.check(&key) {
+    sess.add_data("error", "Invalid email verification");
+    return Ok(Redirect::to("/account"));
+  }
 
   user.set_email_verified(true);
   user.update(&conn)?;
@@ -99,7 +132,7 @@ fn get(data: Verification, user: OptionalWebUser, mut sess: Session, conn: DbCon
 #[derive(Debug, FromForm)]
 struct Verification {
   id: EmailVerificationId,
-  key: EmailVerificationKey,
+  key: String,
 }
 
 #[derive(Debug, FromForm)]

@@ -18,7 +18,7 @@ table! {
         id -> Uuid,
         email -> Text,
         user_id -> Uuid,
-        key -> Uuid,
+        key -> Text,
         last_sent -> Nullable<Timestamp>,
     }
 }

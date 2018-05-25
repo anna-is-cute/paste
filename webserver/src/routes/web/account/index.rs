@@ -62,8 +62,8 @@ fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalWebUs
     }
     user.set_email(update.email);
     user.set_email_verified(false);
-    let ver = user.create_email_verification(&conn, Some(Utc::now().naive_utc()))?;
-    sidekiq.push(ver.job(&*config, &user)?.into())?;
+    let (ver, secret) = user.create_email_verification(&conn, Some(Utc::now().naive_utc()))?;
+    sidekiq.push(ver.job(&*config, &user, &secret)?.into())?;
   }
 
   if !update.name.is_empty() {

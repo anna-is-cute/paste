@@ -19,6 +19,8 @@
       pre.classList.add(clazz);
     }
     hljs.highlightBlock(pre);
-    hljs.lineNumbersBlock(pre);
+    hljs.lineNumbersBlock(pre, {
+      singleLine: true,
+    });
   }
 })();

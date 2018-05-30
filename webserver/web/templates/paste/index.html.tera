@@ -28,7 +28,7 @@
 <script
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-Y7fFjcyyjgDIpkzMk3ogS6xa1mBzIsUzGog/G9iSzGm7b39okkeKIUZd1cqi4wYK"></script>
+  integrity="sha384-jVfBMBVVDjoI+q6ygs94IE00WBlMbcouP3SEKyGFlGw8FCbLbRBKJFjlbToGbHRz"></script>
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"

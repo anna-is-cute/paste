@@ -12,5 +12,16 @@ forms = 524288 # 512 KiB
 # change the api submit limit (max bytes allowed)
 json = 1048576 # 1 MiB
 
-[development]
-secret_key = "gt/gjaCknItthlJK1Cn/WOhpccnW7sD6T3r8OAP4Mxg="
+# You can set a static secret key here instead of having a random one set on startup.
+# Random secret keys will invalidate cookies on server restart, forcing users to log back in and to
+# lose their session.
+# Use `openssl rand -base64 32` to generate a key.
+
+# [development]
+# secret_key = "..."
+
+# [staging]
+# secret_key = "..."
+
+# [production]
+# secret_key = "..."

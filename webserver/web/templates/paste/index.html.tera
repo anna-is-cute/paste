@@ -29,12 +29,10 @@
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
   integrity="sha384-Y7fFjcyyjgDIpkzMk3ogS6xa1mBzIsUzGog/G9iSzGm7b39okkeKIUZd1cqi4wYK"></script>
-{% if not paste.author %}
 <script
   defer
-  src="/static/js/anonymous_paste.js?v={{ resources_version }}"
+  src="/static/js/paste.js?v={{ resources_version }}"
   integrity="sha384-nrjg+RRLhRJjf09WxW1dS+aaanBJ+IyngZ6iOG54n6M6SB0O+YOKXwmoZX5h8p8M"></script>
-{% endif %}
 {% endblock head %}
 
 {% block title %}
@@ -50,29 +48,7 @@ untitled paste
   <div class="hero-body">
     <div class="paste container">
       <div class="right">
-      {% if is_owner %}
-        <div class="field is-grouped">
-          <div class="control">
-            <a class="button is-info is-large" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/edit">
-              <span class="icon is-large">
-                <i class="fas fa-pencil-alt"></i>
-              </span>
-            </a>
-          </div>
-          <div class="control">
-            <form action="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}" method="post">
-              <input type="hidden" name="_method" value="delete"/>
-              <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
-              <button class="button is-danger is-large" type="submit">
-                <span class="icon is-large">
-                  <i class="fas fa-trash-alt"></i>
-                </span>
-              </button>
-            </form>
-          </div>
-        </div>
-      {% endif %}
-      {% if not paste.author %}
+      {% if not paste.author or is_owner %}
         <button class="button is-danger is-large opens-modal">
           <span class="icon is-large">
             <i class="fas fa-trash-alt"></i>
@@ -114,7 +90,7 @@ untitled paste
 {% endblock header %}
 
 {% block main %}
-{% if not paste.author %}
+{% if not paste.author or is_owner %}
 <div id="deletion_modal" class="modal">
   <form action="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}" method="post">
     <input type="hidden" name="_method" value="delete"/>
@@ -126,6 +102,7 @@ untitled paste
         <button class="delete closes-modal" aria-label="close" type="button"></button>
       </header>
       <section class="modal-card-body">
+      {% if not paste.author %}
         <div class="content">
           <p>
             To delete an anonymous paste, you need to use its deletion key. Enter it below and click
@@ -140,6 +117,14 @@ untitled paste
           autocapitalize="off"
           class="input"
           placeholder="Deletion key"/>
+      {% endif %}
+      {% if is_owner %}
+        <div class="content">
+          <p>
+            Please confirm you would like to delete this paste.
+          </p>
+        </div>
+      {% endif %}
       </section>
       <footer class="modal-card-foot">
         <button class="button is-danger" type="submit">Delete</button>

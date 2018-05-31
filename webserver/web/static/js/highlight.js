@@ -1,18 +1,26 @@
 (function() {
-  for (var pre of document.getElementsByTagName('pre')) {
+  for (const pre of document.getElementsByTagName('pre')) {
     if (pre.id === '') {
       continue;
     }
-    var title = document.getElementById(pre.id + '-title');
+    const title = document.getElementById(pre.id + '-title');
     if (title === null) {
       continue;
     }
-    var suffix = title.innerText.trim().split('.').pop();
+    const suffix = title.innerText.trim().split('.').pop();
+    const classes = [];
     if (hljs.getLanguage(suffix) === undefined) {
-      continue;
+      classes.push('no-highlight');
+      classes.push('hljs');
+    } else {
+      classes.push('language-' + suffix);
     }
-    pre.classList.add('language-' + suffix);
+    for (const clazz of classes) {
+      pre.classList.add(clazz);
+    }
     hljs.highlightBlock(pre);
-    hljs.lineNumbersBlock(pre);
+    hljs.lineNumbersBlock(pre, {
+      singleLine: true,
+    });
   }
 })();

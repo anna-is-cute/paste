@@ -48,13 +48,26 @@ untitled paste
   <div class="hero-body">
     <div class="paste container">
       <div class="right">
-      {% if not paste.author or is_owner %}
-        <button class="button is-danger is-large opens-modal">
-          <span class="icon is-large">
-            <i class="fas fa-trash-alt"></i>
-          </span>
-        </button>
-      {% endif %}
+        <div class="field is-grouped">
+          {% if is_owner %}
+          <div class="control">
+            <a class="button is-info is-large" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/edit">
+              <span class="icon is-large">
+                <i class="fas fa-pencil-alt"></i>
+              </span>
+            </a>
+          </div>
+          {% endif %}
+          {% if not paste.author or is_owner %}
+          <div class="control">
+            <button class="button is-danger is-large opens-modal">
+              <span class="icon is-large">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </button>
+          </div>
+          {% endif %}
+        </div>
       </div>
       <div class="left">
         <h1 class="title">

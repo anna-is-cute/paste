@@ -34,7 +34,7 @@ failure = "0.1"
 # accepting base64 gzip data
 libflate = "0.1"
 
-# accepintg base64 xz data
+# accepting base64 xz data
 xz2 = "0.1"
 
 # secure password hashing

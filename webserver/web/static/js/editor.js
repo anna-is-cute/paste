@@ -52,10 +52,16 @@ var paste_editors = {};
       "minLines": 25,
     });
 
-    parent.querySelector('input[name=file_name]').oninput = function(e) {
+    const name_input = parent.querySelector('input[name=file_name]');
+    name_input.oninput = function(e) {
       var mode = modelist.getModeForPath(e.target.value).mode;
       editor.session.setMode(mode);
     };
+
+    if (name_input.value !== '') {
+      var mode = modelist.getModeForPath(name_input.value).mode;
+      editor.session.setMode(mode);
+    }
 
     var to_delete = paste_num;
     parent.querySelector('button[name=delete_button]').onclick = function() {

@@ -2,6 +2,30 @@
 
 {% block head %}
 {{ super() }}
+<link
+  title="dark"
+  rel="stylesheet alternate"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"
+  integrity="sha384-nyXucUVWQWGGNq3mSgG/FGxW4Jmsv+0uCbHZ0VpHRsGZt/PlUT31hz9sUek822eI"
+  crossorigin="anonymous"/>
+<link
+  title="light"
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"
+  integrity="sha384-7gDLYK0oyPpfkc6E6VzcNFzEFGw6QTKMoof6r0lb0cWECaHXX+b2GGxhh0iItikh"
+  crossorigin="anonymous"/>
+<script
+  defer
+  src="/static/js/highlight.pack.js?v={{ resources_version }}"
+  integrity="sha384-JRRwtUx7H7KUP+6uHPOfXcRuX+cvNXZdsqluYW0tiu2BNVwdJCEQwOcCqhbmGysx"></script>
+<script
+  defer
+  src="/static/js/highlightjs-line-numbers/highlightjs-line-numbers.js?v={{ resources_version }}"
+  integrity="sha384-plNgJByMro5ZF548W6rBtkOjm5ahURP5zKSUEW7yl9++jPTSeeD9zB2os+UnWMwn"></script>
+<script
+  defer
+  src="/static/js/highlight.js?v={{ resources_version }}"
+  integrity="sha384-jVfBMBVVDjoI+q6ygs94IE00WBlMbcouP3SEKyGFlGw8FCbLbRBKJFjlbToGbHRz"></script>
 {% endblock head %}
 
 {% block title %}
@@ -82,6 +106,12 @@
         </div>
       </div> #}
     </div>
+    {% for file in paste.files %}
+      {% if file.content and file.content.format == "text" %}
+      <span class="is-not-displayed" id="{{ file.id }}-title">{{ file.name }}</span>
+      <pre id="{{ file.id }}">{{ file.content.value }}</pre>
+      {% endif %}
+    {% endfor %}
   </div>
 {% endfor %}
 

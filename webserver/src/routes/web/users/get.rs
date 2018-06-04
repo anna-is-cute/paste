@@ -4,8 +4,8 @@ use database::models::pastes::Paste as DbPaste;
 use database::models::users::User;
 use database::schema::{users, pastes};
 use errors::*;
-use models::paste::output::{Output, OutputAuthor, OutputFile};
-use models::paste::Visibility;
+use models::paste::output::{Output, OutputAuthor};
+use models::paste::{Visibility, Content};
 use routes::web::{context, Rst, OptionalWebUser, Session};
 
 use diesel::dsl::count;
@@ -16,7 +16,8 @@ use rocket::http::Status as HttpStatus;
 
 use rocket_contrib::Template;
 
-use std::result;
+use std::fs::File;
+use std::io::Read;
 
 #[get("/users/<username>")]
 fn get(username: String, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
@@ -81,10 +82,54 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
     for paste in pastes {
       let id = paste.id();
 
-      let files: Vec<OutputFile> = id.files(&conn)?
-        .iter()
-        .map(|x| x.as_output_file(false, &paste))
-        .collect::<result::Result<_, _>>()?;
+      let files = id.files(&conn)?;
+      let mut has_preview = false;
+
+      let mut output_files = Vec::with_capacity(files.len());
+
+      const LEN: usize = 257;
+      let mut bytes = [0; LEN];
+
+      for file in files {
+        let mut f = file.as_output_file(false, &paste)?;
+
+        // TODO: maybe store this in database or its own file?
+        if !has_preview && file.is_binary() != Some(true) {
+          let path = file.path(&paste);
+          let read = File::open(path)?.read(&mut bytes)?;
+          let full = read < LEN;
+          let end = if read == LEN { read - 1 } else { read };
+
+          let preview = match String::from_utf8(bytes[..end].to_vec()) {
+            Ok(s) => Some((full, s)),
+            Err(e) => {
+              let valid = e.utf8_error().valid_up_to();
+              if valid > 0 {
+                let p = unsafe { String::from_utf8_unchecked(bytes[..valid].to_vec()) };
+                Some((full, p))
+              } else {
+                None
+              }
+            },
+          };
+
+          if let Some((full, mut p)) = preview {
+            if !full {
+              if let Some((mut i, _)) = p.rmatch_indices(|x| x == '\r' || x == '\n').next() {
+                if i != 0 && p.len() > i && &p[i - 1..i] == "\r" {
+                  i -= 1;
+                }
+                p.truncate(i);
+              }
+            }
+
+            f.content = Some(Content::Text(p));
+            has_preview = true;
+          }
+        }
+
+        output_files.push(f);
+      }
 
       outputs.push(Output::new(
         paste.id(),
@@ -93,7 +138,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
         paste.description(),
         paste.visibility(),
         None,
-        files,
+        output_files,
       ));
     }
 

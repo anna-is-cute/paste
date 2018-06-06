@@ -27,7 +27,7 @@ before_cache:
   - cargo clean -p worker_delete_all_pastes
   - cargo clean -p worker_email
 rust:
-  - nightly-2018-05-07
+  - nightly
 matrix:
   fast_finish: true
 notifications:

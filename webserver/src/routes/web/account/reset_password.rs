@@ -11,7 +11,7 @@ use utils::{email, PasswordContext, HashedPassword};
 
 use base64;
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Duration, Utc};
 
 use cookie::{Cookie, SameSite};
 
@@ -187,6 +187,7 @@ fn reset_post(data: Form<Reset>, mut sess: Session, mut cookies: Cookies, conn: 
     .secure(true)
     .http_only(true)
     .same_site(SameSite::Lax)
+    .max_age(Duration::days(30))
     .finish();
   cookies.add_private(cookie);
 

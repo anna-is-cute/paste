@@ -7,7 +7,7 @@ use models::id::UserId;
 use routes::web::{context, Rst, OptionalWebUser, Session};
 use utils::{email, PasswordContext, ReCaptcha, HashedPassword, Validator};
 
-use chrono::Utc;
+use chrono::{Duration, Utc};
 
 use cookie::{Cookie, SameSite};
 
@@ -130,6 +130,7 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     .secure(true)
     .http_only(true)
     .same_site(SameSite::Lax)
+    .max_age(Duration::days(30))
     .finish();
   cookies.add_private(cookie);
 

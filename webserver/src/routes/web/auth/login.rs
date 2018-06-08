@@ -8,6 +8,8 @@ use routes::web::{context, Rst, OptionalWebUser, Session};
 
 use cookie::{Cookie, SameSite};
 
+use chrono::Duration;
+
 use diesel::prelude::*;
 
 use rocket::State;
@@ -80,6 +82,7 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     .secure(true)
     .http_only(true)
     .same_site(SameSite::Lax)
+    .max_age(Duration::days(30))
     .finish();
   cookies.add_private(cookie);
 

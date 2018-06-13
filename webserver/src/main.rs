@@ -1,6 +1,7 @@
 #![feature(plugin, custom_derive, macro_at_most_once_rep)]
 #![plugin(rocket_codegen)]
 
+extern crate ammonia;
 extern crate base64;
 extern crate chrono;
 extern crate cookie;
@@ -18,6 +19,7 @@ extern crate ipnetwork;
 extern crate lazy_static;
 extern crate libflate;
 extern crate percent_encoding;
+extern crate pulldown_cmark;
 extern crate r2d2;
 extern crate r2d2_redis;
 extern crate redis;

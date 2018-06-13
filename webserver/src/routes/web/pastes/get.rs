@@ -4,14 +4,18 @@ use database::models::pastes::Paste as DbPaste;
 use database::models::users::User;
 use database::schema::{pastes, users};
 use errors::*;
-use models::id::PasteId;
-use models::paste::Visibility;
+use models::id::{PasteId, FileId};
+use models::paste::{Content, Visibility};
 use models::paste::output::{Output, OutputFile, OutputAuthor};
 use routes::web::{context, Rst, OptionalWebUser, Session};
+
+use ammonia;
 
 use diesel::prelude::*;
 
 use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
+
+use pulldown_cmark::{html, Parser};
 
 use rocket::http::Status as HttpStatus;
 use rocket::response::Redirect;
@@ -19,6 +23,7 @@ use rocket::State;
 
 use rocket_contrib::Template;
 
+use std::collections::HashMap;
 use std::result;
 
 #[get("/<id>", rank = 10)]
@@ -81,6 +86,28 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
     .map(|x| x.as_output_file(true, &paste))
     .collect::<result::Result<_, _>>()?;
 
+  let mut rendered: HashMap<FileId, Option<String>> = HashMap::with_capacity(files.len());
+
+  for file in &files {
+    if let Some(ref name) = file.name {
+      let lower = name.to_lowercase();
+      if !lower.ends_with(".md") && !lower.ends_with(".mdown") && !lower.ends_with(".markdown") {
+        rendered.insert(file.id, None);
+        continue;
+      }
+    }
+    let content = match file.content {
+      Some(Content::Text(ref s)) => s,
+      _ => {
+        rendered.insert(file.id, None);
+        continue;
+      },
+    };
+    let mut md = String::new();
+    html::push_html(&mut md, Parser::new(content));
+    rendered.insert(file.id, Some(ammonia::clean(&md)));
+  }
+
   let output = Output::new(
     id,
     author,
@@ -97,6 +124,8 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
 
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["paste"] = json!(output);
+  ctx["rendered"] = json!(rendered);
+  println!("rendered: {:#?}", rendered);
   ctx["user"] = json!(*user);
   ctx["deletion_key"] = json!(sess.data.remove("deletion_key"));
   ctx["is_owner"] = json!(is_owner);

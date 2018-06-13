@@ -194,7 +194,13 @@ untitled paste
   </h2>
   {% endif %}
   {% if file.content.format == "text" %}
-  <pre id="{{ file.id }}">{{ file.content.value }}</pre>
+    {% if rendered | get(key=file.id) %}
+      <div class="content">
+        {{ rendered | get(key=file.id) | safe }}
+      </div>
+    {% else %}
+      <pre id="{{ file.id }}">{{ file.content.value }}</pre>
+    {% endif %}
   {% else %}
     Binary content
   {% endif %}

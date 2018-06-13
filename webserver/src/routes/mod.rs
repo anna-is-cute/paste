@@ -27,7 +27,7 @@ use std::str::FromStr;
 
 pub type RouteResult<T> = Result<Custom<Json<Status<T>>>>;
 
-pub mod pastes;
+pub mod api;
 pub mod web;
 
 enum StringOrTemplate {

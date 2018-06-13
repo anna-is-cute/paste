@@ -175,24 +175,28 @@ fn main() {
       routes::web::static_files::get,
     })
     .mount("/api/v0/pastes", routes![
-      routes::pastes::get::get_all,
-      routes::pastes::get::get_all_query,
+      routes::api::pastes::get::get_all,
+      routes::api::pastes::get::get_all_query,
 
-      routes::pastes::post::post,
-      routes::pastes::delete::delete,
-      routes::pastes::get::get_query,
-      routes::pastes::get::get,
-      routes::pastes::patch::patch,
+      routes::api::pastes::post::post,
+      routes::api::pastes::delete::delete,
+      routes::api::pastes::get::get_query,
+      routes::api::pastes::get::get,
+      routes::api::pastes::patch::patch,
 
-      routes::pastes::files::get::get,
-      routes::pastes::files::patch::patch,
-      routes::pastes::files::post::post,
+      routes::api::pastes::files::get::get,
+      routes::api::pastes::files::patch::patch,
+      routes::api::pastes::files::post::post,
 
-      routes::pastes::files::individual::delete::delete,
-      routes::pastes::files::individual::get::get,
-      routes::pastes::files::individual::patch::patch,
+      routes::api::pastes::files::individual::delete::delete,
+      routes::api::pastes::files::individual::get::get,
+      routes::api::pastes::files::individual::patch::patch,
 
-      routes::pastes::files::individual::raw::get::get,
+      routes::api::pastes::files::individual::raw::get::get,
+    ])
+    .mount("/api/v0/users", routes![
+      routes::api::users::get::get,
+      routes::api::users::get::get_page,
     ])
     .launch();
 }

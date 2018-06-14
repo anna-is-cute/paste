@@ -125,7 +125,6 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["paste"] = json!(output);
   ctx["rendered"] = json!(rendered);
-  println!("rendered: {:#?}", rendered);
   ctx["user"] = json!(*user);
   ctx["deletion_key"] = json!(sess.data.remove("deletion_key"));
   ctx["is_owner"] = json!(is_owner);

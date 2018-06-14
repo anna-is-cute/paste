@@ -1,4 +1,4 @@
-@import "bulma-tooltip/src/extension";
+@import "bulma-tooltip/src/sass/index";
 
 body {
   display: flex;
@@ -119,4 +119,35 @@ td.hljs-ln-code {
 
 .is-not-displayed {
   display: none;
+}
+
+.filename {
+  padding: 1.25rem;
+  margin-left: -1.25rem;
+  margin-top: -1.25rem;
+  margin-right: -1.25rem;
+  margin-bottom: 1.5rem;
+
+  border-radius: 6px 6px 0 0;
+
+  background-color: $dark;
+
+  .title:not(:last-child) {
+    margin-bottom: .5rem;
+  }
+
+  .tabs {
+    margin-bottom: -1.25rem;
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+
+    ul {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+  }
+}
+
+.paste-rendered-content:not(:last-child) {
+  margin-bottom: 0;
 }

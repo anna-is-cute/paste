@@ -7,7 +7,7 @@
 {% block title %}Delete account{% endblock title %}
 
 {% block header %}
-<section class="hero is-danger is-bold">
+<section class="hero is-danger">
   <div class="hero-body">
     <div class="container">
       <h1 class="title">

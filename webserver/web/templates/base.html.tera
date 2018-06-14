@@ -6,12 +6,12 @@
   title="dark"
   rel="stylesheet alternate"
   href="/static/css/dark-style.css?v={{ resources_version }}"
-  integrity="sha384-nkDOuuXFZm4d9VGywYtf0FxsJujsilzGPbREJegKPu8L4O3AKP8dtN3O9oT//JrE"/>
+  integrity="sha384-KXqzzcB5HSZysmadFINTItOjPctgJozQIk1Ea697E9sRaIwSFzRvhKkps43stBJY"/>
 <link
   title="light"
   rel="stylesheet"
   href="/static/css/style.css?v={{ resources_version }}"
-  integrity="sha384-u60IHXNf9SLCtRrof8Jc7l4ZEoMXw33IsMI7wIoWJoAUOEuFgISVf/aWgKbd7HE+"/>
+  integrity="sha384-zgz8F2EZvKnhk5c2B2ChmRi1U+QqMtKSBeccujhg3zaOiPLn6FngxN8KJAbkow4o"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
   integrity="sha384-gIJsa7ipunU0jwSDxUAFcwOg81q8YkNgI2VqbW3VV9+yxXFZUbC3lCuU8HpUFb6c"></script>
@@ -49,14 +49,12 @@
 <div class="wrapper">
   <nav class="navbar">
     <div class="navbar-brand">
-      <div class="navbar-item">
-        <a class="button is-primary" href="/">
-          <span class="icon">
-            <i class="fas fa-paste"></i>
-          </span>
-          <span>{{ config.general.site_name }}</span>
-        </a>
-      </div>
+      <a class="navbar-item" href="/">
+        <span class="icon">
+          <i class="fas fa-paste"></i>
+        </span>
+        <span>{{ config.general.site_name }}</span>
+      </a>
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="menu">
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -100,7 +98,7 @@
   </nav>
 
 {% block header %}
-  <section class="hero is-dark is-bold">
+  <section class="hero is-dark">
     <div class="hero-body">
       <div class="container">
         <h1 class="title">

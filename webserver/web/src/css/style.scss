@@ -4,3 +4,44 @@
 td.hljs-ln-numbers {
   color: hsl(228, 8%, 80%)
 }
+
+.filename {
+  h2 {
+    color: $white-ter;
+  }
+
+  .button {
+    color: $white-ter;
+    background-color: lighten($dark, 5);
+    border-color: lighten($dark, 10);
+  }
+
+  .tabs {
+    margin-bottom: -1.25rem;
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+
+    ul {
+      border-bottom-color: $grey;
+
+      li > a {
+        color: $grey;
+        border-bottom-color: $grey;
+
+        &:hover {
+          color: $grey-light;
+          border-bottom-color: $grey-light;
+        }
+      }
+
+      li.is-active {
+        border-bottom: $white-ter;
+
+        a {
+          color: $white-ter;
+          border-bottom-color: $white-ter;
+        }
+      }
+    }
+  }
+}

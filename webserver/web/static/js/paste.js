@@ -15,17 +15,15 @@
     e.onclick = closeModal;
   }
 
-  const tabs_container = document.getElementById('tabs-container');
-
-  if (tabs_container !== null) {
-    const rendered = document.getElementById('rendered-tab');
+  for (const tabs_container of document.getElementsByClassName('paste-tabs-container')) {
+    const rendered = tabs_container.querySelector('.paste-rendered-tab');
     const rendered_a = rendered.firstChild;
 
-    const source = document.getElementById('source-tab');
+    const source = tabs_container.querySelector('.paste-source-tab');
     const source_a = source.firstChild;
 
-    const rendered_content = tabs_container.querySelector('div#rendered-content');
-    const source_content = tabs_container.querySelector('div#source-content');
+    const rendered_content = tabs_container.querySelector('div.paste-rendered-content');
+    const source_content = tabs_container.querySelector('div.paste-source-content');
 
     function swap(current, current_content, next, next_content) {
       current.classList.remove('is-active');

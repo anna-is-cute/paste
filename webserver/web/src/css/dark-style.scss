@@ -1,7 +1,6 @@
 @import "bulmaswatch/darkly/variables";
 @import "bulma/sass/utilities/initial-variables";
 @import "bulma/sass/utilities/functions";
-@import "bulma/sass/utilities/derived-variables";
 
 // make blue less aggressive
 $blue: darken($blue, 10);
@@ -23,6 +22,8 @@ $pagination-hover-color: $grey-lighter;
 
 // make tags not blend in
 $tag-background-color: lighten($grey-darker, 5);
+
+@import "bulma/sass/utilities/derived-variables";
 
 @import "bulma/bulma";
 @import "bulmaswatch/darkly/overrides";

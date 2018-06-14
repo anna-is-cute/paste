@@ -22,3 +22,11 @@ input[type="text"], input[type="email"], input[type="password"], .select select,
 td.hljs-ln-numbers {
   color: hsl(219, 14%, 35%);
 }
+
+.tabs li.is-active a {
+  color: $text;
+}
+
+.tabs a {
+  color: $link;
+}

@@ -32,7 +32,7 @@
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
-  integrity="sha384-nrjg+RRLhRJjf09WxW1dS+aaanBJ+IyngZ6iOG54n6M6SB0O+YOKXwmoZX5h8p8M"></script>
+  integrity="sha384-a/TPXeeZtOGQuZN9cDT/SdZC8EVTlIz8l2NeHUt33vpBlG+AsWsy5GzAB7GIlAnB"></script>
 {% endblock head %}
 
 {% block title %}
@@ -195,8 +195,19 @@ untitled paste
   {% endif %}
   {% if file.content.format == "text" %}
     {% if rendered | get(key=file.id) %}
-      <div class="content">
-        {{ rendered | get(key=file.id) | safe }}
+      <div id="tabs-container">
+        <div class="tabs">
+          <ul>
+            <li id="rendered-tab" class="is-active"><a>Rendered</a></li>
+            <li id="source-tab"><a>Source</a></li>
+          </ul>
+        </div>
+        <div id="rendered-content" class="content">
+          {{ rendered | get(key=file.id) | safe }}
+        </div>
+        <div id="source-content" class="is-not-displayed">
+          <pre id="{{ file.id }}">{{ file.content.value }}</pre>
+        </div>
       </div>
     {% else %}
       <pre id="{{ file.id }}">{{ file.content.value }}</pre>

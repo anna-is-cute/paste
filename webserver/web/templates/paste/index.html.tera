@@ -32,7 +32,7 @@
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
-  integrity="sha384-vpfi/2XIHOy5TmOBOfUI56x25mo4INfl7q7sE8Ou85IYjbhbh8EkGVrHE6jcq175"></script>
+  integrity="sha384-HoJ0thsqt1aHDbLvVcC22ysAiBwyxCehSmyHNEXLHE5+YsD5Mn3oaadDiVXb7otn"></script>
 {% endblock head %}
 
 {% block title %}
@@ -44,7 +44,7 @@ untitled paste
 {% endblock title %}
 
 {% block header %}
-<section class="hero is-dark is-bold">
+<section class="hero is-dark">
   <div class="hero-body">
     <div class="paste container">
       <div class="right">
@@ -188,20 +188,24 @@ untitled paste
 {% for file in paste.files %}
 <div class="box">
   {% if file.name %}
-  <h2 id="{{ file.id }}-title" class="title">
-    <a class="is-pulled-right button" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/files/{{ file.id }}/raw">Raw</a>
-    {{ file.name }}
-  </h2>
+  <div class="filename">
+    <h2 id="{{ file.id }}-title" class="title">
+      <a class="is-pulled-right button" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/files/{{ file.id }}/raw">Raw</a>
+      {{ file.name }}
+    </h2>
+    {% if file.content.format == "text" and rendered | get(key=file.id) %}
+    <div class="paste-tabs tabs" id="{{ file.id }}-tab-links">
+      <ul>
+        <li class="paste-rendered-tab is-active"><a>Rendered</a></li>
+        <li class="paste-source-tab"><a>Source</a></li>
+      </ul>
+    </div>
+    {% endif %}
+  </div>
   {% endif %}
   {% if file.content.format == "text" %}
     {% if rendered | get(key=file.id) %}
-      <div class="paste-tabs-container">
-        <div class="tabs">
-          <ul>
-            <li class="paste-rendered-tab is-active"><a>Rendered</a></li>
-            <li class="paste-source-tab"><a>Source</a></li>
-          </ul>
-        </div>
+      <div class="paste-tabs-container" data-id="{{ file.id }}">
         <div class="paste-rendered-content content">
           {{ rendered | get(key=file.id) | safe }}
         </div>

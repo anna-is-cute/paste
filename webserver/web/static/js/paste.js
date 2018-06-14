@@ -16,10 +16,13 @@
   }
 
   for (const tabs_container of document.getElementsByClassName('paste-tabs-container')) {
-    const rendered = tabs_container.querySelector('.paste-rendered-tab');
+    const file_id = tabs_container.dataset.id;
+    const tab_links = document.getElementById(file_id + '-tab-links');
+
+    const rendered = tab_links.querySelector('.paste-rendered-tab');
     const rendered_a = rendered.firstChild;
 
-    const source = tabs_container.querySelector('.paste-source-tab');
+    const source = tab_links.querySelector('.paste-source-tab');
     const source_a = source.firstChild;
 
     const rendered_content = tabs_container.querySelector('div.paste-rendered-content');

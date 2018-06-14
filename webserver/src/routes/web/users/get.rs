@@ -87,7 +87,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
 
       let mut output_files = Vec::with_capacity(files.len());
 
-      const LEN: usize = 257;
+      const LEN: usize = 385;
       let mut bytes = [0; LEN];
 
       for file in files {
@@ -122,6 +122,12 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
                 p.truncate(i);
               }
             }
+
+            let p = p
+              .lines()
+              .take(10)
+              .collect::<Vec<_>>()
+              .join("\n");
 
             f.content = Some(Content::Text(p));
             has_preview = true;

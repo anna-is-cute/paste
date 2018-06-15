@@ -15,7 +15,7 @@ use diesel::prelude::*;
 
 use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
 
-use pulldown_cmark::{html, Parser};
+use pulldown_cmark::{self, html, Parser};
 
 use rocket::http::Status as HttpStatus;
 use rocket::response::Redirect;
@@ -104,7 +104,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
       },
     };
     let mut md = String::new();
-    html::push_html(&mut md, Parser::new(content));
+    html::push_html(&mut md, Parser::new_ext(content, pulldown_cmark::OPTION_ENABLE_TABLES));
     rendered.insert(file.id, Some(ammonia::clean(&md)));
   }
 

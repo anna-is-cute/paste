@@ -72,39 +72,41 @@
 {% endif %}
 {% for paste in pastes %}
   <div class="box">
-    <h3 class="title">
-      <a href="/pastes/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
-    {% if paste.name %}
-        {{ paste.name }}
-    {% else %}
-        <em>untitled paste</em>
-    {% endif %}
-      </a>
-    </h3>
-    {% if paste.description %}
-    <h4 class="subtitle">
-      {{ paste.description }}
-    </h4>
-    {% endif %}
-    <div class="info-tags field is-grouped is-grouped-multiline">
-      <div class="control">
-        <div class="tags has-addons">
-          <span class="tag is-dark">visibility</span>
-          <span class="tag is-info">{{ paste.visibility }}</span>
+    <div class="box-title">
+      <h3 class="title">
+        <a href="/pastes/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
+      {% if paste.name %}
+          {{ paste.name }}
+      {% else %}
+          <em>untitled paste</em>
+      {% endif %}
+        </a>
+      </h3>
+      {% if paste.description %}
+      <h4 class="subtitle">
+        {{ paste.description }}
+      </h4>
+      {% endif %}
+      <div class="info-tags field is-grouped is-grouped-multiline">
+        <div class="control">
+          <div class="tags has-addons">
+            <span class="tag">visibility</span>
+            <span class="tag is-info">{{ paste.visibility }}</span>
+          </div>
         </div>
+        <div class="control">
+          <div class="tags has-addons">
+            <span class="tag">files</span>
+            <span class="tag is-info">{{ paste.files | length }}</span>
+          </div>
+        </div>
+        {# <div class="control">
+          <div class="tags has-addons">
+            <span class="tag is-dark">created</span>
+            <span class="tag is-info">5 Dec 2017</span>
+          </div>
+        </div> #}
       </div>
-      <div class="control">
-        <div class="tags has-addons">
-          <span class="tag is-dark">files</span>
-          <span class="tag is-info">{{ paste.files | length }}</span>
-        </div>
-      </div>
-      {# <div class="control">
-        <div class="tags has-addons">
-          <span class="tag is-dark">created</span>
-          <span class="tag is-info">5 Dec 2017</span>
-        </div>
-      </div> #}
     </div>
     {% for file in paste.files %}
       {% if file.content and file.content.format == "text" %}

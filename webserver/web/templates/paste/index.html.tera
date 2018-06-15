@@ -188,7 +188,7 @@ untitled paste
 {% for file in paste.files %}
 <div class="box">
   {% if file.name %}
-  <div class="filename">
+  <div class="box-title">
     <h2 id="{{ file.id }}-title" class="title">
       <a class="is-pulled-right button" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/files/{{ file.id }}/raw">Raw</a>
       {{ file.name }}

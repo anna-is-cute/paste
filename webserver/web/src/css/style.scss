@@ -5,9 +5,17 @@ td.hljs-ln-numbers {
   color: hsl(228, 8%, 80%)
 }
 
-.filename {
+.box-title {
   h2 {
     color: $white-ter;
+  }
+
+  a {
+    color: $link;
+
+    a:hover {
+      color: $link-hover;
+    }
   }
 
   .button {

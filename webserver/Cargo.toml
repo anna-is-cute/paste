@@ -85,9 +85,6 @@ unicode_categories = "0.1"
 # email templates
 tera = "0.11"
 
-# markdown rendering
-pulldown-cmark = "0.1"
-
 # html sanitizing
 ammonia = "1"
 
@@ -121,3 +118,8 @@ features = ["serde"]
 [dependencies.sidekiq]
 # git because version on crates.io has incompatible version of r2d2
 git = "https://github.com/spk/rust-sidekiq"
+
+# markdown rendering
+[dependencies.pulldown-cmark]
+version = "0.1"
+default-features = false

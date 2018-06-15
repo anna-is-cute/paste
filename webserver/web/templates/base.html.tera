@@ -11,7 +11,7 @@
   title="light"
   rel="stylesheet"
   href="/static/css/style.css?v={{ resources_version }}"
-  integrity="sha384-WnJ1Mu6vMSZEQSfE8V745zU8eGvK10xmXPTrGJlY2Bh1Ujf5JmNNCK4EhmFyiX7V"/>
+  integrity="sha384-60OmB4zIaGHqKmaUnAJlb9CKWDX0MOdPCYA2k2UcFb3dg6TNEuIjhRxDVrtY/jOK"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
   integrity="sha384-gIJsa7ipunU0jwSDxUAFcwOg81q8YkNgI2VqbW3VV9+yxXFZUbC3lCuU8HpUFb6c"></script>

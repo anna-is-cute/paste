@@ -121,7 +121,7 @@ td.hljs-ln-code {
   display: none;
 }
 
-.filename {
+.box-title {
   padding: 1.25rem;
   margin-left: -1.25rem;
   margin-top: -1.25rem;
@@ -132,8 +132,8 @@ td.hljs-ln-code {
 
   background-color: $dark;
 
-  .title:not(:last-child) {
-    margin-bottom: .5rem;
+  .title + .tabs {
+    margin-top: -1rem;
   }
 
   .tabs {

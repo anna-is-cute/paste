@@ -49,6 +49,11 @@ a {
 // remove the unsightly rounded corners on navbars
 .navbar {
   border-radius: unset;
+
+  a:hover, a:active {
+    background-color: darken($navbar-background-color, 5);
+    color: $white;
+  }
 }
 
 input[type="text"], input[type="email"], input[type="password"], .select select, textarea {

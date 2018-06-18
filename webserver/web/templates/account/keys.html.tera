@@ -36,7 +36,7 @@ Manage API keys.
 {% for key in keys %}
   <tr>
     <td>{{ key.name }}</td>
-    <td><code>{{ key.key | replace(from="-", to="") }}</code></td>
+    <td><code>{{ key.key }}</code></td>
     <td>
       <form action="/account/keys/{{ key.key }}" method="post">
         <input type="hidden" name="_method" value="delete"/>

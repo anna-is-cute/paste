@@ -7,9 +7,9 @@
     }
   }
 
-  document.getElementById('password_verify').oninput = function() {
+  document.getElementById('password_verify').addEventListener('input', function() {
     checkMatch(document.getElementById('password'), this);
-  }
+  });
 
   function doHides(pw, strength) {
     if (pw.value.length === 0) {
@@ -88,7 +88,7 @@
     progress.classList.add(color);
   }
 
-  document.getElementById('password').oninput = function() {
+  document.getElementById('password').addEventListener('input', function() {
     passwordStrength(this);
-  };
+  });
 })();

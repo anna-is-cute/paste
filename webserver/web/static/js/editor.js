@@ -7,12 +7,12 @@ var paste_editors = {};
    */
   function createUpload() {
     var files = [];
-    for (var editor of Object.values(paste_editors)) {
-      var file = {
+    for (const editor of Object.values(paste_editors)) {
+      const file = {
         'name': editor.container.parentElement.parentElement.parentElement.querySelector('input[name=file_name]').value,
         'content': editor.getValue()
       };
-      var id = editor.container.parentElement.parentElement.parentElement.querySelector('input[name=id]');
+      const id = editor.container.parentElement.parentElement.parentElement.querySelector('input[name=id]');
       if (id !== null) {
         file['id'] = id.value;
       }
@@ -28,45 +28,45 @@ var paste_editors = {};
    * @param {HTMLElement} el The element to convert into an editor.
    */
   function setUpEditor(parent, el) {
-    var modelist = ace.require('ace/ext/modelist');
+    const modelist = ace.require('ace/ext/modelist');
 
     var theme;
-    if (localStorage.getItem("style") === "dark") {
+    if (localStorage.getItem('style') === 'dark') {
       theme = 'ace/theme/idle_fingers';
     } else {
       theme = 'ace/theme/tomorrow';
     }
 
-    var editor = ace.edit(el);
+    const editor = ace.edit(el);
 
     editor.setTheme(theme);
 
-    var hidden = document.createElement('input');
+    const hidden = document.createElement('input');
     hidden.type = 'hidden';
     hidden.name = 'file_content';
     hidden.id = 'hidden_content';
     editor.container.insertAdjacentElement('afterend', hidden);
 
     editor.setOptions({
-      "maxLines": 25,
-      "minLines": 25,
+      'maxLines': 25,
+      'minLines': 25,
     });
 
     const name_input = parent.querySelector('input[name=file_name]');
-    name_input.oninput = function(e) {
-      var mode = modelist.getModeForPath(e.target.value).mode;
+    name_input.addEventListener('input', function(e) {
+      const mode = modelist.getModeForPath(e.target.value).mode;
       editor.session.setMode(mode);
-    };
+    });
 
     if (name_input.value !== '') {
-      var mode = modelist.getModeForPath(name_input.value).mode;
+      const mode = modelist.getModeForPath(name_input.value).mode;
       editor.session.setMode(mode);
     }
 
-    var to_delete = paste_num;
-    parent.querySelector('button[name=delete_button]').onclick = function() {
+    const to_delete = paste_num;
+    parent.querySelector('button[name=delete_button]').addEventListener('click', function() {
       removeFile(to_delete);
-    };
+    });
 
     parent.querySelector('div[name=name_field]').classList.add('is-grouped');
 
@@ -75,10 +75,10 @@ var paste_editors = {};
 
   function addFile() {
     // get the base file for cloning (should be invisible if JS is running)
-    var base = document.getElementById('base_file');
+    const base = document.getElementById('base_file');
 
     // deep clone the base
-    var clone = base.cloneNode(true);
+    const clone = base.cloneNode(true);
 
     // show the editor by removing the requires-no-js class that was on the base
     clone.classList.remove('requires-no-js');
@@ -87,7 +87,7 @@ var paste_editors = {};
     clone.id = 'file' + paste_num;
 
     // set up an editor for each textarea in the base (should only be one)
-    for (var ta of clone.getElementsByTagName('textarea')) {
+    for (const ta of clone.getElementsByTagName('textarea')) {
       setUpEditor(clone, ta);
     }
 
@@ -107,7 +107,7 @@ var paste_editors = {};
       return;
     }
 
-    var file = document.getElementById('file' + num);
+    const file = document.getElementById('file' + num);
 
     if (file === null) {
       return;
@@ -121,8 +121,8 @@ var paste_editors = {};
   }
 
   function updateButtons() {
-    var enabled = Object.keys(paste_editors).length > 1;
-    for (var button of document.getElementsByName('delete_button')) {
+    const enabled = Object.keys(paste_editors).length > 1;
+    for (const button of document.getElementsByName('delete_button')) {
       if (enabled) {
         button.disabled = false;
       } else {
@@ -132,23 +132,23 @@ var paste_editors = {};
   }
 
   function createEditors() {
-    for (var editor of document.querySelectorAll('textarea.editor')) {
+    for (const editor of document.querySelectorAll('textarea.editor')) {
       paste_num += 1;
       setUpEditor(editor.parentElement.parentElement.parentElement, editor);
     }
     updateButtons();
   }
 
-  document.getElementById('add_file').onclick = addFile;
+  document.getElementById('add_file').addEventListener('click', addFile);
 
-  document.getElementById('paste_upload').onsubmit = function() {
-    var input = document.createElement('input');
+  document.getElementById('paste_upload').addEventListener('submit', function() {
+    const input = document.createElement('input');
     input.type = 'hidden';
     input.value = JSON.stringify(createUpload());
     input.name = 'upload_json';
 
     this.appendChild(input);
-  };
+  });
 
   // create any initial editors
   createEditors();

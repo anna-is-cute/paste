@@ -8,11 +8,11 @@
   }
 
   for (var e of document.getElementsByClassName('opens-modal')) {
-    e.onclick = openModal;
+    e.addEventListener('click', openModal);
   }
 
   for (var e of document.getElementsByClassName('closes-modal')) {
-    e.onclick = closeModal;
+    e.addEventListener('click', closeModal);
   }
 
   function swap(current, current_content, next, next_content) {
@@ -36,12 +36,12 @@
     const rendered_content = tabs_container.querySelector('div.paste-rendered-content');
     const source_content = tabs_container.querySelector('div.paste-source-content');
 
-    rendered_a.onclick = function() {
+    rendered_a.addEventListener('click', function() {
       swap(source, source_content, rendered, rendered_content);
-    };
-    source_a.onclick = function() {
+    });
+    source_a.addEventListener('click', function() {
       swap(rendered, rendered_content, source, source_content);
-    };
+    });
   }
 
   function getDeletionKeys() {
@@ -111,7 +111,7 @@
 
     deletion_form.addEventListener('submit', function() {
       const keys = getDeletionKeys();
-      delete(keys[paste_id]);
+      delete keys[paste_id];
       setDeletionKeys(keys);
     });
   })();
@@ -122,7 +122,7 @@
 
     for (const key of Object.entries(keys)) {
       if ((new Date) >= new Date(key[1]['expires'])) {
-        delete(keys[key[0]]);
+        delete keys[key[0]];
       }
     }
 

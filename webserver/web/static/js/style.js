@@ -1,5 +1,5 @@
 function setActiveStyleSheet(title) {
-  for (var a of document.getElementsByTagName('link')) {
+  for (const a of document.getElementsByTagName('link')) {
     if (a.getAttribute('rel').indexOf('style') != -1 && a.getAttribute('title')) {
       a.disabled = true;
       if (a.getAttribute('title') === title) {
@@ -51,18 +51,18 @@ function swapTheme() {
 }
 
 (function() {
-  window.onload = function(e) {
-    var style = this.localStorage.getItem('style');
-    var title = style ? style : getPreferredStyleSheet();
+  function loadSheet() {
+    const style = localStorage.getItem('style');
+    const title = style ? style : getPreferredStyleSheet();
     setActiveStyleSheet(title);
   }
 
-  window.onunload = function(e) {
-    var title = getActiveStyleSheet();
-    this.localStorage.setItem('style', title);
-  }
+  window.addEventListener('load', loadSheet);
 
-  var style = localStorage.getItem('style');
-  var title = style ? style : getPreferredStyleSheet();
-  setActiveStyleSheet(title);
+  window.addEventListener('unload', function() {
+    const title = getActiveStyleSheet();
+    this.localStorage.setItem('style', title);
+  });
+
+  loadSheet();
 })();

@@ -6,12 +6,12 @@
   title="dark"
   rel="stylesheet alternate"
   href="/static/css/dark-style.css?v={{ resources_version }}"
-  integrity="sha384-QWPl1/41qtLxFq8YDO1vf2pKyxUmLYlzG0Qh3+dGuIpxlJdhqT8hjQbx2PdfvfbG"/>
+  integrity="sha384-+tK6RMt3PmnP+g1TyCWh28jZbepWZ9CqNAO3xAZrr9zmpwHQCQH0+TMp5qz5/PxU"/>
 <link
   title="light"
   rel="stylesheet"
   href="/static/css/style.css?v={{ resources_version }}"
-  integrity="sha384-9Mu6DScXig1lbkXcUryxEAna37vbPQ2OEiiDEN6tN/+ZJS7f6JFnRit0jPdnCO12"/>
+  integrity="sha384-yCEqKqoKV1s8QMXmGe8/s3cUJ28plqfbrhQMosyGPrlW02n7EprlRZph5qjMUloS"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
   integrity="sha384-RO5D97QdLU5uQzv3D0ir/AT3hZdBsiMK/GbB/QkBRGDCzvSTD6M/5e4vfRciAR93"></script>

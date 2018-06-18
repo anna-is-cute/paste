@@ -121,6 +121,10 @@ td.hljs-ln-code {
   display: none;
 }
 
+table.is-middle td, table.is-middle th {
+  vertical-align: middle;
+}
+
 .box pre.hljs {
   margin-left: -1.25rem;
   margin-right: -1.25rem;

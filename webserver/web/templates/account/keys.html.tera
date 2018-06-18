@@ -25,7 +25,7 @@ Manage API keys.
 {% endblock header_foot %}
 
 {% block main %}
-<table class="table is-striped">
+<table class="table is-striped is-middle">
   <thead>
     <tr>
       <th>Name</th>

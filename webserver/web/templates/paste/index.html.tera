@@ -32,7 +32,7 @@
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
-  integrity="sha384-RMoca5Lhlwv8e93ocxc9wEL3PVZD/8JTRAXaJuLzsOOnfvVl0BpRQdOe1WDDAlst"></script>
+  integrity="sha384-POcY2IR6YE/tKOKkHL6b7gK/t6HRNs3g/lj0vR6sNDGCabxSE+LSUSxHa6Q+LsvD"></script>
 {% endblock head %}
 
 {% block title %}

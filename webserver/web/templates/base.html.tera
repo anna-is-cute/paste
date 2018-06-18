@@ -14,7 +14,7 @@
   integrity="sha384-9Mu6DScXig1lbkXcUryxEAna37vbPQ2OEiiDEN6tN/+ZJS7f6JFnRit0jPdnCO12"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
-  integrity="sha384-gIJsa7ipunU0jwSDxUAFcwOg81q8YkNgI2VqbW3VV9+yxXFZUbC3lCuU8HpUFb6c"></script>
+  integrity="sha384-RO5D97QdLU5uQzv3D0ir/AT3hZdBsiMK/GbB/QkBRGDCzvSTD6M/5e4vfRciAR93"></script>
 <script
   defer
   src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"
@@ -23,11 +23,11 @@
 <script
   defer
   src="/static/js/navbar.js?v={{ resources_version }}"
-  integrity="sha384-tuFBG8NY+WtXmhaV8FJGAYrmJONAZEcvJTJu7pTspReMNYVLkRMAPDUGjfJWn5fB"></script>
+  integrity="sha384-MdI0Z/sllwRLXTelMVN+TtVA0nnA/aEfVCeD1/OTnnzKYxyPYNW2gDat6aIvaTzq"></script>
 <script
   defer
   src="/static/js/notifications.js?v={{ resources_version }}"
-  integrity="sha384-r/COMCXZidHqUxfkz8wbkBh5eExZsD6xMtmHKWNKBD8+X7kEyGIoQFUspLFHtTKQ"></script>
+  integrity="sha384-QD/YnRGKyRa9Fnq6JYR2qOp51Et9hf+8NDhdKA7a1E9+jvG+eYROQnrd1WxZrunY"></script>
 
 <link rel="icon" sizes="16x16 32x32 48x48 64x64" href="/static/favicons/favicon.ico"/>
 <!--[if IE]><link rel="shortcut icon" href="/static/favicons/favicon.ico"/><![endif]-->

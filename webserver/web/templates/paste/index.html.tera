@@ -32,7 +32,7 @@
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
-  integrity="sha384-HoJ0thsqt1aHDbLvVcC22ysAiBwyxCehSmyHNEXLHE5+YsD5Mn3oaadDiVXb7otn"></script>
+  integrity="sha384-RMoca5Lhlwv8e93ocxc9wEL3PVZD/8JTRAXaJuLzsOOnfvVl0BpRQdOe1WDDAlst"></script>
 {% endblock head %}
 
 {% block title %}
@@ -105,7 +105,7 @@ untitled paste
 {% block main %}
 {% if not paste.author or is_owner %}
 <div id="deletion_modal" class="modal">
-  <form action="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}" method="post">
+  <form id="deletion_form" action="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}" method="post">
     <input type="hidden" name="_method" value="delete"/>
     <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
     <div class="modal-background closes-modal"></div>
@@ -124,6 +124,8 @@ untitled paste
         </div>
         <input
           required
+          id="deletion_key_input"
+          data-paste-id="{{ paste.id }}"
           name="key"
           type="text"
           autocorrect="off"
@@ -158,7 +160,11 @@ untitled paste
       appear once.
     </p>
     <p>
-      <code>{{ deletion_key }}</code>
+      Note that this key is saved on <em>this browser only</em> for 30 days. If you clear the cache,
+      the key will be lost.
+    </p>
+    <p>
+      <code id="deletion_key" data-paste-id="{{ paste.id }}">{{ deletion_key }}</code>
     </p>
   </div>
 </div>

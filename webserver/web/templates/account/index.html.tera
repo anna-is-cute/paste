@@ -24,11 +24,13 @@ Manage account settings.
 
 {% block header_foot %}
 <nav class="tabs is-boxed">
-  <ul>
-    <li class="is-active"><a href="/account">Settings</a></li>
-    <li><a href="/account/keys">API keys</a></li>
-    <li><a href="/account/delete">Delete</a></li>
-  </ul>
+  <div class="container">
+    <ul>
+      <li class="is-active"><a href="/account">Settings</a></li>
+      <li><a href="/account/keys">API keys</a></li>
+      <li><a href="/account/delete">Delete</a></li>
+    </ul>
+  </div>
 </nav>
 {% endblock header_foot %}
 

@@ -38,16 +38,20 @@ Create a new paste.
         name="name"
         class="input"
         type="text"
+        {% if form.name %}value="{{ form.name }}"{% endif %}
         placeholder="Paste name"/>
     </div>
     <div class="control has-icons-left">
       <label class="label">Visibility</label>
       <div class="select">
         <select name="visibility">
-          <option>public</option>
-          <option selected>unlisted</option>
+          <option
+            {% if form.visibility and form.visibility == "public" %}selected{% endif %}>public</option>
+          <option
+            {% if not form.visibility or form.visibility == "unlisted" %} selected{% endif %}>unlisted</option>
         {% if user %}
-          <option>private</option>
+          <option
+            {% if form.visibility and form.visibility == "private" %}selected{% endif %}>private</option>
         {% endif %}
         </select>
         <span class="icon is-small is-left">
@@ -64,6 +68,7 @@ Create a new paste.
         name="description"
         class="input"
         type="text"
+        {% if form.description %}value="{{ form.description }}"{% endif %}
         placeholder="Paste description"/>
     </div>
   </div>

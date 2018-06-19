@@ -68,6 +68,7 @@ Manage account settings.
             name="name"
             class="input"
             type="text"
+            {% if form.name %}value="{{ form.name }}"{% endif %}
             placeholder="{{ user.name }}"/>
         </div>
       </div>
@@ -87,6 +88,7 @@ Manage account settings.
             type="text"
             autocorrect="off"
             autocapitalize="off"
+            {% if form.username %}value="{{ form.username }}"{% endif %}
             placeholder="{{ user.username }}"/>
         </div>
         <p class="help">
@@ -108,6 +110,7 @@ Manage account settings.
             name="email"
             class="input"
             type="email"
+            {% if form.email %}value="{{ form.email }}"{% endif %}
             placeholder="{{ user.email }}"/>
         </div>
       </div>

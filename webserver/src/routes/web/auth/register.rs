@@ -35,21 +35,26 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Rst {
   Rst::Template(Template::render("auth/register", ctx))
 }
 
-#[derive(Debug, FromForm)]
+#[derive(Debug, FromForm, Serialize)]
 struct RegistrationData {
   name: String,
   username: String,
   email: String,
+  #[serde(skip)]
   password: String,
+  #[serde(skip)]
   password_verify: String,
+  #[serde(skip)]
   #[form(field = "g-recaptcha-response")]
   recaptcha: ReCaptcha,
+  #[serde(skip)]
   anti_csrf_token: String,
 }
 
 #[post("/register", format = "application/x-www-form-urlencoded", data = "<data>")]
 fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, config: State<Config>, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
   let data = data.into_inner();
+  sess.set_form(&data);
 
   if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
@@ -134,5 +139,6 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     .finish();
   cookies.add_private(cookie);
 
+  sess.take_form();
   Ok(Redirect::to("lastpage"))
 }

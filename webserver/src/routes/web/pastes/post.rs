@@ -95,6 +95,7 @@ fn check_paste(paste: &PasteUpload, files: &[MultiFile]) -> result::Result<(), S
 #[post("/pastes", format = "application/x-www-form-urlencoded", data = "<paste>")]
 fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let paste = paste.into_inner();
+  sess.set_form(&paste);
 
   if !sess.check_token(&paste.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
@@ -190,11 +191,13 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     None => "anonymous",
   };
 
+  sess.take_form();
+
   let username = utf8_percent_encode(username, PATH_SEGMENT_ENCODE_SET);
   Ok(Redirect::to(&format!("/pastes/{}/{}", username, id.simple())))
 }
 
-#[derive(Debug, FromForm)]
+#[derive(Debug, FromForm, Serialize)]
 struct PasteUpload {
   name: String,
   visibility: Visibility,
@@ -202,7 +205,9 @@ struct PasteUpload {
   file_name: String,
   file_content: String,
   upload_json: Option<String>,
+  #[serde(skip)]
   anonymous: Option<String>,
+  #[serde(skip)]
   anti_csrf_token: String,
 }
 

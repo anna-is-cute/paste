@@ -69,6 +69,7 @@ fn check_paste(paste: &PasteUpdate, files: &[MultiFile]) -> result::Result<(), S
 #[patch("/pastes/<username>/<paste_id>", format = "application/x-www-form-urlencoded", data = "<update>")]
 fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let update = update.into_inner();
+  sess.set_form(&update);
 
   if !sess.check_token(&update.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
@@ -233,16 +234,20 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
 
   sess.add_data("info", "Paste updated.");
 
+  sess.take_form();
+
   let username = utf8_percent_encode(&username, PATH_SEGMENT_ENCODE_SET);
   Ok(Rst::Redirect(Redirect::to(&format!("/pastes/{}/{}", username, paste_id.simple()))))
 }
 
-#[derive(Debug, FromForm)]
+#[derive(Debug, FromForm, Serialize)]
 struct PasteUpdate {
   name: String,
   visibility: Visibility,
   description: String,
+  #[serde(skip)]
   upload_json: Option<String>,
+  #[serde(skip)]
   anti_csrf_token: String,
 }
 

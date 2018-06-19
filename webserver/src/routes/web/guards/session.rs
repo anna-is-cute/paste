@@ -11,7 +11,9 @@ use redis::{Commands, Value};
 use rocket::Outcome;
 use rocket::request::{self, Request, FromRequest};
 
-use serde_json;
+use serde::Serialize;
+
+use serde_json::{self, Value as JsonValue};
 
 use uuid::Uuid;
 
@@ -27,6 +29,8 @@ pub struct Session<'a, 'r> where 'r: 'a {
   pub request: Option<&'a Request<'r>>,
   pub id: SessionId,
   pub data: HashMap<String, String>,
+  #[serde(default)]
+  pub json: HashMap<String, JsonValue>,
   pub anti_csrf_tokens: Vec<AntiCsrfToken>,
 }
 
@@ -36,8 +40,17 @@ impl<'a, 'r> Session<'a, 'r> {
       request: Some(request),
       id,
       data: Default::default(),
+      json: Default::default(),
       anti_csrf_tokens: Default::default(),
     }
+  }
+
+  pub fn set_form<T: Serialize>(&mut self, value: T) {
+    self.json.insert("form".into(), json!(value));
+  }
+
+  pub fn take_form(&mut self) -> Option<JsonValue> {
+    self.json.remove("form")
   }
 
   pub fn add_data<K, V>(&mut self, key: K, value: V)

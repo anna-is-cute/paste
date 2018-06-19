@@ -34,6 +34,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
 #[patch("/account", format = "application/x-www-form-urlencoded", data = "<update>")]
 fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
   let update = update.into_inner();
+  sess.set_form(&update);
 
   if !sess.check_token(&update.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
@@ -116,17 +117,22 @@ fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalWebUs
 
   user.update(&conn)?;
 
+  sess.take_form();
   sess.add_data("info", "Account updated.");
   Ok(Redirect::to("/account"))
 }
 
-#[derive(Debug, FromForm)]
+#[derive(Debug, FromForm, Serialize)]
 struct AccountUpdate {
   name: String,
   username: String,
   email: String,
+  #[serde(skip)]
   password: String,
+  #[serde(skip)]
   password_verify: String,
+  #[serde(skip)]
   current_password: String,
+  #[serde(skip)]
   anti_csrf_token: String,
 }

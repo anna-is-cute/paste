@@ -40,6 +40,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Templ
 #[post("/account/forgot_password", format = "application/x-www-form-urlencoded", data = "<data>")]
 fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, addr: SocketAddr) -> Result<Redirect> {
   let data = data.into_inner();
+  sess.set_form(&data);
 
   let res = Ok(Redirect::to("/account/forgot_password"));
 
@@ -108,6 +109,7 @@ fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn
     "Password reset",
   )?.into())?;
 
+  sess.take_form();
   sess.add_data("info", msg);
   res
 }
@@ -214,8 +216,9 @@ fn check_reset(conn: &DbConn, id: Uuid, secret: &str) -> Option<PasswordReset> {
   Some(reset)
 }
 
-#[derive(FromForm)]
+#[derive(FromForm, Serialize)]
 struct ResetRequest {
+  #[serde(skip)]
   anti_csrf_token: String,
   email: String,
 }

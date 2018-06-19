@@ -40,6 +40,7 @@ Create a new account.
         name="name"
         class="input"
         type="text"
+        {% if form.name %}value="{{ form.name }}"{% endif %}
         placeholder="Jim Bob Jones"/>
       <span class="icon is-small is-left">
         <i class="fas fa-id-card"></i>
@@ -58,6 +59,7 @@ Create a new account.
         type="text"
         autocorrect="off"
         autocapitalize="off"
+        {% if form.username %}value="{{ form.username }}"{% endif %}
         placeholder="jimbo33"/>
       <span class="icon is-small is-left">
         <i class="fas fa-user"></i>
@@ -74,6 +76,7 @@ Create a new account.
         name="email"
         class="input"
         type="email"
+        {% if form.email %}value="{{ form.email }}"{% endif %}
         placeholder="your@email.com"/>
       <span class="icon is-small is-left">
         <i class="fas fa-envelope"></i>

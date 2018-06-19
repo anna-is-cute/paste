@@ -27,6 +27,7 @@ Log in to your account.
         placeholder="jimbo32"
         autocorrect="off"
         autocapitalize="off"
+        {% if form.username %}value="{{ form.username }}"{% endif %}
         required/>
       <span class="icon is-small is-left">
         <i class="fas fa-user"></i>

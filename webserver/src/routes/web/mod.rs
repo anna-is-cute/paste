@@ -38,6 +38,7 @@ pub fn context(config: &Config, user: Option<&User>, session: &mut Session) -> V
     "config": &config,
     "error": session.data.remove("error"),
     "info": session.data.remove("info"),
+    "form": session.take_form(),
     "user": user,
     "session": session,
     "server_version": ::SERVER_VERSION,

@@ -73,7 +73,7 @@ Change this paste<span class="requires-js"> and its files</span>.
           name="name"
           class="input"
           type="text"
-          value="{{ paste.name }}"
+          value="{% if form.name %}{{ form.name }}{% else %}{{ paste.name }}{% endif %}"
           placeholder="Paste name"/>
       </div>
       <div class="control has-icons-left">
@@ -81,13 +81,18 @@ Change this paste<span class="requires-js"> and its files</span>.
         <div class="select">
           <select name="visibility">
             {# not having the ifs on a new line causes Tera to remove the space before selected #}
+            {% if form.visibility %}
+              {% set vis = form.visibility %}
+            {% else %}
+              {% set vis = paste.visibility %}
+            {% endif %}
             <option
-              {% if paste.visibility == "public" %} selected{% endif %}>public</option>
+              {% if vis == "public" %} selected{% endif %}>public</option>
             <option
-              {% if paste.visibility == "unlisted" %} selected{% endif %}>unlisted</option>
+              {% if vis == "unlisted" %} selected{% endif %}>unlisted</option>
           {% if user %}
             <option
-              {% if paste.visibility == "private" %} selected{% endif %}>private</option>
+              {% if vis == "private" %} selected{% endif %}>private</option>
           {% endif %}
           </select>
           <span class="icon is-small is-left">
@@ -104,7 +109,7 @@ Change this paste<span class="requires-js"> and its files</span>.
           name="description"
           class="input"
           type="text"
-          value="{{ paste.description }}"
+          value="{% if form.description %}{{ form.description }}{% else %}{{ paste.description }}{% endif %}"
           placeholder="Paste description"/>
       </div>
     </div>

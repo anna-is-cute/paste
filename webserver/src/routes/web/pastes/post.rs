@@ -202,8 +202,11 @@ struct PasteUpload {
   name: String,
   visibility: Visibility,
   description: String,
+  #[serde(skip)]
   file_name: String,
+  #[serde(skip)]
   file_content: String,
+  #[serde(skip)]
   upload_json: Option<String>,
   #[serde(skip)]
   anonymous: Option<String>,

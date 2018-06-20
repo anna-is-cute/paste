@@ -121,6 +121,10 @@ td.hljs-ln-code {
   display: none;
 }
 
+.keeps-spaces {
+  white-space: pre-wrap;
+}
+
 table.is-middle td, table.is-middle th {
   vertical-align: middle;
 }

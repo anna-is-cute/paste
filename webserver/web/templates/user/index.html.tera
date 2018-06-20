@@ -76,7 +76,7 @@
       <h3 class="title">
         <a href="/pastes/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
       {% if paste.name %}
-          {{ paste.name }}
+          <span class="keeps-spaces">{{ paste.name }}</span>
       {% else %}
           <em>untitled paste</em>
       {% endif %}
@@ -84,7 +84,7 @@
       </h3>
       {% if paste.description %}
       <h4 class="subtitle">
-        {{ paste.description }}
+        <span class="keeps-spaces">{{ paste.description }}</span>
       </h4>
       {% endif %}
       <div class="info-tags field is-grouped is-grouped-multiline">

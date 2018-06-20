@@ -40,6 +40,7 @@ extern crate unicode_segmentation;
 extern crate uuid;
 extern crate xz2;
 
+mod backend;
 mod config;
 mod database;
 mod errors;

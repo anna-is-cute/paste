@@ -1,15 +1,10 @@
-use database::{DbConn, schema};
-use database::models::deletion_keys::NewDeletionKey;
-use database::models::files::File as DbFile;
-use database::models::pastes::{Paste as DbPaste, NewPaste};
+use backend::errors::BackendError;
+use backend::pastes::*;
+use database::DbConn;
 use models::paste::Paste;
 use models::paste::output::{Output, OutputFile, OutputAuthor};
 use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
-use store::Store;
-
-use diesel;
-use diesel::prelude::*;
 
 use rocket::http::Status as HttpStatus;
 
@@ -28,53 +23,48 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     },
   };
 
-  // check that files are valid
-  // move validate_files to Paste?
-  if let Err(e) = Store::validate_files(&info.files) {
-    return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::InvalidFile(Some(e))));
+  // check that file names are not the empty string
+  if info.files.iter().filter_map(|x| x.name.as_ref()).any(|x| x.is_empty()) {
+    return Ok(Status::show_error(
+      HttpStatus::BadRequest,
+      ErrorKind::InvalidFile(Some("names cannot be empty (for no name, omit the name field)".into())),
+    ));
   }
-  // move this to PasteId::create?
-  // rocket has already verified the paste info is valid, so create a paste
-  let id = Store::new_paste(user.as_ref().map(|x| x.id()))?;
 
-  // TODO: refactor
-  let np = NewPaste::new(
-    id,
-    info.metadata.name.as_ref().map(|x| x.to_string()),
-    info.metadata.description.as_ref().map(|x| x.to_string()),
-    info.metadata.visibility,
-    user.as_ref().map(|x| x.id()),
-    None,
-  );
-  let paste: DbPaste = diesel::insert_into(schema::pastes::table)
-    .values(&np)
-    .get_result(&*conn)?;
+  let files = info.files
+    .into_iter()
+    .map(|f| FilePayload {
+      name: f.name.map(|x| x.into_inner()),
+      content: f.content,
+    })
+    .collect();
 
-  // TODO: refactor
-  let deletion_key = if user.is_none() {
-    let key = NewDeletionKey::generate(id);
-    diesel::insert_into(schema::deletion_keys::table)
-      .values(&key)
-      .execute(&*conn)?;
-    Some(key.key())
-  } else {
-    None
+  let pp = PastePayload {
+    name: info.metadata.name.map(|x| x.into_inner()),
+    description: info.metadata.description.map(|x| x.into_inner()),
+    visibility: info.metadata.visibility,
+    author: user.as_ref(),
+    files,
   };
 
-  let files: Vec<DbFile> = info.files
-    .into_iter()
-    .map(|x| paste.create_file(&conn, x.name.map(|x| x.to_string()), x.content))
-    .collect::<Result<_, _>>()?;
+  let CreateSuccess { paste, files, deletion_key } = match pp.create(&conn) {
+    Ok(s) => s,
+    Err(e) => {
+      let msg = e.into_message()?;
+      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(Some(msg.into()))));
+    },
+  };
 
   match *user {
     Some(ref u) => paste.commit(u.name(), u.email(), "create paste")?,
     None => paste.commit("Anonymous", "none", "create paste")?,
   }
 
+  // TODO: eventually replace this all with a GET /pastes/<id>?full=true backend call
   let files: Vec<OutputFile> = files
     .into_iter()
-    .map(|x| x.as_output_file(false, &paste))
-    .collect::<Result<_, _>>()?;
+    .map(|x| OutputFile::new(x.id(), Some(x.name()), None))
+    .collect();
 
   let author = match *user {
     Some(ref user) => Some(OutputAuthor::new(user.id(), user.username(), user.name())),
@@ -82,12 +72,12 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
   };
 
   let output = Output::new(
-    id,
+    paste.id(),
     author,
-    info.metadata.name.as_ref().map(ToString::to_string),
-    info.metadata.description.as_ref().map(ToString::to_string),
-    info.metadata.visibility,
-    deletion_key,
+    paste.name(),
+    paste.description(),
+    paste.visibility(),
+    deletion_key.map(|x| x.key()),
     files,
   );
 

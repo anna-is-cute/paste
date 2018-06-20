@@ -60,7 +60,7 @@ t2.micro – one core and low RAM), so please don't bombard it!
 
     ```nginx
     location /static/ {
-      alias /path/to/repo/web/static/;
+      alias /path/to/repo/webserver/web/static/;
     }
     ```
 

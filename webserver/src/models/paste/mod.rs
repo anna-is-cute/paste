@@ -207,6 +207,13 @@ impl Content {
       _ => false,
     }
   }
+
+  pub fn is_empty(&self) -> bool {
+    match *self {
+      Content::Base64(ref b) | Content::Gzip(ref b) | Content::Xz(ref b) => b.is_empty(),
+      Content::Text(ref t) => t.is_empty(),
+    }
+  }
 }
 
 mod base64_serde {

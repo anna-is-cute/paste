@@ -50,7 +50,7 @@ t2.micro – one core and low RAM), so please don't bombard it!
 5. `cargo build --release`
 6. Create a postgres database and user
 7. `echo 'DATABASE_URL=postgres://username@/database' > .env`
-8. `diesel migration run`
+8. `diesel migration run --migration-dir=webserver/migrations`
 9. Make sure a redis server is running and set the URL in `.env`
 10. Start sidekiq using `sidekiq.sh` edited to be correct
 11. Preferably use `ROCKET_ENV=prod` and set a secret key in `Rocket.toml`

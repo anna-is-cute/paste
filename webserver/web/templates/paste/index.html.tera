@@ -174,7 +174,7 @@ untitled paste
   <ul>
     <li>
   {% if paste.author.username and paste.author.name %}
-    <a class="external" href="/users/{{ paste.author.username | urlencode(safe="") }}">
+    <a href="/users/{{ paste.author.username | urlencode(safe="") }}">
       {{ paste.author.name }}
     </a>
   {% else %}

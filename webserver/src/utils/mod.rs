@@ -1,5 +1,6 @@
 pub mod bit_mask;
 pub mod email;
+pub mod external_links;
 pub mod hashed_password;
 pub mod password;
 pub mod recaptcha;

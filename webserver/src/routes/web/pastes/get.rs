@@ -10,7 +10,7 @@ use models::paste::output::{Output, OutputFile, OutputAuthor};
 use routes::web::{context, Rst, OptionalWebUser, Session};
 use utils::external_links;
 
-use ammonia;
+use ammonia::Builder;
 
 use comrak::{markdown_to_html, ComrakOptions};
 
@@ -29,13 +29,21 @@ use std::result;
 
 lazy_static! {
   static ref OPTIONS: ComrakOptions = ComrakOptions {
-      ext_strikethrough: true,
-      ext_table: true,
-      ext_autolink: true,
-      ext_tasklist: true,
-      ext_footnotes: true,
-      .. Default::default()
-    };
+    github_pre_lang: true,
+    ext_strikethrough: true,
+    ext_table: true,
+    ext_autolink: true,
+    // let's see how https://github.com/notriddle/ammonia/issues/100 turns out
+    // ext_tasklist: true,
+    ext_footnotes: true,
+    .. Default::default()
+  };
+
+  static ref CLEANER: Builder<'static> = {
+    let mut b = Builder::default();
+    b.link_rel(Some("noopener noreferrer nofollow"));
+    b
+  };
 }
 
 #[get("/<id>", rank = 10)]
@@ -116,7 +124,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
       },
     };
     let md = markdown_to_html(content, &*OPTIONS);
-    let cleaned = ammonia::clean(&md);
+    let cleaned = CLEANER.clean(&md).to_string();
     let marked = external_links::mark(&*config, &cleaned);
     rendered.insert(file.id, Some(marked));
   }

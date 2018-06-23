@@ -128,4 +128,8 @@
 
     setDeletionKeys(keys);
   })();
+
+  for (const pre of document.querySelectorAll('.paste-rendered-content pre[lang]')) {
+    pre.classList.add('language-' + pre.lang);
+  }
 })();

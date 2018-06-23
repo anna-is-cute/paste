@@ -38,7 +38,7 @@ libflate = "0.1"
 xz2 = "0.1"
 
 # secure password hashing
-sodiumoxide = "0.0.16"
+sodiumoxide = "0.1"
 
 # environment variable loading
 dotenv = "0.13"
@@ -112,7 +112,7 @@ features = ["v4", "serde"]
 
 # database orm
 [dependencies.diesel]
-version = "=1.2"
+version = "1"
 features = ["postgres", "uuid", "r2d2", "chrono", "network-address"]
 
 # timestamp handling

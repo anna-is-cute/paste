@@ -6,20 +6,15 @@
   title="dark"
   rel="stylesheet alternate"
   href="/static/css/dark-style.css?v={{ resources_version }}"
-  integrity="sha384-6B6Sa6Ak8hTzFrvpbKDGg8VYhvb8lU/3B0tsvib/BSimp+L6FjcRjDKrXhLgGqc1"/>
+  integrity="sha384-1mgL5p4rrV1uoB8w6wl822WpBvrOOWQCm6/j4qJW2PCtFbZ+ZH+VbMncfbpVZSzL"/>
 <link
   title="light"
   rel="stylesheet"
   href="/static/css/style.css?v={{ resources_version }}"
-  integrity="sha384-a9SFgOUphVadKCxOyfGMEup33iiWrKPzscQJsYVaS39vgy9+N/P5IN2bjkWSHmhR"/>
+  integrity="sha384-NDl9Ys+yFPnovV+LveGkOi84LqWLX8EyLijCwsnyIwjWlewGvSk7zuwlfUmf6pOY"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
   integrity="sha384-RO5D97QdLU5uQzv3D0ir/AT3hZdBsiMK/GbB/QkBRGDCzvSTD6M/5e4vfRciAR93"></script>
-<script
-  defer
-  src="https://use.fontawesome.com/releases/v5.0.7/js/all.js"
-  integrity="sha384-NM4GHvd8vowDIel+2LNoo7mgwJN5e3Uj5WODAko2Eqg0LUP7eyZ+W1pjSfjbnYXt"
-  crossorigin="anonymous"></script>
 <script
   defer
   src="/static/js/navbar.js?v={{ resources_version }}"
@@ -28,7 +23,14 @@
   defer
   src="/static/js/notifications.js?v={{ resources_version }}"
   integrity="sha384-QD/YnRGKyRa9Fnq6JYR2qOp51Et9hf+8NDhdKA7a1E9+jvG+eYROQnrd1WxZrunY"></script>
-
+<link
+  rel="stylesheet"
+  href="/static/css/fontawesome/solid.css"
+  integrity="sha384-TbilV5Lbhlwdyc4RuIV/JhD8NR+BfMrvz4BL5QFa2we1hQu6wvREr3v6XSRfCTRp"/>
+<link
+  rel="stylesheet"
+  href="/static/css/fontawesome/fontawesome.css"
+  integrity="sha384-ozJwkrqb90Oa3ZNb+yKFW2lToAWYdTiF1vt8JiH5ptTGHTGcN7qdoR1F95e0kYyG"/>
 <link rel="icon" sizes="16x16 32x32 48x48 64x64" href="/static/favicons/favicon.ico"/>
 <!--[if IE]><link rel="shortcut icon" href="/static/favicons/favicon.ico"/><![endif]-->
 <link rel="apple-touch-icon-precomposed" href="/static/favicons/favicon-152.png"/>

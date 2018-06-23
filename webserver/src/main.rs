@@ -4,6 +4,7 @@
 extern crate ammonia;
 extern crate base64;
 extern crate chrono;
+extern crate comrak;
 extern crate cookie;
 #[macro_use]
 extern crate diesel;
@@ -13,13 +14,14 @@ extern crate failure;
 extern crate git2;
 extern crate hex;
 #[macro_use]
+extern crate html5ever;
+#[macro_use]
 extern crate if_chain;
 extern crate ipnetwork;
 #[macro_use]
 extern crate lazy_static;
 extern crate libflate;
 extern crate percent_encoding;
-extern crate pulldown_cmark;
 extern crate r2d2;
 extern crate r2d2_redis;
 extern crate redis;
@@ -37,6 +39,7 @@ extern crate tera;
 extern crate toml;
 extern crate unicode_categories;
 extern crate unicode_segmentation;
+extern crate url;
 extern crate uuid;
 extern crate xz2;
 

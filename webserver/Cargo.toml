@@ -88,6 +88,12 @@ tera = "0.11"
 # html sanitizing
 ammonia = "1"
 
+# html parsing
+html5ever = "0.22"
+
+# url parsing
+url = "1"
+
 # web logic
 [dependencies.rocket]
 version = "0.3"
@@ -120,6 +126,6 @@ features = ["serde"]
 git = "https://github.com/spk/rust-sidekiq"
 
 # markdown rendering
-[dependencies.pulldown-cmark]
-version = "0.1"
+[dependencies.comrak]
+version = "0.2"
 default-features = false

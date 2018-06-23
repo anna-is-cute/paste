@@ -8,14 +8,15 @@ use models::id::{PasteId, FileId};
 use models::paste::{Content, Visibility};
 use models::paste::output::{Output, OutputFile, OutputAuthor};
 use routes::web::{context, Rst, OptionalWebUser, Session};
+use utils::external_links;
 
 use ammonia;
+
+use comrak::{markdown_to_html, ComrakOptions};
 
 use diesel::prelude::*;
 
 use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
-
-use pulldown_cmark::{self, html, Parser};
 
 use rocket::http::Status as HttpStatus;
 use rocket::response::Redirect;
@@ -25,6 +26,17 @@ use rocket_contrib::Template;
 
 use std::collections::HashMap;
 use std::result;
+
+lazy_static! {
+  static ref OPTIONS: ComrakOptions = ComrakOptions {
+      ext_strikethrough: true,
+      ext_table: true,
+      ext_autolink: true,
+      ext_tasklist: true,
+      ext_footnotes: true,
+      .. Default::default()
+    };
+}
 
 #[get("/<id>", rank = 10)]
 fn id(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
@@ -103,9 +115,10 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
         continue;
       },
     };
-    let mut md = String::new();
-    html::push_html(&mut md, Parser::new_ext(content, pulldown_cmark::OPTION_ENABLE_TABLES));
-    rendered.insert(file.id, Some(ammonia::clean(&md)));
+    let md = markdown_to_html(content, &*OPTIONS);
+    let cleaned = ammonia::clean(&md);
+    let marked = external_links::mark(&*config, &cleaned);
+    rendered.insert(file.id, Some(marked));
   }
 
   let output = Output::new(

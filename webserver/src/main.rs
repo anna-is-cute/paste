@@ -80,7 +80,7 @@ lazy_static! {
 }
 
 fn main() {
-  if !sodiumoxide::init() {
+  if sodiumoxide::init().is_err() {
     println!("could not initialize libsodium");
     return;
   }

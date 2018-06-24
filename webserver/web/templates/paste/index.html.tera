@@ -8,15 +8,13 @@
 <link
   title="dark"
   rel="stylesheet alternate"
-  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css"
-  integrity="sha384-nyXucUVWQWGGNq3mSgG/FGxW4Jmsv+0uCbHZ0VpHRsGZt/PlUT31hz9sUek822eI"
-  crossorigin="anonymous"/>
+  href="/static/css/highlightjs/atom-one-dark.min.css?v={{ resources_version }}"
+  integrity="sha384-nyXucUVWQWGGNq3mSgG/FGxW4Jmsv+0uCbHZ0VpHRsGZt/PlUT31hz9sUek822eI"/>
 <link
   title="light"
   rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css"
-  integrity="sha384-7gDLYK0oyPpfkc6E6VzcNFzEFGw6QTKMoof6r0lb0cWECaHXX+b2GGxhh0iItikh"
-  crossorigin="anonymous"/>
+  href="/static/css/highlightjs/atom-one-light.min.css?v={{ resources_version }}"
+  integrity="sha384-7gDLYK0oyPpfkc6E6VzcNFzEFGw6QTKMoof6r0lb0cWECaHXX+b2GGxhh0iItikh"/>
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"

@@ -72,3 +72,18 @@ td.hljs-ln-numbers {
 .tabs a {
   color: $grey;
 }
+
+// codeflask is awful (dark)
+$atom-one-dark-background: #282c34;
+
+textarea.codeflask__textarea {
+  background-color: $atom-one-dark-background;
+}
+
+div.codeflask.codeflask--has-line-numbers::before {
+  background-color: lighten($atom-one-dark-background, 5);
+}
+
+.codeflask.codeflask--has-line-numbers .codeflask__lines {
+  color: lighten($atom-one-dark-background, 30);
+}

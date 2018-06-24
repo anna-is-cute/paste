@@ -1,0 +1,129 @@
+.codeflask {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.codeflask, .codeflask * {
+  box-sizing: border-box;
+}
+.codeflask__pre {
+  background: none;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+.codeflask__textarea {
+  border: none;
+  z-index: 1;
+  resize: none;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  -webkit-appearance: pre;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+.codeflask--has-line-numbers .codeflask__textarea {
+  width: calc(100% - 40px);
+}
+.codeflask__code {
+  display: block;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  overflow: hidden;
+}
+.codeflask__flatten {
+  padding: 10px;
+  font-size: 13px;
+  line-height: 20px;
+  white-space: pre;
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: auto;
+  margin: 0 !important;
+  outline: none;
+  text-align: left;
+}
+.codeflask--has-line-numbers .codeflask__flatten {
+  width: calc(100% - 40px);
+  left: 40px;
+}
+.codeflask__line-highlight {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: rgba(0,0,0,0.1);
+  z-index: 1;
+}
+.codeflask__lines {
+  padding: 10px 4px;
+  font-size: 12px;
+  line-height: 20px;
+  font-family: 'Cousine', monospace;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 100%;
+  text-align: right;
+  color: #999;
+  z-index: 2;
+}
+.codeflask__lines__line {
+  display: block;
+}
+.codeflask.codeflask--has-line-numbers {
+  padding-left: 40px;
+}
+.codeflask.codeflask--has-line-numbers:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 100%;
+  background: #eee;
+  z-index: 1;
+}
+.codeflask {
+  background: #fff;
+  color: #4f559c;
+}
+.codeflask .token.punctuation {
+  color: #4a4a4a;
+}
+.codeflask .token.keyword {
+  color: #8500ff;
+}
+.codeflask .token.operator {
+  color: #ff5598;
+}
+.codeflask .token.string {
+  color: #41ad8f;
+}
+.codeflask .token.comment {
+  color: #9badb7;
+}
+.codeflask .token.function {
+  color: #8500ff;
+}
+.codeflask .token.boolean {
+  color: #8500ff;
+}
+.codeflask .token.number {
+  color: #8500ff;
+}
+.codeflask .token.selector {
+  color: #8500ff;
+}
+.codeflask .token.property {
+  color: #8500ff;
+}
+.codeflask .token.tag {
+  color: #8500ff;
+}
+.codeflask .token.attr-value {
+  color: #8500ff;
+}

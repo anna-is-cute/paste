@@ -23,7 +23,7 @@
   integrity="sha384-nxnrl2txmz2hofc7DaY8R0H0Z2bgRtnwIInWHj5yQN0MEAyv2WoX1vEKUlZ9Stnp"></script>
 <script
   defer
-  src="/static/js/highlight.pack.js?v={{ resources_version }}"
+  src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
   integrity="sha384-JRRwtUx7H7KUP+6uHPOfXcRuX+cvNXZdsqluYW0tiu2BNVwdJCEQwOcCqhbmGysx"></script>
 <script
   defer

@@ -2,18 +2,32 @@
 
 {% block head %}
 {{ super() }}
+<link
+  title="dark"
+  rel="stylesheet alternate"
+  href="/static/css/highlightjs/atom-one-dark.min.css?v={{ resources_version }}"
+  integrity="sha384-nyXucUVWQWGGNq3mSgG/FGxW4Jmsv+0uCbHZ0VpHRsGZt/PlUT31hz9sUek822eI"/>
+<link
+  title="light"
+  rel="stylesheet"
+  href="/static/css/highlightjs/atom-one-light.min.css?v={{ resources_version }}"
+  integrity="sha384-7gDLYK0oyPpfkc6E6VzcNFzEFGw6QTKMoof6r0lb0cWECaHXX+b2GGxhh0iItikh"/>
+<link
+  rel="stylesheet"
+  href="/static/css/codeflask/codeflask.css?v={{ resources_version }}"
+  integrity="sha384-6/US8aDmhQQ0LQxV5+UQZ/mDm5zqf4C7itj5JbXUY7Q8edcQiLBmK5Ly/OTX8aLm"/>
 <script
   defer
-  src="/static/js/ace-min-noconflict/ace.js?v={{ resources_version }}"
-  integrity="sha384-pHolRD674CW03iJeuvwFcYxjrYHl7uBsv43EFlDLWhiCCLmhsGL/jveQRniHL+af"></script>
+  src="/static/js/codeflask/codeflask.min.js?v={{ resources_version }}"
+  integrity="sha384-XiXwwF7KxiVA9Wyo3K/QCGmaTVxLk1X+S1sO5TqTlJogx9c/OM6AI/zO17oOaQwL"></script>
 <script
   defer
-  src="/static/js/ace-min-noconflict/ext-modelist.js?v={{ resources_version }}"
-  integrity="sha384-/whn+QM+slQwsIU53M8dabpXei0lk1uWLg1Wvit+S/i4zAnviTAG5ldiTy3stmNC"></script>
+  src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
+  integrity="sha384-JRRwtUx7H7KUP+6uHPOfXcRuX+cvNXZdsqluYW0tiu2BNVwdJCEQwOcCqhbmGysx"></script>
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-aMrTVPBMMf1cgSxQbEwkBgltSULwVpz2dGsnUXrMP3ak3+Wjl8CqCYGptZlJrYuj"></script>
+  integrity="sha384-nUbNo7mYX8v0xgqFyWy4JHAl9wq0wCTezU28Q/zAYTnuFjFh0GOz/x2idJZUI3vz"></script>
 {% endblock head %}
 
 {% block title %}

@@ -9,16 +9,26 @@ var paste_editors = {};
     var files = [];
     for (const editor of Object.values(paste_editors)) {
       const file = {
-        'name': editor.container.parentElement.parentElement.parentElement.querySelector('input[name=file_name]').value,
-        'content': editor.getValue()
+        'name': editor.editorRoot.parentElement.parentElement.parentElement.querySelector('input[name=file_name]').value,
+        'content': editor.getCode()
       };
-      const id = editor.container.parentElement.parentElement.parentElement.querySelector('input[name=id]');
+      const id = editor.editorRoot.parentElement.parentElement.parentElement.querySelector('input[name=id]');
       if (id !== null) {
         file['id'] = id.value;
       }
       files.push(file);
     }
     return files;
+  }
+
+  function codeFlaskSucksHighlight(editor) {
+    hljs.highlightBlock(editor.elCode);
+    // remove the extra classes hljs adds without asking
+    for (const clazz of editor.elCode.classList) {
+      if (clazz !== 'hljs' && clazz !== 'codeflask__code' && !clazz.startsWith('language-')) {
+        editor.elCode.classList.remove(clazz);
+      }
+    }
   }
 
   /**
@@ -28,40 +38,43 @@ var paste_editors = {};
    * @param {HTMLElement} el The element to convert into an editor.
    */
   function setUpEditor(parent, el) {
-    const modelist = ace.require('ace/ext/modelist');
+    const div = document.createElement('div');
 
-    var theme;
-    if (localStorage.getItem('style') === 'dark') {
-      theme = 'ace/theme/idle_fingers';
-    } else {
-      theme = 'ace/theme/tomorrow';
-    }
+    div.style.height = '400px';
 
-    const editor = ace.edit(el);
-
-    editor.setTheme(theme);
+    const editor = new CodeFlask(div, {
+      defaultTheme: false,
+      lineNumbers: true,
+      language: 'plaintext',
+    });
 
     const hidden = document.createElement('input');
     hidden.type = 'hidden';
     hidden.name = 'file_content';
     hidden.id = 'hidden_content';
-    editor.container.insertAdjacentElement('afterend', hidden);
+    editor.editorRoot.insertAdjacentElement('afterend', hidden);
 
-    editor.setOptions({
-      'maxLines': 25,
-      'minLines': 25,
+    editor.elCode.style.background = 'none';
+    editor.elCode.style.padding = '0';
+
+    editor.setHighlightCallback(function(ed) {
+      codeFlaskSucksHighlight(ed);
     });
 
     const name_input = parent.querySelector('input[name=file_name]');
     name_input.addEventListener('input', function(e) {
-      const mode = modelist.getModeForPath(e.target.value).mode;
-      editor.session.setMode(mode);
+      const suffix = e.target.value.split('.').pop();
+      const lang = hljs.getLanguage(suffix) !== undefined ? suffix : 'plaintext';
+      editor.updateLanguage(lang);
     });
 
     if (name_input.value !== '') {
-      const mode = modelist.getModeForPath(name_input.value).mode;
-      editor.session.setMode(mode);
+      const suffix = name_input.value.split('.').pop();
+      const lang = hljs.getLanguage(suffix) !== undefined ? suffix : 'plaintext';
+      editor.updateLanguage(lang);
     }
+
+    editor.updateCode(el.value);
 
     const to_delete = paste_num;
     parent.querySelector('button[name=delete_button]').addEventListener('click', function() {
@@ -71,6 +84,9 @@ var paste_editors = {};
     parent.querySelector('div[name=name_field]').classList.add('is-grouped');
 
     paste_editors[paste_num] = editor;
+
+    el.insertAdjacentElement('beforebegin', div);
+    el.remove();
   }
 
   function addFile() {

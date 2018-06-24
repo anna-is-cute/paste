@@ -8,18 +8,6 @@ function setActiveStyleSheet(title) {
     }
   }
   localStorage.setItem('style', getActiveStyleSheet());
-  if (typeof paste_editors === 'object') {
-    var theme;
-    if (title === 'dark') {
-      theme = 'ace/theme/idle_fingers';
-    } else if (title === 'light') {
-      theme = 'ace/theme/tomorrow';
-    }
-
-    for (var editor of Object.values(paste_editors)) {
-      editor.setTheme(theme);
-    }
-  }
 }
 
 function getActiveStyleSheet() {

@@ -6,15 +6,15 @@
   title="dark"
   rel="stylesheet alternate"
   href="/static/css/dark-style.css?v={{ resources_version }}"
-  integrity="sha384-uQeSYlIeOMbDfaBixx7/Tfp6/jyzYsTGmgHNpbuSZyTgZTAzpWTtdLS2nDXif0XW"/>
+  integrity="sha384-GEi+xDrsZ161gxzYrk7J27DKFGgKPJbSrQkRyytG4+DyPqTpv898YBMOJFfjOPB4"/>
 <link
   title="light"
   rel="stylesheet"
   href="/static/css/style.css?v={{ resources_version }}"
-  integrity="sha384-VmRcBcTDyKzigKq0Mw0mTF77ir1C1XAVIxZTXyaxy0n8DFhdlJjfT802J0/ZQN9m"/>
+  integrity="sha384-lNBvh2DfsLn+sJdzgDNh+Cpx8vSKiAhIdWjmqwZ0HCcPUneYyh4CsE6IBGqOnxg4"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
-  integrity="sha384-RO5D97QdLU5uQzv3D0ir/AT3hZdBsiMK/GbB/QkBRGDCzvSTD6M/5e4vfRciAR93"></script>
+  integrity="sha384-xsL1jXHRn9N8BLpuVbTwFhT4UhDbg1nIBYkbFJGMgc0GmbY3WDp/eMKT1SBfYmO3"></script>
 <script
   defer
   src="/static/js/navbar.js?v={{ resources_version }}"

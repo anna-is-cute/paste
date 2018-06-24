@@ -16,7 +16,7 @@
   crossorigin="anonymous"/>
 <script
   defer
-  src="/static/js/highlight.pack.js?v={{ resources_version }}"
+  src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
   integrity="sha384-JRRwtUx7H7KUP+6uHPOfXcRuX+cvNXZdsqluYW0tiu2BNVwdJCEQwOcCqhbmGysx"></script>
 <script
   defer

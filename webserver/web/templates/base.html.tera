@@ -25,11 +25,11 @@
   integrity="sha384-QD/YnRGKyRa9Fnq6JYR2qOp51Et9hf+8NDhdKA7a1E9+jvG+eYROQnrd1WxZrunY"></script>
 <link
   rel="stylesheet"
-  href="/static/css/fontawesome/solid.css"
+  href="/static/css/fontawesome/solid.css?v={{ resources_version }}"
   integrity="sha384-TbilV5Lbhlwdyc4RuIV/JhD8NR+BfMrvz4BL5QFa2we1hQu6wvREr3v6XSRfCTRp"/>
 <link
   rel="stylesheet"
-  href="/static/css/fontawesome/fontawesome.css"
+  href="/static/css/fontawesome/fontawesome.css?v={{ resources_version }}"
   integrity="sha384-ozJwkrqb90Oa3ZNb+yKFW2lToAWYdTiF1vt8JiH5ptTGHTGcN7qdoR1F95e0kYyG"/>
 <link rel="icon" sizes="16x16 32x32 48x48 64x64" href="/static/favicons/favicon.ico"/>
 <!--[if IE]><link rel="shortcut icon" href="/static/favicons/favicon.ico"/><![endif]-->

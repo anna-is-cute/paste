@@ -136,6 +136,8 @@ fn main() {
 
       routes::web::about::get,
 
+      routes::web::credits::get,
+
       routes::web::auth::login::get,
       routes::web::auth::login::post,
 

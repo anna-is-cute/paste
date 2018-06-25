@@ -1,0 +1,59 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}
+Credits
+{% endblock title %}
+
+{% block header_title %}
+Credits
+{% endblock header_title %}
+
+{% block header_subtitle %}
+Projects that make paste possible.
+{% endblock header_subtitle %}
+
+{% block main %}
+<table class="table is-fullwidth">
+  <tr>
+    <td align="right">
+      <a href="https://twemoji.twitter.com/">Twemoji</a>
+    </td>
+    <td>
+      {{ config.general.site_name }} uses Twemoji's clipboard icon as a favicon.
+    </td>
+  </tr>
+  <tr>
+    <td align="right">
+      <a href="https://bulma.io/">Bulma</a>
+    </td>
+    <td>
+      Bulma is the foundation of {{ config.general.site_name }}'s CSS.
+    </td>
+  </tr>
+  <tr>
+    <td align="right">
+      <a href="https://github.com/dropbox/zxcvbn">zxcvbn</a>
+    </td>
+    <td>
+      {{ config.general.site_name }} uses zxcvbn to warn users when they're choosing a bad password.
+    </td>
+  </tr>
+  <tr>
+    <td align="right">
+      <a href="https://fontawesome.com/">FontAwesome</a>
+    </td>
+    <td>
+      All the icons on {{ config.general.site_name }} are powered by FontAwesome.
+    </td>
+  </tr>
+</table>
+<div class="content has-text-centered">
+  <span class="icon is-large has-text-danger">
+    <i class="fas fa-3x fa-heart"></i>
+  </span>
+</div>
+{% endblock main %}

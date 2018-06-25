@@ -14,7 +14,7 @@
   integrity="sha384-mqcIiULOumYur6to+7fFnauFRUz8moxeuJakbX6hPALnBdPjwP3AI27+u2j6cq81"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
-  integrity="sha384-xsL1jXHRn9N8BLpuVbTwFhT4UhDbg1nIBYkbFJGMgc0GmbY3WDp/eMKT1SBfYmO3"></script>
+  integrity="sha384-Jkt7YLun9UdrUCzwOTcLZcmUpkLflmI9Y/ksdoxa8m7HmpxkETujPoYB/av7Hy5E"></script>
 <script
   defer
   src="/static/js/navbar.js?v={{ resources_version }}"
@@ -92,7 +92,7 @@
             <a class="navbar-item" href="/register">Register</a>
           {% endif %}
             <hr class="navbar-divider"/>
-            <a class="navbar-item" onclick="swapTheme()">Swap theme</a>
+            <a class="navbar-item" id="swap_theme">Swap theme</a>
           </div>
         </div>
       </div>

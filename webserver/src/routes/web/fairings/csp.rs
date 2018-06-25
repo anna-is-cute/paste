@@ -24,7 +24,6 @@ impl Fairing for Csp {
         let mut split = directive.trim().split(' ');
         let directive = split.next().unwrap(); // must be one element in a split
         let value = split.collect::<Vec<_>>().join(" ");
-        println!("updating {} with {}", directive, value);
         header.update_directive(directive, &value);
       }
     }
@@ -62,9 +61,7 @@ impl CspHeader {
   }
 
   fn update_directive(&mut self, dir: &str, update: &str) {
-    println!("csp: {:?}", self.directives);
     let entry = self.directives.entry(dir.to_string()).or_insert_with(Default::default);
-    println!("entry: {:?}", entry);
     *entry += " ";
     *entry += update;
   }

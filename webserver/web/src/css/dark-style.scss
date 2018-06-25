@@ -77,6 +77,8 @@ td.hljs-ln-numbers {
 $atom-one-dark-background: #282c34;
 
 textarea.codesass__textarea {
+  // where does this magic color come from?
+  caret-color: rgb(236, 240, 241);
   background-color: $atom-one-dark-background;
 }
 

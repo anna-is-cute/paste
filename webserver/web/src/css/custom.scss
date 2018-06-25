@@ -209,6 +209,18 @@ table.is-middle td, table.is-middle th {
   margin-bottom: 0;
 }
 
+td[align=right] {
+  text-align: right;
+}
+
+td[align=left] {
+  text-align: left;
+}
+
+td[align=center] {
+  text-align: center;
+}
+
 // highlight-js-line-numbers
 
 .hljs-ln {

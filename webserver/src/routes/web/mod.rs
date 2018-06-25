@@ -7,7 +7,7 @@ use models::id::UserId;
 use diesel::prelude::*;
 
 use rocket::{State, Outcome};
-use rocket::http::Status as HttpStatus;
+use rocket::http::{Header, Status as HttpStatus};
 use rocket::request::{self, Request, FromRequest};
 use rocket::response::{Responder, Response, Redirect};
 
@@ -105,5 +105,30 @@ impl<'r> Responder<'r> for Rst {
       Rst::Status(s) => Err(s),
       Rst::Template(t) => t.respond_to(request),
     }
+  }
+}
+
+pub struct AddCsp<T>(T, Vec<String>);
+
+impl<T> AddCsp<T> {
+  pub fn new<I, S>(inner: T, directives: I) -> Self
+    where I: IntoIterator<Item = S>,
+          S: AsRef<str>,
+  {
+    AddCsp(inner, directives.into_iter().map(|x| x.as_ref().to_string()).collect())
+  }
+
+  pub fn none(inner: T) -> Self {
+    AddCsp(inner, Default::default())
+  }
+}
+
+impl<'r, T> Responder<'r> for AddCsp<T>
+  where T: Responder<'r>,
+{
+  fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
+    let mut response = self.0.respond_to(request)?;
+    response.set_header(Header::new("Content-Security-Policy", self.1.join("; ")));
+    Ok(response)
   }
 }

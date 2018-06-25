@@ -1,11 +1,6 @@
 ! function(n, e) {
   "use strict";
 
-  function t() {
-      var n = e.createElement("style");
-      n.type = "text/css", n.innerHTML = h(".{0}{border-collapse:collapse}.{0} td{padding:0}.{1}:before{content:attr({2})}", [f, m, j]), e.getElementsByTagName("head")[0].appendChild(n)
-  }
-
   function r(t) {
       "complete" === e.readyState ? l(t) : n.addEventListener("DOMContentLoaded", function() {
           l(t)
@@ -91,5 +86,5 @@
       m = "hljs-ln-n",
       j = "data-line-number",
       L = /\r\n|\r|\n/g;
-  n.hljs ? (n.hljs.initLineNumbersOnLoad = r, n.hljs.lineNumbersBlock = i, t()) : n.console.error("highlight.js not detected!")
+  n.hljs ? (n.hljs.initLineNumbersOnLoad = r, n.hljs.lineNumbersBlock = i) : n.console.error("highlight.js not detected!")
 }(window, document);

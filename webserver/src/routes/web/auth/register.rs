@@ -4,7 +4,7 @@ use database::models::users::{User, NewUser};
 use database::schema::users;
 use errors::*;
 use models::id::UserId;
-use routes::web::{context, Rst, OptionalWebUser, Session};
+use routes::web::{context, AddCsp, Rst, OptionalWebUser, Session};
 use utils::{email, PasswordContext, ReCaptcha, HashedPassword, Validator};
 
 use chrono::{Duration, Utc};
@@ -27,12 +27,19 @@ use sidekiq::Client as SidekiqClient;
 use uuid::Uuid;
 
 #[get("/register")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Rst {
+fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Rst> {
   if user.is_some() {
-    return Rst::Redirect(Redirect::to("/"));
+    return AddCsp::none(Rst::Redirect(Redirect::to("/")));
   }
   let ctx = context(&*config, user.as_ref(), &mut sess);
-  Rst::Template(Template::render("auth/register", ctx))
+  AddCsp::new(
+    Rst::Template(Template::render("auth/register", ctx)),
+    vec![
+      "frame-src https://www.google.com/recaptcha/",
+      // https://github.com/google/recaptcha/issues/107 get with the times, google
+      "style-src 'unsafe-inline'",
+    ],
+  )
 }
 
 #[derive(Debug, FromForm, Serialize)]

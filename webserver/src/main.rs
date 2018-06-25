@@ -120,6 +120,7 @@ fn main() {
     .manage(redis_store::init_pool())
     .manage(redis_store::init_sidekiq())
     .manage(config)
+    .attach(fairings::Csp)
     .attach(fairings::SecurityHeaders)
     .attach(fairings::AntiCsrf)
     .attach(fairings::LastPage::default())

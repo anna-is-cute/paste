@@ -9,7 +9,7 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-tDtuGGxKbgW8Msv+mHhQLaJK8aZ34KavAFbf8mOLWRQaVAVBpAP4oeCHhw6YobwP"></script>
+  integrity="sha384-psOOiWtm8cOmC12861czu8UqoOis84u/9RTHE//pjQC2QhPVjKeHMFBBy65EZZtP"></script>
 {% endblock head %}
 
 {% block title %}Account{% endblock title %}
@@ -134,7 +134,7 @@ Manage account settings.
         </div>
         <p class="help">
           Leave this blank to keep your password the same.
-          <progress id="strength_progress" class="password progress is-marginless is-danger" style="display: none;" value="100" max="100"></progress>
+          <progress id="strength_progress" class="password progress is-marginless is-danger is-not-displayed" value="100" max="100"></progress>
           <span id="strength"></span>
           <span id="strength_warning" class="has-text-warning"></span>
         </p>

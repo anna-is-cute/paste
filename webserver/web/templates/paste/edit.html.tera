@@ -22,7 +22,7 @@
 <script
   defer
   src="/static/js/codeflask/codeflask.min.js?v={{ resources_version }}"
-  integrity="sha384-XiXwwF7KxiVA9Wyo3K/QCGmaTVxLk1X+S1sO5TqTlJogx9c/OM6AI/zO17oOaQwL"></script>
+  integrity="sha384-O63SEt2Nzbhltwh0KyvSelCuvH9RwxivZRBMEVv/3Hdd1LrZh3Fn7jXO2eaObE6G"></script>
 <script
   defer
   src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"

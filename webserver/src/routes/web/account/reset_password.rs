@@ -74,7 +74,10 @@ fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn
     None => {
       let (k, m) = match PasswordResetAttempt::find_increment(&conn, addr.ip())? {
         Some(m) => ("error", m),
-        None => ("info", msg),
+        None => {
+          sess.take_form();
+          ("info", msg)
+        },
       };
       sess.add_data(k, m);
       return res;
@@ -82,6 +85,7 @@ fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn
   };
 
   if !user.email_verified() {
+    sess.take_form();
     sess.add_data("info", msg);
     return res;
   }

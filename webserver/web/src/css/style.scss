@@ -56,17 +56,17 @@ td.hljs-ln-numbers {
   }
 }
 
-// codeflask is awful (light)
+// codesass
 $atom-one-light-background: #fafafa;
 
-textarea.codeflask__textarea {
+textarea.codesass__textarea {
   background-color: $atom-one-light-background;
 }
 
-div.codeflask.codeflask--has-line-numbers::before {
+div.codesass.codesass--has-line-numbers::before {
   background-color: darken($atom-one-light-background, 5);
 }
 
-.codeflask.codeflask--has-line-numbers .codeflask__lines {
+.codesass.codesass--has-line-numbers .codesass__lines {
   color: darken($atom-one-light-background, 30);
 }

@@ -1,37 +1,38 @@
-.codeflask {
+.codesass {
   position: absolute;
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
-.codeflask, .codeflask * {
+.codesass, .codesass * {
   box-sizing: border-box;
 }
-.codeflask__pre {
+.codesass__pre {
   background: none;
   pointer-events: none;
   z-index: 3;
   overflow: hidden;
 }
-.codeflask__textarea {
+.codesass__textarea {
+  color: transparent;
   border: none;
   z-index: 1;
   resize: none;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: monospace;
   -webkit-appearance: pre;
   z-index: 2;
   width: 100%;
   height: 100%;
 }
-.codeflask--has-line-numbers .codeflask__textarea {
+.codesass--has-line-numbers .codesass__textarea {
   width: calc(100% - 40px);
 }
-.codeflask__code {
+.codesass__code {
   display: block;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: monospace;
   overflow: hidden;
 }
-.codeflask__flatten {
+.codesass__flatten {
   padding: 10px;
   font-size: 13px;
   line-height: 20px;
@@ -44,11 +45,11 @@
   outline: none;
   text-align: left;
 }
-.codeflask--has-line-numbers .codeflask__flatten {
+.codesass--has-line-numbers .codesass__flatten {
   width: calc(100% - 40px);
   left: 40px;
 }
-.codeflask__line-highlight {
+.codesass__line-highlight {
   position: absolute;
   top: 10px;
   left: 0;
@@ -57,7 +58,7 @@
   background: rgba(0,0,0,0.1);
   z-index: 1;
 }
-.codeflask__lines {
+.codesass__lines {
   padding: 10px 4px;
   font-size: 12px;
   line-height: 20px;
@@ -71,13 +72,13 @@
   color: #999;
   z-index: 2;
 }
-.codeflask__lines__line {
+.codesass__lines__line {
   display: block;
 }
-.codeflask.codeflask--has-line-numbers {
+.codesass.codesass--has-line-numbers {
   padding-left: 40px;
 }
-.codeflask.codeflask--has-line-numbers:before {
+.codesass.codesass--has-line-numbers:before {
   content: '';
   position: absolute;
   left: 0;
@@ -87,43 +88,43 @@
   background: #eee;
   z-index: 1;
 }
-.codeflask {
+.codesass {
   background: #fff;
   color: #4f559c;
 }
-.codeflask .token.punctuation {
+.codesass .token.punctuation {
   color: #4a4a4a;
 }
-.codeflask .token.keyword {
+.codesass .token.keyword {
   color: #8500ff;
 }
-.codeflask .token.operator {
+.codesass .token.operator {
   color: #ff5598;
 }
-.codeflask .token.string {
+.codesass .token.string {
   color: #41ad8f;
 }
-.codeflask .token.comment {
+.codesass .token.comment {
   color: #9badb7;
 }
-.codeflask .token.function {
+.codesass .token.function {
   color: #8500ff;
 }
-.codeflask .token.boolean {
+.codesass .token.boolean {
   color: #8500ff;
 }
-.codeflask .token.number {
+.codesass .token.number {
   color: #8500ff;
 }
-.codeflask .token.selector {
+.codesass .token.selector {
   color: #8500ff;
 }
-.codeflask .token.property {
+.codesass .token.property {
   color: #8500ff;
 }
-.codeflask .token.tag {
+.codesass .token.tag {
   color: #8500ff;
 }
-.codeflask .token.attr-value {
+.codesass .token.attr-value {
   color: #8500ff;
 }

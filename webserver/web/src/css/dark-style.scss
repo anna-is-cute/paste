@@ -73,18 +73,18 @@ td.hljs-ln-numbers {
   color: $grey;
 }
 
-// codeflask is awful (dark)
+// codesass
 $atom-one-dark-background: #282c34;
 
-textarea.codeflask__textarea {
+textarea.codesass__textarea {
   background-color: $atom-one-dark-background;
 }
 
-div.codeflask.codeflask--has-line-numbers::before {
+div.codesass.codesass--has-line-numbers::before {
   background-color: lighten($atom-one-dark-background, 5);
 }
 
-.codeflask.codeflask--has-line-numbers .codeflask__lines {
+.codesass.codesass--has-line-numbers .codesass__lines {
   color: lighten($atom-one-dark-background, 30);
 }
 

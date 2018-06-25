@@ -42,7 +42,7 @@ var paste_editors = {};
 
     div.style.height = '400px';
 
-    const editor = new CodeFlask(div, {
+    const editor = new CodeSass(div, {
       defaultTheme: false,
       lineNumbers: true,
       language: 'plaintext',

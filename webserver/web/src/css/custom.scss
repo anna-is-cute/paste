@@ -121,6 +121,10 @@ td.hljs-ln-code {
   display: none;
 }
 
+.is-dotted-underlined {
+  text-decoration: dotted underline;
+}
+
 .keeps-spaces {
   white-space: pre-wrap;
 }
@@ -203,4 +207,16 @@ table.is-middle td, table.is-middle th {
 
 .paste-rendered-content:not(:last-child) {
   margin-bottom: 0;
+}
+
+// highlight-js-line-numbers
+
+.hljs-ln {
+  border-collapse: collapse;
+}
+.hljs-ln td {
+  padding: 0;
+}
+.hljs-ln-n:before {
+  content: attr(data-line-number);
 }

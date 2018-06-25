@@ -19,7 +19,7 @@
 <script
   defer
   src="/static/js/highlightjs-line-numbers/highlightjs-line-numbers.js?v={{ resources_version }}"
-  integrity="sha384-ywcAiDbkw5warCyZoKNn2+Yiy5cYCvfqXjpdyRBCprswo+m26Blw9WFXvneyrki/"></script>
+  integrity="sha384-FCZ1PyUseHnXo4+1fCfTp/7wM8gulH0POMyk16XGumx7X7Roa1hWUxtXCmJfjHFQ"></script>
 <script
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"

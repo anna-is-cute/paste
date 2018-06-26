@@ -73,6 +73,10 @@ td.hljs-ln-numbers {
   color: $grey;
 }
 
+code, pre {
+  font-family: monospace !important;
+}
+
 // codesass
 $atom-one-dark-background: #282c34;
 

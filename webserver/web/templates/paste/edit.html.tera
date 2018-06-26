@@ -22,7 +22,7 @@
 <script
   defer
   src="/static/js/codesass/codesass.min.js?v={{ resources_version }}"
-  integrity="sha384-RRqHm+E/tbHAi5vA9Y7W+LxFCQxbwfzBoukj7OzXhkehF4G4+34WwHLRe1+ibtvf"></script>
+  integrity="sha384-RTTX6eKyn/bWDgDRBwGxaGE3/t8aOmw/p/sr/ADoydk42IMzufVu2YUurwLu08DQ"></script>
 <script
   defer
   src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"

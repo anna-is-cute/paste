@@ -23,6 +23,7 @@ use std::result;
 pub mod about;
 pub mod account;
 pub mod auth;
+pub mod credits;
 pub mod fairings;
 pub mod guards;
 pub mod index;

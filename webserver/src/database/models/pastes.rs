@@ -14,7 +14,7 @@ use chrono::{NaiveDateTime, Utc};
 use diesel;
 use diesel::prelude::*;
 
-use git2::{Signature, Repository, DiffOptions};
+use git2::{Signature, Repository, DiffOptions, IndexAddOption, Status};
 
 use rocket::http::Status as HttpStatus;
 
@@ -127,10 +127,11 @@ impl Paste {
 
   pub fn repo_dirty(&self) -> Result<bool> {
     let repo = Repository::open(self.files_directory())?;
-    let mut options = DiffOptions::new();
-    options.ignore_submodules(true);
-    let diff = repo.diff_index_to_workdir(None, Some(&mut options))?;
-    Ok(diff.stats()?.files_changed() != 0)
+    let dirty = repo
+      .statuses(None)?
+      .iter()
+      .any(|x| x.status() != Status::CURRENT || x.status() != Status::IGNORED);
+    Ok(dirty)
   }
 
   pub fn commit_if_dirty(&self, username: &str, email: &str, message: &str) -> Result<()> {
@@ -142,9 +143,13 @@ impl Paste {
   }
 
   pub fn commit(&self, username: &str, email: &str, message: &str) -> Result<()> {
-    let repo = Repository::open(self.files_directory())?;
+    let files_dir = self.files_directory();
 
+    let repo = Repository::open(&files_dir)?;
     let mut index = repo.index()?;
+
+    index.add_all(vec!["."], IndexAddOption::DEFAULT, None)?;
+    index.write()?;
 
     let tree_id = index.write_tree()?;
     let tree = repo.find_tree(tree_id)?;

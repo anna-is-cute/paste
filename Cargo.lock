@@ -2276,7 +2276,7 @@ dependencies = [
 
 [[package]]
 name = "webserver"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "ammonia 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "base64 0.9.2 (registry+https://github.com/rust-lang/crates.io-index)",

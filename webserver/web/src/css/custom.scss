@@ -96,6 +96,18 @@ td.hljs-ln-code {
   margin-top: -0.75rem;
 }
 
+.paste.hero-body {
+  padding-bottom: 1.5rem;
+}
+
+.hero-foot .tabs {
+  padding-bottom: 2px;
+
+  & ul {
+    align-items: flex-end;
+  }
+}
+
 .paste.container {
   display: flex;
   flex-direction: row;
@@ -127,6 +139,10 @@ td.hljs-ln-code {
 
 .keeps-spaces {
   white-space: pre-wrap;
+}
+
+.right.tag {
+  margin-left: .5rem;
 }
 
 a.external::after {

@@ -41,41 +41,68 @@ Edit untitled paste
   {% endif %}
 {% endblock title %}
 
-{% block header_title %}
-  {% if paste.name %}
-Edit {{ paste.name }}
-  {% else %}
-Edit <em>untitled paste</em>
-  {% endif %}
-{% endblock header_title %}
-
-{% block header_subtitle %}
-Change this paste<span class="requires-js"> and its files</span>.
-{% endblock header_subtitle %}
+{% block header %}
+<section class="hero is-dark">
+  <div class="paste hero-body">
+    <div class="paste container">
+      <div class="right">
+        <div class="field is-grouped">
+          {% if is_owner %}
+          <div class="control">
+            <a class="button is-info is-large" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/edit">
+              <span class="icon is-large">
+                <i class="fas fa-pencil-alt"></i>
+              </span>
+            </a>
+          </div>
+          {% endif %}
+          {% if not paste.author or is_owner %}
+          <div class="control">
+            <button class="button is-danger is-large opens-modal">
+              <span class="icon is-large">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </button>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="left">
+        <h1 class="title">
+          Edit
+        {% if paste.name %}
+          <span class="keeps-spaces">{{ paste.name }}</span>
+        {% else %}
+          <em>untitled paste</em>
+        {% endif %}
+        </h1>
+        {% if paste.description %}
+        <h2 class="subtitle">
+          Change this paste<span class="requires-js"> and its files</span>.
+        </h2>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="hero-foot">
+    <div class="paste container">
+      <div class="right">
+        <em class="has-text-grey">{{ paste.visibility }}</em>
+        <span class="has-text-grey-light">/</span>
+        <em class="has-text-grey">2 days ago</em>
+      </div>
+      <div class="left tabs">
+        <ul>
+          <li><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">files</a></li>
+          <li><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/revisions">revisions <span class="right tag">2</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock header %}
 
 {% block main %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-  <ul>
-    <li>
-  {% if paste.author.username %}
-      <a href="/users/{{ paste.author.username | urlencode(safe="") }}">{{ paste.author.username }}</a>
-  {% else %}
-      <a>anonymous</a>
-  {% endif %}
-    </li>
-    <li>
-  {% if paste.name %}
-      <a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">{{ paste.name }}</a>
-  {% else %}
-      <a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}"><em>untitled paste</em></a>
-  {% endif %}
-    </li>
-    <li class="is-active">
-      <a>edit</a>
-    </li>
-  </ul>
-</nav>
-
 <form id="paste_upload" method="post" action="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">
   <input type="hidden" name="_method" value="patch"/>
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>

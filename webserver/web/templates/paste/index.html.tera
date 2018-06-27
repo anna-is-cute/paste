@@ -43,7 +43,7 @@ untitled paste
 
 {% block header %}
 <section class="hero is-dark">
-  <div class="hero-body">
+  <div class="paste hero-body">
     <div class="paste container">
       <div class="right">
         <div class="field is-grouped">
@@ -80,20 +80,21 @@ untitled paste
           <span class="keeps-spaces">{{ paste.description }}</span>
         </h2>
         {% endif %}
-        <div class="info-tags field is-grouped is-grouped-multiline">
-          <div class="control">
-            <div class="tags has-addons">
-              <span class="tag">visibility</span>
-              <span class="tag is-info">{{ paste.visibility }}</span>
-            </div>
-          </div>
-          {# <div class="control">
-            <div class="tags has-addons">
-              <span class="tag">created</span>
-              <span class="tag is-info">5 Dec 2017</span>
-            </div>
-          </div> #}
-        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-foot">
+    <div class="paste container">
+      <div class="right">
+        <em class="has-text-grey">{{ paste.visibility }}</em>
+        <span class="has-text-grey-light">/</span>
+        <em class="has-text-grey">2 days ago</em>
+      </div>
+      <div class="left tabs">
+        <ul>
+          <li class="is-active"><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">files</a></li>
+          <li><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/revisions">revisions <span class="right tag">2</span></a></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -167,27 +168,6 @@ untitled paste
   </div>
 </div>
 {% endif %}
-
-<nav class="breadcrumb" aria-label="breadcrumbs">
-  <ul>
-    <li>
-  {% if paste.author.username and paste.author.name %}
-    <a href="/users/{{ paste.author.username | urlencode(safe="") }}">
-      {{ paste.author.name }}
-    </a>
-  {% else %}
-    <a>anonymous</a>
-  {% endif %}
-    </li>
-    <li class="is-active">
-  {% if paste.name %}
-    <a>{{ paste.name }}</a>
-  {% else %}
-    <a><em>untitled paste</em></a>
-  {% endif %}
-    </li>
-  </ul>
-</nav>
 
 {% for file in paste.files %}
 <div class="box">

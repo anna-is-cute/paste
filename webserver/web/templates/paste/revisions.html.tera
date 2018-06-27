@@ -1,0 +1,114 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% if paste.visibility != "public" %}
+<meta name="robots" content="noindex, nofollow"/>
+{% endif %}
+<link
+  title="dark"
+  rel="stylesheet alternate"
+  href="/static/css/highlightjs/atom-one-dark.min.css?v={{ resources_version }}"
+  integrity="sha384-nyXucUVWQWGGNq3mSgG/FGxW4Jmsv+0uCbHZ0VpHRsGZt/PlUT31hz9sUek822eI"/>
+<link
+  title="light"
+  rel="stylesheet"
+  href="/static/css/highlightjs/atom-one-light.min.css?v={{ resources_version }}"
+  integrity="sha384-7gDLYK0oyPpfkc6E6VzcNFzEFGw6QTKMoof6r0lb0cWECaHXX+b2GGxhh0iItikh"/>
+<script
+  defer
+  src="/static/js/paste.js?v={{ resources_version }}"
+  integrity="sha384-nxnrl2txmz2hofc7DaY8R0H0Z2bgRtnwIInWHj5yQN0MEAyv2WoX1vEKUlZ9Stnp"></script>
+<script
+  defer
+  src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
+  integrity="sha384-JRRwtUx7H7KUP+6uHPOfXcRuX+cvNXZdsqluYW0tiu2BNVwdJCEQwOcCqhbmGysx"></script>
+<script
+  defer
+  src="/static/js/highlightjs-line-numbers/highlightjs-line-numbers.js?v={{ resources_version }}"
+  integrity="sha384-FCZ1PyUseHnXo4+1fCfTp/7wM8gulH0POMyk16XGumx7X7Roa1hWUxtXCmJfjHFQ"></script>
+<script
+  defer
+  src="/static/js/highlight.js?v={{ resources_version }}"
+  integrity="sha384-caCmnkFqxfjOh+u4KGwKvqB32/6UtEti6NjeNUJ8ZPisFKz4WIbQPfMdXkCWwsRV"></script>
+{% endblock head %}
+
+{% block title %}
+  Revisions for
+  {% if paste.name %}
+{{ paste.name }}
+  {% else %}
+untitled paste
+  {% endif %}
+{% endblock title %}
+
+{% block header %}
+<section class="hero is-dark">
+  <div class="paste hero-body">
+    <div class="paste container">
+      <div class="right">
+        <div class="field is-grouped">
+          {% if is_owner %}
+          <div class="control">
+            <a class="button is-info is-large" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/edit">
+              <span class="icon is-large">
+                <i class="fas fa-pencil-alt"></i>
+              </span>
+            </a>
+          </div>
+          {% endif %}
+          {% if not paste.author or is_owner %}
+          <div class="control">
+            <button class="button is-danger is-large opens-modal">
+              <span class="icon is-large">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </button>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="left">
+        <h1 class="title">
+          Revisions for
+        {% if paste.name %}
+          <span class="keeps-spaces">{{ paste.name }}</span>
+        {% else %}
+          <em>untitled paste</em>
+        {% endif %}
+        </h1>
+        {% if paste.description %}
+        <h2 class="subtitle">
+          View the changes made to this paste.
+        </h2>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="hero-foot">
+    <div class="paste container">
+      <div class="right">
+        <em class="has-text-grey">{{ paste.visibility }}</em>
+        <span class="has-text-grey-light">/</span>
+        <em class="has-text-grey">2 days ago</em>
+      </div>
+      <div class="left tabs">
+        <ul>
+          <li><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">files</a></li>
+          <li class="is-active"><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/revisions">revisions <span class="right tag">2</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock header %}
+
+{% block main %}
+
+{% for diff in diffs %}
+<div class="box">
+  <pre class="language-diff"><code>{{ diff }}</code></pre>
+</div>
+{% endfor %}
+
+{% endblock main %}

@@ -130,7 +130,7 @@ impl Paste {
     let dirty = repo
       .statuses(None)?
       .iter()
-      .any(|x| x.status() != Status::CURRENT || x.status() != Status::IGNORED);
+      .any(|x| x.status() != Status::CURRENT && x.status() != Status::IGNORED);
     Ok(dirty)
   }
 

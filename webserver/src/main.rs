@@ -152,6 +152,8 @@ fn main() {
 
       routes::web::pastes::files::raw::get,
 
+      routes::web::pastes::revisions::get,
+
       routes::web::pastes::get::edit,
 
       routes::web::pastes::post::post,

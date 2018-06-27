@@ -14,7 +14,7 @@ use chrono::{NaiveDateTime, Utc};
 use diesel;
 use diesel::prelude::*;
 
-use git2::{Signature, Repository, DiffOptions, IndexAddOption, Status};
+use git2::{Signature, Repository, IndexAddOption, Status};
 
 use rocket::http::Status as HttpStatus;
 

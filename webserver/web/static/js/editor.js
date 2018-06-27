@@ -66,6 +66,7 @@ var paste_editors = {};
       const suffix = e.target.value.split('.').pop();
       const lang = hljs.getLanguage(suffix) !== undefined ? suffix : 'plaintext';
       editor.updateLanguage(lang);
+      editor.updateCode(editor.code);
     });
 
     if (name_input.value !== '') {

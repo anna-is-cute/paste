@@ -77,11 +77,9 @@ untitled paste
           <em>untitled paste</em>
         {% endif %}
         </h1>
-        {% if paste.description %}
         <h2 class="subtitle">
           View the changes made to this paste.
         </h2>
-        {% endif %}
       </div>
     </div>
   </div>

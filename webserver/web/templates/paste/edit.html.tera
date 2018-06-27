@@ -53,11 +53,9 @@ Edit untitled paste
         <em>untitled paste</em>
       {% endif %}
       </h1>
-      {% if paste.description %}
       <h2 class="subtitle">
         Change this paste<span class="requires-js"> and its files</span>.
       </h2>
-      {% endif %}
     </div>
   </div>
   <div class="hero-foot">

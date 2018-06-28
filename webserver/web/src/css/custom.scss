@@ -225,16 +225,18 @@ table.is-middle td, table.is-middle th {
   margin-bottom: 0;
 }
 
-td[align=right] {
-  text-align: right;
-}
+th, td {
+  &[align=right] {
+    text-align: right !important;
+  }
 
-td[align=left] {
-  text-align: left;
-}
+  &[align=left] {
+    text-align: left !important;
+  }
 
-td[align=center] {
-  text-align: center;
+  &[align=center] {
+    text-align: center !important;
+  }
 }
 
 // highlight-js-line-numbers

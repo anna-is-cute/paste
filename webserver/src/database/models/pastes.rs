@@ -9,7 +9,7 @@ use super::files::{File as DbFile, NewFile};
 use super::super::schema::{pastes, files};
 use super::users::User;
 
-use chrono::{NaiveDateTime, Utc};
+use chrono::{NaiveDateTime, DateTime, Utc};
 
 use diesel;
 use diesel::prelude::*;
@@ -69,8 +69,8 @@ impl Paste {
     self.description = description.map(|x| x.as_ref().to_string());
   }
 
-  pub fn created_at(&self) -> &NaiveDateTime {
-    &self.created_at
+  pub fn created_at(&self) -> DateTime<Utc> {
+    DateTime::from_utc(self.created_at, Utc)
   }
 
   pub fn update(&mut self, conn: &DbConn, update: &MetadataUpdate) -> Result<()> {

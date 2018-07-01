@@ -1,3 +1,5 @@
+use chrono::{DateTime, Utc};
+
 use diesel::backend::Backend;
 use diesel::deserialize::{self, FromSql};
 use diesel::Queryable;
@@ -33,6 +35,7 @@ pub struct Metadata {
   pub description: Option<CountedText>,
   #[serde(default)]
   pub visibility: Visibility,
+  pub created_at: DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, Serialize)]

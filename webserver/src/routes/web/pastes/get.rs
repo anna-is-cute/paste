@@ -135,6 +135,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
     paste.name(),
     paste.description(),
     paste.visibility(),
+    paste.created_at(),
     None,
     files,
   );
@@ -209,6 +210,7 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
     paste.name(),
     paste.description(),
     paste.visibility(),
+    paste.created_at(),
     None,
     files,
   );

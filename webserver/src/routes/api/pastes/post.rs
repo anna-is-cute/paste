@@ -77,6 +77,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     paste.name(),
     paste.description(),
     paste.visibility(),
+    paste.created_at(),
     deletion_key.map(|x| x.key()),
     files,
   );

@@ -136,6 +136,7 @@ fn _get(page: u32, username: String, user: OptionalUser, conn: DbConn) -> RouteR
         paste.name(),
         paste.description(),
         paste.visibility(),
+        paste.created_at(),
         None,
         output_files,
       ));

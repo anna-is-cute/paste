@@ -194,6 +194,10 @@ table.is-middle td, table.is-middle th {
 }
 
 .box-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
   padding: 1.25rem;
   margin-left: -1.25rem;
   margin-top: -1.25rem;
@@ -254,5 +258,15 @@ th, td {
 
   &:before {
     content: attr(data-line-number);
+  }
+}
+
+.paste.info {
+  color: $grey;
+  font-style: italic;
+
+  :not(:first-child):not(:empty)::before {
+    content: ' / ';
+    color: $grey-light;
   }
 }

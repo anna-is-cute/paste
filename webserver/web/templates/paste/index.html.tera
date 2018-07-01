@@ -31,6 +31,14 @@
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
   integrity="sha384-caCmnkFqxfjOh+u4KGwKvqB32/6UtEti6NjeNUJ8ZPisFKz4WIbQPfMdXkCWwsRV"></script>
+<script
+  defer
+  src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
+  integrity="sha384-5zARgXuvMiKGWrda+raHXOlTw717huPS47iQABU10DXHGQJ+7PE/PPghBZSmzaNU"></script>
+<script
+  defer
+  src="/static/js/timestamps.js?v={{ resources_version }}"
+  integrity="sha384-kHzAsCWPhplRAhLqnWD9TBi3YspDbgGbNqXU2UfcvVDV+sNVlJTckJrWjTLeF4Ho"></script>
 {% endblock head %}
 
 {% block title %}
@@ -85,10 +93,11 @@ untitled paste
   </div>
   <div class="hero-foot">
     <div class="paste container">
-      <div class="right">
-        <em class="has-text-grey">{{ paste.visibility }}</em>
-        <span class="has-text-grey-light">/</span>
-        <em class="has-text-grey">2 days ago</em>
+      {% set file_count = paste.files | length %}
+      <div class="right paste info">
+        <span>{{ paste.visibility }}</span>
+        <span class="timestamp" data-timestamp="{{ paste.created_at }}"></span>
+        <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
       </div>
       <div class="left tabs">
         <ul>
@@ -173,18 +182,20 @@ untitled paste
 <div class="box">
   {% if file.name %}
   <div class="box-title">
-    <h2 id="{{ file.id }}-title" class="title">
-      <a class="is-pulled-right button" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/files/{{ file.id }}/raw">Raw</a>
-      <span class="keeps-spaces">{{ file.name }}</span>
-    </h2>
-    {% if file.content.format == "text" and rendered | get(key=file.id) %}
-    <div class="paste-tabs tabs" id="{{ file.id }}-tab-links">
-      <ul>
-        <li class="paste-rendered-tab is-active"><a>Rendered</a></li>
-        <li class="paste-source-tab"><a>Source</a></li>
-      </ul>
+    <div>
+      <h2 id="{{ file.id }}-title" class="title">
+        <span class="keeps-spaces">{{ file.name }}</span>
+      </h2>
+      {% if file.content.format == "text" and rendered | get(key=file.id) %}
+      <div class="paste-tabs tabs" id="{{ file.id }}-tab-links">
+        <ul>
+          <li class="paste-rendered-tab is-active"><a>Rendered</a></li>
+          <li class="paste-source-tab"><a>Source</a></li>
+        </ul>
+      </div>
+      {% endif %}
     </div>
-    {% endif %}
+    <a class="is-pulled-right button" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/files/{{ file.id }}/raw">Raw</a>
   </div>
   {% endif %}
   {% if file.content.format == "text" %}

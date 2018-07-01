@@ -143,6 +143,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
         paste.name(),
         paste.description(),
         paste.visibility(),
+        paste.created_at(),
         None,
         output_files,
       ));

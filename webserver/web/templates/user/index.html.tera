@@ -24,6 +24,14 @@
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
   integrity="sha384-caCmnkFqxfjOh+u4KGwKvqB32/6UtEti6NjeNUJ8ZPisFKz4WIbQPfMdXkCWwsRV"></script>
+<script
+  defer
+  src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
+  integrity="sha384-5zARgXuvMiKGWrda+raHXOlTw717huPS47iQABU10DXHGQJ+7PE/PPghBZSmzaNU"></script>
+<script
+  defer
+  src="/static/js/timestamps.js?v={{ resources_version }}"
+  integrity="sha384-kHzAsCWPhplRAhLqnWD9TBi3YspDbgGbNqXU2UfcvVDV+sNVlJTckJrWjTLeF4Ho"></script>
 {% endblock head %}
 
 {% block title %}
@@ -71,39 +79,27 @@
 {% for paste in pastes %}
   <div class="box">
     <div class="box-title">
-      <h3 class="title">
-        <a href="/pastes/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
-      {% if paste.name %}
-          <span class="keeps-spaces">{{ paste.name }}</span>
-      {% else %}
-          <em>untitled paste</em>
-      {% endif %}
-        </a>
-      </h3>
-      {% if paste.description %}
-      <h4 class="subtitle">
-        <span class="keeps-spaces">{{ paste.description }}</span>
-      </h4>
-      {% endif %}
-      <div class="info-tags field is-grouped is-grouped-multiline">
-        <div class="control">
-          <div class="tags has-addons">
-            <span class="tag">visibility</span>
-            <span class="tag is-info">{{ paste.visibility }}</span>
-          </div>
-        </div>
-        <div class="control">
-          <div class="tags has-addons">
-            <span class="tag">files</span>
-            <span class="tag is-info">{{ paste.files | length }}</span>
-          </div>
-        </div>
-        {# <div class="control">
-          <div class="tags has-addons">
-            <span class="tag is-dark">created</span>
-            <span class="tag is-info">5 Dec 2017</span>
-          </div>
-        </div> #}
+      <div>
+        <h3 class="title is-marginless">
+          <a href="/pastes/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
+        {% if paste.name %}
+            <span class="keeps-spaces">{{ paste.name }}</span>
+        {% else %}
+            <em>untitled paste</em>
+        {% endif %}
+          </a>
+        </h3>
+        {% if paste.description %}
+        <h4 class="subtitle is-marginless">
+          <span class="keeps-spaces">{{ paste.description }}</span>
+        </h4>
+        {% endif %}
+      </div>
+      {% set file_count = paste.files | length %}
+      <div class="paste info">
+        <span>{{ paste.visibility }}</span>
+        <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
+        <span class="timestamp" data-timestamp="{{ paste.created_at }}"></span>
       </div>
     </div>
     {% for file in paste.files %}

@@ -5,7 +5,7 @@ use database::models::users::User;
 use database::schema::users;
 use errors::*;
 use models::id::PasteId;
-use models::paste::output::{Output, OutputAuthor};
+use models::paste::output::{Output, OutputAuthor, OutputFile};
 use routes::web::{context, Rst, OptionalWebUser, Session};
 
 use diesel::prelude::*;
@@ -16,6 +16,8 @@ use rocket::http::Status as HttpStatus;
 use rocket::State;
 
 use rocket_contrib::Template;
+
+use std::result;
 
 #[get("/pastes/<username>/<id>/revisions")]
 fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
@@ -80,14 +82,20 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
     }
   }
 
+  let files: Vec<OutputFile> = id.files(&conn)?
+    .iter()
+    .map(|x| x.as_output_file(false, &paste))
+    .collect::<result::Result<_, _>>()?;
+
   let output = Output::new(
     id,
     author,
     paste.name(),
     paste.description(),
     paste.visibility(),
+    paste.created_at(),
     None,
-    None,
+    files,
   );
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());

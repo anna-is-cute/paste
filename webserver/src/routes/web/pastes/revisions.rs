@@ -46,11 +46,16 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
   let head = repo.refname_to_id("HEAD")?;
   let head_commit = repo.find_commit(head)?;
 
+  let mut count = 1;
+
   let mut diffs = Vec::new();
   let mut commit = head_commit;
   loop {
     let parent = match commit.parent(0) {
-      Ok(p) => DiffArg::Commit(p),
+      Ok(p) => {
+        count += 1;
+        DiffArg::Commit(p)
+      },
       Err(_) => DiffArg::Tree(
         // FIXME: this is using the sha1 of the empty tree, which all repos have, but there must be
         //        a better way
@@ -102,6 +107,7 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
 
   let mut ctx = context(&*config, user.into_inner().as_ref(), &mut sess);
   ctx["paste"] = json!(output);
+  ctx["num_commits"] = json!(count);
   ctx["author_name"] = json!(author_name);
   ctx["diffs"] = json!(diffs);
 

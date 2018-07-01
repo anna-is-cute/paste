@@ -143,9 +143,7 @@ impl Paste {
   }
 
   pub fn commit(&self, username: &str, email: &str, message: &str) -> Result<()> {
-    let files_dir = self.files_directory();
-
-    let repo = Repository::open(&files_dir)?;
+    let repo = self.repository()?;
     let mut index = repo.index()?;
 
     index.add_all(vec!["."], IndexAddOption::DEFAULT, None)?;
@@ -167,6 +165,33 @@ impl Paste {
     repo.commit(Some("HEAD"), &signature, &signature, message, &tree, &parents)?;
 
     Ok(())
+  }
+
+  pub fn repository(&self) -> Result<Repository> {
+    let repo = Repository::open(self.files_directory())?;
+
+    Ok(repo)
+  }
+
+  pub fn num_commits(&self) -> Result<usize> {
+    let repo = self.repository()?;
+    let head = repo.refname_to_id("HEAD")?;
+    let head_commit = repo.find_commit(head)?;
+
+    let mut count = 1;
+
+    let mut commit = head_commit;
+    loop {
+      match commit.parent(0) {
+        Ok(p) => {
+          commit = p;
+          count += 1;
+        },
+        Err(_) => break,
+      }
+    }
+
+    Ok(count)
   }
 
   pub fn create_file<S: AsRef<str>>(&self, conn: &DbConn, name: Option<S>, content: Content) -> Result<DbFile> {

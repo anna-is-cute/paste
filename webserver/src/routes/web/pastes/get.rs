@@ -146,6 +146,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
 
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["paste"] = json!(output);
+  ctx["num_commits"] = json!(paste.num_commits()?);
   ctx["rendered"] = json!(rendered);
   ctx["user"] = json!(*user);
   ctx["deletion_key"] = json!(sess.data.remove("deletion_key"));
@@ -221,6 +222,7 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
 
   let mut ctx = context(&*config, Some(&user), &mut sess);
   ctx["paste"] = json!(output);
+  ctx["num_commits"] = json!(paste.num_commits()?);
   ctx["is_owner"] = json!(is_owner);
   ctx["author_name"] = json!(author_name);
 

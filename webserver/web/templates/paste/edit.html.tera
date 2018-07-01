@@ -77,7 +77,7 @@ Edit untitled paste
       <div class="left tabs">
         <ul>
           <li><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">files</a></li>
-          <li><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/revisions">revisions <span class="right tag">2</span></a></li>
+          <li><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/revisions">revisions <span class="right tag">{{ num_commits }}</span></a></li>
         </ul>
       </div>
     </div>

@@ -71,8 +71,8 @@ Edit untitled paste
       {% set file_count = paste.files | length %}
       <div class="right paste info">
         <span>{{ paste.visibility }}</span>
-        <span class="timestamp" data-timestamp="{{ paste.created_at }}"></span>
         <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
+        <span class="timestamp" data-timestamp="{{ paste.created_at }}"></span>
       </div>
       <div class="left tabs">
         <ul>

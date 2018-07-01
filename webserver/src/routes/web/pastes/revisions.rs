@@ -79,9 +79,7 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
       true
     })?;
 
-    if !diff_str.is_empty() {
-      diffs.push(diff_str);
-    }
+    diffs.push(diff_str);
 
     match parent {
       DiffArg::Commit(c) => commit = c,

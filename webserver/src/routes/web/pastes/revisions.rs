@@ -42,13 +42,18 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
     return Ok(Rst::Status(status));
   }
 
+  let files: Vec<OutputFile> = id.files(&conn)?
+    .iter()
+    .map(|x| x.as_output_file(false, &paste))
+    .collect::<result::Result<_, _>>()?;
+
   let repo = Repository::open(paste.files_directory())?;
   let head = repo.refname_to_id("HEAD")?;
   let head_commit = repo.find_commit(head)?;
 
   let mut count = 1;
 
-  let mut diffs = Vec::new();
+  let mut all_revisions: Vec<Vec<Revision>> = Vec::default();
   let mut commit = head_commit;
   loop {
     let parent = match commit.parent(0) {
@@ -69,28 +74,64 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
     };
 
     let diff = repo.diff_tree_to_tree(Some(&parent_tree), Some(&commit.tree()?), None)?;
-    let mut diff_str = String::new();
-    diff.print(DiffFormat::Patch, |_delta, _hunk, line| {
+
+    let mut revisions = Vec::default();
+
+    let mut revision = Revision::default();
+    let mut hunk = Hunk::default();
+
+    diff.print(DiffFormat::Patch, |delta, _hunk, line| {
+      let line_str = ::std::str::from_utf8(line.content()).unwrap();
       match line.origin() {
-        '+' | '-' | ' ' => diff_str.push(line.origin()),
-        _ => {}
+        '+' | '-' | ' ' => hunk.diff.push(line.origin()),
+        'F' => {
+          let name = delta.new_file().path()
+            .or_else(|| delta.old_file().path())
+            .unwrap()
+            .to_string_lossy()
+            .to_string();
+
+          if revision.id.is_some() && revision.id.as_ref() != Some(&name) {
+            revision.hunks.push(hunk.clone());
+            hunk = Hunk::default();
+            revisions.push(revision.clone());
+            revision = Revision::default();
+          }
+
+          revision.id = Some(name.clone());
+
+          let name = files
+            .iter()
+            .find(|x| x.id.simple().to_string() == name)
+            .and_then(|x| x.name.as_ref())
+            .cloned();
+          revision.file_name = name;
+          return true;
+        },
+        'H' => {
+          if hunk.header.is_some() {
+            revision.hunks.push(hunk.clone());
+            hunk = Hunk::default();
+          }
+          hunk.header = Some(line_str.to_string());
+          return true;
+        },
+        _ => return true,
       }
-      diff_str += ::std::str::from_utf8(line.content()).unwrap();
+      hunk.diff += line_str;
       true
     })?;
 
-    diffs.push(diff_str);
+    revision.hunks.push(hunk);
+    revisions.push(revision);
+
+    all_revisions.push(revisions);
 
     match parent {
       DiffArg::Commit(c) => commit = c,
       DiffArg::Tree(_) => break,
     }
   }
-
-  let files: Vec<OutputFile> = id.files(&conn)?
-    .iter()
-    .map(|x| x.as_output_file(false, &paste))
-    .collect::<result::Result<_, _>>()?;
 
   let output = Output::new(
     id,
@@ -109,7 +150,7 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
   ctx["paste"] = json!(output);
   ctx["num_commits"] = json!(count);
   ctx["author_name"] = json!(author_name);
-  ctx["diffs"] = json!(diffs);
+  ctx["revisions"] = json!(all_revisions);
 
   Ok(Rst::Template(Template::render("paste/revisions", ctx)))
 }
@@ -117,4 +158,17 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
 enum DiffArg<'repo> {
   Commit(Commit<'repo>),
   Tree(Tree<'repo>),
+}
+
+#[derive(Debug, Serialize, Default, Clone)]
+struct Revision {
+  id: Option<String>,
+  file_name: Option<String>,
+  hunks: Vec<Hunk>,
+}
+
+#[derive(Debug, Serialize, Default, Clone)]
+struct Hunk {
+  header: Option<String>,
+  diff: String,
 }

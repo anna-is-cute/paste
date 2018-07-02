@@ -76,3 +76,7 @@ div.codesass.codesass--has-line-numbers::before {
 .codesass.codesass--has-line-numbers .codesass__lines {
   color: darken($atom-one-light-background, 30);
 }
+
+.diffs .subtitle.hunk code {
+  background-color: darken($grey-darker, 5);
+}

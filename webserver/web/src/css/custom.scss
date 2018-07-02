@@ -270,3 +270,19 @@ th, td {
     color: $grey-light;
   }
 }
+
+.diffs .subtitle.hunk > * {
+  flex-grow: 1;
+}
+
+.diffs .subtitle.hunk {
+  margin: 0 -1.25rem;
+  padding: 0;
+  display: flex;
+  border-bottom: 2px solid $grey;
+  margin-top: .5rem;
+
+  &:first-child {
+    margin-top: -1.5rem;
+  }
+}

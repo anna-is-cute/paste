@@ -112,10 +112,35 @@ untitled paste
 
 {% block main %}
 
-{% for diff in diffs %}
-<div class="box">
-  <pre class="language-diff"><code>{{ diff }}</code></pre>
-</div>
+<div class="diffs">
+{% for revisions in revisions %}
+  {% if not loop.first %}
+    <hr/>
+  {% endif %}
+  {% for revision in revisions %}
+  <div class="box">
+    <div class="box-title">
+      <div>
+        <h2 class="title is-marginless">
+        {% if revision.file_name %}
+          <span class="keeps-spaces">{{ revision.file_name }}</span>
+        {% else %}
+          <em>unknown file</em>
+        {% endif %}
+        </h2>
+      </div>
+    </div>
+    <div>
+      {% for hunk in revision.hunks %}
+      <p class="subtitle hunk">
+        <code>{{ hunk.header }}</code>
+      </p>
+      <pre class="language-diff"><code>{{ hunk.diff }}</code></pre>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
 {% endfor %}
+</div>
 
 {% endblock main %}

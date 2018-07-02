@@ -94,6 +94,14 @@ div.codesass.codesass--has-line-numbers::before {
   color: lighten($atom-one-dark-background, 30);
 }
 
+.diffs .subtitle.hunk {
+  border-bottom: 2px solid darken($grey, 10);
+
+  code {
+    background-color: darken($grey-darker, 5);
+  }
+}
+
 // fonts
 
 /* lato-regular - latin_latin-ext */

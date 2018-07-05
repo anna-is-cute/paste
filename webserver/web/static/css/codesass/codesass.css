@@ -28,10 +28,10 @@
   width: calc(100% - 40px);
 }
 .codesass--has-line-numbers .codesass__pre {
-  overflow-x: visible;
+  overflow: visible;
 }
 .codesass--has-line-numbers .codesass__pre > code {
-  overflow-x: visible !important;
+  overflow: visible !important;
 }
 .codesass__code {
   display: block;

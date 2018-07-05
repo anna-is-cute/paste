@@ -40,7 +40,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  overflow: auto;
+  overflow: visible;
   margin: 0 !important;
   outline: none;
   text-align: left;
@@ -70,7 +70,7 @@
   height: 100%;
   text-align: right;
   color: #999;
-  z-index: 2;
+  z-index: 4;
 }
 .codesass__lines__line {
   display: block;
@@ -86,7 +86,7 @@
   width: 40px;
   height: 100%;
   background: #eee;
-  z-index: 1;
+  z-index: 4;
 }
 .codesass {
   background: #fff;

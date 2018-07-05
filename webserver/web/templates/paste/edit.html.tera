@@ -18,7 +18,7 @@
 <link
   rel="stylesheet"
   href="/static/css/codesass/codesass.css?v={{ resources_version }}"
-  integrity="sha384-+97redWAaid5l/waCAY6qGIBeazYoG2D9v7DE3JUCjJsHxddBSh4OLOZV86Iy6vF"/>
+  integrity="sha384-4bb3B6RVIvP4pnQirdxfsf9N0JO0R66fAqXrmCjU4FtowSWgR19etRc6vaTQZ/R3"/>
 <script
   defer
   src="/static/js/codesass/codesass.min.js?v={{ resources_version }}"

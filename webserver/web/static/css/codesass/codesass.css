@@ -27,6 +27,12 @@
 .codesass--has-line-numbers .codesass__textarea {
   width: calc(100% - 40px);
 }
+.codesass--has-line-numbers .codesass__pre {
+  overflow-x: visible;
+}
+.codesass--has-line-numbers .codesass__pre > code {
+  overflow-x: visible !important;
+}
 .codesass__code {
   display: block;
   font-family: monospace;
@@ -40,7 +46,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  overflow: visible;
+  overflow: auto;
   margin: 0 !important;
   outline: none;
   text-align: left;

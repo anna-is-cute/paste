@@ -5,7 +5,7 @@
       return;
     }
 
-    const m = moment.utc(ts);
+    const m = moment.utc(ts).local();
 
     elem.innerHTML = m.fromNow();
     elem.title = m.format('LLL');

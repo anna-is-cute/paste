@@ -31,7 +31,7 @@
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
-  integrity="sha384-kHzAsCWPhplRAhLqnWD9TBi3YspDbgGbNqXU2UfcvVDV+sNVlJTckJrWjTLeF4Ho"></script>
+  integrity="sha384-JNp8gZk5EwCAAX+dPMjAj/kD7G2uiZIrDhcy1rDNi72s7uPPyq9TIRgcjVMHNCeS"></script>
 {% endblock head %}
 
 {% block title %}

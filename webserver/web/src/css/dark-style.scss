@@ -95,7 +95,13 @@ div.codesass.codesass--has-line-numbers::before {
 }
 
 .diffs .subtitle.hunk {
-  border-bottom: 2px solid darken($grey, 10);
+  $diff-border: 2px solid darken($grey, 10);
+
+  border-bottom: $diff-border;
+
+  &:not(:first-child) {
+    border-top: $diff-border;
+  }
 
   code {
     background-color: darken($grey-darker, 5);

@@ -211,7 +211,7 @@ untitled paste
     {% else %}
       <pre
         class="file-source"
-        {% if file.language %}lang="{{ file.language }}"{% endif %}
+        {% if file.highlight_language %}lang="{{ file.highlight_language }}"{% endif %}
         id="{{ file.id }}"
         data-ln-prefix="{{ file.name | slugify }}"><code>{{ file.content.value }}</code></pre>
     {% endif %}

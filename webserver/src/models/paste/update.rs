@@ -2,6 +2,7 @@
 
 use models::id::FileId;
 use models::paste::{Content, CountedText, Visibility};
+use utils::Language;
 
 use serde::de::{Deserialize, Deserializer};
 
@@ -41,6 +42,13 @@ impl<V> Update<V> {
       Update::Ignore => panic!("unwrap_set on Ignore"),
       Update::Set(v) => v,
       Update::Remove => panic!("unwrap_set on Remove"),
+    }
+  }
+
+  pub fn set(self) -> Option<V> {
+    match self {
+      Update::Set(v) => Some(v),
+      _ => None,
     }
   }
 }
@@ -115,6 +123,9 @@ pub struct PasteFileUpdate {
   // single option because name can only be changed or left alone (all pastes must have name)
   #[serde(default)]
   pub name: Option<String>,
+  // double option because highlight language can be removed, changed, or left alone
+  #[serde(default)]
+  pub highlight_language: Update<Language>,
   // double option because content can be removed (file deletion), changed, or left alone
   #[serde(default)]
   pub content: Update<Content>,

@@ -1,5 +1,6 @@
 use models::id::{DeletionKeyId, PasteId, FileId, UserId};
 use super::{Paste, Metadata, Visibility, Content};
+use utils::Language;
 
 use chrono::{DateTime, Utc};
 
@@ -43,15 +44,17 @@ impl Output {
 pub struct OutputFile {
   pub id: FileId,
   pub name: Option<String>,
+  pub language: Option<&'static str>,
   #[serde(skip_serializing_if = "Option::is_none")]
   pub content: Option<Content>,
 }
 
 impl OutputFile {
-  pub fn new<S: Into<String>>(id: FileId, name: Option<S>, content: Option<Content>) -> Self {
+  pub fn new<S: Into<String>>(id: FileId, name: Option<S>, language: Option<Language>, content: Option<Content>) -> Self {
     OutputFile {
       id,
       name: name.map(Into::into),
+      language: language.map(|x| x.hljs()),
       content,
     }
   }

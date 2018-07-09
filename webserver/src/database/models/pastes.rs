@@ -8,6 +8,7 @@ use store::Store;
 use super::files::{File as DbFile, NewFile};
 use super::super::schema::{pastes, files};
 use super::users::User;
+use utils::Language;
 
 use chrono::{NaiveDateTime, DateTime, Utc};
 
@@ -194,7 +195,7 @@ impl Paste {
     Ok(count)
   }
 
-  pub fn create_file<S: AsRef<str>>(&self, conn: &DbConn, name: Option<S>, content: Content) -> Result<DbFile> {
+  pub fn create_file<S: AsRef<str>>(&self, conn: &DbConn, name: Option<S>, lang: Option<Language>, content: Content) -> Result<DbFile> {
     // generate file id
     let id = FileId(Uuid::new_v4());
 
@@ -212,7 +213,7 @@ impl Paste {
       .unwrap_or_else(|| id.simple().to_string()); // fall back to uuid if necessary
 
     // add file to the database
-    let new_file = NewFile::new(id, self.id(), name, Some(binary), None);
+    let new_file = NewFile::new(id, self.id(), name, Some(binary), lang, None);
     let db_file = diesel::insert_into(files::table).values(&new_file).get_result(&**conn)?;
 
     Ok(db_file)

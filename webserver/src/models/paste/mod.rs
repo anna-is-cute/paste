@@ -1,3 +1,5 @@
+use utils::Language;
+
 use chrono::{DateTime, Utc};
 
 use diesel::backend::Backend;
@@ -174,6 +176,7 @@ impl<'v> FromFormValue<'v> for Visibility {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PasteFile {
   pub name: Option<CountedText>,
+  pub language: Option<Language>,
   pub content: Content,
 }
 

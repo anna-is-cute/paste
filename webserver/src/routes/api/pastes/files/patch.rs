@@ -96,6 +96,16 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
           Update::Ignore => {},
         }
 
+        match file.highlight_language {
+          Update::Set(lang) => db_file.set_highlight_language(Some(lang)),
+          Update::Remove => db_file.set_highlight_language(None),
+          Update::Ignore => {},
+        }
+
+        if file.highlight_language.is_set() || file.highlight_language.is_remove() {
+          db_changed = true;
+        }
+
         if db_changed {
           diesel::update(files::table)
             .filter(files::id.eq(db_file.id()))
@@ -107,7 +117,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
       // adding file
       None => {
         let content = file.content.unwrap_set();
-        paste.create_file(&conn, file.name, content)?;
+        paste.create_file(&conn, file.name, file.highlight_language.set(), content)?;
       },
     }
   }

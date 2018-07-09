@@ -35,6 +35,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     .into_iter()
     .map(|f| FilePayload {
       name: f.name.map(|x| x.into_inner()),
+      language: f.language,
       content: f.content,
     })
     .collect();
@@ -63,7 +64,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
   // TODO: eventually replace this all with a GET /pastes/<id>?full=true backend call
   let files: Vec<OutputFile> = files
     .into_iter()
-    .map(|x| OutputFile::new(x.id(), Some(x.name()), None))
+    .map(|x| OutputFile::new(x.id(), Some(x.name()), x.highlight_language(), None))
     .collect();
 
   let author = match *user {

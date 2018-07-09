@@ -6,11 +6,21 @@ var paste_editors = {};
    * Create the upload array for handling multiple files.
    */
   function createUpload() {
+    function getLanguage(parent) {
+      const lang = parent.querySelector('select[name=file_language]').value;
+      if (lang === '') {
+        return null;
+      }
+      return lang;
+    }
+
     var files = [];
     for (const editor of Object.values(paste_editors)) {
+      const parent = editor.editorRoot.parentElement.parentElement.parentElement;
       const file = {
-        'name': editor.editorRoot.parentElement.parentElement.parentElement.querySelector('input[name=file_name]').value,
-        'content': editor.getCode()
+        'name': parent.querySelector('input[name=file_name]').value,
+        'language': getLanguage(parent),
+        'content': editor.getCode(),
       };
       const id = editor.editorRoot.parentElement.parentElement.parentElement.querySelector('input[name=id]');
       if (id !== null) {
@@ -62,27 +72,31 @@ var paste_editors = {};
     });
 
     const name_input = parent.querySelector('input[name=file_name]');
-    name_input.addEventListener('input', function(e) {
-      const suffix = e.target.value.split('.').pop();
+    const lang_input = parent.querySelector('select[name=file_language]');
+
+    function updateLanguage() {
+      var suffix;
+      if (lang_input.value !== '') {
+        suffix = lang_input.value;
+      } else if (name_input.value !== '') {
+        suffix = name_input.value.split('.').pop();
+      }
       const lang = hljs.getLanguage(suffix) !== undefined ? suffix : 'plaintext';
       editor.updateLanguage(lang);
       editor.updateCode(editor.code);
-    });
-
-    if (name_input.value !== '') {
-      const suffix = name_input.value.split('.').pop();
-      const lang = hljs.getLanguage(suffix) !== undefined ? suffix : 'plaintext';
-      editor.updateLanguage(lang);
     }
 
+    name_input.addEventListener('input', updateLanguage);
+    lang_input.addEventListener('change', updateLanguage);
+
+    updateLanguage();
     editor.updateCode(el.value);
+    editor.createLineNumbers(); // TODO: fix this in codesass
 
     const to_delete = paste_num;
     parent.querySelector('button[name=delete_button]').addEventListener('click', function() {
       removeFile(to_delete);
     });
-
-    parent.querySelector('div[name=name_field]').classList.add('is-grouped');
 
     paste_editors[paste_num] = editor;
 

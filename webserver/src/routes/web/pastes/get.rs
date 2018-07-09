@@ -8,7 +8,7 @@ use models::id::{PasteId, FileId};
 use models::paste::{Content, Visibility};
 use models::paste::output::{Output, OutputFile, OutputAuthor};
 use routes::web::{context, Rst, OptionalWebUser, Session};
-use utils::external_links;
+use utils::{external_links, Language};
 
 use ammonia::Builder;
 
@@ -222,6 +222,7 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
 
   let mut ctx = context(&*config, Some(&user), &mut sess);
   ctx["paste"] = json!(output);
+  ctx["languages"] = json!(Language::context());
   ctx["num_commits"] = json!(paste.num_commits()?);
   ctx["is_owner"] = json!(is_owner);
   ctx["author_name"] = json!(author_name);

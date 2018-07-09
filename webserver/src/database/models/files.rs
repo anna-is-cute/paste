@@ -4,6 +4,7 @@ use errors::*;
 use models::id::{FileId, PasteId};
 use models::paste::Content;
 use models::paste::output::OutputFile;
+use utils::Language;
 
 use super::pastes::Paste;
 use super::super::schema::files;
@@ -15,6 +16,7 @@ use std::io::Read;
 use std::path::PathBuf;
 
 #[derive(Debug, Identifiable, AsChangeset, Queryable, Associations)]
+#[changeset_options(treat_none_as_null = "true")]
 #[belongs_to(Paste)]
 pub struct File {
   id: FileId,
@@ -22,6 +24,7 @@ pub struct File {
   name: String,
   is_binary: Option<bool>,
   created_at: NaiveDateTime,
+  highlight_language: Option<Language>,
 }
 
 impl File {
@@ -41,6 +44,14 @@ impl File {
     self.name = name;
   }
 
+  pub fn highlight_language(&self) -> Option<Language> {
+    self.highlight_language
+  }
+
+  pub fn set_highlight_language(&mut self, lang: Option<Language>) {
+    self.highlight_language = lang;
+  }
+
   pub fn is_binary(&self) -> Option<bool> {
     self.is_binary
   }
@@ -56,7 +67,7 @@ impl File {
       None
     };
 
-    Ok(OutputFile::new(self.id(), Some(self.name()), content))
+    Ok(OutputFile::new(self.id(), Some(self.name()), self.highlight_language(), content))
   }
 
   pub fn path(&self, paste: &Paste) -> PathBuf {
@@ -86,11 +97,12 @@ pub struct NewFile {
   name: String,
   is_binary: Option<bool>,
   created_at: NaiveDateTime,
+  highlight_language: Option<Language>,
 }
 
 impl NewFile {
-  pub fn new(id: FileId, paste_id: PasteId, name: String, is_binary: Option<bool>, created_at: Option<NaiveDateTime>) -> Self {
+  pub fn new(id: FileId, paste_id: PasteId, name: String, is_binary: Option<bool>, highlight_language: Option<Language>, created_at: Option<NaiveDateTime>) -> Self {
     let created_at = created_at.unwrap_or_else(|| Utc::now().naive_utc());
-    NewFile { id, paste_id, name, is_binary, created_at }
+    NewFile { id, paste_id, name, is_binary, created_at, highlight_language }
   }
 }

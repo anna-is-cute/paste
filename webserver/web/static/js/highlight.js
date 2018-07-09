@@ -8,7 +8,12 @@
       if (title === null) {
         return;
       }
-      const suffix = title.innerText.trim().split('.').pop();
+      var suffix;
+      if (pre.lang) {
+        suffix = pre.lang;
+      } else {
+        suffix = title.innerText.trim().split('.').pop();
+      }
       const classes = [];
       if (hljs.getLanguage(suffix) === undefined) {
         classes.push('no-highlight');

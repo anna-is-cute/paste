@@ -171,10 +171,10 @@ Edit untitled paste
           <div class="control has-icons-left">
             <div class="select">
               <select name="file_language">
-                <option label="auto"{% if not file.language %} selected{% endif %}></option>
+                <option label="auto"{% if not file.highlight_language %} selected{% endif %}></option>
                 <option disabled>---</option>
                 {% for lang in languages %}
-                <option value="{{ lang.0 }}"{% if file.language and file.language == lang.2 %} selected{% endif %}>{{ lang.1 }}</option>
+                <option value="{{ lang.0 }}"{% if file.highlight_language and file.highlight_language == lang.2 %} selected{% endif %}>{{ lang.1 }}</option>
                 {% endfor %}
               </select>
               <span class="icon is-small is-left">

@@ -100,11 +100,17 @@ impl<'a, 'r> FromRequest<'a, 'r> for DeletionAuth {
   type Error = ApiKeyError;
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
-    let auth = match request.headers().get_one("Authorization") {
+    let header = request
+      .headers()
+      .iter()
+      .filter(|h| h.name == "Authorization")
+      .map(|h| h.value.to_lowercase())
+      .find(|h| h.starts_with("key "));
+    let auth = match header {
       Some(a) => a,
       None => return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::NotPresent)),
     };
-    if !auth.to_lowercase().starts_with("key ") {
+    if !auth.starts_with("key ") {
       return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::BadHeader));
     }
     let uuid = match Uuid::from_str(&auth[4..]) {
@@ -148,11 +154,17 @@ impl<'a, 'r> FromRequest<'a, 'r> for RequiredUser {
   type Error = ApiKeyError;
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
-    let auth = match request.headers().get_one("Authorization") {
+    let header = request
+      .headers()
+      .iter()
+      .filter(|h| h.name == "Authorization")
+      .map(|h| h.value.to_lowercase())
+      .find(|h| h.starts_with("key "));
+    let auth = match header {
       Some(a) => a,
       None => return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::NotPresent)),
     };
-    if !auth.to_lowercase().starts_with("key ") {
+    if !auth.starts_with("key ") {
       return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::BadHeader));
     }
     let uuid = match Uuid::from_str(&auth[4..]) {
@@ -194,11 +206,17 @@ impl<'a, 'r> FromRequest<'a, 'r> for OptionalUser {
   type Error = ApiKeyError;
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
-    let auth = match request.headers().get_one("Authorization") {
+    let header = request
+      .headers()
+      .iter()
+      .filter(|h| h.name == "Authorization")
+      .map(|h| h.value.to_lowercase())
+      .find(|h| h.starts_with("key "));
+    let auth = match header {
       Some(a) => a,
       None => return Outcome::Success(OptionalUser(None)),
     };
-    if !auth.to_lowercase().starts_with("key ") {
+    if !auth.starts_with("key ") {
       return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::BadHeader));
     }
     let uuid = match Uuid::from_str(&auth[4..]) {

@@ -44,7 +44,7 @@ impl Output {
 pub struct OutputFile {
   pub id: FileId,
   pub name: Option<String>,
-  pub language: Option<&'static str>,
+  pub highlight_language: Option<&'static str>,
   #[serde(skip_serializing_if = "Option::is_none")]
   pub content: Option<Content>,
 }
@@ -54,7 +54,7 @@ impl OutputFile {
     OutputFile {
       id,
       name: name.map(Into::into),
-      language: language.map(|x| x.hljs()),
+      highlight_language: language.map(|x| x.hljs()),
       content,
     }
   }

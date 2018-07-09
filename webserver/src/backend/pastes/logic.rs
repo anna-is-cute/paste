@@ -110,7 +110,7 @@ impl<'a> PastePayload<'a> {
 
     let mut files = Vec::with_capacity(self.files.len());
     for file in self.files {
-      let f = paste.create_file(conn, file.name, file.language, file.content)
+      let f = paste.create_file(conn, file.name, file.highlight_language, file.content)
         .map_err(|e| CreateError::Internal(e.into()))?;
       files.push(f);
     }

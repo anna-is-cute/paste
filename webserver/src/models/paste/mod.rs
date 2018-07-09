@@ -177,7 +177,7 @@ impl<'v> FromFormValue<'v> for Visibility {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PasteFile {
   pub name: Option<CountedText>,
-  pub language: Option<Language>,
+  pub highlight_language: Option<Language>,
   pub content: Content,
 }
 

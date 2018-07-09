@@ -7,6 +7,7 @@ use models::id::{PasteId, FileId};
 use models::paste::{Visibility, Content};
 use models::paste::update::{MetadataUpdate, Update};
 use routes::web::{OptionalWebUser, Rst, Session};
+use utils::Language;
 
 use diesel;
 use diesel::prelude::*;
@@ -202,6 +203,11 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
         f.write_all(&file.content.into_bytes())?;
         // FIXME: set is_binary field
 
+        if file.language != db_file.highlight_language() {
+          db_changed = true;
+        }
+        db_file.set_highlight_language(file.language);
+
         if db_changed {
           diesel::update(files::table)
             .filter(files::id.eq(db_file.id()))
@@ -219,7 +225,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
           Some(file.name)
         };
         let content = Content::Text(file.content);
-        paste.create_file(&conn, name, content)?;
+        paste.create_file(&conn, name, file.language, content)?;
       },
     }
   }
@@ -256,6 +262,7 @@ struct MultiFile {
   #[serde(default)]
   id: Option<FileId>,
   name: String,
+  language: Option<Language>,
   content: String,
 }
 

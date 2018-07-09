@@ -30,7 +30,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-5mVmmlY3Wcx9lcNBipBaUE2po4oGkDqdVib0zwJ6XVOKGo3Huc+A5PkwGSbIPp9F"></script>
+  integrity="sha384-tQMeDWNrXWQhLnYbF53DhLZt5icAmI9XHxnw8Gmfy7UH+zdv1wtqHcQtREYAeD70"></script>
 <script
   defer
   src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
@@ -158,7 +158,7 @@ Edit untitled paste
 
     {% for file in paste.files %}
     <div id="file{{ loop.index }}" class="field">
-      <div name="name_field" class="field is-grouped">
+      <div name="name_field" class="field is-grouped is-grouped-multiline">
         <div class="control is-expanded">
           <input
             name="file_name"
@@ -167,12 +167,28 @@ Edit untitled paste
             value="{{ file.name }}"
             placeholder="File name with extension"/>
         </div>
-        <div class="requires-js control">
-          <button name="delete_button" type="button" class="button is-danger">
-            <span class="icon">
-              <i class="fas fa-trash-alt"></i>
-            </span>
-          </button>
+        <div class="field is-grouped">
+          <div class="control has-icons-left">
+            <div class="select">
+              <select name="file_language">
+                <option label="auto"{% if not file.language %} selected{% endif %}></option>
+                <option disabled>---</option>
+                {% for lang in languages %}
+                <option value="{{ lang.0 }}"{% if file.language and file.language == lang.2 %} selected{% endif %}>{{ lang.1 }}</option>
+                {% endfor %}
+              </select>
+              <span class="icon is-small is-left">
+                <i class="fas fa-code"></i>
+              </span>
+            </div>
+          </div>
+          <div class="requires-js control">
+            <button name="delete_button" type="button" class="button is-danger">
+              <span class="icon">
+                <i class="fas fa-trash-alt"></i>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
       {% if file.content.format == "text" %}

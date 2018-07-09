@@ -4,6 +4,7 @@ use database::DbConn;
 use errors::*;
 use models::paste::{Visibility, Content};
 use routes::web::{OptionalWebUser, Session};
+use utils::Language;
 
 use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
 
@@ -16,6 +17,7 @@ fn handle_non_js(upload: &PasteUpload) -> Vec<MultiFile> {
   vec![
     MultiFile {
       name: upload.file_name.clone(),
+      language: upload.file_language,
       content: upload.file_content.clone(),
     },
   ]
@@ -70,6 +72,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     .into_iter()
     .map(|f| FilePayload {
       name: if f.name.is_empty() { None } else { Some(f.name) },
+      language: f.language,
       content: Content::Text(f.content),
     })
     .collect();
@@ -119,6 +122,8 @@ struct PasteUpload {
   #[serde(skip)]
   file_name: String,
   #[serde(skip)]
+  file_language: Option<Language>,
+  #[serde(skip)]
   file_content: String,
   #[serde(skip)]
   upload_json: Option<String>,
@@ -131,5 +136,6 @@ struct PasteUpload {
 #[derive(Debug, Deserialize)]
 struct MultiFile {
   name: String,
+  language: Option<Language>,
   content: String,
 }

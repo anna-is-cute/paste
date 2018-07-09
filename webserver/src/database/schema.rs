@@ -31,6 +31,7 @@ table! {
         name -> Text,
         is_binary -> Nullable<Bool>,
         created_at -> Timestamp,
+        highlight_language -> Nullable<Text>,
     }
 }
 

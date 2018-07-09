@@ -4,6 +4,7 @@ use database::models::files::File;
 use database::models::pastes::Paste;
 use database::models::users::User;
 use models::paste::{Content, Visibility};
+use utils::Language;
 
 use failure::Error;
 
@@ -17,6 +18,7 @@ pub struct PastePayload<'u> {
 
 pub struct FilePayload {
   pub name: Option<String>,
+  pub language: Option<Language>,
   pub content: Content,
 }
 

@@ -30,7 +30,7 @@
 <script
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-caCmnkFqxfjOh+u4KGwKvqB32/6UtEti6NjeNUJ8ZPisFKz4WIbQPfMdXkCWwsRV"></script>
+  integrity="sha384-Bt73xnaUZ6TxQHjxnfXdu2qJZVMKQm7hK6eC0wO7dGMpSPGCJN4FqpzNHOfd9n/w"></script>
 <script
   defer
   src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
@@ -205,11 +205,15 @@ untitled paste
           {{ rendered | get(key=file.id) | safe }}
         </div>
         <div class="paste-source-content is-not-displayed">
-          <pre class="file-source" id="{{ file.id }}" data-ln-prefix="{{ file.name | slugify }}">{{ file.content.value }}</pre>
+          <pre class="file-source" id="{{ file.id }}" data-ln-prefix="{{ file.name | slugify }}"><code>{{ file.content.value }}</code></pre>
         </div>
       </div>
     {% else %}
-      <pre class="file-source" id="{{ file.id }}" data-ln-prefix="{{ file.name | slugify }}">{{ file.content.value }}</pre>
+      <pre
+        class="file-source"
+        {% if file.language %}lang="{{ file.language }}"{% endif %}
+        id="{{ file.id }}"
+        data-ln-prefix="{{ file.name | slugify }}"><code>{{ file.content.value }}</code></pre>
     {% endif %}
   {% else %}
     Binary content

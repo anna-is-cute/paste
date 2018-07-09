@@ -1,7 +1,7 @@
 <div id="base_file" class="requires-no-js field">
   <hr/>
 
-  <div name="name_field" class="field">
+  <div name="name_field" class="field is-grouped is-grouped-multiline">
     <div class="control is-expanded">
       <input
         name="file_name"
@@ -9,12 +9,28 @@
         type="text"
         placeholder="File name with extension"/>
     </div>
-    <div class="requires-js control">
-      <button name="delete_button" type="button" class="button is-danger">
-        <span class="icon">
-          <i class="fas fa-trash-alt"></i>
-        </span>
-      </button>
+    <div class="field is-grouped">
+      <div class="control has-icons-left">
+        <div class="select">
+          <select name="file_language">
+            <option label="auto" selected></option>
+            <option disabled>---</option>
+            {% for lang in languages %}
+            <option value="{{ lang.0 }}">{{ lang.1 }}</option>
+            {% endfor %}
+          </select>
+          <span class="icon is-small is-left">
+            <i class="fas fa-code"></i>
+          </span>
+        </div>
+      </div>
+      <div class="requires-js control">
+        <button name="delete_button" type="button" class="button is-danger">
+          <span class="icon">
+            <i class="fas fa-trash-alt"></i>
+          </span>
+        </button>
+      </div>
     </div>
   </div>
   <div class="field">

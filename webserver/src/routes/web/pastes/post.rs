@@ -72,7 +72,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     .into_iter()
     .map(|f| FilePayload {
       name: if f.name.is_empty() { None } else { Some(f.name) },
-      language: f.language,
+      highlight_language: f.language,
       content: Content::Text(f.content),
     })
     .collect();

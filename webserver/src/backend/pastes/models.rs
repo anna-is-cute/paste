@@ -18,7 +18,7 @@ pub struct PastePayload<'u> {
 
 pub struct FilePayload {
   pub name: Option<String>,
-  pub language: Option<Language>,
+  pub highlight_language: Option<Language>,
   pub content: Content,
 }
 

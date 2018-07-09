@@ -35,7 +35,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     .into_iter()
     .map(|f| FilePayload {
       name: f.name.map(|x| x.into_inner()),
-      language: f.language,
+      highlight_language: f.highlight_language,
       content: f.content,
     })
     .collect();

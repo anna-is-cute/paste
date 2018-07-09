@@ -53,7 +53,7 @@ fn _get_all(query: Option<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>>
         name: x.name().map(Into::into),
         description: x.description().map(Into::into),
         visibility: x.visibility(),
-        created_at: x.created_at(),
+        created_at: Some(x.created_at()),
       },
     })
     .collect();

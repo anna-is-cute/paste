@@ -30,7 +30,7 @@ impl Output {
           name: name.map(|x| x.as_ref().to_string().into()),
           description: desc.map(|x| x.as_ref().to_string().into()),
           visibility: vis,
-          created_at,
+          created_at: Some(created_at),
         },
         files: Vec::new(),
       },

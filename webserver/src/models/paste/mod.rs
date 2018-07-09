@@ -37,7 +37,8 @@ pub struct Metadata {
   pub description: Option<CountedText>,
   #[serde(default)]
   pub visibility: Visibility,
-  pub created_at: DateTime<Utc>,
+  #[serde(skip_deserializing)]
+  pub created_at: Option<DateTime<Utc>>,
 }
 
 #[derive(Debug, Clone, Serialize)]

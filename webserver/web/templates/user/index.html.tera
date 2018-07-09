@@ -107,7 +107,7 @@
       <span class="is-not-displayed" id="{{ file.id }}-title">{{ file.name }}</span>
       <pre
         class="file-source"
-        {% if file.language %}lang="{{ file.language }}"{% endif %}
+        {% if file.highlight_language %}lang="{{ file.highlight_language }}"{% endif %}
         id="{{ file.id }}"><code>{{ file.content.value }}</code></pre>
       {% endif %}
     {% endfor %}

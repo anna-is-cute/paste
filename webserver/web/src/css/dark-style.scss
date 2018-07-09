@@ -108,6 +108,11 @@ div.codesass.codesass--has-line-numbers::before {
   }
 }
 
+.select:not(.is-multiple) {
+  // fix arrows
+  height: 2.5em;
+}
+
 // fonts
 
 /* lato-regular - latin_latin-ext */

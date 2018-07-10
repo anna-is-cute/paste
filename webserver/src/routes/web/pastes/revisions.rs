@@ -84,6 +84,7 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
       let line_str = ::std::str::from_utf8(line.content()).unwrap();
       match line.origin() {
         '+' | '-' | ' ' => hunk.diff.push(line.origin()),
+        '=' | '>' | '<' => {},
         'F' => {
           let name = delta.new_file().path()
             .or_else(|| delta.old_file().path())

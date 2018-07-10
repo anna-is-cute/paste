@@ -13,11 +13,14 @@
       <div class="control has-icons-left">
         <div class="select">
           <select name="file_language">
-            <option label="auto" selected></option>
-            <option disabled>---</option>
-            {% for lang in languages %}
-            <option value="{{ lang.0 }}">{{ lang.1 }}</option>
-            {% endfor %}
+            <optgroup label="Highlight language">
+              <option label="auto" selected></option>
+            </optgroup>
+            <optgroup>
+              {% for lang in languages %}
+              <option value="{{ lang.0 }}">{{ lang.1 }}</option>
+              {% endfor %}
+            </optgroup>
           </select>
           <span class="icon is-small is-left">
             <i class="fas fa-code"></i>

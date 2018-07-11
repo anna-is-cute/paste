@@ -9,6 +9,8 @@ services:
       - postgres
       - redis
       - sidekiq
+    environment:
+      - ROCKET_ENV=prod
   redis:
     image: redis:alpine
   postgres:

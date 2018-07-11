@@ -1,6 +1,12 @@
 /target
 **/*.rs.bk
+
 /Rocket.toml
 /config.toml
 /.env
 /sidekiq.yml
+/sidekiq.sh
+
+.docker/run/nginx/certs/*
+.docker/run/nginx/sites/*.conf
+.docker/run/nginx/nginx.conf

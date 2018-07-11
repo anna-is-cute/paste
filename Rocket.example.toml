@@ -1,4 +1,6 @@
 [global]
+# uncomment this for docker (defaults to localhost)
+# address = "0.0.0.0"
 template_dir = "web/templates"
 
 # uncomment this to enable server TLS

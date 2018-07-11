@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# DOCKER USERS: please change #!/bin/sh to #!/bin/bash :)
+
 # Edit these variables.
 
 # The environment to start sidekiq in. "development" "beta" "production"

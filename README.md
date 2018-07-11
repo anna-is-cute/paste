@@ -135,6 +135,19 @@ Done!
     }
     ```
 
+## Compiling
+
+If you just want to compile paste, perhaps to test while making a contribution, there is a Docker
+image that has a set-up build environment.
+
+```shell
+# from repo root
+docker run --rm -it -v "$(pwd)":/paste jkcclemens/paste
+```
+
+By default, that will build paste, but you can also append `/bin/bash` to the command to start a
+Bash shell in the working environment.
+
 ## Contact
 
 Join the [Discord server](https://discord.gg/EnqSwJK)!

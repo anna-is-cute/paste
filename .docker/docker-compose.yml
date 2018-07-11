@@ -31,7 +31,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - "./run/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
-      - "./run/nginx/sites:/etc/nginx/sites:ro"
-      - "./run/nginx/certs:/etc/nginx/certs:ro"
+      - "./nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "./nginx/sites:/etc/nginx/sites:ro"
+      - "./nginx/certs:/etc/nginx/certs:ro"
       - "../webserver/web/static:/etc/nginx/web/static:ro"

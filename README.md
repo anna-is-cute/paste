@@ -43,11 +43,11 @@ will need to copy over their examples files and edit those. The example files fo
 
 If you need `./Rocket.toml`, the example file will be located at `./Rocket.example.toml`.
 
-1. `.docker/run/nginx/nginx.conf`
+1. `.docker/nginx/nginx.conf`
 
     Change anything you deem necessary.
 
-2. `.docker/run/nginx/sites`
+2. `.docker/nginx/sites`
 
     Choose the file that is best for you. There are HTTP and HTTPS configurations. nginx will load
     anything that matches `*.conf` in that directory, so rename or copy whichever you want.

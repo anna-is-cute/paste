@@ -1,0 +1,37 @@
+version: '3'
+services:
+  backend:
+    build: run
+    command: /run.sh --release
+    volumes:
+      - "../:/paste"
+    depends_on:
+      - postgres
+      - redis
+      - sidekiq
+  redis:
+    image: redis
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=paste
+      - POSTGRES_PASSWORD=paste
+  sidekiq:
+    build: sidekiq
+    depends_on:
+      - redis
+    volumes:
+      - "../:/paste"
+  nginx:
+    image: nginx:alpine
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./run/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "./run/nginx/sites:/etc/nginx/sites:ro"
+      - "./run/nginx/certs:/etc/nginx/certs:ro"
+      - "../webserver/web/static:/etc/nginx/web/static:ro"

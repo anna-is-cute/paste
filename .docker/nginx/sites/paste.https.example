@@ -7,7 +7,7 @@ server {
   server_name change.me;
 
   # CHANGE: change fullchain.pem and privkey.pem to the files you've put in the certs directroy
-  #         place certs and keys in .docker/run/nginx/certs
+  #         place certs and keys in .docker/nginx/certs
   ssl_certificate /etc/nginx/certs/fullchain.pem;
   ssl_certificate_key /etc/nginx/certs/privkey.pem;
 

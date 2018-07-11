@@ -10,9 +10,9 @@ services:
       - redis
       - sidekiq
   redis:
-    image: redis
+    image: redis:alpine
   postgres:
-    image: postgres
+    image: postgres:alpine
     environment:
       - POSTGRES_USER=paste
       - POSTGRES_PASSWORD=paste

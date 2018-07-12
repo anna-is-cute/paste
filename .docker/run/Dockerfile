@@ -4,6 +4,8 @@ RUN $HOME/.cargo/bin/cargo install diesel_cli --no-default-features --features p
 
 RUN apt-get install --assume-yes --no-install-recommends postgresql-client
 
+STOPSIGNAL SIGKILL
+
 ADD run.sh /run.sh
 
 CMD /run.sh

@@ -8,4 +8,6 @@ RUN gem install sidekiq ffi
 
 WORKDIR /paste
 
+STOPSIGNAL SIGKILL
+
 CMD ./sidekiq.sh

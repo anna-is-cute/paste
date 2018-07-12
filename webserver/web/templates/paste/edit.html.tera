@@ -76,8 +76,8 @@ Edit untitled paste
       </div>
       <div class="left tabs">
         <ul>
-          <li><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">files</a></li>
-          <li><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/revisions">revisions <span class="right tag">{{ num_commits }}</span></a></li>
+          <li><a href="/p/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">files</a></li>
+          <li><a href="/p/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/revisions">revisions <span class="right tag">{{ num_commits }}</span></a></li>
         </ul>
       </div>
     </div>
@@ -86,7 +86,7 @@ Edit untitled paste
 {% endblock header %}
 
 {% block main %}
-<form id="paste_upload" method="post" action="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">
+<form id="paste_upload" method="post" action="/p/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">
   <input type="hidden" name="_method" value="patch"/>
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div>

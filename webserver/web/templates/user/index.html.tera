@@ -61,12 +61,12 @@
   {% if page == 1 %}
     <a class="pagination-previous" disabled>Previous</a>
   {% else %}
-    <a href="/users/{{ target.username | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
+    <a href="/u/{{ target.username | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
   {% endif %}
   {% if page == last_page %}
     <a class="pagination-next" disabled>Next</a>
   {% else %}
-    <a href="/users/{{ target.username | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
+    <a href="/u/{{ target.username | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
   {% endif %}
 </nav>
 
@@ -81,7 +81,7 @@
     <div class="box-title">
       <div>
         <h3 class="title is-marginless">
-          <a href="/pastes/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
+          <a href="/p/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
         {% if paste.name %}
             <span class="keeps-spaces">{{ paste.name }}</span>
         {% else %}
@@ -123,12 +123,12 @@
   {% if page == 1 %}
     <a class="pagination-previous" disabled>Previous</a>
   {% else %}
-    <a href="/users/{{ target.username | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
+    <a href="/u/{{ target.username | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
   {% endif %}
   {% if page == last_page %}
     <a class="pagination-next" disabled>Next</a>
   {% else %}
-    <a href="/users/{{ target.username | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
+    <a href="/u/{{ target.username | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
   {% endif %}
 </nav>
 {% endif %}

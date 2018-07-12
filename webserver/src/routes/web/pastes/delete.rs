@@ -18,7 +18,7 @@ use uuid::Uuid;
 
 use std::str::FromStr;
 
-#[delete("/pastes/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>")]
+#[delete("/p/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>")]
 fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let deletion = deletion.into_inner();
 

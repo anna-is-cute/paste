@@ -19,7 +19,7 @@ use rocket_contrib::Template;
 
 use std::result;
 
-#[get("/pastes/<username>/<id>/revisions")]
+#[get("/p/<username>/<id>/revisions")]
 fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,

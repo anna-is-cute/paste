@@ -69,16 +69,16 @@ fn id(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
     &username,
     PATH_SEGMENT_ENCODE_SET,
   );
-  Ok(Rst::Redirect(Redirect::to(&format!("/pastes/{}/{}", owner, id))))
+  Ok(Rst::Redirect(Redirect::to(&format!("/p/{}/{}", owner, id))))
 }
 
 #[get("/<username>/<id>", rank = 10)]
 fn username_id(username: String, id: PasteId) -> Redirect {
   let username = utf8_percent_encode(&username, PATH_SEGMENT_ENCODE_SET);
-  Redirect::to(&format!("/pastes/{}/{}", username, id))
+  Redirect::to(&format!("/p/{}/{}", username, id))
 }
 
-#[get("/pastes/<username>/<id>")]
+#[get("/p/<username>/<id>")]
 fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
@@ -156,7 +156,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
   Ok(Rst::Template(Template::render("paste/index", ctx)))
 }
 
-#[get("/pastes/<username>/<id>/edit")]
+#[get("/p/<username>/<id>/edit")]
 fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let user = match user.into_inner() {
     Some(u) => u,

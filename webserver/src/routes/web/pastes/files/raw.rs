@@ -31,7 +31,7 @@ impl<'r> Responder<'r> for As {
 }
 
 
-#[get("/pastes/<username>/<paste_id>/files/<file_id>/raw")]
+#[get("/p/<username>/<paste_id>/files/<file_id>/raw")]
 fn get(username: String, paste_id: PasteId, file_id: FileId, user: OptionalWebUser, conn: DbConn) -> Result<As> {
   let paste: DbPaste = match paste_id.get(&conn)? {
     Some(p) => p,

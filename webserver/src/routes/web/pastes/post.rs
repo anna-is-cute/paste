@@ -111,7 +111,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
   sess.take_form();
 
   let username = utf8_percent_encode(username, PATH_SEGMENT_ENCODE_SET);
-  Ok(Redirect::to(&format!("/pastes/{}/{}", username, paste.id().simple())))
+  Ok(Redirect::to(&format!("/p/{}/{}", username, paste.id().simple())))
 }
 
 #[derive(Debug, FromForm, Serialize)]

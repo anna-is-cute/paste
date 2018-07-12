@@ -61,7 +61,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     None => paste.commit("Anonymous", "none", "create paste")?,
   }
 
-  // TODO: eventually replace this all with a GET /pastes/<id>?full=true backend call
+  // TODO: eventually replace this all with a GET /p/<id>?full=true backend call
   let files: Vec<OutputFile> = files
     .into_iter()
     .map(|x| OutputFile::new(x.id(), Some(x.name()), x.highlight_language(), None))

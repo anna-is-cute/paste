@@ -19,12 +19,12 @@ use rocket_contrib::Template;
 use std::fs::File;
 use std::io::Read;
 
-#[get("/users/<username>")]
+#[get("/u/<username>")]
 fn get(username: String, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
   _get(1, username, config, user, sess, conn)
 }
 
-#[get("/users/<username>?<params>")]
+#[get("/u/<username>?<params>")]
 fn get_page(username: String, params: PageParams, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
   _get(params.page, username, config, user, sess, conn)
 }

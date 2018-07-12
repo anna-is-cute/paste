@@ -57,7 +57,7 @@ untitled paste
         <div class="field is-grouped">
           {% if is_owner %}
           <div class="control">
-            <a class="button is-info is-large" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/edit">
+            <a class="button is-info is-large" href="/p/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/edit">
               <span class="icon is-large">
                 <i class="fas fa-pencil-alt"></i>
               </span>
@@ -101,8 +101,8 @@ untitled paste
       </div>
       <div class="left tabs">
         <ul>
-          <li class="is-active"><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">files</a></li>
-          <li><a href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/revisions">revisions <span class="right tag">{{ num_commits }}</span></a></li>
+          <li class="is-active"><a href="/p/{{ author_name | urlencode(safe="") }}/{{ paste.id }}">files</a></li>
+          <li><a href="/p/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/revisions">revisions <span class="right tag">{{ num_commits }}</span></a></li>
         </ul>
       </div>
     </div>
@@ -113,7 +113,7 @@ untitled paste
 {% block main %}
 {% if not paste.author or is_owner %}
 <div id="deletion_modal" class="modal">
-  <form id="deletion_form" action="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}" method="post">
+  <form id="deletion_form" action="/p/{{ author_name | urlencode(safe="") }}/{{ paste.id }}" method="post">
     <input type="hidden" name="_method" value="delete"/>
     <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
     <div class="modal-background closes-modal"></div>
@@ -195,7 +195,7 @@ untitled paste
       </div>
       {% endif %}
     </div>
-    <a class="is-pulled-right button" href="/pastes/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/files/{{ file.id }}/raw">Raw</a>
+    <a class="is-pulled-right button" href="/p/{{ author_name | urlencode(safe="") }}/{{ paste.id }}/files/{{ file.id }}/raw">Raw</a>
   </div>
   {% endif %}
   {% if file.content.format == "text" %}

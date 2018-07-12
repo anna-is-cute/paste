@@ -67,7 +67,7 @@ fn check_paste(paste: &PasteUpdate, files: &[MultiFile]) -> result::Result<(), S
   Ok(())
 }
 
-#[patch("/pastes/<username>/<paste_id>", format = "application/x-www-form-urlencoded", data = "<update>")]
+#[patch("/p/<username>/<paste_id>", format = "application/x-www-form-urlencoded", data = "<update>")]
 fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let update = update.into_inner();
   sess.set_form(&update);
@@ -243,7 +243,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
   sess.take_form();
 
   let username = utf8_percent_encode(&username, PATH_SEGMENT_ENCODE_SET);
-  Ok(Rst::Redirect(Redirect::to(&format!("/pastes/{}/{}", username, paste_id.simple()))))
+  Ok(Rst::Redirect(Redirect::to(&format!("/p/{}/{}", username, paste_id.simple()))))
 }
 
 #[derive(Debug, FromForm, Serialize)]

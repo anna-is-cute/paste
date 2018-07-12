@@ -4,7 +4,7 @@ set -e
 
 source "$HOME/.bashrc"
 
-while ! nc -z postgres 5432; do
+while ! pg_isready -h postgres -p 5432 -q; do
   sleep 1
 done
 

@@ -5,6 +5,14 @@ authors = ["Kyle Clemens <git@kyleclemens.com>"]
 
 build = "build.rs"
 
+exclude = [
+  # pls
+  # "web/",
+  # "migrations/",
+  "web/**/*",
+  "migrations/**/*",
+]
+
 [badges]
 travis-ci = { repository = "jkcclemens/paste", branch = "master" }
 maintenance = { status = "actively-developed" }

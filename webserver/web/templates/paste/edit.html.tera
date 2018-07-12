@@ -30,7 +30,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-tQMeDWNrXWQhLnYbF53DhLZt5icAmI9XHxnw8Gmfy7UH+zdv1wtqHcQtREYAeD70"></script>
+  integrity="sha384-gZTaRJZ75a+mYa/4QVi1Y/bcKoC8wzbJmPA9ZO7pD5c/fbw4xejov0ou0MjsiyuM"></script>
 <script
   defer
   src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
@@ -38,7 +38,7 @@
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
-  integrity="sha384-JNp8gZk5EwCAAX+dPMjAj/kD7G2uiZIrDhcy1rDNi72s7uPPyq9TIRgcjVMHNCeS"></script>
+  integrity="sha384-pUpaSeZxPJMNsyWP4KoOd3efZ7g9I9Bvpt4i4pVdMTtsdM1kQqelw2YKyf6CalmR"></script>
 {% endblock head %}
 
 {% block title %}

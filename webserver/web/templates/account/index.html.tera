@@ -9,7 +9,7 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-psOOiWtm8cOmC12861czu8UqoOis84u/9RTHE//pjQC2QhPVjKeHMFBBy65EZZtP"></script>
+  integrity="sha384-/X0bG33G/+qdcdtMZRL6gWteDKzsAOMlMd+vmLlk0aEUaErn2y9Nce/m1JuI2bux"></script>
 {% endblock head %}
 
 {% block title %}Account{% endblock title %}

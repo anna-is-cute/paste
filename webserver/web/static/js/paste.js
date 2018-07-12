@@ -1,4 +1,8 @@
-(function() {
+'use strict';
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+(function () {
   function openModal() {
     document.getElementById('deletion_modal').classList.add('is-active');
   }
@@ -7,41 +11,66 @@
     document.getElementById('deletion_modal').classList.remove('is-active');
   }
 
-  for (var e of document.getElementsByClassName('opens-modal')) {
-    e.addEventListener('click', openModal);
-  }
+  [].concat(_toConsumableArray(document.getElementsByClassName('opens-modal'))).forEach(function (e) {
+    return e.addEventListener('click', openModal);
+  });
 
-  for (var e of document.getElementsByClassName('closes-modal')) {
-    e.addEventListener('click', closeModal);
-  }
+  [].concat(_toConsumableArray(document.getElementsByClassName('closes-modal'))).forEach(function (e) {
+    return e.addEventListener('click', closeModal);
+  });
 
-  function swap(current, current_content, next, next_content) {
+  function swap(current, currentContent, next, nextContent) {
     current.classList.remove('is-active');
     next.classList.add('is-active');
 
-    current_content.classList.add('is-not-displayed');
-    next_content.classList.remove('is-not-displayed');
+    currentContent.classList.add('is-not-displayed');
+    nextContent.classList.remove('is-not-displayed');
   }
 
-  for (const tabs_container of document.getElementsByClassName('paste-tabs-container')) {
-    const file_id = tabs_container.dataset.id;
-    const tab_links = document.getElementById(file_id + '-tab-links');
+  var _loop = function _loop(tabsContainer) {
+    var fileId = tabsContainer.dataset.id;
+    var tabLinks = document.getElementById(fileId + '-tab-links');
 
-    const rendered = tab_links.querySelector('.paste-rendered-tab');
-    const rendered_a = rendered.firstChild;
+    var rendered = tabLinks.querySelector('.paste-rendered-tab');
+    var renderedA = rendered.firstChild;
 
-    const source = tab_links.querySelector('.paste-source-tab');
-    const source_a = source.firstChild;
+    var source = tabLinks.querySelector('.paste-source-tab');
+    var sourceA = source.firstChild;
 
-    const rendered_content = tabs_container.querySelector('div.paste-rendered-content');
-    const source_content = tabs_container.querySelector('div.paste-source-content');
+    var renderedContent = tabsContainer.querySelector('div.paste-rendered-content');
+    var sourceContent = tabsContainer.querySelector('div.paste-source-content');
 
-    rendered_a.addEventListener('click', function() {
-      swap(source, source_content, rendered, rendered_content);
+    renderedA.addEventListener('click', function () {
+      return swap(source, sourceContent, rendered, renderedContent);
     });
-    source_a.addEventListener('click', function() {
-      swap(rendered, rendered_content, source, source_content);
+    sourceA.addEventListener('click', function () {
+      return swap(rendered, renderedContent, source, sourceContent);
     });
+  };
+
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = document.getElementsByClassName('paste-tabs-container')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var tabsContainer = _step.value;
+
+      _loop(tabsContainer);
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
   }
 
   function getDeletionKeys() {
@@ -61,75 +90,97 @@
   }
 
   // check if the page is displaying a deletion key and add it to local storage
-  (function() {
-    const dk_elem = document.getElementById('deletion_key');
+  (function () {
+    var dkElem = document.getElementById('deletion_key');
 
-    if (dk_elem === null) {
+    if (dkElem === null) {
       return;
     }
 
-    const deletion_key = dk_elem.innerText;
+    var deletionKey = dkElem.innerText;
 
-    const keys = getDeletionKeys();
+    var keys = getDeletionKeys();
 
-    const paste_id = dk_elem.dataset.pasteId;
+    var pasteId = dkElem.dataset.pasteId;
 
-    keys[paste_id] = {
-      deletion_key: deletion_key,
-      expires: new Date((new Date).getTime() + (30 * 24 * 60 * 60 * 1000)),
+    keys[pasteId] = {
+      deletionKey: deletionKey,
+      expires: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000)
     };
 
     setDeletionKeys(keys);
   })();
 
   // check if we have a deletion key for this paste and insert it
-  (function() {
-    const dk_input = document.getElementById('deletion_key_input');
+  (function () {
+    var dkInput = document.getElementById('deletion_key_input');
 
-    if (dk_input === null) {
+    if (dkInput === null) {
       return;
     }
 
-    const paste_id = dk_input.dataset.pasteId;
+    var pasteId = dkInput.dataset.pasteId;
 
-    const keys = getDeletionKeys();
+    var keys = getDeletionKeys();
 
-    const key = keys[paste_id];
+    var key = keys[pasteId];
 
     if (key === undefined) {
       return;
     }
 
-    dk_input.value = key['deletion_key'];
+    dkInput.value = key.deletion_key;
 
     // add a listener for form submit to remove key from local storage
-    const deletion_form = document.getElementById('deletion_form');
+    var deletionForm = document.getElementById('deletion_form');
 
-    if (deletion_form === null) {
+    if (deletionForm === null) {
       return;
     }
 
-    deletion_form.addEventListener('submit', function() {
-      const keys = getDeletionKeys();
-      delete keys[paste_id];
+    deletionForm.addEventListener('submit', function () {
+      var keys = getDeletionKeys();
+      delete keys[pasteId];
       setDeletionKeys(keys);
     });
   })();
 
   // expire old deletion keys
-  (function() {
-    const keys = getDeletionKeys();
+  (function () {
+    var keys = getDeletionKeys();
 
-    for (const key of Object.entries(keys)) {
-      if ((new Date) >= new Date(key[1]['expires'])) {
-        delete keys[key[0]];
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+      for (var _iterator2 = Object.entries(keys)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var key = _step2.value;
+
+        if (new Date() >= new Date(key[1].expires)) {
+          delete keys[key[0]];
+        }
+      }
+    } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+          _iterator2.return();
+        }
+      } finally {
+        if (_didIteratorError2) {
+          throw _iteratorError2;
+        }
       }
     }
 
     setDeletionKeys(keys);
   })();
 
-  for (const pre of document.querySelectorAll('.paste-rendered-content pre[lang]')) {
-    pre.classList.add('language-' + pre.lang);
-  }
+  document.querySelectorAll('.paste-rendered-content pre[lang]').forEach(function (pre) {
+    return pre.classList.add('language-' + pre.lang);
+  });
 })();
+//# sourceMappingURL=paste.js.map

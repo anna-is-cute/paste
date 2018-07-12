@@ -2,12 +2,12 @@ version: '3'
 services:
   backend:
     build: run
-    command: /run.sh --release --verbose
+    command: /run.sh --release
     restart: unless-stopped
     volumes:
-      - "../:/paste"
-      - "./run/.cargo/registry:/root/.cargo/registry"
-      - "./run/.cargo/git:/root/.cargo/git"
+      - "../:/paste:cached"
+      - "./run/.cargo/registry:/root/.cargo/registry:cached"
+      - "./run/.cargo/git:/root/.cargo/git:cached"
     depends_on:
       - postgres
       - redis

@@ -9,11 +9,11 @@
 <script
   defer
   src="/static/js/register.js?v={{ resources_version }}"
-  integrity="sha384-U2cd1s+wthquNZB8IU0Ls74sGRjCOWXCYC/bX2NwUFzeGaZXzjnQY7B3War5n5xq"></script>
+  integrity="sha384-IF+WRbsZQr5oU5hfhCPvBCMSdXtqctB0TpELdSoJcRPf1leOFQQbjz8InzLgpgFD"></script>
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-psOOiWtm8cOmC12861czu8UqoOis84u/9RTHE//pjQC2QhPVjKeHMFBBy65EZZtP"></script>
+  integrity="sha384-/X0bG33G/+qdcdtMZRL6gWteDKzsAOMlMd+vmLlk0aEUaErn2y9Nce/m1JuI2bux"></script>
 <script
   defer
   src="/static/js/recaptcha/config.js?v={{ resources_version }}"

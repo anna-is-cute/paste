@@ -1,6 +1,9 @@
 /target
 **/*.rs.bk
 
+/node_modules
+/package-lock.json
+
 /Rocket.toml
 /config.toml
 /.env

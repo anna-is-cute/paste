@@ -14,15 +14,15 @@
   integrity="sha384-WLqJo53+dkI37mYL5tKRJXyxGFx2XW/fCM76V6DEzn2iMsPWAIX/ErmFXMA/IlVC"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
-  integrity="sha384-Jkt7YLun9UdrUCzwOTcLZcmUpkLflmI9Y/ksdoxa8m7HmpxkETujPoYB/av7Hy5E"></script>
+  integrity="sha384-HTYvuZHY1AndfrAqn+dIGFE7QognotxeUaFecs+e2FA30FKkHLfMyyLvBufM+eSk"></script>
 <script
   defer
   src="/static/js/navbar.js?v={{ resources_version }}"
-  integrity="sha384-MdI0Z/sllwRLXTelMVN+TtVA0nnA/aEfVCeD1/OTnnzKYxyPYNW2gDat6aIvaTzq"></script>
+  integrity="sha384-Lo/tAxQVxUqzV/F1Zz9jmad5085ugI5TUTcZZSPlraIB6Aq0Kdeh7nWXdskGxIAE"></script>
 <script
   defer
   src="/static/js/notifications.js?v={{ resources_version }}"
-  integrity="sha384-QD/YnRGKyRa9Fnq6JYR2qOp51Et9hf+8NDhdKA7a1E9+jvG+eYROQnrd1WxZrunY"></script>
+  integrity="sha384-SpOHsKR6B3ZYO5uf/rzzNY1FKy8ocZINBHMcGUbYNOOTftqNAg25Me3hYeIlLCr3"></script>
 <link
   rel="stylesheet"
   href="/static/css/fontawesome/solid.css?v={{ resources_version }}"

@@ -2,9 +2,12 @@ version: '3'
 services:
   backend:
     build: run
-    command: /run.sh --release
+    command: /run.sh --release --verbose
+    restart: unless-stopped
     volumes:
       - "../:/paste"
+      - "./run/.cargo/registry:/root/.cargo/registry"
+      - "./run/.cargo/git:/root/.cargo/git"
     depends_on:
       - postgres
       - redis
@@ -13,8 +16,10 @@ services:
       - ROCKET_ENV=prod
   redis:
     image: redis:alpine
+    restart: unless-stopped
   postgres:
     image: postgres:alpine
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=paste
       - POSTGRES_PASSWORD=paste
@@ -26,7 +31,7 @@ services:
       - "../:/paste"
   nginx:
     image: nginx:alpine
-    restart: always
+    restart: unless-stopped
     depends_on:
       - backend
     ports:

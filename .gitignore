@@ -10,3 +10,6 @@
 .docker/nginx/certs/*
 .docker/nginx/sites/*.conf
 .docker/nginx/nginx.conf
+
+.docker/run/.cargo/registry
+.docker/run/.cargo/git

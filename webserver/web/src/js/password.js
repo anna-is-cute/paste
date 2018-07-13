@@ -22,7 +22,7 @@
   }
 
   (function() {
-    const reveals = document.querySelectorAll('[name=password_reveal]');
+    const reveals = document.getElementsByName('password_reveal');
     for (const reveal of reveals) {
       reveal.addEventListener('click', () => {
         const pwField = reveal.parentElement.previousElementSibling.firstElementChild;

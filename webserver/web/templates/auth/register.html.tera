@@ -17,11 +17,11 @@
 <script
   defer
   src="/static/js/recaptcha/config.js?v={{ resources_version }}"
-  integrity="sha384-NOjRAsOVySdSwigdJUwErpMs9xXUTQXGIcWJ1UBo81U6hzmwy8wk0nfLGdQZkV4c"></script>
+  integrity="sha384-l5U/0HZcOpOmdhTbK1r5uJebO2evdFW2byo8i4VJ82CTiug/nIhnLdNmdnjpP3j2"></script>
 <script
   defer
-  src="/static/js/recaptcha/v1528855115741/recaptcha__en.js?v={{ resources_version }}"
-  integrity="sha384-/nGfsa/Ee66d0U1DW0bnKUT6DTqg6PpM6FezGlCGEsdxEcxQZaEwbKL8q9M7L4PH"></script>
+  src="/static/js/recaptcha/v1531117903872/recaptcha__en.js?v={{ resources_version }}"
+  integrity="sha384-r527D48IFGBbs4MibYPpuRXVOv4WDFGgwmDwjs8cf2etjyr5t/weqbilRt7Cp1Cf"></script>
 {% endblock head %}
 
 {% block title %}

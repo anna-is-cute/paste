@@ -24,7 +24,7 @@
   }
 
   (function () {
-    var reveals = document.querySelectorAll('[name=password_reveal]');
+    var reveals = document.getElementsByName('password_reveal');
 
     var _loop = function _loop(reveal) {
       reveal.addEventListener('click', function () {

@@ -23,7 +23,7 @@
 <script
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-wq2OjN8RLzqETA0Qtu+2qQQE7I2PUfJGO5pMc5AlfxGQcjWYcTi3mW3tSCe2Pmd3"></script>
+  integrity="sha384-eJ6Y8W5G6M3LfKNuE3SrYMoCYOOTR/ty2Xg+sehkCcB3MKynzx7emEKdcvEpArQK"></script>
 <script
   defer
   src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
@@ -31,7 +31,7 @@
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
-  integrity="sha384-pUpaSeZxPJMNsyWP4KoOd3efZ7g9I9Bvpt4i4pVdMTtsdM1kQqelw2YKyf6CalmR"></script>
+  integrity="sha384-nvZWXhPMbi0ixdPLjUPfx2htsDNlNiypOV+5mX4XOwbZ2aDQjY7yw5Jd2HSf9cUr"></script>
 {% endblock head %}
 
 {% block title %}

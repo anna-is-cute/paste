@@ -1,6 +1,6 @@
 'use strict';
 
-/* global zxcvbn */
+/* global zxcvbn:false */
 
 (function () {
   function checkMatch(pw, verify) {

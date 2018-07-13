@@ -1,4 +1,4 @@
-/* global moment */
+/* global moment:false */
 
 (function() {
   function updateTime(elem) {

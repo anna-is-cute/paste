@@ -7,6 +7,7 @@ server {
   server_name change.me;
 
   location /static/ {
+    brotli_static on;
     alias /etc/nginx/web/static/;
   }
 

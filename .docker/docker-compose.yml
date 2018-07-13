@@ -41,4 +41,5 @@ services:
       - "./nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
       - "./nginx/sites:/etc/nginx/sites:ro"
       - "./nginx/certs:/etc/nginx/certs:ro"
+      - "./nginx/modules:/etc/nginx/modules:ro"
       - "../webserver/web/static:/etc/nginx/web/static:ro"

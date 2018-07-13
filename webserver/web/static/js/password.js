@@ -95,8 +95,8 @@
     progress.classList.add(color);
   }
 
-  document.getElementById('password').addEventListener('input', function () {
-    return passwordStrength(_this);
+  document.getElementById('password').addEventListener('input', function (e) {
+    return passwordStrength(e.target);
   });
 })();
 //# sourceMappingURL=password.js.map

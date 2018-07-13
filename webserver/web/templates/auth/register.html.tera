@@ -123,28 +123,30 @@ Create a new account.
     </p>
   </div>
 
-  <div class="field has-addons">
+  <div class="field">
     <label class="label">Password (again)</label>
-    <div class="control has-icons-left">
-      <input
-        required
-        id="password_verify"
-        name="password_verify"
-        class="input"
-        type="password"
-        minlength="10"
-        placeholder="What you typed above"
-        required/>
-      <span class="icon is-small is-left">
-        <i class="fas fa-asterisk"></i>
-      </span>
-    </div>
-    <div class="control">
-      <a name="password_reveal" class="button">
-        <span class="icon is-small">
-          <i class="fas fa-eye"></i>
+    <div class="field has-addons">
+      <div class="control is-expanded has-icons-left">
+        <input
+          required
+          id="password_verify"
+          name="password_verify"
+          class="input"
+          type="password"
+          minlength="10"
+          placeholder="What you typed above"
+          required/>
+        <span class="icon is-small is-left">
+          <i class="fas fa-asterisk"></i>
         </span>
-      </a>
+      </div>
+      <div class="control">
+        <a name="password_reveal" class="button">
+          <span class="icon is-small">
+            <i class="fas fa-eye"></i>
+          </span>
+        </a>
+      </div>
     </div>
   </div>
 

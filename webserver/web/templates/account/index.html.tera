@@ -9,7 +9,7 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-96js5vStiqVwy8NtoQWl99DEXagkL6iLy8I12uF2zhWYNUaVj4Gk7tga0j2FXs+H"></script>
+  integrity="sha384-f2n4a9cpkN/PwT+lXTEXXNeRmuS4lGBEW7iYBr48lyCU8/OkvmygEcYn287n+j+z"></script>
 {% endblock head %}
 
 {% block title %}Account{% endblock title %}
@@ -62,7 +62,7 @@ Manage account settings.
     </div>
     <div class="field-body">
       <div class="field">
-        <div class="control">
+        <div class="control has-icons-left">
           <input
             id="name"
             name="name"
@@ -70,6 +70,9 @@ Manage account settings.
             type="text"
             {% if form.name %}value="{{ form.name }}"{% endif %}
             placeholder="{{ user.name }}"/>
+          <span class="icon is-small is-left">
+            <i class="fas fa-id-card"></i>
+          </span>
         </div>
       </div>
     </div>
@@ -80,7 +83,7 @@ Manage account settings.
     </div>
     <div class="field-body">
       <div class="field">
-        <div class="control">
+        <div class="control has-icons-left">
           <input
             id="username"
             name="username"
@@ -90,6 +93,9 @@ Manage account settings.
             autocapitalize="off"
             {% if form.username %}value="{{ form.username }}"{% endif %}
             placeholder="{{ user.username }}"/>
+          <span class="icon is-small is-left">
+            <i class="fas fa-user"></i>
+          </span>
         </div>
         <p class="help">
           Changing your username will invalidate all links with your username in them.
@@ -104,7 +110,7 @@ Manage account settings.
     </div>
     <div class="field-body">
       <div class="field">
-        <div class="control">
+        <div class="control has-icons-left">
           <input
             id="email"
             name="email"
@@ -112,6 +118,9 @@ Manage account settings.
             type="email"
             {% if form.email %}value="{{ form.email }}"{% endif %}
             placeholder="{{ user.email }}"/>
+          <span class="icon is-small is-left">
+            <i class="fas fa-envelope"></i>
+          </span>
         </div>
       </div>
     </div>
@@ -123,14 +132,26 @@ Manage account settings.
     </div>
     <div class="field-body">
       <div class="field">
-        <div class="control">
-          <input
-            id="password"
-            name="password"
-            data-bar="hidden"
-            class="input"
-            minlength="10"
-            type="password"/>
+        <div class="field has-addons">
+          <div class="control is-expanded has-icons-left">
+            <input
+              id="password"
+              name="password"
+              data-bar="hidden"
+              class="input"
+              minlength="10"
+              type="password"/>
+            <span class="icon is-small is-left">
+              <i class="fas fa-asterisk"></i>
+            </span>
+          </div>
+          <div class="control">
+            <a name="password_reveal" class="button">
+              <span class="icon is-small">
+                <i class="fas fa-eye"></i>
+              </span>
+            </a>
+          </div>
         </div>
         <p class="help">
           Leave this blank to keep your password the same.
@@ -146,14 +167,24 @@ Manage account settings.
       <label class="label">Change password (again)</label>
     </div>
     <div class="field-body">
-      <div class="field">
-        <div class="control">
+      <div class="field has-addons">
+        <div class="control is-expanded has-icons-left">
           <input
             id="password_verify"
             name="password_verify"
             class="input"
             minlength="10"
             type="password"/>
+          <span class="icon is-small is-left">
+            <i class="fas fa-asterisk"></i>
+          </span>
+        </div>
+        <div class="control">
+          <a name="password_reveal" class="button">
+            <span class="icon is-small">
+              <i class="fas fa-eye"></i>
+            </span>
+          </a>
         </div>
       </div>
     </div>
@@ -165,12 +196,24 @@ Manage account settings.
     </div>
     <div class="field-body">
       <div class="field">
-        <div class="control">
-          <input
-            required
-            name="current_password"
-            class="input"
-            type="password"/>
+        <div class="field has-addons">
+          <div class="control is-expanded has-icons-left">
+            <input
+              required
+              name="current_password"
+              class="input"
+              type="password"/>
+            <span class="icon is-small is-left">
+              <i class="fas fa-asterisk"></i>
+            </span>
+          </div>
+          <div class="control">
+            <a name="password_reveal" class="button">
+              <span class="icon is-small">
+                <i class="fas fa-eye"></i>
+              </span>
+            </a>
+          </div>
         </div>
         <p class="help">
           Required to change any information.

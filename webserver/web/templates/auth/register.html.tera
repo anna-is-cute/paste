@@ -13,7 +13,7 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-96js5vStiqVwy8NtoQWl99DEXagkL6iLy8I12uF2zhWYNUaVj4Gk7tga0j2FXs+H"></script>
+  integrity="sha384-f2n4a9cpkN/PwT+lXTEXXNeRmuS4lGBEW7iYBr48lyCU8/OkvmygEcYn287n+j+z"></script>
 <script
   defer
   src="/static/js/recaptcha/config.js?v={{ resources_version }}"
@@ -40,7 +40,7 @@ Create a new account.
 <form id="registration_form" method="post" action="/register">
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div class="field">
-    <label class="label">Name</label>
+    <label class="label">Display name</label>
     <div class="control has-icons-left">
       <input
         required
@@ -94,24 +94,33 @@ Create a new account.
 
   <div class="field">
     <label class="label">Password</label>
-    <div class="control has-icons-left">
-      <input
-        required
-        id="password"
-        name="password"
-        class="input"
-        type="password"
-        minlength="10"
-        placeholder="Something really secure, please <3"/>
-      <span class="icon is-small is-left">
-        <i class="fas fa-asterisk"></i>
-      </span>
-      <p class="help">
-        <progress id="strength_progress" class="password progress is-marginless is-danger" value="100" max="100"></progress>
-        <span id="strength"></span>
-        <span id="strength_warning" class="has-text-warning"></span>
-      </p>
+    <div class="field has-addons">
+      <div class="control is-expanded has-icons-left">
+        <input
+          required
+          id="password"
+          name="password"
+          class="input"
+          type="password"
+          minlength="10"
+          placeholder="Something really secure, please <3"/>
+        <span class="icon is-small is-left">
+          <i class="fas fa-asterisk"></i>
+        </span>
+      </div>
+      <div class="control">
+        <a name="password_reveal" class="button">
+          <span class="icon is-small">
+            <i class="fas fa-eye"></i>
+          </span>
+        </a>
+      </div>
     </div>
+    <p class="help">
+      <progress id="strength_progress" class="password progress is-marginless is-danger" value="100" max="100"></progress>
+      <span id="strength"></span>
+      <span id="strength_warning" class="has-text-warning"></span>
+    </p>
   </div>
 
   <div class="field">

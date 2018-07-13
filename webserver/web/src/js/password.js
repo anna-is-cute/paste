@@ -11,7 +11,7 @@
 
   document
     .getElementById('password_verify')
-    .addEventListener('input', () => checkMatch(document.getElementById('password'), this));
+    .addEventListener('input', e => checkMatch(document.getElementById('password'), e.target));
 
   function doHides(pw, strength) {
     if (pw.value.length === 0) {
@@ -20,6 +20,25 @@
       strength.classList.remove('is-not-displayed');
     }
   }
+
+  (function() {
+    const reveals = document.querySelectorAll('[name=password_reveal]');
+    for (const reveal of reveals) {
+      reveal.addEventListener('click', () => {
+        const pwField = reveal.parentElement.previousElementSibling.firstElementChild;
+        pwField.type = pwField.type === 'password' ? 'text' : 'password';
+
+        const icon = reveal.querySelector('i.fas');
+        if (pwField.type === 'password') {
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        } else {
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        }
+      });
+    }
+  })();
 
   function passwordStrength(pw) {
     checkMatch(pw, document.getElementById('password_verify'));

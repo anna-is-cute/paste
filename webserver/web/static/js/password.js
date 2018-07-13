@@ -3,8 +3,6 @@
 /* global zxcvbn */
 
 (function () {
-  var _this = this;
-
   function checkMatch(pw, verify) {
     if (pw.value === verify.value && pw.value.length !== 0) {
       verify.classList.add('is-success');
@@ -13,8 +11,8 @@
     }
   }
 
-  document.getElementById('password_verify').addEventListener('input', function () {
-    return checkMatch(document.getElementById('password'), _this);
+  document.getElementById('password_verify').addEventListener('input', function (e) {
+    return checkMatch(document.getElementById('password'), e.target);
   });
 
   function doHides(pw, strength) {
@@ -24,6 +22,51 @@
       strength.classList.remove('is-not-displayed');
     }
   }
+
+  (function () {
+    var reveals = document.querySelectorAll('[name=password_reveal]');
+
+    var _loop = function _loop(reveal) {
+      reveal.addEventListener('click', function () {
+        var pwField = reveal.parentElement.previousElementSibling.firstElementChild;
+        pwField.type = pwField.type === 'password' ? 'text' : 'password';
+
+        var icon = reveal.querySelector('i.fas');
+        if (pwField.type === 'password') {
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        } else {
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        }
+      });
+    };
+
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = reveals[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var reveal = _step.value;
+
+        _loop(reveal);
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+  })();
 
   function passwordStrength(pw) {
     checkMatch(pw, document.getElementById('password_verify'));

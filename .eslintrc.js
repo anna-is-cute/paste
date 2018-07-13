@@ -33,6 +33,21 @@ module.exports = {
         "array-bracket-spacing": ["warn", "never"],
         "block-spacing": ["warn", "always"],
         "brace-style": ["warn", "1tbs"],
-        "camelcase": ["warn"]
+        "camelcase": ["warn"],
+        "no-extra-parens": ["warn"],
+        "no-template-curly-in-string": ["warn"],
+        "valid-jsdoc": [
+            "error",
+            {
+                "requireReturn": false,
+            },
+        ],
+        "array-callback-return": ["error"],
+        "block-scoped-var": ["error"],
+        "consistent-return": ["error"],
+        "curly": ["warn"],
+        "no-implicit-globals": ["error"],
+        "no-useless-concat": ["warn"],
+        "radix": ["error", "always"],
     }
 };

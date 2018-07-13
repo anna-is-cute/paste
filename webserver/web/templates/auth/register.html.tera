@@ -9,7 +9,7 @@
 <script
   defer
   src="/static/js/register.js?v={{ resources_version }}"
-  integrity="sha384-IF+WRbsZQr5oU5hfhCPvBCMSdXtqctB0TpELdSoJcRPf1leOFQQbjz8InzLgpgFD"></script>
+  integrity="sha384-+bKWQUeVgvyDR0KsqAdKD7lrz78x8k4DF4G1lJTgFDViRvUU7i4VBb9CXg4rouPw"></script>
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"

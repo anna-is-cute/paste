@@ -27,7 +27,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-gZTaRJZ75a+mYa/4QVi1Y/bcKoC8wzbJmPA9ZO7pD5c/fbw4xejov0ou0MjsiyuM"></script>
+  integrity="sha384-5rgtSfwtegMCc8bAALOrs1RKiobn8XY+awcI+pyNRQ9ySejBkUn2GAS+Tcih49SG"></script>
 {% endblock head %}
 
 {% block title %}

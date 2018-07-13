@@ -8,6 +8,8 @@ var pasteEditors = {};
 (function () {
   /**
    * Create the upload array for handling multiple files.
+   *
+   * @returns {[{name: string, language: string, content: string}]} Array of upload files.
    */
   function createUpload() {
     function getLanguage(parent) {

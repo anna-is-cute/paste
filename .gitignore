@@ -16,3 +16,5 @@
 
 .docker/run/.cargo/registry
 .docker/run/.cargo/git
+
+webserver/web/static/**/*.br

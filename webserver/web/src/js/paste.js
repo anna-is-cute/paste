@@ -68,7 +68,7 @@
 
     keys[pasteId] = {
       deletionKey,
-      expires: new Date((new Date).getTime() + (30 * 24 * 60 * 60 * 1000)),
+      expires: new Date((new Date).getTime() + 30 * 24 * 60 * 60 * 1000),
     };
 
     setDeletionKeys(keys);
@@ -113,7 +113,7 @@
     const keys = getDeletionKeys();
 
     for (const key of Object.entries(keys)) {
-      if ((new Date) >= new Date(key[1].expires)) {
+      if (new Date >= new Date(key[1].expires)) {
         delete keys[key[0]];
       }
     }

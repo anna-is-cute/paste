@@ -1,4 +1,4 @@
-/* global hljs */
+/* global hljs:false */
 
 (function() {
   for (const pre of document.getElementsByTagName('pre')) {

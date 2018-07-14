@@ -7,13 +7,16 @@ use models::status::{Status, ErrorKind};
 use routes::{RouteResult, OptionalUser};
 
 use rocket::http::Status as HttpStatus;
+use rocket::State;
 
 use rocket_contrib::Json;
+
+use sidekiq::Client as SidekiqClient;
 
 type InfoResult = ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>;
 
 #[post("/", format = "application/json", data = "<info>")]
-fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
+fn post(info: InfoResult, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
   // TODO: can this be a request guard?
   let info = match info {
     Ok(x) => x.into_inner(),
@@ -44,11 +47,12 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     name: info.metadata.name.map(|x| x.into_inner()),
     description: info.metadata.description.map(|x| x.into_inner()),
     visibility: info.metadata.visibility,
+    expires: info.metadata.expires,
     author: user.as_ref(),
     files,
   };
 
-  let CreateSuccess { paste, files, deletion_key } = match pp.create(&conn) {
+  let CreateSuccess { paste, files, deletion_key } = match pp.create(&conn, &*sidekiq) {
     Ok(s) => s,
     Err(e) => {
       let msg = e.into_message()?;
@@ -79,6 +83,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn) -> RouteResult<Outpu
     paste.description(),
     paste.visibility(),
     paste.created_at(),
+    paste.expires(),
     deletion_key.map(|x| x.key()),
     files,
   );

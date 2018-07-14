@@ -4,7 +4,7 @@ use std::os::raw::c_char;
 use std::path::Path;
 
 #[no_mangle]
-pub unsafe fn delete_all_pastes(path: *const c_char) {
+pub unsafe fn delete_directory(path: *const c_char) {
   let path = CStr::from_ptr(path).to_string_lossy();
 
   do_the_thing(&path);
@@ -16,5 +16,7 @@ fn do_the_thing(path: &str) {
     return;
   }
 
-  fs::remove_dir_all(path).unwrap();
+  if let Err(e) = fs::remove_dir_all(path) {
+    eprintln!("could not delete {}: {}", path.to_string_lossy(), e);
+  }
 }

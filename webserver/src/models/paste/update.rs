@@ -4,6 +4,8 @@ use models::id::FileId;
 use models::paste::{Content, CountedText, Visibility};
 use utils::Language;
 
+use chrono::{DateTime, Utc};
+
 use serde::de::{Deserialize, Deserializer};
 
 use std::fmt::{self, Debug, Formatter};
@@ -112,6 +114,9 @@ pub struct MetadataUpdate {
   // visibility)
   #[serde(default)]
   pub visibility: Option<Visibility>,
+  // double option because expires can be removed, changed, or left alone
+  #[serde(default)]
+  pub expires: Update<DateTime<Utc>>,
 }
 
 #[derive(Debug, Deserialize)]

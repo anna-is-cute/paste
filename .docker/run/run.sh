@@ -11,6 +11,7 @@ done
 diesel migration --migration-dir=webserver/migrations run
 
 cargo build -p worker_email "$@"
-cargo build -p worker_delete_all_pastes "$@"
+cargo build -p worker_delete_directory "$@"
+cargo build -p worker_expire_paste "$@"
 
 cargo run "$@" -p webserver config.toml

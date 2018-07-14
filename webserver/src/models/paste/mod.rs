@@ -39,6 +39,7 @@ pub struct Metadata {
   pub visibility: Visibility,
   #[serde(skip_deserializing)]
   pub created_at: Option<DateTime<Utc>>,
+  pub expires: Option<DateTime<Utc>>,
 }
 
 #[derive(Debug, Clone, Serialize)]

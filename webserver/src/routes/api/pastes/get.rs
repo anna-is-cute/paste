@@ -53,6 +53,7 @@ fn _get_all(query: Option<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>>
         name: x.name().map(Into::into),
         description: x.description().map(Into::into),
         visibility: x.visibility(),
+        expires: x.expires(),
         created_at: Some(x.created_at()),
       },
     })
@@ -110,6 +111,7 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
     paste.description(),
     paste.visibility(),
     paste.created_at(),
+    paste.expires(),
     None,
     files,
   );

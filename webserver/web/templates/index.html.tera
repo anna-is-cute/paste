@@ -27,7 +27,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-5rgtSfwtegMCc8bAALOrs1RKiobn8XY+awcI+pyNRQ9ySejBkUn2GAS+Tcih49SG"></script>
+  integrity="sha384-SHFlU9QE3+FRoi8q9jTyG9xMhWLSRe3OmMN0aq7GLEG3O2WMScLXEGnPPxPkwRsY"></script>
 {% endblock head %}
 
 {% block title %}
@@ -75,15 +75,110 @@ Create a new paste.
     </div>
   </div>
 
-  <div class="field">
-    <label class="label">Description</label>
-    <div class="control">
+  <div class="field is-grouped">
+    <div class="control is-expanded">
+      <label class="label">Description</label>
       <input
         name="description"
         class="input"
         type="text"
         {% if form.description %}value="{{ form.description }}"{% endif %}
         placeholder="Paste description"/>
+    </div>
+    <div class="control has-icons-left requires-js">
+      <label class="label">Expires</label>
+      <div class="select">
+        <select id="expires">
+          <option selected>no</option>
+          <option>relative</option>
+          <option>absolute</option>
+        </select>
+        <span class="icon is-small is-left">
+          <i class="fas fa-stopwatch"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div id="absolute-expiry" class="requires-js is-hidden">
+    <div class="field is-grouped">
+      <div class="control">
+        <label class="label">Expiry date</label>
+        <input id="absolute-date" class="input" type="date"/>
+      </div>
+      <div class="control">
+        <label class="label">Expiry time</label>
+        <input id="absolute-time" class="input" type="time"/>
+      </div>
+      <div class="control">
+        <label class="label">Expiry timezone</label>
+        <div class="select">
+          <select id="absolute-timezone">
+            <option value="-12">UTC-12</option>
+            <option value="-11">UTC-11</option>
+            <option value="-10">UTC-10</option>
+            <option value="-9.5">UTC-09:30</option>
+            <option value="-9">UTC-09</option>
+            <option value="-8">UTC-08</option>
+            <option value="-7">UTC-07</option>
+            <option value="-6">UTC-06</option>
+            <option value="-5">UTC-05</option>
+            <option value="-4.5">UTC-04:30</option>
+            <option value="-4">UTC-04</option>
+            <option value="-3.5">UTC-03:30</option>
+            <option value="-3">UTC-03</option>
+            <option value="-2.5">UTC-02:30</option>
+            <option value="-2">UTC-02</option>
+            <option value="-1">UTC-01</option>
+            <option value="0" selected>UTC</option>
+            <option value="1">UTC+01</option>
+            <option value="2">UTC+02</option>
+            <option value="3">UTC+03</option>
+            <option value="3.5">UTC+03:30</option>
+            <option value="4">UTC+04</option>
+            <option value="4.5">UTC+04:30</option>
+            <option value="5">UTC+05</option>
+            <option value="5.5">UTC+05:30</option>
+            <option value="5.75">UTC+05:45</option>
+            <option value="6">UTC+06</option>
+            <option value="6.5">UTC+06:30</option>
+            <option value="7">UTC+07</option>
+            <option value="8">UTC+08</option>
+            <option value="8.75">UTC+08:45</option>
+            <option value="9">UTC+09</option>
+            <option value="9.5">UTC+09:30</option>
+            <option value="10">UTC+10</option>
+            <option value="10.5">UTC+10:30</option>
+            <option value="11">UTC+11</option>
+            <option value="12">UTC+12</option>
+            <option value="12.75">UTC+12:45</option>
+            <option value="13">UTC+13</option>
+            <option value="13.75">UTC+13:45</option>
+            <option value="14">UTC+14</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="relative-expiry" class="requires-js is-hidden">
+    <div class="field is-grouped">
+      <div class="control">
+        <label class="label">Years</label>
+        <input id="relative-years" class="input" type="number" min="0" value="0"/>
+      </div>
+      <div class="control">
+        <label class="label">Days</label>
+        <input id="relative-days" class="input" type="number" min="0" max="31" value="0"/>
+      </div>
+      <div class="control">
+        <label class="label">Hours</label>
+        <input id="relative-hours" class="input" type="number" min="0" max="23" value="0"/>
+      </div>
+      <div class="control">
+        <label class="label">Minutes</label>
+        <input id="relative-minutes" class="input" type="number" min="0" max="59" value="0"/>
+      </div>
     </div>
   </div>
 

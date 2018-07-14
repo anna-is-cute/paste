@@ -68,6 +68,7 @@ table! {
         author_id -> Nullable<Uuid>,
         description -> Nullable<Text>,
         created_at -> Timestamp,
+        expires -> Nullable<Timestamp>,
     }
 }
 

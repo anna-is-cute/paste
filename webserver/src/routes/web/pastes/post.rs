@@ -4,14 +4,17 @@ use database::DbConn;
 use errors::*;
 use models::paste::{Visibility, Content};
 use routes::web::{OptionalWebUser, Session};
-use utils::Language;
+use utils::{FormDate, Language};
 
 use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
 
 use rocket::request::Form;
 use rocket::response::Redirect;
+use rocket::State;
 
 use serde_json;
+
+use sidekiq::Client as SidekiqClient;
 
 fn handle_non_js(upload: &PasteUpload) -> Vec<MultiFile> {
   vec![
@@ -30,7 +33,7 @@ fn handle_js(input: &str) -> Result<Vec<MultiFile>> {
 }
 
 #[post("/pastes", format = "application/x-www-form-urlencoded", data = "<paste>")]
-fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
   let paste = paste.into_inner();
   sess.set_form(&paste);
 
@@ -81,11 +84,12 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     name,
     description,
     visibility: paste.visibility,
+    expires: paste.expires.map(|x| x.into_inner()),
     author: user.as_ref(),
     files,
   };
 
-  let CreateSuccess { paste, deletion_key, .. } = match pp.create(&conn) {
+  let CreateSuccess { paste, deletion_key, .. } = match pp.create(&conn, &*sidekiq) {
     Ok(s) => s,
     Err(e) => {
       let msg = e.into_web_message()?;
@@ -119,6 +123,7 @@ struct PasteUpload {
   name: String,
   visibility: Visibility,
   description: String,
+  expires: Option<FormDate>,
   #[serde(skip)]
   file_name: String,
   #[serde(skip)]

@@ -69,6 +69,10 @@ Create a new paste.
   // *unlisted - publicly available to anyone with the link, hidden from crawlers
   // private - only visible to the authed user creating the paste
   "visibility": "public",
+  // (optional) the expiration date of the paste
+  // must be a UTC ISO 8601 string
+  // pastes do not expire by default
+  "expires": "2018-07-14T14:07:00Z",
   // (required – at least one file) array of files to add to the paste
   "files": [
     {

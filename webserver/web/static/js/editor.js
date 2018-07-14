@@ -1,11 +1,151 @@
 'use strict';
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 /* global hljs:false, CodeSass:false */
 
 var pasteNum = 0;
 var pasteEditors = {};
 
 (function () {
+  /**
+   * Formats a UTC offset into "+04:30" format from a decimal like 4.5.
+   *
+   * @param {Number} i Decimal representing UTC offset
+   * @returns {String} Formatted String
+   */
+  function prettyOffset(i) {
+    // check if the offset is negative for formatting later. all the math will be done as if it were
+    // positive
+    var isNeg = i < 0;
+
+    var input = Math.abs(i);
+
+    // get the hour component by stripping off the fraction
+    var hour = Math.floor(input);
+
+    // subtract the hour component to get the fraction
+    var frac = input - hour;
+
+    var mins = 60 * frac;
+
+    // pad with leading zeroes
+    var hs = hour.toString().padStart(2, '0');
+    var ms = mins.toString().padStart(2, '0');
+
+    var pre = isNeg ? '-' : '+';
+    return '' + pre + hs + ':' + ms;
+  }
+
+  /**
+   * @param {boolean} makeDate Whether to turn the ISO String into a Date
+   * @returns {null | Date | String} The absolute expiry date set by the user, if set, otherwise
+   * null. Returns an ISO string if makeDate is false, a Date if true.
+   */
+  function getAbsoluteExpiry(makeDate) {
+    var date = document.getElementById('absolute-date');
+    var time = document.getElementById('absolute-time');
+    var tz = document.getElementById('absolute-timezone');
+
+    if (date === null || time === null || tz === null) {
+      return null;
+    }
+
+    var dateValue = date.value;
+    var timeValue = time.value;
+    var tzValue = tz.value;
+
+    if (!dateValue || !timeValue || !tzValue) {
+      return null;
+    }
+
+    var tzNum = Number(tzValue);
+
+    var prettyTz = tzNum === 0 ? 'Z' : prettyOffset(tzNum);
+
+    var dateString = dateValue + 'T' + timeValue + ':00.000' + prettyTz;
+
+    var finalDate = new Date(dateString);
+
+    if (makeDate) {
+      return finalDate;
+    }
+
+    return finalDate.toISOString();
+  }
+
+  function getRelativeExpiry(makeDate) {
+    var yearsElem = document.getElementById('relative-years');
+    var daysElem = document.getElementById('relative-days');
+    var hoursElem = document.getElementById('relative-hours');
+    var minutesElem = document.getElementById('relative-minutes');
+
+    if (yearsElem === null || daysElem === null || hoursElem === null || minutesElem === null) {
+      return null;
+    }
+
+    var years = Number(yearsElem.value ? yearsElem.value : '0');
+    var days = Number(daysElem.value ? daysElem.value : '0');
+    var hours = Number(hoursElem.value ? hoursElem.value : '0');
+    var minutes = Number(minutesElem.value ? minutesElem.value : '0');
+
+    if (isNaN(years) || isNaN(days) || isNaN(hours) || isNaN(minutes)) {
+      return null;
+    }
+
+    if (years + days + hours + minutes === 0) {
+      return null;
+    }
+
+    var date = new Date();
+
+    date.setFullYear(date.getFullYear() + years);
+    date.setDate(date.getDate() + days);
+    date.setHours(date.getHours() + hours);
+    date.setMinutes(date.getMinutes() + minutes);
+
+    if (makeDate) {
+      return date;
+    }
+
+    return date.toISOString();
+  }
+
+  /**
+   * @returns { null | String } date
+   */
+  function getExpiry() {
+    var expires = document.getElementById('expires');
+    if (expires === null) {
+      return null;
+    }
+
+    switch (expires.value) {
+      case 'relative':
+        return getRelativeExpiry(false);
+      case 'absolute':
+        return getAbsoluteExpiry(false);
+      default:
+        return null;
+    }
+  }
+
+  function setTimezone(tz) {
+    var tzSelect = document.getElementById('absolute-timezone');
+    if (tzSelect === null) {
+      return;
+    }
+
+    var offset = tz === undefined ? new Date().getTimezoneOffset() / -60 : tz;
+    [].concat(_toConsumableArray(tzSelect.children)).forEach(function (e) {
+      if (Number(e.value) === offset) {
+        e.setAttribute('selected', '');
+      } else {
+        e.removeAttribute('selected');
+      }
+    });
+  }
+
   /**
    * Create the upload array for handling multiple files.
    *
@@ -291,6 +431,16 @@ var pasteEditors = {};
     input.name = 'upload_json';
 
     e.target.appendChild(input);
+
+    var expiry = getExpiry();
+    if (expiry !== null) {
+      var expiresInput = document.createElement('input');
+      expiresInput.type = 'hidden';
+      expiresInput.value = expiry;
+      expiresInput.name = 'expires';
+
+      e.target.appendChild(expiresInput);
+    }
   });
 
   // create any initial editors
@@ -300,5 +450,49 @@ var pasteEditors = {};
   if (Object.keys(pasteEditors).length === 0) {
     addFile();
   }
+
+  // set the default timezone
+  setTimezone();
+
+  (function () {
+    var expires = document.getElementById('expires');
+    if (expires === null) {
+      return;
+    }
+    expires.addEventListener('change', function (e) {
+      var expiry = e.target.value;
+      var abs = document.getElementById('absolute-expiry');
+      var rel = document.getElementById('relative-expiry');
+      if (expiry === 'relative') {
+        abs.classList.add('is-hidden');
+        rel.classList.remove('is-hidden');
+      } else if (expiry === 'absolute') {
+        abs.classList.remove('is-hidden');
+        rel.classList.add('is-hidden');
+      } else {
+        abs.classList.add('is-hidden');
+        rel.classList.add('is-hidden');
+      }
+    });
+  })();
+
+  (function () {
+    var abs = document.getElementById('absolute-expiry');
+    var expirationDate = abs.dataset.expirationDate;
+    if (expirationDate === undefined) {
+      return;
+    }
+
+    var date = new Date(expirationDate);
+
+    var year = date.getFullYear();
+    var month = (date.getMonth() + 1).toString().padStart(2, '0');
+    var day = date.getDate().toString().padStart(2, '0');
+    document.getElementById('absolute-date').value = year + '-' + month + '-' + day;
+
+    var hour = date.getHours().toString().padStart(2, '0');
+    var minute = date.getMinutes().toString().padStart(2, '0');
+    document.getElementById('absolute-time').value = hour + ':' + minute;
+  })();
 })();
 //# sourceMappingURL=editor.js.map

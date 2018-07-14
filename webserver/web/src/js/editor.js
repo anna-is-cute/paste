@@ -5,6 +5,144 @@ const pasteEditors = {};
 
 (function() {
   /**
+   * Formats a UTC offset into "+04:30" format from a decimal like 4.5.
+   *
+   * @param {Number} i Decimal representing UTC offset
+   * @returns {String} Formatted String
+   */
+  function prettyOffset(i) {
+    // check if the offset is negative for formatting later. all the math will be done as if it were
+    // positive
+    const isNeg = i < 0;
+
+    const input = Math.abs(i);
+
+    // get the hour component by stripping off the fraction
+    const hour = Math.floor(input);
+
+    // subtract the hour component to get the fraction
+    const frac = input - hour;
+
+    const mins = 60 * frac;
+
+    // pad with leading zeroes
+    const hs = hour.toString().padStart(2, '0');
+    const ms = mins.toString().padStart(2, '0');
+
+    const pre = isNeg ? '-' : '+';
+    return `${pre}${hs}:${ms}`;
+  }
+
+  /**
+   * @param {boolean} makeDate Whether to turn the ISO String into a Date
+   * @returns {null | Date | String} The absolute expiry date set by the user, if set, otherwise
+   * null. Returns an ISO string if makeDate is false, a Date if true.
+   */
+  function getAbsoluteExpiry(makeDate) {
+    const date = document.getElementById('absolute-date');
+    const time = document.getElementById('absolute-time');
+    const tz = document.getElementById('absolute-timezone');
+
+    if (date === null || time === null || tz === null) {
+      return null;
+    }
+
+    const dateValue = date.value;
+    const timeValue = time.value;
+    const tzValue = tz.value;
+
+    if (!dateValue || !timeValue || !tzValue) {
+      return null;
+    }
+
+    const tzNum = Number(tzValue);
+
+    const prettyTz = tzNum === 0 ? 'Z' : prettyOffset(tzNum);
+
+    const dateString = `${dateValue}T${timeValue}:00.000${prettyTz}`;
+
+    const finalDate = new Date(dateString);
+
+    if (makeDate) {
+      return finalDate;
+    }
+
+    return finalDate.toISOString();
+  }
+
+  function getRelativeExpiry(makeDate) {
+    const yearsElem = document.getElementById('relative-years');
+    const daysElem = document.getElementById('relative-days');
+    const hoursElem = document.getElementById('relative-hours');
+    const minutesElem = document.getElementById('relative-minutes');
+
+    if (yearsElem === null || daysElem === null || hoursElem === null || minutesElem === null) {
+      return null;
+    }
+
+    const years = Number(yearsElem.value ? yearsElem.value : '0');
+    const days = Number(daysElem.value ? daysElem.value : '0');
+    const hours = Number(hoursElem.value ? hoursElem.value : '0');
+    const minutes = Number(minutesElem.value ? minutesElem.value : '0');
+
+    if (isNaN(years) || isNaN(days) || isNaN(hours) || isNaN(minutes)) {
+      return null;
+    }
+
+    if (years + days + hours + minutes === 0) {
+      return null;
+    }
+
+    const date = new Date;
+
+    date.setFullYear(date.getFullYear() + years);
+    date.setDate(date.getDate() + days);
+    date.setHours(date.getHours() + hours);
+    date.setMinutes(date.getMinutes() + minutes);
+
+    if (makeDate) {
+      return date;
+    }
+
+    return date.toISOString();
+  }
+
+  /**
+   * @returns { null | String } date
+   */
+  function getExpiry() {
+    const expires = document.getElementById('expires');
+    if (expires === null) {
+      return null;
+    }
+
+    switch (expires.value) {
+      case 'relative':
+        return getRelativeExpiry(false);
+      case 'absolute':
+        return getAbsoluteExpiry(false);
+      default:
+        return null;
+    }
+  }
+
+  function setTimezone(tz) {
+    const tzSelect = document.getElementById('absolute-timezone');
+    if (tzSelect === null) {
+      return;
+    }
+
+    const offset = tz === undefined ? (new Date).getTimezoneOffset() / -60 : tz;
+    [...tzSelect.children].forEach(e => {
+      if (Number(e.value) === offset) {
+        e.setAttribute('selected', '');
+      } else {
+        e.removeAttribute('selected');
+      }
+    });
+  }
+
+  /**
    * Create the upload array for handling multiple files.
    *
    * @returns {[{name: string, language: string, content: string}]} Array of upload files.
@@ -181,6 +319,16 @@ const pasteEditors = {};
     input.name = 'upload_json';
 
     e.target.appendChild(input);
+
+    const expiry = getExpiry();
+    if (expiry !== null) {
+      const expiresInput = document.createElement('input');
+      expiresInput.type = 'hidden';
+      expiresInput.value = expiry;
+      expiresInput.name = 'expires';
+
+      e.target.appendChild(expiresInput);
+    }
   });
 
   // create any initial editors
@@ -190,4 +338,48 @@ const pasteEditors = {};
   if (Object.keys(pasteEditors).length === 0) {
     addFile();
   }
+
+  // set the default timezone
+  setTimezone();
+
+  (function() {
+    const expires = document.getElementById('expires');
+    if (expires === null) {
+      return;
+    }
+    expires.addEventListener('change', e => {
+      const expiry = e.target.value;
+      const abs = document.getElementById('absolute-expiry');
+      const rel = document.getElementById('relative-expiry');
+      if (expiry === 'relative') {
+        abs.classList.add('is-hidden');
+        rel.classList.remove('is-hidden');
+      } else if (expiry === 'absolute') {
+        abs.classList.remove('is-hidden');
+        rel.classList.add('is-hidden');
+      } else {
+        abs.classList.add('is-hidden');
+        rel.classList.add('is-hidden');
+      }
+    });
+  })();
+
+  (function() {
+    const abs = document.getElementById('absolute-expiry');
+    const expirationDate = abs.dataset.expirationDate;
+    if (expirationDate === undefined) {
+      return;
+    }
+
+    const date = new Date(expirationDate);
+
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    document.getElementById('absolute-date').value = `${year}-${month}-${day}`;
+
+    const hour = date.getHours().toString().padStart(2, '0');
+    const minute = date.getMinutes().toString().padStart(2, '0');
+    document.getElementById('absolute-time').value = `${hour}:${minute}`;
+  })();
 })();

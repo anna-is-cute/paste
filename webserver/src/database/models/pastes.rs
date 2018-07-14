@@ -4,6 +4,7 @@ use models::id::{FileId, PasteId, UserId};
 use models::paste::{Content, Visibility};
 use models::paste::update::{MetadataUpdate, Update};
 use models::status::ErrorKind;
+use sidekiq_::Job;
 use store::Store;
 use super::files::{File as DbFile, NewFile};
 use super::super::schema::{pastes, files};
@@ -18,6 +19,8 @@ use diesel::prelude::*;
 use git2::{Signature, Repository, IndexAddOption, Status};
 
 use rocket::http::Status as HttpStatus;
+
+use sidekiq::{Client as SidekiqClient, Value};
 
 use uuid::Uuid;
 
@@ -35,6 +38,7 @@ pub struct Paste {
   author_id: Option<UserId>,
   description: Option<String>,
   created_at: NaiveDateTime,
+  expires: Option<NaiveDateTime>,
 }
 
 impl Paste {
@@ -74,10 +78,19 @@ impl Paste {
     DateTime::from_utc(self.created_at, Utc)
   }
 
-  pub fn update(&mut self, conn: &DbConn, update: &MetadataUpdate) -> Result<()> {
+  pub fn expires(&self) -> Option<DateTime<Utc>> {
+    self.expires.map(|x| DateTime::from_utc(x, Utc))
+  }
+
+  pub fn set_expires(&mut self, expires: Option<DateTime<Utc>>) {
+    self.expires = expires.map(|x| x.naive_utc());
+  }
+
+  pub fn update(&mut self, conn: &DbConn, sidekiq: &SidekiqClient, update: &MetadataUpdate) -> Result<()> {
     let changed = !update.name.is_ignore()
       || update.visibility.is_some()
-      || !update.description.is_ignore();
+      || !update.description.is_ignore()
+      || !update.expires.is_ignore();
     if !changed {
       return Ok(());
     }
@@ -93,6 +106,28 @@ impl Paste {
     }
     if let Some(ref update) = update.visibility {
       self.set_visibility(*update);
+    }
+    match update.expires {
+      Update::Set(ref s) => {
+        self.set_expires(Some(s.clone()));
+
+        let timestamp = s.timestamp();
+
+        let user = match self.author_id() {
+          Some(a) => a.simple().to_string(),
+          None => "anonymous".to_string(),
+        };
+
+        let job = Job::queue("ExpirePaste", timestamp, vec![
+          Value::Number(timestamp.into()),
+          Value::String(Store::directory().to_string_lossy().to_string()),
+          Value::String(user),
+          Value::String(self.id().simple().to_string()),
+        ]);
+        sidekiq.push(job.into())?;
+      },
+      Update::Remove => self.set_expires(None),
+      _ => {},
     }
     diesel::update(pastes::table)
       .filter(pastes::id.eq(self.id))
@@ -249,6 +284,7 @@ pub struct NewPaste {
   author_id: Option<UserId>,
   description: Option<String>,
   created_at: NaiveDateTime,
+  expires: Option<NaiveDateTime>,
 }
 
 impl NewPaste {
@@ -259,8 +295,9 @@ impl NewPaste {
     visibility: Visibility,
     author_id: Option<UserId>,
     created_at: Option<NaiveDateTime>,
+    expires: Option<NaiveDateTime>,
   ) -> Self {
     let created_at = created_at.unwrap_or_else(|| Utc::now().naive_utc());
-    NewPaste { id, name, visibility, author_id, description, created_at }
+    NewPaste { id, name, visibility, author_id, description, created_at, expires }
   }
 }

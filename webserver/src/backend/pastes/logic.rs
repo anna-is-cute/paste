@@ -3,11 +3,16 @@ use database::models::deletion_keys::NewDeletionKey;
 use database::models::pastes::{Paste, NewPaste};
 use database::schema::{deletion_keys, pastes};
 use models::paste::Visibility;
+use sidekiq_::Job;
 use store::Store;
 use super::models::{PastePayload, CreateSuccess, CreateError};
 
+use chrono::Utc;
+
 use diesel;
 use diesel::prelude::*;
+
+use sidekiq::{Client as SidekiqClient, Value};
 
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -23,6 +28,12 @@ impl<'a> PastePayload<'a> {
 
     if self.files.is_empty() {
       return Err(CreateError::NoFiles);
+    }
+
+    if let Some(expiration_date) = self.expires {
+      if expiration_date < Utc::now() {
+        return Err(CreateError::PastExpirationDate);
+      }
     }
 
     if self.files.len() > 1 {
@@ -76,7 +87,7 @@ impl<'a> PastePayload<'a> {
     Ok(())
   }
 
-  pub fn create(self, conn: &DbConn) -> Result<CreateSuccess, CreateError> {
+  pub fn create(self, conn: &DbConn, sidekiq: &SidekiqClient) -> Result<CreateSuccess, CreateError> {
     self.check()?;
 
     let id = Store::new_paste(self.author.map(|x| x.id()))
@@ -89,6 +100,7 @@ impl<'a> PastePayload<'a> {
       self.visibility,
       self.author.map(|x| x.id()),
       None,
+      self.expires.map(|x| x.naive_utc()),
     );
 
     let paste: Paste = diesel::insert_into(pastes::table)
@@ -113,6 +125,23 @@ impl<'a> PastePayload<'a> {
       let f = paste.create_file(conn, file.name, file.highlight_language, file.content)
         .map_err(|e| CreateError::Internal(e.into()))?;
       files.push(f);
+    }
+
+    if let Some(expiration_date) = self.expires {
+      let timestamp = expiration_date.timestamp();
+
+      let user = match self.author {
+        Some(a) => a.id().simple().to_string(),
+        None => "anonymous".to_string(),
+      };
+
+      let job = Job::queue("ExpirePaste", timestamp, vec![
+        Value::Number(timestamp.into()),
+        Value::String(Store::directory().to_string_lossy().to_string()),
+        Value::String(user),
+        Value::String(id.simple().to_string()),
+      ]);
+      sidekiq.push(job.into()).map_err(|e| CreateError::Internal(e.into()))?;
     }
 
     Ok(CreateSuccess {

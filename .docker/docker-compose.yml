@@ -30,7 +30,7 @@ services:
     volumes:
       - "../:/paste"
   nginx:
-    image: nginx:alpine
+    build: nginx
     restart: unless-stopped
     depends_on:
       - backend

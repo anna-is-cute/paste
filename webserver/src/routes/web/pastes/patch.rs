@@ -7,7 +7,7 @@ use models::id::{PasteId, FileId};
 use models::paste::{Visibility, Content};
 use models::paste::update::{MetadataUpdate, Update};
 use routes::web::{OptionalWebUser, Rst, Session};
-use utils::Language;
+use utils::{FormDate, Language};
 
 use diesel;
 use diesel::prelude::*;
@@ -17,8 +17,11 @@ use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
 use rocket::http::Status as HttpStatus;
 use rocket::request::LenientForm;
 use rocket::response::Redirect;
+use rocket::State;
 
 use serde_json;
+
+use sidekiq::Client as SidekiqClient;
 
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -68,7 +71,7 @@ fn check_paste(paste: &PasteUpdate, files: &[MultiFile]) -> result::Result<(), S
 }
 
 #[patch("/p/<username>/<paste_id>", format = "application/x-www-form-urlencoded", data = "<update>")]
-fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Rst> {
   let update = update.into_inner();
   sess.set_form(&update);
 
@@ -133,9 +136,16 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 
+  let expires = match update.expires {
+    Some(ref f) if Some(**f) == paste.expires() => Update::Ignore,
+    Some(f) => Update::Set(f.into_inner()),
+    None => Update::Remove,
+  };
+
   let metadata = MetadataUpdate {
     name: into_update(update.name, paste.name()),
     description: into_update(update.description, paste.description()),
+    expires,
     visibility: if update.visibility == paste.visibility() {
       None
     } else {
@@ -143,7 +153,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
     },
   };
 
-  paste.update(&conn, &metadata)?;
+  paste.update(&conn, &*sidekiq, &metadata)?;
 
   let mut db_changed = false;
   // TODO: this needs much refactor love
@@ -251,6 +261,7 @@ struct PasteUpdate {
   name: String,
   visibility: Visibility,
   description: String,
+  expires: Option<FormDate>,
   #[serde(skip)]
   upload_json: Option<String>,
   #[serde(skip)]

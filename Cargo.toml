@@ -2,6 +2,7 @@
 
 members = [
   "webserver",
-  "workers/delete_all_pastes",
+  "workers/delete_directory",
   "workers/email",
+  "workers/expire_paste",
 ]

@@ -56,7 +56,14 @@ a {
   }
 }
 
-input[type="text"], input[type="email"], input[type="password"], .select select, textarea {
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+.select select,
+textarea {
   background-color: $dark;
   color: $white-ter;
   border-color: $grey-dark;

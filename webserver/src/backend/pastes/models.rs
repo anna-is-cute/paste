@@ -6,12 +6,15 @@ use database::models::users::User;
 use models::paste::{Content, Visibility};
 use utils::Language;
 
+use chrono::{DateTime, Utc};
+
 use failure::Error;
 
 pub struct PastePayload<'u> {
   pub name: Option<String>,
   pub description: Option<String>,
   pub visibility: Visibility,
+  pub expires: Option<DateTime<Utc>>,
   pub author: Option<&'u User>,
   pub files: Vec<FilePayload>,
 }
@@ -39,6 +42,7 @@ pub enum CreateError {
   FileNameTooLarge,
   FileNameTooLong,
   EmptyFile,
+  PastExpirationDate,
   Internal(Error),
 }
 
@@ -56,6 +60,7 @@ impl BackendError for CreateError {
       CreateError::FileNameTooLarge => "file name must be less than 25 KiB",
       CreateError::FileNameTooLong => "file name must be less than or equal to 255 characters",
       CreateError::EmptyFile => "file content must not be empty",
+      CreateError::PastExpirationDate => "paste expiry date cannot be in the past",
     };
 
     Ok(m)

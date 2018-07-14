@@ -1,5 +1,5 @@
 [package]
-name = "worker_delete_all_pastes"
+name = "worker_delete_directory"
 version = "0.1.0"
 authors = ["Kyle Clemens <git@kyleclemens.com>"]
 

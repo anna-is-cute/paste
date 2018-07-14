@@ -16,6 +16,11 @@ pub enum Job {
     subject: String,
     content: String,
   },
+  Queue {
+    class: String,
+    timestamp: i64,
+    args: Vec<Value>,
+  },
 }
 
 impl Job {
@@ -38,14 +43,23 @@ impl Job {
     })
   }
 
-  fn class(&self) -> &str {
-    match *self {
-      Job::DeleteAllPastes(_) => "DeleteAllPastes",
-      Job::Email { .. } => "Email",
+  pub fn queue<C: Into<String>>(class: C, timestamp: i64, args: Vec<Value>) -> Job {
+    Job::Queue {
+      class: class.into(),
+      timestamp,
+      args,
     }
   }
 
-  fn args(&self) -> Vec<sidekiq::Value> {
+  fn class(&self) -> &str {
+    match *self {
+      Job::DeleteAllPastes(_) => "DeleteDirectory",
+      Job::Email { .. } => "Email",
+      Job::Queue { .. } => "Queue",
+    }
+  }
+
+  fn args(&self) -> Vec<Value> {
     match *self {
       Job::DeleteAllPastes(u) => {
         let path = Store::directory()
@@ -64,12 +78,17 @@ impl Job {
         Value::String(subject.to_string()),
         Value::String(content.to_string()),
       ],
+      Job::Queue { ref class, timestamp, ref args } => vec![
+        Value::String(class.to_string()),
+        Value::Number(timestamp.into()),
+        Value::Array(args.clone()),
+      ],
     }
   }
 
   fn opts(&self) -> JobOpts {
     match *self {
-      Job::DeleteAllPastes(_) => JobOpts {
+      Job::DeleteAllPastes(_) | Job::Queue { .. } => JobOpts {
         queue: "low".into(),
         .. Default::default()
       },

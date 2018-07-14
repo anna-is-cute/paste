@@ -5,13 +5,16 @@ use models::status::{Status, ErrorKind};
 use routes::{RouteResult, RequiredUser};
 
 use rocket::http::Status as HttpStatus;
+use rocket::State;
 
 use rocket_contrib::Json;
+
+use sidekiq::Client as SidekiqClient;
 
 type UpdateResult = ::std::result::Result<Json<MetadataUpdate>, ::rocket_contrib::SerdeError>;
 
 #[patch("/<paste_id>", format = "application/json", data = "<info>")]
-pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
+pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<()> {
   // TODO: can this be a request guard?
   let info = match info {
     Ok(x) => x.into_inner(),
@@ -31,7 +34,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
   }
 
   // update paste and database if necessary
-  paste.update(&conn, &info)?;
+  paste.update(&conn, &*sidekiq, &info)?;
 
   // return status (204?)
   Ok(Status::show_success(HttpStatus::NoContent, ()))

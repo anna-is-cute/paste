@@ -141,6 +141,7 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
     paste.description(),
     paste.visibility(),
     paste.created_at(),
+    paste.expires(),
     None,
     files,
   );

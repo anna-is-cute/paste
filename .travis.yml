@@ -15,20 +15,22 @@ script:
   # cannot use --all because apparently upgrading sodiumoxide to 0.1 breaks lettre across projects
   - cargo build --verbose -p webserver
   - cargo build --verbose -p worker_email
-  - cargo build --verbose -p worker_delete_all_pastes
+  - cargo build --verbose -p worker_delete_directory
+  - cargo build --verbose -p worker_expire_paste
 # Remove the local crate's build files, as they only add bloat to the cache.
 # TODO: Remove unused dependency build files
 before_cache:
-  - rm -rfv target/debug/{webserver,libdelete_all_pastes,libemail}.d
-  - rm -rfv target/debug/incremental/{build_script_build,webserver,worker_delete_all_pastes,worker_email}-*
-  - rm -rfv target/debug/.fingerprint/{webserver,worker_delete_all_pastes,worker_email}-*
-  - rm -rfv target/debug/build/{webserver,worker_delete_all_pastes,worker_email}-*
-  - rm -rfv target/debug/deps/{webserver,worker_delete_all_pastes,worker_email}-*
+  - rm -rfv target/debug/{webserver,libworker_delete_directory,libworker_email,libworker_expire_paste}.d
+  - rm -rfv target/debug/incremental/{build_script_build,webserver,worker_delete_directory,worker_email,worker_expire_paste}-*
+  - rm -rfv target/debug/.fingerprint/{webserver,worker_delete_directory,worker_email,worker_expire_paste}-*
+  - rm -rfv target/debug/build/{webserver,worker_delete_directory,worker_email,worker_expire_paste}-*
+  - rm -rfv target/debug/deps/{webserver,worker_delete_directory,worker_email,worker_expire_paste}-*
   # apparently cargo creates this file now? no reason to reupload the whole cache for it
   - rm -fv target/.rustc_info.json
   - cargo clean -p webserver
-  - cargo clean -p worker_delete_all_pastes
+  - cargo clean -p worker_delete_directory
   - cargo clean -p worker_email
+  - cargo clean -p worker_expire_paste
 rust:
   - nightly-2018-06-28
 matrix:

@@ -92,7 +92,7 @@
       return;
     }
 
-    dkInput.value = key.deletion_key;
+    dkInput.value = key.deletionKey;
 
     // add a listener for form submit to remove key from local storage
     const deletionForm = document.getElementById('deletion_form');

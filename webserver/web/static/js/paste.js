@@ -129,7 +129,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return;
     }
 
-    dkInput.value = key.deletion_key;
+    dkInput.value = key.deletionKey;
 
     // add a listener for form submit to remove key from local storage
     var deletionForm = document.getElementById('deletion_form');

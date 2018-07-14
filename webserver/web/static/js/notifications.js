@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var _this = this;
-
   var _iteratorNormalCompletion = true;
   var _didIteratorError = false;
   var _iteratorError = undefined;
@@ -11,8 +9,8 @@
     for (var _iterator = document.querySelectorAll('.message > .message-header > .delete')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var button = _step.value;
 
-      button.addEventListener('click', function () {
-        return _this.parentElement.parentElement.remove();
+      button.addEventListener('click', function (e) {
+        return e.currentTarget.parentElement.parentElement.remove();
       });
     }
   } catch (err) {
@@ -38,8 +36,8 @@
     for (var _iterator2 = document.querySelectorAll('.notification > .delete')[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
       var _button = _step2.value;
 
-      _button.addEventListener('click', function () {
-        return _this.parentElement.remove();
+      _button.addEventListener('click', function (e) {
+        return e.currentTarget.parentElement.remove();
       });
     }
   } catch (err) {

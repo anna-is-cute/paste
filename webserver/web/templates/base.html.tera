@@ -22,7 +22,7 @@
 <script
   defer
   src="/static/js/notifications.js?v={{ resources_version }}"
-  integrity="sha384-SpOHsKR6B3ZYO5uf/rzzNY1FKy8ocZINBHMcGUbYNOOTftqNAg25Me3hYeIlLCr3"></script>
+  integrity="sha384-at8m89v1aeryT/Wwgi4wPHeFlkzND+DAkWMR+p5tcYE6VJuMtSbKsbjQPlSrAYfr"></script>
 <link
   rel="stylesheet"
   href="/static/css/fontawesome/solid.css?v={{ resources_version }}"

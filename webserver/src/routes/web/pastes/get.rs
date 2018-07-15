@@ -111,7 +111,9 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
   for file in &files {
     if let Some(ref name) = file.name {
       let lower = name.to_lowercase();
-      if !lower.ends_with(".md") && !lower.ends_with(".mdown") && !lower.ends_with(".markdown") {
+      let md_ext = file.highlight_language.is_none() && lower.ends_with(".md") || lower.ends_with(".mdown") || lower.ends_with(".markdown");
+      let lang = file.highlight_language == Some(Language::Markdown.hljs());
+      if !lang && !md_ext {
         rendered.insert(file.id, None);
         continue;
       }

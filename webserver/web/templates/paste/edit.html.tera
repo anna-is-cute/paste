@@ -29,8 +29,12 @@
   integrity="sha384-JRRwtUx7H7KUP+6uHPOfXcRuX+cvNXZdsqluYW0tiu2BNVwdJCEQwOcCqhbmGysx"></script>
 <script
   defer
+  src="/static/js/luxon/luxon.min.js?v={{ resources_version }}"
+  integrity="sha384-4HmTfKgI5bxGuWYP66hV51Q7S+CkAiqGkCxqnzlYIgBw8O0mhMWl4YVDO6u1E8+3"></script>
+<script
+  defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-vPwQXe3auwQxqW9+TJ4aOycBYvkleFqABIOimDzYpt/AxsWvrOEEhfrRG8xPqiQR"></script>
+  integrity="sha384-Kcva1JhnlTjAn34lsluin5T0fDM0bksm6w3xx0UZcZG9D62RdkHyPm74nT4y7tZU"></script>
 <script
   defer
   src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
@@ -73,6 +77,12 @@ Edit untitled paste
         <span>{{ paste.visibility }}</span>
         <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
         <span class="timestamp" data-timestamp="{{ paste.created_at }}"></span>
+        {% if paste.expires %}
+        <span class="requires-js">
+          expires
+          <span class="timestamp" data-timestamp="{{ paste.expires }}"></span>
+        </span>
+        {% endif %}
       </div>
       <div class="left tabs">
         <ul>

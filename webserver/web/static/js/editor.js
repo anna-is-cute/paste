@@ -2,12 +2,14 @@
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-/* global hljs:false, CodeSass:false */
+/* global hljs:false, CodeSass:false, luxon:false */
 
 var pasteNum = 0;
 var pasteEditors = {};
 
 (function () {
+  var DateTime = luxon.DateTime;
+
   /**
    * Formats a UTC offset into "+04:30" format from a decimal like 4.5.
    *
@@ -39,8 +41,8 @@ var pasteEditors = {};
 
   /**
    * @param {boolean} makeDate Whether to turn the ISO String into a Date
-   * @returns {null | Date | String} The absolute expiry date set by the user, if set, otherwise
-   * null. Returns an ISO string if makeDate is false, a Date if true.
+   * @returns {null | DateTime | String} The absolute expiry date set by the user, if set, otherwise
+   * null. Returns an ISO string if makeDate is false, a DateTime if true.
    */
   function getAbsoluteExpiry(makeDate) {
     var date = document.getElementById('absolute-date');
@@ -65,13 +67,13 @@ var pasteEditors = {};
 
     var dateString = dateValue + 'T' + timeValue + ':00.000' + prettyTz;
 
-    var finalDate = new Date(dateString);
+    var finalDate = DateTime.fromISO(dateString);
 
     if (makeDate) {
       return finalDate;
     }
 
-    return finalDate.toISOString();
+    return finalDate.toString();
   }
 
   function getRelativeExpiry(makeDate) {
@@ -97,18 +99,18 @@ var pasteEditors = {};
       return null;
     }
 
-    var date = new Date();
-
-    date.setFullYear(date.getFullYear() + years);
-    date.setDate(date.getDate() + days);
-    date.setHours(date.getHours() + hours);
-    date.setMinutes(date.getMinutes() + minutes);
+    var date = DateTime.local().plus({
+      years: years,
+      days: days,
+      hours: hours,
+      minutes: minutes
+    });
 
     if (makeDate) {
       return date;
     }
 
-    return date.toISOString();
+    return date.toString();
   }
 
   /**
@@ -136,7 +138,7 @@ var pasteEditors = {};
       return;
     }
 
-    var offset = tz === undefined ? new Date().getTimezoneOffset() / -60 : tz;
+    var offset = tz === undefined ? DateTime.local().offset / 60 : tz;
     [].concat(_toConsumableArray(tzSelect.children)).forEach(function (e) {
       if (Number(e.value) === offset) {
         e.setAttribute('selected', '');
@@ -499,15 +501,15 @@ var pasteEditors = {};
       return;
     }
 
-    var date = new Date(expirationDate);
+    var date = DateTime.fromISO(expirationDate);
 
-    var year = date.getFullYear();
-    var month = (date.getMonth() + 1).toString().padStart(2, '0');
-    var day = date.getDate().toString().padStart(2, '0');
+    var year = date.year;
+    var month = date.month.toString().padStart(2, '0');
+    var day = date.day.toString().padStart(2, '0');
     document.getElementById('absolute-date').value = year + '-' + month + '-' + day;
 
-    var hour = date.getHours().toString().padStart(2, '0');
-    var minute = date.getMinutes().toString().padStart(2, '0');
+    var hour = date.hour.toString().padStart(2, '0');
+    var minute = date.minute.toString().padStart(2, '0');
     document.getElementById('absolute-time').value = hour + ':' + minute;
   })();
 })();

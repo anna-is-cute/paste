@@ -1,9 +1,11 @@
-/* global hljs:false, CodeSass:false */
+/* global hljs:false, CodeSass:false, luxon:false */
 
 let pasteNum = 0;
 const pasteEditors = {};
 
 (function() {
+  const DateTime = luxon.DateTime;
+
   /**
    * Formats a UTC offset into "+04:30" format from a decimal like 4.5.
    *
@@ -35,8 +37,8 @@ const pasteEditors = {};
 
   /**
    * @param {boolean} makeDate Whether to turn the ISO String into a Date
-   * @returns {null | Date | String} The absolute expiry date set by the user, if set, otherwise
-   * null. Returns an ISO string if makeDate is false, a Date if true.
+   * @returns {null | DateTime | String} The absolute expiry date set by the user, if set, otherwise
+   * null. Returns an ISO string if makeDate is false, a DateTime if true.
    */
   function getAbsoluteExpiry(makeDate) {
     const date = document.getElementById('absolute-date');
@@ -61,13 +63,13 @@ const pasteEditors = {};
 
     const dateString = `${dateValue}T${timeValue}:00.000${prettyTz}`;
 
-    const finalDate = new Date(dateString);
+    const finalDate = DateTime.fromISO(dateString);
 
     if (makeDate) {
       return finalDate;
     }
 
-    return finalDate.toISOString();
+    return finalDate.toString();
   }
 
   function getRelativeExpiry(makeDate) {
@@ -93,18 +95,18 @@ const pasteEditors = {};
       return null;
     }
 
-    const date = new Date;
-
-    date.setFullYear(date.getFullYear() + years);
-    date.setDate(date.getDate() + days);
-    date.setHours(date.getHours() + hours);
-    date.setMinutes(date.getMinutes() + minutes);
+    const date = DateTime.local().plus({
+      years,
+      days,
+      hours,
+      minutes,
+    });
 
     if (makeDate) {
       return date;
     }
 
-    return date.toISOString();
+    return date.toString();
   }
 
   /**
@@ -132,7 +134,7 @@ const pasteEditors = {};
       return;
     }
 
-    const offset = tz === undefined ? (new Date).getTimezoneOffset() / -60 : tz;
+    const offset = tz === undefined ? DateTime.local().offset / 60 : tz;
     [...tzSelect.children].forEach(e => {
       if (Number(e.value) === offset) {
         e.setAttribute('selected', '');
@@ -387,15 +389,15 @@ const pasteEditors = {};
       return;
     }
 
-    const date = new Date(expirationDate);
+    const date = DateTime.fromISO(expirationDate);
 
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
+    const year = date.year;
+    const month = date.month.toString().padStart(2, '0');
+    const day = date.day.toString().padStart(2, '0');
     document.getElementById('absolute-date').value = `${year}-${month}-${day}`;
 
-    const hour = date.getHours().toString().padStart(2, '0');
-    const minute = date.getMinutes().toString().padStart(2, '0');
+    const hour = date.hour.toString().padStart(2, '0');
+    const minute = date.minute.toString().padStart(2, '0');
     document.getElementById('absolute-time').value = `${hour}:${minute}`;
   })();
 })();

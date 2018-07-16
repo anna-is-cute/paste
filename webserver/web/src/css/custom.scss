@@ -288,3 +288,25 @@ th, td {
 #paste_upload .columns .column {
   padding-bottom: 0;
 }
+
+.label-icon {
+  display: flex;
+
+  .icon {
+    &.is-right {
+      margin-left: .25rem;
+    }
+
+    &.is-left {
+      margin-right: .25rem;
+    }
+  }
+
+  a > .icon {
+    color: $grey;
+
+    &:hover {
+      color: $link-hover;
+    }
+  }
+}

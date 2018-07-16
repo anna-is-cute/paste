@@ -511,6 +511,8 @@ var pasteEditors = {};
     var hour = date.hour.toString().padStart(2, '0');
     var minute = date.minute.toString().padStart(2, '0');
     document.getElementById('absolute-time').value = hour + ':' + minute;
+
+    document.getElementById('absolute-timezone').value = '' + date.offset / 60;
   })();
 })();
 //# sourceMappingURL=editor.js.map

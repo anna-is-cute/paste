@@ -100,6 +100,12 @@
         <span>{{ paste.visibility }}</span>
         <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
         <span class="timestamp" data-timestamp="{{ paste.created_at }}"></span>
+        {% if paste.expires %}
+        <span class="requires-js">
+          expires
+          <span class="timestamp" data-timestamp="{{ paste.expires }}"></span>
+        </span>
+        {% endif %}
       </div>
     </div>
     {% for file in paste.files %}

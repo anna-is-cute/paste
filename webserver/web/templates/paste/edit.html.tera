@@ -30,7 +30,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-SHFlU9QE3+FRoi8q9jTyG9xMhWLSRe3OmMN0aq7GLEG3O2WMScLXEGnPPxPkwRsY"></script>
+  integrity="sha384-vPwQXe3auwQxqW9+TJ4aOycBYvkleFqABIOimDzYpt/AxsWvrOEEhfrRG8xPqiQR"></script>
 <script
   defer
   src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"

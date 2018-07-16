@@ -343,6 +343,16 @@ const pasteEditors = {};
   setTimezone();
 
   (function() {
+    function inputsRequired(el, req) {
+      el.querySelectorAll('input, select').forEach(e => {
+        if (req) {
+          e.setAttribute('required', '');
+          return;
+        }
+        e.removeAttribute('required');
+      });
+    }
+
     const expires = document.getElementById('expires');
     if (expires === null) {
       return;
@@ -354,12 +364,18 @@ const pasteEditors = {};
       if (expiry === 'relative') {
         abs.classList.add('is-hidden');
         rel.classList.remove('is-hidden');
+        inputsRequired(abs, false);
+        inputsRequired(rel, true);
       } else if (expiry === 'absolute') {
         abs.classList.remove('is-hidden');
         rel.classList.add('is-hidden');
+        inputsRequired(abs, true);
+        inputsRequired(rel, false);
       } else {
         abs.classList.add('is-hidden');
         rel.classList.add('is-hidden');
+        inputsRequired(abs, false);
+        inputsRequired(rel, false);
       }
     });
   })();

@@ -34,7 +34,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-Kcva1JhnlTjAn34lsluin5T0fDM0bksm6w3xx0UZcZG9D62RdkHyPm74nT4y7tZU"></script>
+  integrity="sha384-TNi31Rs9kaKiilKh2fvS7rSH3ulHJEOnfjm5J7fOf1GoQi5i3LGsxqzMYiYulkK8"></script>
 <script
   defer
   src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"

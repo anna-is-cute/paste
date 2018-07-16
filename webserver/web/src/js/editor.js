@@ -399,5 +399,7 @@ const pasteEditors = {};
     const hour = date.hour.toString().padStart(2, '0');
     const minute = date.minute.toString().padStart(2, '0');
     document.getElementById('absolute-time').value = `${hour}:${minute}`;
+
+    document.getElementById('absolute-timezone').value = `${date.offset / 60}`;
   })();
 })();

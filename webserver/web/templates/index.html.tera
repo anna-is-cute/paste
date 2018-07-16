@@ -92,8 +92,15 @@ Create a new paste.
         </div>
       </div>
       <div class="field">
-        <div class="control has-icons-left requires-js">
+        <div class="label-icon">
           <label class="label">Expires</label>
+          <a href="https://github.com/jkcclemens/paste/wiki/Expiring-pastes" target="_blank">
+            <span class="icon is-small is-right">
+              <i class="fas fa-question-circle"></i>
+            </span>
+          </a>
+        </div>
+        <div class="control has-icons-left requires-js">
           <div class="select is-fullwidth">
             <select id="expires">
               <option selected>no</option>

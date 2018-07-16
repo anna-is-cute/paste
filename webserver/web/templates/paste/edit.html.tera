@@ -155,7 +155,7 @@ Edit untitled paste
 
     <div
       id="absolute-expiry"
-      class="requires-js{% if not paste.expires %} is-hidden{% endif %}"
+      class="{% if not paste.expires %}requires-js is-hidden{% else %}requires-js{% endif %}"
       {% if paste.expires %}data-expiration-date="{{ paste.expires }}"{% endif %}>
       <div class="field is-grouped">
         <div class="control">

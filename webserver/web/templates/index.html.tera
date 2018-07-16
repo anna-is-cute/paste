@@ -45,57 +45,66 @@ Create a new paste.
 {% block main %}
 <form id="paste_upload" action="/pastes" method="post">
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
-  <div class="field is-grouped">
-    <div class="control is-expanded">
-      <label class="label">Paste name</label>
-      <input
-        name="name"
-        class="input"
-        type="text"
-        {% if form.name %}value="{{ form.name }}"{% endif %}
-        placeholder="Paste name"/>
-    </div>
-    <div class="control has-icons-left">
-      <label class="label">Visibility</label>
-      <div class="select">
-        <select name="visibility">
-          <option
-            {% if form.visibility and form.visibility == "public" %}selected{% endif %}>public</option>
-          <option
-            {% if not form.visibility or form.visibility == "unlisted" %} selected{% endif %}>unlisted</option>
-        {% if user %}
-          <option
-            {% if form.visibility and form.visibility == "private" %}selected{% endif %}>private</option>
-        {% endif %}
-        </select>
-        <span class="icon is-small is-left">
-          <i class="fas fa-globe"></i>
-        </span>
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <div class="control is-expanded">
+          <label class="label">Paste name</label>
+          <input
+            name="name"
+            class="input"
+            type="text"
+            {% if form.name %}value="{{ form.name }}"{% endif %}
+            placeholder="Paste name"/>
+        </div>
+      </div>
+      <div class="field">
+        <div class="control is-expanded">
+          <label class="label">Description</label>
+          <input
+            name="description"
+            class="input"
+            type="text"
+            {% if form.description %}value="{{ form.description }}"{% endif %}
+            placeholder="Paste description"/>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="field is-grouped">
-    <div class="control is-expanded">
-      <label class="label">Description</label>
-      <input
-        name="description"
-        class="input"
-        type="text"
-        {% if form.description %}value="{{ form.description }}"{% endif %}
-        placeholder="Paste description"/>
-    </div>
-    <div class="control has-icons-left requires-js">
-      <label class="label">Expires</label>
-      <div class="select">
-        <select id="expires">
-          <option selected>no</option>
-          <option>relative</option>
-          <option>absolute</option>
-        </select>
-        <span class="icon is-small is-left">
-          <i class="fas fa-stopwatch"></i>
-        </span>
+    <div class="column is-narrow">
+      <div class="field">
+        <div class="control has-icons-left">
+          <label class="label">Visibility</label>
+          <div class="select is-fullwidth">
+            <select name="visibility">
+              <option
+                {% if form.visibility and form.visibility == "public" %}selected{% endif %}>public</option>
+              <option
+                {% if not form.visibility or form.visibility == "unlisted" %} selected{% endif %}>unlisted</option>
+            {% if user %}
+              <option
+                {% if form.visibility and form.visibility == "private" %}selected{% endif %}>private</option>
+            {% endif %}
+            </select>
+            <span class="icon is-small is-left">
+              <i class="fas fa-globe"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <div class="control has-icons-left requires-js">
+          <label class="label">Expires</label>
+          <div class="select is-fullwidth">
+            <select id="expires">
+              <option selected>no</option>
+              <option>relative</option>
+              <option>absolute</option>
+            </select>
+            <span class="icon is-small is-left">
+              <i class="fas fa-stopwatch"></i>
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

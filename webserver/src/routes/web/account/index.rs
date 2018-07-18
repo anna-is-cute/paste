@@ -1,18 +1,19 @@
-use config::Config;
-use database::DbConn;
-use database::schema::users;
-use errors::*;
-use routes::web::{context, Rst, OptionalWebUser, Session};
-use utils::{email, HashedPassword, Validator};
-
+use crate::{
+  config::Config,
+  database::{DbConn, schema::users},
+  errors::*,
+  routes::web::{context, Rst, OptionalWebUser, Session},
+  utils::{email, HashedPassword, Validator},
+};
 use chrono::Utc;
 
-use diesel::dsl::count;
-use diesel::prelude::*;
+use diesel::{dsl::count, prelude::*};
 
-use rocket::request::Form;
-use rocket::response::Redirect;
-use rocket::State;
+use rocket::{
+  request::Form,
+  response::Redirect,
+  State,
+};
 
 use rocket_contrib::Template;
 

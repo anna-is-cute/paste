@@ -1,23 +1,27 @@
-use config::Config;
-use database::DbConn;
-use database::models::pastes::Paste as DbPaste;
-use database::models::users::User;
-use database::schema::{users, pastes};
-use errors::*;
-use models::paste::output::{Output, OutputAuthor};
-use models::paste::{Visibility, Content};
-use routes::web::{context, Rst, OptionalWebUser, Session};
+use crate::{
+  config::Config,
+  database::{
+    DbConn,
+    models::{pastes::Paste as DbPaste, users::User},
+    schema::{users, pastes},
+  },
+  errors::*,
+  models::paste::{
+    Visibility, Content,
+    output::{Output, OutputAuthor},
+  },
+  routes::web::{context, Rst, OptionalWebUser, Session},
+};
 
-use diesel::dsl::count;
-use diesel::prelude::*;
+use diesel::{dsl::count, prelude::*};
 
-use rocket::State;
-use rocket::http::Status as HttpStatus;
+use rocket::{State, http::Status as HttpStatus};
 
 use rocket_contrib::Template;
 
-use std::fs::File;
-use std::io::Read;
+use serde_json::{json, json_internal};
+
+use std::{fs::File, io::Read};
 
 #[get("/u/<username>")]
 fn get(username: String, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {

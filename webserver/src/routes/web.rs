@@ -1,24 +1,29 @@
-use config::Config;
-use database::PostgresPool;
-use database::models::users::User;
-use database::schema::users as users_db;
-use models::id::UserId;
+use crate::{
+  config::Config,
+  database::{
+    PostgresPool,
+    models::users::User,
+    schema::users as users_db,
+  },
+  models::id::UserId,
+};
 
 use diesel::prelude::*;
 
-use rocket::{State, Outcome};
-use rocket::http::{Header, Status as HttpStatus};
-use rocket::request::{self, Request, FromRequest};
-use rocket::response::{Responder, Response, Redirect};
+use rocket::{
+  State, Outcome,
+  http::{Header, Status as HttpStatus},
+  request::{self, Request, FromRequest},
+  response::{Responder, Response, Redirect},
+};
 
 use rocket_contrib::Template;
 
-use serde_json::Value;
+use serde_json::{Value, json, json_internal};
 
 use uuid::Uuid;
 
-use std::ops::Deref;
-use std::result;
+use std::{ops::Deref, result};
 
 pub mod about;
 pub mod account;
@@ -56,7 +61,7 @@ impl OptionalWebUser {
   }
 }
 
-impl<'a, 'r> FromRequest<'a, 'r> for OptionalWebUser {
+impl FromRequest<'a, 'r> for OptionalWebUser {
   type Error = ();
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
@@ -99,7 +104,7 @@ pub enum Rst {
   Template(Template),
 }
 
-impl<'r> Responder<'r> for Rst {
+impl Responder<'r> for Rst {
   fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
     match self {
       Rst::Redirect(r) => r.respond_to(request),

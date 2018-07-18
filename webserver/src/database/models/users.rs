@@ -1,5 +1,8 @@
-use errors::*;
-use models::id::{ApiKeyId, UserId};
+use crate::{
+  errors::*,
+  models::id::{ApiKeyId, UserId},
+};
+
 use super::api_keys::{ApiKey, NewApiKey};
 use super::email_verifications::{EmailVerification, NewEmailVerification};
 use super::super::DbConn;
@@ -7,7 +10,6 @@ use super::super::schema::{users, api_keys, email_verifications};
 
 use chrono::NaiveDateTime;
 
-use diesel;
 use diesel::prelude::*;
 
 use sodiumoxide::crypto::pwhash::{HashedPassword, pwhash_verify};

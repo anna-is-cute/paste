@@ -1,4 +1,4 @@
-use models::id::{DeletionKeyId, PasteId};
+use crate::models::id::{DeletionKeyId, PasteId};
 use super::pastes::Paste;
 use super::super::schema::deletion_keys;
 

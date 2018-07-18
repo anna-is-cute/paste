@@ -1,11 +1,19 @@
-use database::DbConn;
-use database::models::deletion_keys::DeletionKey;
-use database::models::pastes::Paste;
-use database::models::users::User;
-use models::id::{PasteId, UserId};
-use models::paste::Visibility;
-use models::status::{Status, ErrorKind};
-use routes::{RouteResult, DeletionAuth};
+use crate::{
+  database::{
+    DbConn,
+    models::{
+      deletion_keys::DeletionKey,
+      pastes::Paste,
+      users::User,
+    },
+  },
+  models::{
+    id::{PasteId, UserId},
+    paste::Visibility,
+    status::{Status, ErrorKind},
+  },
+  routes::{RouteResult, DeletionAuth},
+};
 
 use rocket::http::Status as HttpStatus;
 

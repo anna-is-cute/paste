@@ -1,7 +1,9 @@
-use std::ffi::CStr;
-use std::fs;
-use std::os::raw::c_char;
-use std::path::Path;
+use std::{
+  ffi::CStr,
+  fs,
+  os::raw::c_char,
+  path::Path,
+};
 
 #[no_mangle]
 pub unsafe fn delete_directory(path: *const c_char) {

@@ -1,19 +1,27 @@
-use database::DbConn;
-use database::models::pastes::Paste as DbPaste;
-use database::models::users::User;
-use database::schema::{users, pastes};
-use models::paste::{Visibility, Content};
-use models::paste::output::{Output, OutputAuthor};
-use models::status::{Status, ErrorKind};
-use routes::{OptionalUser, RouteResult};
+use crate::{
+  database::{
+    DbConn,
+    models::{
+      pastes::Paste as DbPaste,
+      users::User,
+    },
+    schema::{users, pastes},
+  },
+  models::{
+    paste::{
+      Visibility, Content,
+      output::{Output, OutputAuthor},
+    },
+    status::{Status, ErrorKind},
+  },
+  routes::{OptionalUser, RouteResult},
+};
 
-use diesel::dsl::count;
-use diesel::prelude::*;
+use diesel::{prelude::*, dsl::count};
 
 use rocket::http::Status as HttpStatus;
 
-use std::fs::File;
-use std::io::Read;
+use std::{fs::File, io::Read};
 
 #[get("/<username>")]
 fn get(username: String, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {

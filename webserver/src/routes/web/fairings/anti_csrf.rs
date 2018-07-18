@@ -1,11 +1,13 @@
-use routes::web::Session;
+use crate::routes::web::Session;
 
 use hex;
 
-use rocket::{Data, Outcome};
-use rocket::fairing::{Fairing, Info, Kind};
-use rocket::http::Method;
-use rocket::request::Request;
+use rocket::{
+  Data, Outcome,
+  fairing::{Fairing, Info, Kind},
+  http::Method,
+  request::Request,
+};
 
 use sodiumoxide::randombytes;
 

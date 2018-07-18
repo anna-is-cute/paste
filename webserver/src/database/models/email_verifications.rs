@@ -1,11 +1,14 @@
-use config::Config;
-use database::DbConn;
-use errors::*;
-use models::id::{UserId, EmailVerificationId};
-use sidekiq_::Job;
+use crate::{
+  config::Config,
+  database::DbConn,
+  errors::*,
+  models::id::{UserId, EmailVerificationId},
+  sidekiq::Job,
+  utils::HashedPassword,
+};
+
 use super::users::User;
 use super::super::schema::email_verifications;
-use utils::HashedPassword;
 
 use base64;
 
@@ -13,6 +16,8 @@ use chrono::{Utc, DateTime, NaiveDateTime, Duration};
 
 use diesel;
 use diesel::prelude::*;
+
+use serde_json::{json, json_internal};
 
 use sodiumoxide::crypto::pwhash::{pwhash_verify, HashedPassword as PwhashPassword};
 use sodiumoxide::randombytes;

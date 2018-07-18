@@ -1,14 +1,19 @@
-use config::Config;
-use database::DbConn;
-use errors::*;
-use models::id::ApiKeyId;
-use routes::web::{context, Rst, OptionalWebUser, Session};
+use crate::{
+  config::Config,
+  database::DbConn,
+  errors::*,
+  models::id::ApiKeyId,
+  routes::web::{context, Rst, OptionalWebUser, Session},
+};
 
-use rocket::request::Form;
-use rocket::response::Redirect;
-use rocket::State;
-
+use rocket::{
+  request::Form,
+  response::Redirect,
+  State,
+};
 use rocket_contrib::Template;
+
+use serde_json::{json, json_internal};
 
 #[get("/account/keys")]
 fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {

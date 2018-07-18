@@ -1,6 +1,8 @@
-use rocket::fairing::{Fairing, Info, Kind};
-use rocket::request::Request;
-use rocket::response::Response;
+use rocket::{
+  fairing::{Fairing, Info, Kind},
+  request::Request,
+  response::Response,
+};
 
 use std::collections::HashMap;
 

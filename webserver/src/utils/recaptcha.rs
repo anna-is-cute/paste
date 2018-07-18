@@ -1,9 +1,8 @@
-use errors::*;
+use crate::errors::*;
 
 use reqwest::Client;
 
-use rocket::request::FromFormValue;
-use rocket::http::RawStr;
+use rocket::{request::FromFormValue, http::RawStr};
 
 use serde_json;
 
@@ -35,7 +34,7 @@ impl ReCaptcha {
   }
 }
 
-impl<'v> FromFormValue<'v> for ReCaptcha {
+impl FromFormValue<'v> for ReCaptcha {
   type Error = &'v RawStr;
 
   fn from_form_value(form_value: &'v RawStr) -> result::Result<Self, Self::Error> {

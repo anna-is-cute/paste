@@ -1,22 +1,24 @@
-use utils::Language;
+use crate::utils::Language;
 
 use chrono::{DateTime, Utc};
 
-use diesel::backend::Backend;
-use diesel::deserialize::{self, FromSql};
-use diesel::Queryable;
-use diesel::serialize::{self, ToSql};
-use diesel::sql_types::SmallInt;
+use diesel::{
+  Queryable,
+  backend::Backend,
+  deserialize::{self, FromSql},
+  serialize::{self, ToSql},
+  sql_types::SmallInt,
+};
 
-use rocket::http::RawStr;
-use rocket::request::FromFormValue;
+use failure::format_err;
+
+use rocket::{http::RawStr, request::FromFormValue};
 
 use serde::de::{self, Deserialize, Deserializer};
 
 use unicode_segmentation::UnicodeSegmentation;
 
-use std::io::Write;
-use std::ops::Deref;
+use std::{io::Write, ops::Deref};
 
 pub mod output;
 pub mod update;
@@ -55,7 +57,7 @@ impl CountedText {
   }
 }
 
-impl<'de> Deserialize<'de> for CountedText {
+impl Deserialize<'de> for CountedText {
   fn deserialize<D>(des: D) -> Result<Self, D::Error>
     where D: Deserializer<'de>,
   {
@@ -155,7 +157,7 @@ impl<DB: Backend<RawValue = [u8]>> FromSql<SmallInt, DB> for Visibility {
   }
 }
 
-impl<'v> FromFormValue<'v> for Visibility {
+impl FromFormValue<'v> for Visibility {
     type Error = &'v RawStr;
 
     fn from_form_value(form_value: &'v RawStr) -> Result<Self, Self::Error> {
@@ -234,7 +236,7 @@ mod base64_serde {
 
   pub struct Base64Visitor;
 
-  impl<'de> Visitor<'de> for Base64Visitor {
+  impl Visitor<'de> for Base64Visitor {
     type Value = Vec<u8>;
 
     fn expecting(&self, formatter: &mut Formatter) -> fmt::Result {

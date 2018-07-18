@@ -1,13 +1,20 @@
-use backend::errors::BackendError;
-use backend::pastes::*;
-use database::DbConn;
-use models::paste::Paste;
-use models::paste::output::{Output, OutputFile, OutputAuthor};
-use models::status::{Status, ErrorKind};
-use routes::{RouteResult, OptionalUser};
+use crate::{
+  backend::{
+    errors::BackendError,
+    pastes::*,
+  },
+  database::DbConn,
+  models::{
+    paste::{
+      Paste,
+      output::{Output, OutputFile, OutputAuthor}
+    },
+    status::{Status, ErrorKind},
+  },
+  routes::{RouteResult, OptionalUser},
+};
 
-use rocket::http::Status as HttpStatus;
-use rocket::State;
+use rocket::{State, http::Status as HttpStatus};
 
 use rocket_contrib::Json;
 

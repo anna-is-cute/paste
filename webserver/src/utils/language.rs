@@ -1,11 +1,14 @@
-use diesel::backend::Backend;
-use diesel::deserialize::{self, FromSql};
-use diesel::Queryable;
-use diesel::serialize::{self, ToSql};
-use diesel::sql_types::Text;
+use diesel::{
+  backend::Backend,
+  deserialize::{self, FromSql},
+  Queryable,
+  serialize::{self, ToSql},
+  sql_types::Text,
+};
 
-use rocket::http::RawStr;
-use rocket::request::FromFormValue;
+use failure::format_err;
+
+use rocket::{http::RawStr, request::FromFormValue};
 
 use std::io::Write;
 
@@ -371,8 +374,8 @@ impl Language {
     Language::Zephir,
   ];
 
-  pub fn as_str(&self) -> &'static str {
-    match *self {
+  pub fn as_str(self) -> &'static str {
+    match self {
       Language::OneC => "OneC",
       Language::Abnf => "Abnf",
       Language::AccessLog => "AccessLog",
@@ -736,8 +739,8 @@ impl Language {
     Some(lang)
   }
 
-  pub fn hljs(&self) -> &'static str {
-    match *self {
+  pub fn hljs(self) -> &'static str {
+    match self {
       Language::OneC => "1c",
       Language::Abnf => "abnf",
       Language::AccessLog => "accesslog",
@@ -1098,11 +1101,11 @@ impl Language {
       _ => return None,
     };
 
-    return Some(lang);
+    Some(lang)
   }
 
-  pub fn pretty(&self) -> &'static str {
-    match *self {
+  pub fn pretty(self) -> &'static str {
+    match self {
       Language::OneC => "1c",
       Language::Abnf => "ABNF",
       Language::AccessLog => "AccessLog",
@@ -1463,7 +1466,7 @@ impl Language {
       _ => return None,
     };
 
-    return Some(lang);
+    Some(lang)
   }
 
   pub fn context() -> Vec<(String, &'static str, &'static str)> {
@@ -1498,7 +1501,7 @@ impl<DB: Backend<RawValue = [u8]>> FromSql<Text, DB> for Language {
   }
 }
 
-impl<'v> FromFormValue<'v> for Language {
+impl FromFormValue<'v> for Language {
     type Error = &'v RawStr;
 
     fn from_form_value(form_value: &'v RawStr) -> Result<Self, Self::Error> {

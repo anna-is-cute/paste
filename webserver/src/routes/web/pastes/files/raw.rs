@@ -1,27 +1,30 @@
-use database::DbConn;
-use database::models::pastes::Paste as DbPaste;
-use database::models::users::User;
-use database::schema::users;
-use errors::*;
-use models::id::{PasteId, FileId};
-use routes::web::OptionalWebUser;
-use routes::AddHeaders;
+use crate::{
+  database::{
+    DbConn,
+    models::{pastes::Paste as DbPaste, users::User},
+    schema::users,
+  },
+  errors::*,
+  models::id::{PasteId, FileId},
+  routes::{AddHeaders, web::OptionalWebUser},
+};
 
 use diesel::prelude::*;
 
-use rocket::http::{Status as HttpStatus};
-use rocket::request::Request;
-use rocket::response::{Responder, Response};
+use rocket::{
+  http::{Status as HttpStatus},
+  request::Request,
+  response::{Responder, Response},
+};
 
-use std::fs::File;
-use std::result;
+use std::{fs::File, result};
 
 enum As {
   Add(AddHeaders<File>),
   Status(HttpStatus),
 }
 
-impl<'r> Responder<'r> for As {
+impl Responder<'r> for As {
   fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
     match self {
       As::Add(r) => r.respond_to(request),

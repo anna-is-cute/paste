@@ -1,29 +1,37 @@
 #![cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value, print_literal))]
 
-use config::Config;
-use database::{PostgresPool, schema};
-use database::models::deletion_keys::DeletionKey;
-use database::models::users::User;
-use errors::*;
-use models::id::ApiKeyId;
-use models::status::Status;
-use routes::web::{context, OptionalWebUser, Session};
+use crate::{
+  config::Config,
+  database::{PostgresPool, schema},
+  database::models::deletion_keys::DeletionKey,
+  database::models::users::User,
+  errors::*,
+  models::id::ApiKeyId,
+  models::status::Status,
+  routes::web::{context, OptionalWebUser, Session},
+};
 
 use diesel::prelude::*;
 
-use rocket::{Request, State, Outcome};
-use rocket::http::{Status as HttpStatus, Header};
-use rocket::request::{self, FromRequest};
-use rocket::response::{Responder, Response};
-use rocket::response::status::Custom;
+use rocket::{
+  Request, State, Outcome,
+  http::{Status as HttpStatus, Header},
+  request::{self, FromRequest},
+  response::{
+    Responder, Response,
+    status::Custom,
+  },
+};
 
 use rocket_contrib::{Json, Template};
 
 use uuid::Uuid;
 
-use std::ops::Deref;
-use std::result;
-use std::str::FromStr;
+use std::{
+  ops::Deref,
+  result,
+  str::FromStr,
+};
 
 pub type RouteResult<T> = Result<Custom<Json<Status<T>>>>;
 
@@ -35,7 +43,7 @@ enum StringOrTemplate {
   Template(Template),
 }
 
-impl<'r> Responder<'r> for StringOrTemplate {
+impl Responder<'r> for StringOrTemplate {
   fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
     match self {
       StringOrTemplate::String(s) => s.respond_to(request),
@@ -55,22 +63,22 @@ fn error(req: &Request, kind: &str, template: &'static str) -> StringOrTemplate 
   StringOrTemplate::Template(Template::render(template, ctx))
 }
 
-#[error(400)]
+#[catch(400)]
 fn bad_request(req: &Request) -> StringOrTemplate {
   error(req, "bad_request", "error/400")
 }
 
-#[error(403)]
+#[catch(403)]
 fn forbidden(req: &Request) -> StringOrTemplate {
   error(req, "forbidden", "error/403")
 }
 
-#[error(404)]
+#[catch(404)]
 fn not_found(req: &Request) -> StringOrTemplate {
   error(req, "not_found", "error/404")
 }
 
-#[error(500)]
+#[catch(500)]
 fn internal_server_error(req: &Request) -> StringOrTemplate {
   error(req, "internal_server_error", "error/500")
 }
@@ -96,7 +104,7 @@ pub struct RequiredUser(User);
 #[derive(Debug)]
 pub struct OptionalUser(Option<User>);
 
-impl<'a, 'r> FromRequest<'a, 'r> for DeletionAuth {
+impl FromRequest<'a, 'r> for DeletionAuth {
   type Error = ApiKeyError;
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
@@ -150,7 +158,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for DeletionAuth {
   }
 }
 
-impl<'a, 'r> FromRequest<'a, 'r> for RequiredUser {
+impl FromRequest<'a, 'r> for RequiredUser {
   type Error = ApiKeyError;
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
@@ -202,7 +210,7 @@ impl Deref for RequiredUser {
   }
 }
 
-impl<'a, 'r> FromRequest<'a, 'r> for OptionalUser {
+impl FromRequest<'a, 'r> for OptionalUser {
   type Error = ApiKeyError;
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {

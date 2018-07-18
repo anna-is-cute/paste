@@ -1,11 +1,13 @@
-use config::Config;
+use crate::config::Config;
 
-use html5ever::{parse_fragment, serialize, QualName, Parser};
-use html5ever::driver::ParseOpts;
-use html5ever::rcdom::{NodeData, RcDom, Handle};
-use html5ever::tendril::TendrilSink;
-use html5ever::tree_builder::TreeSink;
-use html5ever::interface::Attribute;
+use html5ever::{
+  parse_fragment, serialize, QualName, Parser,
+  driver::ParseOpts,
+  rcdom::{NodeData, RcDom, Handle},
+  tendril::TendrilSink,
+  tree_builder::TreeSink,
+  interface::Attribute,
+};
 
 use url::{Url, ParseError as UrlParseError};
 

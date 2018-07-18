@@ -1,6 +1,9 @@
-use models::id::{DeletionKeyId, PasteId, FileId, UserId};
+use crate::{
+  models::id::{DeletionKeyId, PasteId, FileId, UserId},
+  utils::Language,
+};
+
 use super::{Paste, Metadata, Visibility, Content};
-use utils::Language;
 
 use chrono::{DateTime, Utc};
 

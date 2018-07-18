@@ -1,10 +1,14 @@
-use backend::errors::BackendError;
-use database::models::deletion_keys::DeletionKey;
-use database::models::files::File;
-use database::models::pastes::Paste;
-use database::models::users::User;
-use models::paste::{Content, Visibility};
-use utils::Language;
+use crate::{
+  backend::errors::BackendError,
+  database::models::{
+    deletion_keys::DeletionKey,
+    files::File,
+    pastes::Paste,
+    users::User,
+  },
+  models::paste::{Content, Visibility},
+  utils::Language,
+};
 
 use chrono::{DateTime, Utc};
 

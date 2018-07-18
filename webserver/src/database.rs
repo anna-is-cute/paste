@@ -1,14 +1,17 @@
-use diesel::pg::PgConnection;
-use diesel::r2d2::ConnectionManager;
+use diesel::{
+  pg::PgConnection,
+  r2d2::ConnectionManager,
+};
 
 use r2d2::{Pool, PooledConnection};
 
-use rocket::http::Status;
-use rocket::request::{self, FromRequest};
-use rocket::{Request, State, Outcome};
+use rocket::{
+  Request, State, Outcome,
+  http::Status,
+  request::{self, FromRequest},
+};
 
-use std::env;
-use std::ops::Deref;
+use std::{env, ops::Deref};
 
 pub mod models;
 pub mod schema;
@@ -26,7 +29,7 @@ pub fn init_pool() -> PostgresPool {
 
 pub struct DbConn(pub PooledConnection<ConnectionManager<PgConnection>>);
 
-impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
+impl FromRequest<'a, 'r> for DbConn {
   type Error = ();
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {

@@ -1,11 +1,13 @@
-use database::DbConn;
-use errors::*;
+use crate::{
+  database::DbConn,
+  errors::*,
+  utils::BitMask,
+};
+
 use super::super::schema::password_reset_attempts;
-use utils::BitMask;
 
 use chrono::{DateTime, Duration, NaiveDateTime, Utc};
 
-use diesel;
 use diesel::prelude::*;
 
 use ipnetwork::IpNetwork;

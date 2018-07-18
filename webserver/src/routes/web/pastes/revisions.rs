@@ -1,21 +1,27 @@
-use config::Config;
-use database::DbConn;
-use database::models::pastes::Paste as DbPaste;
-use database::models::users::User;
-use database::schema::users;
-use errors::*;
-use models::id::PasteId;
-use models::paste::output::{Output, OutputAuthor, OutputFile};
-use routes::web::{context, Rst, OptionalWebUser, Session};
+use crate::{
+  config::Config,
+  database::{
+    DbConn,
+    models::{pastes::Paste as DbPaste, users::User},
+    schema::users,
+  },
+  errors::*,
+  models::{
+    id::PasteId,
+    paste::output::{Output, OutputAuthor, OutputFile},
+  },
+  routes::web::{context, Rst, OptionalWebUser, Session},
+};
 
 use diesel::prelude::*;
 
 use git2::{Repository, DiffFormat, Oid, Commit, Tree};
 
-use rocket::http::Status as HttpStatus;
-use rocket::State;
+use rocket::{State, http::Status as HttpStatus};
 
 use rocket_contrib::Template;
+
+use serde_json::{json, json_internal};
 
 use std::result;
 

@@ -4,14 +4,13 @@ use r2d2_redis::RedisConnectionManager;
 
 use redis::Connection;
 
-use rocket::http::Status;
-use rocket::request::{self, FromRequest};
-use rocket::{Request, State, Outcome};
+use rocket::{
+  Request, State, Outcome,
+  http::Status,
+  request::{self, FromRequest},
+};
 
-use sidekiq;
-
-use std::env;
-use std::ops::Deref;
+use std::{env, ops::Deref};
 
 pub type RedisPool = Pool<RedisConnectionManager>;
 
@@ -35,7 +34,7 @@ fn pool(path: &str) -> RedisPool {
 
 pub struct Redis(pub PooledConnection<RedisConnectionManager>);
 
-impl<'a, 'r> FromRequest<'a, 'r> for Redis {
+impl FromRequest<'a, 'r> for Redis {
   type Error = ();
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {

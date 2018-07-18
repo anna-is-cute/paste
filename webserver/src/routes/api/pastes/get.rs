@@ -1,12 +1,22 @@
-use database::DbConn;
-use database::models::pastes::Paste as DbPaste;
-use database::models::users::User;
-use database::schema::{pastes, users};
-use models::id::PasteId;
-use models::paste::{Metadata, Visibility};
-use models::paste::output::{Output, OutputFile, OutputAuthor};
-use models::status::{Status, ErrorKind};
-use routes::{RouteResult, OptionalUser};
+use crate::{
+  database::{
+    DbConn,
+    models::{
+      pastes::Paste as DbPaste,
+      users::User,
+    },
+  },
+  database::schema::{pastes, users},
+  models::{
+    id::PasteId,
+    paste::{
+      Metadata, Visibility,
+      output::{Output, OutputFile, OutputAuthor},
+    },
+    status::{Status, ErrorKind},
+  },
+  routes::{RouteResult, OptionalUser},
+};
 
 use diesel::prelude::*;
 

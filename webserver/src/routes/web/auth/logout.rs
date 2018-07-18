@@ -1,8 +1,10 @@
-use routes::web::Session;
+use crate::routes::web::Session;
 
-use rocket::http::{Cookies, Cookie};
-use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::{
+  http::{Cookies, Cookie},
+  request::Form,
+  response::Redirect,
+};
 
 #[post("/logout", data = "<data>")]
 fn post(data: Form<Logout>, mut sess: Session, mut cookies: Cookies) -> Redirect {

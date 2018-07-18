@@ -1,12 +1,13 @@
-use errors::*;
-use models::id::{PasteId, UserId};
+use crate::{
+  errors::*,
+  models::id::{PasteId, UserId},
+};
 
 use git2::Repository;
 
 use uuid::Uuid;
 
-use std::fs;
-use std::path::PathBuf;
+use std::{fs, path::PathBuf};
 
 pub struct Store;
 

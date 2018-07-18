@@ -1,9 +1,13 @@
+cargo-features = ["edition"]
+
 [package]
 name = "webserver"
 version = "0.1.1"
 authors = ["Kyle Clemens <git@kyleclemens.com>"]
 
 build = "build.rs"
+
+edition = "2018"
 
 exclude = [
   # pls

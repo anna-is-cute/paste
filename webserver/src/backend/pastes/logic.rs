@@ -1,10 +1,17 @@
-use database::DbConn;
-use database::models::deletion_keys::NewDeletionKey;
-use database::models::pastes::{Paste, NewPaste};
-use database::schema::{deletion_keys, pastes};
-use models::paste::Visibility;
-use sidekiq_::Job;
-use store::Store;
+use crate::{
+  database::{
+    DbConn,
+    models::{
+      deletion_keys::NewDeletionKey,
+      pastes::{Paste, NewPaste},
+    },
+    schema::{deletion_keys, pastes},
+  },
+  models::paste::Visibility,
+  sidekiq::Job,
+  store::Store,
+};
+
 use super::models::{PastePayload, CreateSuccess, CreateError};
 
 use chrono::Utc;
@@ -18,7 +25,7 @@ use unicode_segmentation::UnicodeSegmentation;
 
 use std::borrow::Cow;
 
-impl<'a> PastePayload<'a> {
+impl PastePayload<'u> {
   fn check(&self) -> Result<(), CreateError> {
     const MAX_SIZE: usize = 25 * 1024;
 
@@ -91,7 +98,7 @@ impl<'a> PastePayload<'a> {
     self.check()?;
 
     let id = Store::new_paste(self.author.map(|x| x.id()))
-      .map_err(|e| CreateError::Internal(e.into()))?;
+      .map_err(CreateError::Internal)?;
 
     let np = NewPaste::new(
       id,
@@ -123,7 +130,7 @@ impl<'a> PastePayload<'a> {
     let mut files = Vec::with_capacity(self.files.len());
     for file in self.files {
       let f = paste.create_file(conn, file.name, file.highlight_language, file.content)
-        .map_err(|e| CreateError::Internal(e.into()))?;
+        .map_err(CreateError::Internal)?;
       files.push(f);
     }
 

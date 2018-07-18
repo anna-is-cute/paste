@@ -1,22 +1,27 @@
-use config::Config;
-use database::DbConn;
-use database::schema::email_verifications;
-use database::models::email_verifications::EmailVerification;
-use errors::*;
-use models::id::EmailVerificationId;
-use routes::web::{OptionalWebUser, Session};
-use utils::HashedPassword;
+use crate::{
+  config::Config,
+  database::{
+    DbConn,
+    schema::email_verifications,
+    models::email_verifications::EmailVerification,
+  },
+  errors::*,
+  models::id::EmailVerificationId,
+  routes::web::{OptionalWebUser, Session},
+  utils::HashedPassword,
+};
 
 use base64;
 
 use chrono::Utc;
 
-use diesel;
 use diesel::prelude::*;
 
-use rocket::State;
-use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::{
+  State,
+  request::Form,
+  response::Redirect,
+};
 
 use sidekiq::Client as SidekiqClient;
 

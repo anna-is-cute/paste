@@ -1,6 +1,6 @@
 use super::super::schema::api_keys;
 use super::users::User;
-use models::id::{UserId, ApiKeyId};
+use crate::models::id::{UserId, ApiKeyId};
 
 #[derive(Debug, Serialize, Identifiable, Queryable, Associations)]
 #[primary_key(key)]

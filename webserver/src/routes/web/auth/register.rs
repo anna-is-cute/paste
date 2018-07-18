@@ -1,24 +1,28 @@
-use config::Config;
-use database::DbConn;
-use database::models::users::{User, NewUser};
-use database::schema::users;
-use errors::*;
-use models::id::UserId;
-use routes::web::{context, AddCsp, Rst, OptionalWebUser, Session};
-use utils::{email, PasswordContext, ReCaptcha, HashedPassword, Validator};
+use crate::{
+  config::Config,
+  database::{
+    DbConn,
+    models::users::{User, NewUser},
+    schema::users,
+  },
+  errors::*,
+  models::id::UserId,
+  routes::web::{context, AddCsp, Rst, OptionalWebUser, Session},
+  utils::{email, PasswordContext, ReCaptcha, HashedPassword, Validator},
+};
 
 use chrono::{Duration, Utc};
 
 use cookie::{Cookie, SameSite};
 
-use diesel;
-use diesel::dsl::count;
-use diesel::prelude::*;
+use diesel::{dsl::count, prelude::*};
 
-use rocket::State;
-use rocket::http::Cookies;
-use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::{
+  State,
+  http::Cookies,
+  request::Form,
+  response::Redirect,
+};
 
 use rocket_contrib::Template;
 

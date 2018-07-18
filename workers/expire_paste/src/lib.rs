@@ -1,18 +1,18 @@
-extern crate chrono;
 #[macro_use]
 extern crate diesel;
-extern crate dotenv;
-extern crate failure;
-extern crate uuid;
 
-use std::ffi::CStr;
-use std::fs;
-use std::os::raw::c_char;
-use std::path::Path;
-use std::str::FromStr;
+use std::{
+  ffi::CStr,
+  fs,
+  os::raw::c_char,
+  path::Path,
+  str::FromStr,
+};
 
-use diesel::prelude::*;
-use diesel::pg::PgConnection;
+use diesel::{
+  prelude::*,
+  pg::PgConnection,
+};
 
 use failure::Error;
 
@@ -21,7 +21,7 @@ use uuid::Uuid;
 mod paste;
 mod schema;
 
-use paste::Paste;
+use crate::paste::Paste;
 
 type Result<T> = std::result::Result<T, Error>;
 

@@ -1,8 +1,12 @@
-use database::DbConn;
-use models::id::PasteId;
-use models::paste::output::OutputFile;
-use models::status::{Status, ErrorKind};
-use routes::{RouteResult, OptionalUser};
+use crate::{
+  database::DbConn,
+  models::{
+    id::PasteId,
+    paste::output::OutputFile,
+    status::{Status, ErrorKind},
+  },
+  routes::{RouteResult, OptionalUser},
+};
 
 use rocket::http::Status as HttpStatus;
 

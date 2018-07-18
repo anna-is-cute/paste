@@ -1,4 +1,4 @@
-use schema::pastes;
+use crate::schema::pastes;
 
 use chrono::NaiveDateTime;
 

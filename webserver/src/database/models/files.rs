@@ -1,19 +1,20 @@
 #![cfg_attr(feature = "cargo-clippy", allow(option_option))]
 
-use errors::*;
-use models::id::{FileId, PasteId};
-use models::paste::Content;
-use models::paste::output::OutputFile;
-use utils::Language;
+use crate::{
+  errors::*,
+  models::{
+    id::{FileId, PasteId},
+    paste::{Content, output::OutputFile},
+  },
+  utils::Language,
+};
 
 use super::pastes::Paste;
 use super::super::schema::files;
 
 use chrono::{NaiveDateTime, Utc};
 
-use std::fs::File as FsFile;
-use std::io::Read;
-use std::path::PathBuf;
+use std::{fs::File as FsFile, io::Read, path::PathBuf};
 
 #[derive(Debug, Identifiable, AsChangeset, Queryable, Associations)]
 #[changeset_options(treat_none_as_null = "true")]

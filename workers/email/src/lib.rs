@@ -1,20 +1,21 @@
-extern crate lettre;
-extern crate lettre_email;
-extern crate native_tls;
+#![feature(rust_2018_preview)]
+
 #[macro_use]
 extern crate serde_derive;
-extern crate serde;
-extern crate toml;
 
-use lettre::{SmtpTransport, EmailTransport, ClientSecurity, ClientTlsParameters};
-use lettre::smtp::authentication::{Credentials, Mechanism};
+use lettre::{
+  SmtpTransport, EmailTransport, ClientSecurity, ClientTlsParameters,
+  smtp::authentication::{Credentials, Mechanism},
+};
 
 use lettre_email::EmailBuilder;
 
 use native_tls::TlsConnector;
 
-use std::ffi::CStr;
-use std::os::raw::c_char;
+use std::{
+  ffi::CStr,
+  os::raw::c_char,
+};
 
 mod config;
 

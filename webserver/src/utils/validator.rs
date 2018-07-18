@@ -8,7 +8,7 @@ pub struct Validator<'a> {
   s: Cow<'a, str>,
 }
 
-impl<'a> Validator<'a> {
+impl Validator<'a> {
   fn bytes(&mut self) -> Result<(), &'static str> {
     const MAX_SIZE: usize = 5 * 1024;
     if self.s.len() > MAX_SIZE {

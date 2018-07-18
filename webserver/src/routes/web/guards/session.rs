@@ -1,6 +1,8 @@
-use models::id::SessionId;
-use redis_store::Redis;
-use routes::web::guards::AntiCsrfToken;
+use crate::{
+  models::id::SessionId,
+  redis_store::Redis,
+  routes::web::guards::AntiCsrfToken,
+};
 
 use chrono::{Utc, Duration};
 
@@ -8,20 +10,21 @@ use cookie::{Cookie, SameSite};
 
 use redis::{Commands, Value};
 
-use rocket::Outcome;
-use rocket::request::{self, Request, FromRequest};
+use rocket::{
+  Outcome,
+  request::{self, Request, FromRequest},
+};
 
 use serde::Serialize;
 
-use serde_json::{self, Value as JsonValue};
+use serde_json::{Value as JsonValue, json, json_internal};
 
 use uuid::Uuid;
 
-use std::collections::HashMap;
-use std::str::FromStr;
+use std::{collections::HashMap, str::FromStr};
 
 // set session expiration to one day
-const SESS_EXPIRE: usize = 1 * 24 * 60 * 60;
+const SESS_EXPIRE: usize = 24 * 60 * 60;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Session<'a, 'r> where 'r: 'a {
@@ -34,7 +37,7 @@ pub struct Session<'a, 'r> where 'r: 'a {
   pub anti_csrf_tokens: Vec<AntiCsrfToken>,
 }
 
-impl<'a, 'r> Session<'a, 'r> {
+impl Session<'a, 'r> {
   pub fn new(id: SessionId, request: &'a Request<'r>) -> Self {
     Session {
       request: Some(request),
@@ -92,7 +95,7 @@ impl<'a, 'r> Session<'a, 'r> {
   }
 }
 
-impl<'a, 'r> FromRequest<'a, 'r> for Session<'a, 'r> {
+impl FromRequest<'a, 'r> for Session<'a, 'r> {
     type Error = String;
 
     fn from_request(req: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
@@ -111,7 +114,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Session<'a, 'r> {
       let redis: Redis = match req.guard() {
         Outcome::Success(s) => s,
         Outcome::Failure((status, _)) => return Outcome::Failure((status, "could not get redis connection".into())),
-        Outcome::Forward(f) => return Outcome::Forward(f),
+        Outcome::Forward(()) => return Outcome::Forward(()),
       };
 
       let json: String = match redis.get(format!("session:{}", sess_id.simple())) {
@@ -131,7 +134,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Session<'a, 'r> {
     }
 }
 
-impl<'a, 'r> Drop for Session<'a, 'r> {
+impl Drop for Session<'a, 'r> {
   fn drop(&mut self) {
     if let Some(req) = self.request {
       let json = match serde_json::to_string(self) {

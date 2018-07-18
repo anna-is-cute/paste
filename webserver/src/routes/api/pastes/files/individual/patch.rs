@@ -1,19 +1,23 @@
-use database::DbConn;
-use database::schema::files;
-use models::id::{PasteId, FileId};
-use models::paste::update::{PasteFileUpdate, Update};
-use models::status::{Status, ErrorKind};
-use routes::{RouteResult, RequiredUser};
+use crate::{
+  database::{
+    DbConn,
+    schema::files,
+  },
+  models::{
+    id::{PasteId, FileId},
+    paste::update::{PasteFileUpdate, Update},
+    status::{Status, ErrorKind},
+  },
+  routes::{RouteResult, RequiredUser},
+};
 
-use diesel;
 use diesel::prelude::*;
 
 use rocket::http::Status as HttpStatus;
 
 use rocket_contrib::Json;
 
-use std::fs::OpenOptions;
-use std::io::Write;
+use std::{fs::OpenOptions, io::Write};
 
 type UpdateResult = ::std::result::Result<Json<PasteFileUpdate>, ::rocket_contrib::SerdeError>;
 

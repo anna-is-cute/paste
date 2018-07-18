@@ -1,13 +1,19 @@
-use config::Config;
-use database::DbConn;
-use database::models::password_reset_attempts::PasswordResetAttempt;
-use database::models::password_resets::{PasswordReset, NewPasswordReset};
-use database::models::users::User;
-use database::schema::{users, password_resets};
-use errors::*;
-use routes::web::{context, Session, Rst, OptionalWebUser};
-use sidekiq_::Job;
-use utils::{email, PasswordContext, HashedPassword};
+use crate::{
+  config::Config,
+  database::{
+    DbConn,
+    models::{
+      password_reset_attempts::PasswordResetAttempt,
+      password_resets::{PasswordReset, NewPasswordReset},
+      users::User,
+    },
+    schema::{users, password_resets},
+  },
+  errors::*,
+  routes::web::{context, Session, Rst, OptionalWebUser},
+  sidekiq::Job,
+  utils::{email, PasswordContext, HashedPassword},
+};
 
 use base64;
 
@@ -15,15 +21,18 @@ use chrono::{DateTime, Duration, Utc};
 
 use cookie::{Cookie, SameSite};
 
-use diesel;
 use diesel::prelude::*;
 
-use rocket::http::Cookies;
-use rocket::request::Form;
-use rocket::response::Redirect;
-use rocket::State;
+use rocket::{
+  http::Cookies,
+  request::Form,
+  response::Redirect,
+  State,
+};
 
 use rocket_contrib::{Template, UUID};
+
+use serde_json::{json, json_internal};
 
 use sidekiq::Client as SidekiqClient;
 

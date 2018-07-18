@@ -1,7 +1,9 @@
-use rocket::fairing::{Fairing, Info, Kind};
-use rocket::http::Header;
-use rocket::request::Request;
-use rocket::response::Response;
+use rocket::{
+  fairing::{Fairing, Info, Kind},
+  http::Header,
+  request::Request,
+  response::Response,
+};
 
 pub struct SecurityHeaders;
 

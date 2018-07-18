@@ -1,19 +1,25 @@
-use database::DbConn;
-use errors::*;
-use models::id::{FileId, PasteId, UserId};
-use models::paste::{Content, Visibility};
-use models::paste::update::{MetadataUpdate, Update};
-use models::status::ErrorKind;
-use sidekiq_::Job;
-use store::Store;
+use crate::{
+  database::DbConn,
+  errors::*,
+  models::{
+    id::{FileId, PasteId, UserId},
+    paste::{
+      Content, Visibility,
+      update::{MetadataUpdate, Update},
+    },
+    status::ErrorKind,
+  },
+  sidekiq::Job,
+  store::Store,
+  utils::Language,
+};
+
 use super::files::{File as DbFile, NewFile};
 use super::super::schema::{pastes, files};
 use super::users::User;
-use utils::Language;
 
 use chrono::{NaiveDateTime, DateTime, Utc};
 
-use diesel;
 use diesel::prelude::*;
 
 use git2::{Signature, Repository, IndexAddOption, Status};
@@ -24,9 +30,11 @@ use sidekiq::{Client as SidekiqClient, Value};
 
 use uuid::Uuid;
 
-use std::fs::{self, File};
-use std::io::Write;
-use std::path::PathBuf;
+use std::{
+  fs::{self, File},
+  io::Write,
+  path::PathBuf,
+};
 
 #[derive(Debug, Identifiable, AsChangeset, Queryable, Associations)]
 #[changeset_options(treat_none_as_null = "true")]
@@ -109,7 +117,7 @@ impl Paste {
     }
     match update.expires {
       Update::Set(ref s) => {
-        self.set_expires(Some(s.clone()));
+        self.set_expires(Some(*s));
 
         let timestamp = s.timestamp();
 
@@ -217,14 +225,9 @@ impl Paste {
     let mut count = 1;
 
     let mut commit = head_commit;
-    loop {
-      match commit.parent(0) {
-        Ok(p) => {
-          commit = p;
-          count += 1;
-        },
-        Err(_) => break,
-      }
+    while let Ok(p) = commit.parent(0) {
+      commit = p;
+      count += 1;
     }
 
     Ok(count)

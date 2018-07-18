@@ -1,12 +1,16 @@
-use config::Config;
-use database::DbConn;
-use errors::*;
-use routes::web::{context, Rst, OptionalWebUser, Session};
-use sidekiq_::Job;
+use crate::{
+  config::Config,
+  database::DbConn,
+  errors::*,
+  routes::web::{context, Rst, OptionalWebUser, Session},
+  sidekiq::Job,
+};
 
-use rocket::request::Form;
-use rocket::response::Redirect;
-use rocket::State;
+use rocket::{
+  request::Form,
+  response::Redirect,
+  State,
+};
 
 use rocket_contrib::Template;
 

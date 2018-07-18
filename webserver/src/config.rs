@@ -1,10 +1,12 @@
-use errors::*;
+use crate::errors::*;
 
 use toml;
 
-use std::fs::File;
-use std::io::Read;
-use std::path::PathBuf;
+use std::{
+  fs::File,
+  io::Read,
+  path::PathBuf,
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {

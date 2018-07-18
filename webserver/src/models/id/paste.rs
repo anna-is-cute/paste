@@ -1,11 +1,14 @@
-use database::DbConn;
-use database::models::files::File as DbFile;
-use database::models::pastes::Paste as DbPaste;
-use database::schema::{files, pastes};
-use errors::*;
+use crate::{
+  database::{
+    DbConn,
+    models::{files::File as DbFile, pastes::Paste as DbPaste},
+    schema::{files, pastes},
+  },
+  errors::*,
+};
+
 use super::FileId;
 
-use diesel;
 use diesel::prelude::*;
 
 uuid_wrapper!(

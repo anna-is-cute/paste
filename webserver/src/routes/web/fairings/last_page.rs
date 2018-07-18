@@ -1,15 +1,17 @@
-use models::id::SessionId;
-use routes::web::Session;
+use crate::{models::id::SessionId, routes::web::Session};
 
-use rocket::Outcome;
-use rocket::fairing::{Fairing, Info, Kind};
-use rocket::http::{Method, Status as HttpStatus};
-use rocket::http::hyper::header::Location;
-use rocket::request::Request;
-use rocket::response::Response;
+use rocket::{
+  Outcome,
+  fairing::{Fairing, Info, Kind},
+  http::{
+    Method, Status as HttpStatus,
+    hyper::header::Location,
+  },
+  request::Request,
+  response::Response,
+};
 
-use std::collections::HashMap;
-use std::sync::RwLock;
+use std::{collections::HashMap, sync::RwLock};
 
 #[derive(Debug, Default)]
 pub struct LastPage {

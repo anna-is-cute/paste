@@ -1,11 +1,14 @@
-use database::DbConn;
-use models::id::PasteId;
-use models::paste::update::MetadataUpdate;
-use models::status::{Status, ErrorKind};
-use routes::{RouteResult, RequiredUser};
+use crate::{
+  database::DbConn,
+  models::{
+    id::PasteId,
+    paste::update::MetadataUpdate,
+    status::{Status, ErrorKind},
+  },
+  routes::{RouteResult, RequiredUser},
+};
 
-use rocket::http::Status as HttpStatus;
-use rocket::State;
+use rocket::{http::Status as HttpStatus, State};
 
 use rocket_contrib::Json;
 

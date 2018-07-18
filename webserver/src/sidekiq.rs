@@ -1,10 +1,14 @@
-use errors::*;
-use models::id::UserId;
-use store::Store;
+use crate::{
+  errors::*,
+  models::id::UserId,
+  store::Store,
+};
+
+use failure::format_err;
 
 use serde::Serialize;
 
-use sidekiq::{self, Value, JobOpts};
+use sidekiq::{Value, JobOpts};
 
 use std::path::PathBuf;
 

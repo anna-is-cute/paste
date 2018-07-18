@@ -1,18 +1,19 @@
-use backend::errors::BackendError;
-use backend::pastes::*;
-use database::DbConn;
-use errors::*;
-use models::paste::{Visibility, Content};
-use routes::web::{OptionalWebUser, Session};
-use utils::{FormDate, Language};
+use crate::{
+  backend::{errors::BackendError, pastes::*},
+  database::DbConn,
+  errors::*,
+  models::paste::{Visibility, Content},
+  routes::web::{OptionalWebUser, Session},
+  utils::{FormDate, Language},
+};
 
 use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
 
-use rocket::request::Form;
-use rocket::response::Redirect;
-use rocket::State;
-
-use serde_json;
+use rocket::{
+  request::Form,
+  response::Redirect,
+  State,
+};
 
 use sidekiq::Client as SidekiqClient;
 

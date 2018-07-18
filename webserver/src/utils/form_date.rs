@@ -1,10 +1,8 @@
 use chrono::{DateTime, Utc};
 
-use rocket::request::FromFormValue;
-use rocket::http::RawStr;
+use rocket::{request::FromFormValue, http::RawStr};
 
-use std::ops::Deref;
-use std::str::FromStr;
+use std::{ops::Deref, str::FromStr};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FormDate(DateTime<Utc>);
@@ -23,7 +21,7 @@ impl Deref for FormDate {
   }
 }
 
-impl<'v> FromFormValue<'v> for FormDate {
+impl FromFormValue<'v> for FormDate {
   type Error = &'v RawStr;
 
   fn from_form_value(form_value: &'v RawStr) -> Result<Self, Self::Error> {

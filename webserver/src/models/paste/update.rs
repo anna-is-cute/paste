@@ -1,8 +1,12 @@
 #![cfg_attr(feature = "cargo-clippy", allow(option_option))]
 
-use models::id::FileId;
-use models::paste::{Content, CountedText, Visibility};
-use utils::Language;
+use crate::{
+  models::{
+    id::FileId,
+    paste::{Content, CountedText, Visibility},
+  },
+  utils::Language,
+};
 
 use chrono::{DateTime, Utc};
 

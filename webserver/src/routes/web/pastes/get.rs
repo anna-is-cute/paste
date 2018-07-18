@@ -1,14 +1,21 @@
-use config::Config;
-use database::DbConn;
-use database::models::pastes::Paste as DbPaste;
-use database::models::users::User;
-use database::schema::{pastes, users};
-use errors::*;
-use models::id::{PasteId, FileId};
-use models::paste::{Content, Visibility};
-use models::paste::output::{Output, OutputFile, OutputAuthor};
-use routes::web::{context, Rst, OptionalWebUser, Session};
-use utils::{external_links, Language};
+use crate::{
+  config::Config,
+  database::{
+    DbConn,
+    models::{pastes::Paste as DbPaste, users::User},
+    schema::{pastes, users},
+  },
+  errors::*,
+  models::{
+    id::{PasteId, FileId},
+    paste::{
+      Content, Visibility,
+      output::{Output, OutputFile, OutputAuthor},
+    },
+  },
+  routes::web::{context, Rst, OptionalWebUser, Session},
+  utils::{external_links, Language},
+};
 
 use ammonia::Builder;
 
@@ -18,14 +25,17 @@ use diesel::prelude::*;
 
 use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
 
-use rocket::http::Status as HttpStatus;
-use rocket::response::Redirect;
-use rocket::State;
+use rocket::{
+  http::Status as HttpStatus,
+  response::Redirect,
+  State,
+};
 
 use rocket_contrib::Template;
 
-use std::collections::HashMap;
-use std::result;
+use serde_json::{json, json_internal};
+
+use std::{collections::HashMap, result};
 
 lazy_static! {
   static ref OPTIONS: ComrakOptions = ComrakOptions {

@@ -1,34 +1,42 @@
-use database::DbConn;
-use database::models::pastes::Paste as DbPaste;
-use database::models::users::User;
-use database::schema::{users, files};
-use errors::*;
-use models::id::{PasteId, FileId};
-use models::paste::{Visibility, Content};
-use models::paste::update::{MetadataUpdate, Update};
-use routes::web::{OptionalWebUser, Rst, Session};
-use utils::{FormDate, Language};
+use crate::{
+  database::{
+    DbConn,
+    models::{pastes::Paste as DbPaste, users::User},
+    schema::{users, files},
+  },
+  errors::*,
+  models::{
+    id::{PasteId, FileId},
+    paste::{
+      Visibility, Content,
+      update::{MetadataUpdate, Update},
+    },
+  },
+  routes::web::{OptionalWebUser, Rst, Session},
+  utils::{FormDate, Language},
+};
 
-use diesel;
 use diesel::prelude::*;
 
 use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
 
-use rocket::http::Status as HttpStatus;
-use rocket::request::LenientForm;
-use rocket::response::Redirect;
-use rocket::State;
-
-use serde_json;
+use rocket::{
+  http::Status as HttpStatus,
+  request::LenientForm,
+  response::Redirect,
+  State,
+};
 
 use sidekiq::Client as SidekiqClient;
 
 use unicode_segmentation::UnicodeSegmentation;
 
-use std::borrow::Cow;
-use std::fs::OpenOptions;
-use std::io::Write;
-use std::result;
+use std::{
+  borrow::Cow,
+  fs::OpenOptions,
+  io::Write,
+  result,
+};
 
 fn handle_js(input: &str) -> Result<Vec<MultiFile>> {
   let files: Vec<MultiFile> = serde_json::from_str(input)?;

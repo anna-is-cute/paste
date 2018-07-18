@@ -1,10 +1,14 @@
-use config::Config;
-use routes::web::{context, OptionalWebUser, Session};
-use utils::Language;
+use crate::{
+  config::Config,
+  routes::web::{context, OptionalWebUser, Session},
+  utils::Language,
+};
 
 use rocket::State;
 
 use rocket_contrib::Template;
+
+use serde_json::{json, json_internal};
 
 #[get("/")]
 fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Template {

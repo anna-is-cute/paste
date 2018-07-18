@@ -1,7 +1,11 @@
+cargo-features = ["edition"]
+
 [package]
 name = "worker_email"
 version = "0.1.0"
 authors = ["Kyle Clemens <git@kyleclemens.com>"]
+
+edition = "2018"
 
 [lib]
 crate-type = ["cdylib"]

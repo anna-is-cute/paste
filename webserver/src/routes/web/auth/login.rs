@@ -1,10 +1,13 @@
-use config::Config;
-use database::DbConn;
-use database::models::login_attempts::LoginAttempt;
-use database::models::users::User;
-use database::schema::users;
-use errors::*;
-use routes::web::{context, Rst, OptionalWebUser, Session};
+use crate::{
+  config::Config,
+  database::{
+    DbConn,
+    models::{login_attempts::LoginAttempt, users::User},
+    schema::users,
+  },
+  errors::*,
+  routes::web::{context, Rst, OptionalWebUser, Session},
+};
 
 use cookie::{Cookie, SameSite};
 

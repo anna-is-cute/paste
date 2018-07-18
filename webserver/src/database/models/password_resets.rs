@@ -1,13 +1,17 @@
+use crate::{
+  models::id::{UserId, PasswordResetId},
+  utils::HashedPassword,
+};
+
 use super::users::User;
 use super::super::schema::password_resets;
-use utils::HashedPassword;
-
-use models::id::{UserId, PasswordResetId};
 
 use chrono::{Utc, Duration, NaiveDateTime};
 
-use sodiumoxide::randombytes;
-use sodiumoxide::crypto::pwhash::{pwhash_verify, HashedPassword as PwhashPassword};
+use sodiumoxide::{
+  randombytes,
+  crypto::pwhash::{pwhash_verify, HashedPassword as PwhashPassword},
+};
 
 use uuid::Uuid;
 

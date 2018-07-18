@@ -1,47 +1,26 @@
-#![feature(plugin, custom_derive, macro_at_most_once_rep)]
+#![feature(
+  plugin,
+  custom_derive,
+  macro_at_most_once_rep,
+  rust_2018_preview,
+  use_extern_macros,
+  crate_in_paths,
+  crate_visibility_modifier,
+  non_modrs_mods,
+  in_band_lifetimes,
+)]
 #![plugin(rocket_codegen)]
 
-extern crate ammonia;
-extern crate base64;
-extern crate chrono;
-extern crate comrak;
-extern crate cookie;
 #[macro_use]
 extern crate diesel;
-extern crate dotenv;
-#[macro_use]
-extern crate failure;
-extern crate git2;
-extern crate hex;
 #[macro_use]
 extern crate html5ever;
 #[macro_use]
 extern crate if_chain;
-extern crate ipnetwork;
 #[macro_use]
 extern crate lazy_static;
-extern crate libflate;
-extern crate percent_encoding;
-extern crate r2d2;
-extern crate r2d2_redis;
-extern crate redis;
-extern crate reqwest;
-extern crate rocket_contrib;
-extern crate rocket;
 #[macro_use]
 extern crate serde_derive;
-#[macro_use]
-extern crate serde_json;
-extern crate serde;
-extern crate sidekiq;
-extern crate sodiumoxide;
-extern crate tera;
-extern crate toml;
-extern crate unicode_categories;
-extern crate unicode_segmentation;
-extern crate url;
-extern crate uuid;
-extern crate xz2;
 
 mod backend;
 mod config;
@@ -50,18 +29,17 @@ mod errors;
 mod models;
 mod redis_store;
 mod routes;
-mod sidekiq_;
+mod sidekiq;
 mod store;
 mod utils;
 
-use routes::web::fairings;
+use crate::routes::web::fairings;
 
 use rocket_contrib::Template;
 
 use tera::Tera;
 
-use std::env;
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 
 pub static SERVER_VERSION: Option<&'static str> = include!(concat!(env!("OUT_DIR"), "/version"));
 
@@ -125,7 +103,7 @@ fn main() {
     .attach(fairings::AntiCsrf)
     .attach(fairings::LastPage::default())
     .attach(Template::fairing())
-    .catch(errors![
+    .catch(catchers![
       routes::bad_request,
       routes::forbidden,
       routes::internal_server_error,

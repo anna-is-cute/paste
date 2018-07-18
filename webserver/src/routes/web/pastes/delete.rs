@@ -1,18 +1,28 @@
-use database::DbConn;
-use database::models::deletion_keys::DeletionKey;
-use database::models::pastes::Paste as DbPaste;
-use database::models::users::User;
-use database::schema::{users, deletion_keys};
-use errors::*;
-use models::id::{DeletionKeyId, PasteId};
-use models::paste::Visibility;
-use routes::web::{Rst, OptionalWebUser, Session};
+use crate::{
+  database::{
+    DbConn,
+    models::{
+      deletion_keys::DeletionKey,
+      pastes::Paste as DbPaste,
+      users::User,
+    },
+    schema::{users, deletion_keys},
+  },
+  errors::*,
+  models::{
+    id::{DeletionKeyId, PasteId},
+    paste::Visibility,
+  },
+  routes::web::{Rst, OptionalWebUser, Session},
+};
 
 use diesel::prelude::*;
 
-use rocket::http::Status as HttpStatus;
-use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::{
+  http::Status as HttpStatus,
+  request::Form,
+  response::Redirect,
+};
 
 use uuid::Uuid;
 

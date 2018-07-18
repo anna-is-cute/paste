@@ -1,13 +1,21 @@
-use database::DbConn;
-use errors::*;
-use models::id::{PasteId, FileId};
-use models::status::{Status, ErrorKind};
-use routes::OptionalUser;
+use crate::{
+  database::DbConn,
+  errors::*,
+  models::{
+    id::{PasteId, FileId},
+    status::{Status, ErrorKind},
+  },
+  routes::OptionalUser,
+};
 
-use rocket::http::Status as HttpStatus;
-use rocket::request::Request;
-use rocket::response::{Responder, Response, NamedFile};
-use rocket::response::status::Custom;
+use rocket::{
+  http::Status as HttpStatus,
+  request::Request,
+  response::{
+    Responder, Response, NamedFile,
+    status::Custom,
+  },
+};
 
 use rocket_contrib::Json;
 
@@ -35,7 +43,7 @@ enum FileOrError {
   Error(Custom<Json<Status<()>>>),
 }
 
-impl<'r> Responder<'r> for FileOrError {
+impl Responder<'r> for FileOrError {
   fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
     match self {
       FileOrError::File(f) => f.respond_to(request),

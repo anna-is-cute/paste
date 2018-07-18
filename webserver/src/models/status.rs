@@ -1,9 +1,6 @@
-use rocket::http::Status as HttpStatus;
-use rocket::response::status::Custom;
+use rocket::{http::Status as HttpStatus, response::status::Custom};
 
 use rocket_contrib::Json;
-
-use serde;
 
 use std::fmt::Debug;
 

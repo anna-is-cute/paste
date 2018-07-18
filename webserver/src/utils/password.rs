@@ -8,7 +8,7 @@ pub struct PasswordContext<'a> {
   email: &'a str,
 }
 
-impl<'a> PasswordContext<'a> {
+impl PasswordContext<'a> {
   pub fn new(password: &'a str, password_verify: &'a str, name: &'a str, username: &'a str, email: &'a str) -> Self {
     PasswordContext {
       password,

@@ -1,5 +1,4 @@
-use rocket::request::FromFormValue;
-use rocket::http::RawStr;
+use rocket::{request::FromFormValue, http::RawStr};
 
 use sodiumoxide::crypto::pwhash;
 
@@ -8,7 +7,7 @@ use std::ops::Deref;
 #[derive(Debug)]
 pub struct HashedPassword(Vec<u8>);
 
-impl<'v> FromFormValue<'v> for HashedPassword {
+impl FromFormValue<'v> for HashedPassword {
   type Error = &'v RawStr;
 
   fn from_form_value(form_value: &'v RawStr) -> Result<Self, Self::Error> {

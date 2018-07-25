@@ -111,10 +111,12 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
     return Ok(Rst::Status(status));
   }
 
-  let files: Vec<OutputFile> = id.files(&conn)?
+  let mut files: Vec<OutputFile> = id.files(&conn)?
     .iter()
     .map(|x| x.as_output_file(true, &paste))
     .collect::<result::Result<_, _>>()?;
+
+  files.sort_unstable_by(|a, b| a.name.cmp(&b.name));
 
   let mut rendered: HashMap<FileId, Option<String>> = HashMap::with_capacity(files.len());
 
@@ -213,10 +215,12 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
 
   // should be authed beyond this point
 
-  let files: Vec<OutputFile> = id.files(&conn)?
+  let mut files: Vec<OutputFile> = id.files(&conn)?
     .iter()
     .map(|x| x.as_output_file(true, &paste))
     .collect::<result::Result<_, _>>()?;
+
+  files.sort_unstable_by(|a, b| a.name.cmp(&b.name));
 
   let output = Output::new(
     id,

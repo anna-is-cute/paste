@@ -48,10 +48,12 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
     return Ok(Rst::Status(status));
   }
 
-  let files: Vec<OutputFile> = id.files(&conn)?
+  let mut files: Vec<OutputFile> = id.files(&conn)?
     .iter()
     .map(|x| x.as_output_file(false, &paste))
     .collect::<result::Result<_, _>>()?;
+
+  files.sort_unstable_by(|a, b| a.name.cmp(&b.name));
 
   let repo = Repository::open(paste.files_directory())?;
   let head = repo.refname_to_id("HEAD")?;

@@ -73,10 +73,12 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn, sidekiq: State<Sidek
   }
 
   // TODO: eventually replace this all with a GET /p/<id>?full=true backend call
-  let files: Vec<OutputFile> = files
+  let mut files: Vec<OutputFile> = files
     .into_iter()
     .map(|x| OutputFile::new(x.id(), Some(x.name()), x.highlight_language(), None))
     .collect();
+
+  files.sort_unstable_by(|a, b| a.name.cmp(&b.name));
 
   let author = match *user {
     Some(ref user) => Some(OutputAuthor::new(user.id(), user.username(), user.name())),

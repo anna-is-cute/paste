@@ -101,10 +101,12 @@ fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> 
   let query = query.unwrap_or_default();
 
   let full = query.full == Some(true);
-  let files: Vec<OutputFile> = id.files(&conn)?
+  let mut files: Vec<OutputFile> = id.files(&conn)?
     .iter()
     .map(|x| x.as_output_file(full, &paste))
     .collect::<Result<_, _>>()?;
+
+  files.sort_unstable_by(|a, b| a.name.cmp(&b.name));
 
   let author = match paste.author_id() {
     Some(author) => {

@@ -19,3 +19,5 @@
 .docker/run/target
 
 webserver/web/static/**/*.br
+
+/store

@@ -5,6 +5,7 @@ use crate::{
     schema::{files, pastes},
   },
   errors::*,
+  models::paste::output::OutputFile,
 };
 
 use super::FileId;
@@ -50,5 +51,37 @@ impl PasteId {
       .filter(files::paste_id.eq(self.0))
       .first(&**conn)
       .optional()?)
+  }
+
+  pub fn output_files(&self, conn: &DbConn, paste: &DbPaste, with_content: bool) -> Result<Vec<OutputFile>> {
+    let files = self.files(conn)?;
+    let mut outputs: Vec<OutputFile> = files
+      .into_iter()
+      .map(|f| f.as_output_file(with_content, paste))
+      .collect::<Result<_>>()?;
+
+    outputs.sort_unstable_by(|a, b| a.name.cmp(&b.name));
+
+    if let Some(idx) = outputs
+      .iter()
+      .map(|x| x.name.as_ref().unwrap())
+      .map(|x| x.split('.').next().unwrap())
+      .position(|x| x.to_lowercase() == "readme")
+    {
+      let readme = outputs.remove(idx);
+      outputs.insert(0, readme);
+    }
+
+    Ok(outputs)
+  }
+
+  pub fn output_file(&self, conn: &DbConn, paste: &DbPaste, id: FileId, with_content: bool) -> Result<Option<OutputFile>> {
+    let file = match self.file(conn, id)? {
+      Some(f) => f,
+      None => return Ok(None),
+    };
+    let output = file.as_output_file(with_content, paste)?;
+
+    Ok(Some(output))
   }
 }

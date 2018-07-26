@@ -21,12 +21,7 @@ fn get(paste_id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<O
     return Ok(Status::show_error(status, kind));
   }
 
-  let mut files: Vec<OutputFile> = paste_id.files(&conn)?
-    .into_iter()
-    .map(|f| f.as_output_file(false, &paste))
-    .collect::<Result<_, _>>()?;
-
-  files.sort_unstable_by(|a, b| a.name.cmp(&b.name));
+  let files: Vec<OutputFile> = paste_id.output_files(&conn, &paste, true)?;
 
   Ok(Status::show_success(HttpStatus::Ok, files))
 }

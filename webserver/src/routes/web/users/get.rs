@@ -87,16 +87,19 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
       let id = paste.id();
 
       let files = id.files(&conn)?;
+
       let mut has_preview = false;
 
-      let mut output_files = Vec::with_capacity(files.len());
+      let mut output_files = id.output_files(&conn, &paste, false)?;
 
       const LEN: usize = 385;
       let mut bytes = [0; LEN];
 
-      for file in files {
-        let mut f = file.as_output_file(false, &paste)?;
-
+      for mut f in &mut output_files {
+        let file = match files.iter().find(|x| x.id() == f.id) {
+          Some(f) => f,
+          None => continue,
+        };
         // TODO: maybe store this in database or its own file?
         if !has_preview && file.is_binary() != Some(true) {
           let path = file.path(&paste);
@@ -137,8 +140,6 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
             has_preview = true;
           }
         }
-
-        output_files.push(f);
       }
 
       outputs.push(Output::new(

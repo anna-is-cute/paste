@@ -64,9 +64,11 @@ impl PasteId {
 
     if let Some(idx) = outputs
       .iter()
-      .map(|x| x.name.as_ref().unwrap())
-      .map(|x| x.split('.').next().unwrap())
-      .position(|x| x.to_lowercase() == "readme")
+      .enumerate()
+      .filter_map(|(i, x)| Some((i, x.name.as_ref()?)))
+      .filter_map(|(i, x)| Some((i, x.split('.').next()?)))
+      .find(|(_, x)| x.to_lowercase() == "readme")
+      .map(|(i, _)| i)
     {
       let readme = outputs.remove(idx);
       outputs.insert(0, readme);

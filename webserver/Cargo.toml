@@ -106,6 +106,9 @@ html5ever = "0.22"
 # url parsing
 url = "1"
 
+# comparing strings without case
+unicase = "2"
+
 # web logic
 [dependencies.rocket]
 version = "0.3"

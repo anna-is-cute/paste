@@ -2310,6 +2310,7 @@ dependencies = [
  "sodiumoxide 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tera 0.11.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "toml 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "unicase 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicode-segmentation 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicode_categories 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "url 1.7.1 (registry+https://github.com/rust-lang/crates.io-index)",

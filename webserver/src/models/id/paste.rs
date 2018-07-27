@@ -12,6 +12,10 @@ use super::FileId;
 
 use diesel::prelude::*;
 
+use unicase::UniCase;
+
+use std::cmp::Ordering;
+
 uuid_wrapper!(
   /// An ID for a paste, which may or may not exist.
   ///
@@ -60,19 +64,28 @@ impl PasteId {
       .map(|f| f.as_output_file(with_content, paste))
       .collect::<Result<_>>()?;
 
-    outputs.sort_unstable_by(|a, b| a.name.cmp(&b.name));
+    let readme = UniCase::new("readme");
+    outputs.sort_unstable_by(|a, b| {
+      let a_name = match a.name {
+        Some(ref n) => n,
+        None => return a.name.cmp(&b.name),
+      };
+      let b_name = match b.name {
+        Some(ref n) => n,
+        None => return a.name.cmp(&b.name),
+      };
 
-    if let Some(idx) = outputs
-      .iter()
-      .enumerate()
-      .filter_map(|(i, x)| Some((i, x.name.as_ref()?)))
-      .filter_map(|(i, x)| Some((i, x.split('.').next()?)))
-      .find(|(_, x)| x.to_lowercase() == "readme")
-      .map(|(i, _)| i)
-    {
-      let readme = outputs.remove(idx);
-      outputs.insert(0, readme);
-    }
+      let a_readme = UniCase::new(a_name.split('.').next().expect("first split (a)")) == readme;
+      let b_readme = UniCase::new(b_name.split('.').next().expect("first split (b)")) == readme;
+
+      if a_readme && !b_readme {
+        Ordering::Less
+      } else if b_readme && !a_readme {
+        Ordering::Greater
+      } else {
+        a_name.cmp(&b_name)
+      }
+    });
 
     Ok(outputs)
   }

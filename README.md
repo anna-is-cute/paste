@@ -149,7 +149,8 @@ By default, that will build paste, but you can also append `/bin/bash` to the co
 Bash shell in the working environment.
 
 ## API
-See the [paste API documentation](api.md)
+
+See the [paste API documentation](/api.md).
 
 ## Contact
 

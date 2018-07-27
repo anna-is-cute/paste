@@ -148,6 +148,10 @@ docker run --rm -it -v "$(pwd)":/paste jkcclemens/paste
 By default, that will build paste, but you can also append `/bin/bash` to the command to start a
 Bash shell in the working environment.
 
+## API
+
+See the [paste API documentation](/api.md).
+
 ## Contact
 
 Join the [Discord server](https://discord.gg/EnqSwJK)!

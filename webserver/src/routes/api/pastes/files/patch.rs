@@ -74,7 +74,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: Db
       // updating existing file
       Some(id) => {
         // file should be present due to check above
-        let mut db_file = db_files.iter_mut().find(|x| x.id() == id).expect("missing file");
+        let db_file = db_files.iter_mut().find(|x| x.id() == id).expect("missing file");
         if let Some(name) = file.name {
           db_file.set_name(name);
           db_changed = true;

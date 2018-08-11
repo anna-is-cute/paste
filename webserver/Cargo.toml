@@ -85,7 +85,7 @@ percent-encoding = "1"
 # connection pooling
 r2d2 = "0.8"
 
-# in-memory data store
+# in-memory data store - outdated until r2d2_redis updates
 redis = "0.8"
 
 # redis connection pooling

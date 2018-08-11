@@ -95,7 +95,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
       const LEN: usize = 385;
       let mut bytes = [0; LEN];
 
-      for mut f in &mut output_files {
+      for f in &mut output_files {
         let file = match files.iter().find(|x| x.id() == f.id) {
           Some(f) => f,
           None => continue,

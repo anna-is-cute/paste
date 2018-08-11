@@ -209,7 +209,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
       // updating existing file
       Some(id) => {
         // file should be present due to check above
-        let mut db_file = db_files.iter_mut().find(|x| x.id() == id).expect("missing file");
+        let db_file = db_files.iter_mut().find(|x| x.id() == id).expect("missing file");
         if !file.name.is_empty() && file.name != db_file.name() {
           db_file.set_name(file.name);
           db_changed = true;

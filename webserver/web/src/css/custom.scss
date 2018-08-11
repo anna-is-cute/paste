@@ -310,3 +310,8 @@ th, td {
     }
   }
 }
+
+// Firefox on Android is silly
+textarea.codesass__textarea {
+  border-radius: 0;
+}

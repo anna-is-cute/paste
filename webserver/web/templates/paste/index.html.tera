@@ -76,6 +76,11 @@ untitled paste
         </div>
       </div>
       <div class="left">
+        {% if paste.author %}
+        <a class="has-text-grey" href="/u/{{ author_name | urlencode(safe="") }}">
+          <span class="keeps-spaces">{{ paste.author.name }}</span>
+        </a>
+        {% endif %}
         <h1 class="title">
         {% if paste.name %}
           <span class="keeps-spaces">{{ paste.name }}</span>

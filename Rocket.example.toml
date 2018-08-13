@@ -4,10 +4,12 @@
 # port = 8000
 template_dir = "web/templates"
 
-# uncomment this to enable server TLS
-# [global.tls]
-# certs = "path/to/certs.pem"
-# key = "path/to/key.pem"
+# TLS is required! Yes, even if running behind a reverse proxy.
+# If you're doing localhost testing, consider using mkcert to generate a valid certificate!
+# https://github.com/FiloSottile/mkcert
+[global.tls]
+certs = "path/to/certs.pem"
+key = "path/to/key.pem"
 
 [global.limits]
 # change the form submit limit (max bytes allowed)

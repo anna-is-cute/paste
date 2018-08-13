@@ -47,10 +47,10 @@ If you need `./Rocket.toml`, the example file will be located at `./Rocket.examp
 
     Change anything you deem necessary.
 
-2. `.docker/nginx/sites`
+2. `.docker/nginx/sites/paste.conf`
 
-    Choose the file that is best for you. There are HTTP and HTTPS configurations. nginx will load
-    anything that matches `*.conf` in that directory, so rename or copy whichever you want.
+    This one breaks the naming scheme, since nginx will load anything that matches `*.conf` in that
+    directory!
 
     File is commented with what changes are necessary and notes.
 
@@ -96,7 +96,7 @@ from https://0.0.0.0:8000`. Note that this is not how the outside world will acc
 nginx is set up to expose ports 80 and 443 on the host by default, but you can change
 `docker-compose.yml` (and you'll need to change `nginx.conf` as well) to change that.
 
-Access paste by connecting to the host via HTTP or HTTPS, depending on how you set up nginx.
+Access paste by connecting to the host via HTTPS.
 
 Done!
 

@@ -106,6 +106,7 @@
   </form>
 </div>
 
+{% if pastes | length != 0 %}
 <div class="select-all dropdown is-hoverable requires-js">
   <div class="dropdown-trigger">
     <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
@@ -122,6 +123,7 @@
     </div>
   </div>
 </div>
+{% endif %}
 {% endif %}
 
 {% set last_page = total / 15 %}

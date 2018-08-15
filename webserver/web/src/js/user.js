@@ -5,6 +5,10 @@
 
   function buttonVisibilityCheck() {
     const button = document.getElementById('delete-button');
+    if (button === null) {
+      return;
+    }
+
     if ([...getCheckboxes()].some(x => x.checked)) {
       button.classList.remove('is-hidden');
     } else {
@@ -31,6 +35,8 @@
     getCheckboxes().forEach(x => x.addEventListener('change', buttonVisibilityCheck));
 
     const form = document.getElementById('deletion_form');
-    form.addEventListener('submit', () => addInput(form));
+    if (form !== null) {
+      form.addEventListener('submit', () => addInput(form));
+    }
   })();
 })();

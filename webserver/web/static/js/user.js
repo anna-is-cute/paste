@@ -9,6 +9,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
   function buttonVisibilityCheck() {
     var button = document.getElementById('delete-button');
+    if (button === null) {
+      return;
+    }
+
     if ([].concat(_toConsumableArray(getCheckboxes())).some(function (x) {
       return x.checked;
     })) {
@@ -41,9 +45,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     });
 
     var form = document.getElementById('deletion_form');
-    form.addEventListener('submit', function () {
-      return addInput(form);
-    });
+    if (form !== null) {
+      form.addEventListener('submit', function () {
+        return addInput(form);
+      });
+    }
   })();
 })();
 //# sourceMappingURL=user.js.map

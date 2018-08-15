@@ -51,5 +51,27 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       });
     }
   })();
+
+  function allCheckboxes(on) {
+    document.querySelectorAll('input[type=checkbox]').forEach(function (e) {
+      return e.checked = on;
+    });
+    buttonVisibilityCheck();
+  }
+
+  (function () {
+    var selectAll = document.getElementById('select-all');
+    if (selectAll !== null) {
+      selectAll.addEventListener('click', function () {
+        return allCheckboxes(true);
+      });
+    }
+    var selectNone = document.getElementById('select-none');
+    if (selectNone !== null) {
+      selectNone.addEventListener('click', function () {
+        return allCheckboxes(false);
+      });
+    }
+  })();
 })();
 //# sourceMappingURL=user.js.map

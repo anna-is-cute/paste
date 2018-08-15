@@ -39,4 +39,20 @@
       form.addEventListener('submit', () => addInput(form));
     }
   })();
+
+  function allCheckboxes(on) {
+    document.querySelectorAll('input[type=checkbox]').forEach(e => e.checked = on);
+    buttonVisibilityCheck();
+  }
+
+  (function() {
+    const selectAll = document.getElementById('select-all');
+    if (selectAll !== null) {
+      selectAll.addEventListener('click', () => allCheckboxes(true));
+    }
+    const selectNone = document.getElementById('select-none');
+    if (selectNone !== null) {
+      selectNone.addEventListener('click', () => allCheckboxes(false));
+    }
+  })();
 })();

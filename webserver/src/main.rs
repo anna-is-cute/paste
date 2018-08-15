@@ -137,6 +137,7 @@ fn main() {
       routes::web::pastes::post::post,
 
       routes::web::pastes::delete::delete,
+      routes::web::pastes::delete::ids,
       routes::web::pastes::patch::patch,
 
       routes::web::account::index::get,

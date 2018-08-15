@@ -28,7 +28,7 @@ use uuid::Uuid;
 
 use std::str::FromStr;
 
-#[delete("/p/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>")]
+#[delete("/p/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>", rank = 1)]
 fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let deletion = deletion.into_inner();
 
@@ -110,4 +110,57 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: Op
 struct PasteDeletion {
   key: Option<String>,
   anti_csrf_token: String,
+}
+
+#[delete("/p/<username>/ids", format = "application/x-www-form-urlencoded", data = "<deletion>", rank = 2)]
+fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+  let deletion = deletion.into_inner();
+
+  if !sess.check_token(&deletion.anti_csrf_token) {
+    sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Rst::Redirect(Redirect::to("lastpage")));
+  }
+
+  let user = match user.into_inner() {
+    Some(u) => u,
+    None => return Ok(Rst::Redirect(Redirect::to("/login"))),
+  };
+
+  if username != user.username() {
+    sess.add_data("error", "You cannot delete pastes for other users.");
+    return Ok(Rst::Redirect(Redirect::to("lastpage")));
+  }
+
+  let ids: Vec<PasteId> = serde_json::from_str(&deletion.ids)?;
+
+  let err = "No pastes were deleted because an invalid paste was specified. Perhaps it was deleted already?";
+  let mut pastes = Vec::with_capacity(ids.len());
+  for id in ids {
+    let paste: DbPaste = match id.get(&conn)? {
+      Some(p) => p,
+      None => {
+        sess.add_data("error", err);
+        return Ok(Rst::Redirect(Redirect::to("lastpage")));
+      },
+    };
+    if paste.author_id() != Some(user.id()) {
+      // no special error for this because it could lead to leaking private pastes
+      sess.add_data("error", err);
+      return Ok(Rst::Redirect(Redirect::to("lastpage")));
+    }
+    pastes.push(paste);
+  }
+
+  for paste in &pastes {
+    paste.delete(&conn)?;
+  }
+
+  sess.add_data("info", format!("{} paste{} deleted.", pastes.len(), if pastes.len() == 1 { "" } else { "s" }));
+  Ok(Rst::Redirect(Redirect::to("lastpage")))
+}
+
+#[derive(Debug, FromForm)]
+struct MultiPasteDeletion {
+  anti_csrf_token: String,
+  ids: String,
 }

@@ -32,27 +32,77 @@
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
   integrity="sha384-nvZWXhPMbi0ixdPLjUPfx2htsDNlNiypOV+5mX4XOwbZ2aDQjY7yw5Jd2HSf9cUr"></script>
+<script
+  defer
+  src="/static/js/user.js?v={{ resources_version }}"
+  integrity="sha384-Vxe79bmSNcCyUik6heG3e0L3w19dJHB2/X5jCUON48WqyN39dlwYuIM6STPkoYZ1"></script>
+<script
+  defer
+  src="/static/js/modal.js?v={{ resources_version }}"
+  integrity="sha384-ZRNB7Q+d2cw5nKPIP3gBP58TnspQ+F001MRqjNMPkNM0EtgaYuAbHHJc2ESs352/"></script>
 {% endblock head %}
 
 {% block title %}
 {{ target.name }}'s pastes
 {% endblock title %}
 
-{% block header_title %}
-{{ target.name }}'s pastes
-{% endblock header_title %}
-
-{% block header_subtitle %}
-{# can't use pluralize filter because we're stuck on old Tera, which counts 0 as singular #}
-{{ total }}
-{% if total == 1 %}
-  paste.
-{% else %}
-  pastes.
-{% endif %}
-{% endblock header_subtitle %}
+{% block header %}
+<section class="hero is-dark">
+  <div class="hero-body">
+    <div class="paste container">
+      <div class="right">
+        <div class="field is-grouped">
+          <div class="control">
+            <button id="delete-button" class="button is-danger is-hidden requires-js opens-modal" data-modal-id="deletion_modal">
+              Delete selected
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="left">
+        <h1 class="title">
+          {{ target.name }}'s pastes
+        </h1>
+        <h2 class="subtitle">
+          {# can't use pluralize filter because we're stuck on old Tera, which counts 0 as singular #}
+          {{ total }}
+          {% if total == 1 %}
+            paste.
+          {% else %}
+            pastes.
+          {% endif %}
+        </h2>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock header %}
 
 {% block main %}
+<div id="deletion_modal" class="modal">
+  <form id="deletion_form" action="/p/{{ target.username | urlencode(safe="") }}/delete" method="post">
+    <input type="hidden" name="_method" value="delete"/>
+    <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+    <div class="modal-background closes-modal" data-modal-id="deletion_form"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Delete pastes</p>
+        <button class="delete closes-modal" data-modal-id="deletion_form" aria-label="close" type="button"></button>
+      </header>
+      <section class="modal-card-body">
+        <div class="content">
+          <p>
+            Please confirm you would like to delete the selected pastes.
+          </p>
+        </div>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-danger" type="submit">Delete all</button>
+      </footer>
+    </div>
+  </form>
+</div>
+
 {% set last_page = total / 15 %}
 {% set last_page = last_page | round(method="ceil") %}
 
@@ -79,7 +129,17 @@
 {% for paste in pastes %}
   <div class="box">
     <div class="box-title">
-      <div>
+      <div class="paste-removable-title">
+        <div class="pretty p-icon p-round p-smooth p-plain is-size-5 requires-js">
+          <input
+            type="checkbox"
+            name="paste-delete"
+            data-paste-id="{{ paste.id }}"/>
+          <div class="state">
+            <i class="icon fas fa-check"></i>
+            <label></label>
+          </div>
+        </div>
         <h3 class="title is-marginless">
           <a href="/p/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
         {% if paste.name %}

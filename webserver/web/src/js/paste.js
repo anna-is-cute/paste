@@ -1,16 +1,4 @@
 (function() {
-  function openModal() {
-    document.getElementById('deletion_modal').classList.add('is-active');
-  }
-
-  function closeModal() {
-    document.getElementById('deletion_modal').classList.remove('is-active');
-  }
-
-  [...document.getElementsByClassName('opens-modal')].forEach(e => e.addEventListener('click', openModal));
-
-  [...document.getElementsByClassName('closes-modal')].forEach(e => e.addEventListener('click', closeModal));
-
   function swap(current, currentContent, next, nextContent) {
     current.classList.remove('is-active');
     next.classList.add('is-active');

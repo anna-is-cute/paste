@@ -18,7 +18,11 @@
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
-  integrity="sha384-SQgdHK5p4bbCVoMh3OtJgE2uoJA9cccAch1XboKUcxb5+JjmWdmVGnmsd7Xy2O6s"></script>
+  integrity="sha384-gJNm/NFT+oE53Jxd093fmMyvblJB8qOjWk2uFesHa4/S94u4Fikhd7SPf1oTVn72"></script>
+<script
+  defer
+  src="/static/js/modal.js?v={{ resources_version }}"
+  integrity="sha384-ZRNB7Q+d2cw5nKPIP3gBP58TnspQ+F001MRqjNMPkNM0EtgaYuAbHHJc2ESs352/"></script>
 <script
   defer
   src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
@@ -66,7 +70,7 @@ untitled paste
           {% endif %}
           {% if not paste.author or is_owner %}
           <div class="control">
-            <button class="button is-danger is-large opens-modal">
+            <button class="button is-danger is-large opens-modal" data-modal-id="deletion_modal">
               <span class="icon is-large">
                 <i class="fas fa-trash-alt"></i>
               </span>
@@ -127,11 +131,11 @@ untitled paste
   <form id="deletion_form" action="/p/{{ author_name | urlencode(safe="") }}/{{ paste.id }}" method="post">
     <input type="hidden" name="_method" value="delete"/>
     <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
-    <div class="modal-background closes-modal"></div>
+    <div class="modal-background closes-modal" data-modal-id="deletion_modal"></div>
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">Delete paste</p>
-        <button class="delete closes-modal" aria-label="close" type="button"></button>
+        <button class="delete closes-modal" data-modal-id="deletion_modal" aria-label="close" type="button"></button>
       </header>
       <section class="modal-card-body">
       {% if not paste.author %}

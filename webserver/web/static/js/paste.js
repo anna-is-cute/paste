@@ -1,24 +1,6 @@
 'use strict';
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 (function () {
-  function openModal() {
-    document.getElementById('deletion_modal').classList.add('is-active');
-  }
-
-  function closeModal() {
-    document.getElementById('deletion_modal').classList.remove('is-active');
-  }
-
-  [].concat(_toConsumableArray(document.getElementsByClassName('opens-modal'))).forEach(function (e) {
-    return e.addEventListener('click', openModal);
-  });
-
-  [].concat(_toConsumableArray(document.getElementsByClassName('closes-modal'))).forEach(function (e) {
-    return e.addEventListener('click', closeModal);
-  });
-
   function swap(current, currentContent, next, nextContent) {
     current.classList.remove('is-active');
     next.classList.add('is-active');

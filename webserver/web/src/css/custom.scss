@@ -1,4 +1,5 @@
 @import "bulma-tooltip/src/sass/index";
+@import "pretty-checkbox/src/pretty-checkbox";
 
 body {
   display: flex;
@@ -314,4 +315,9 @@ th, td {
 // Firefox on Android is silly
 textarea.codesass__textarea {
   border-radius: 0;
+}
+
+.paste-removable-title {
+  display: flex;
+  align-items: center;
 }

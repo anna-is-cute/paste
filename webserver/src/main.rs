@@ -170,6 +170,7 @@ fn main() {
 
       routes::api::pastes::post::post,
       routes::api::pastes::delete::delete,
+      routes::api::pastes::delete::ids,
       routes::api::pastes::get::get_query,
       routes::api::pastes::get::get,
       routes::api::pastes::patch::patch,

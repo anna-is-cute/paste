@@ -12,12 +12,14 @@ use crate::{
     paste::Visibility,
     status::{Status, ErrorKind},
   },
-  routes::{RouteResult, DeletionAuth},
+  routes::{RouteResult, RequiredUser, DeletionAuth},
 };
 
 use rocket::http::Status as HttpStatus;
 
-#[delete("/<id>")]
+use rocket_contrib::Json;
+
+#[delete("/<id>", rank = 1)]
 fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
   let paste = match id.get(&conn)? {
     Some(p) => p,
@@ -72,3 +74,37 @@ fn check_deletion_key(paste: &Paste, key: &DeletionKey) -> Option<(HttpStatus, E
   }
   Some((HttpStatus::Forbidden, ErrorKind::NotAllowed))
 }
+
+#[delete("/ids", format = "application/json", data = "<info>", rank = 2)]
+fn ids(info: Json<Vec<PasteId>>, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
+  let ids = info.into_inner();
+
+  let mut pastes = Vec::with_capacity(ids.len());
+  for id in ids {
+    let paste = match id.get(&conn)? {
+      Some(p) => p,
+      None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
+    };
+    if let Some((status, kind)) = paste.check_access(Some(user.id())) {
+      return Ok(Status::show_error(status, kind));
+    }
+    if paste.author_id() != Some(user.id()) {
+      return Ok(Status::show_error(HttpStatus::Forbidden, ErrorKind::NotAllowed));
+    }
+    pastes.push(paste);
+  }
+
+  for paste in &pastes {
+    paste.delete(&conn)?;
+  }
+
+  // FIXME:
+  // Error: Failed to write response: Custom { kind: WriteZero, error: StringError("failed to write
+  // whole buffer") }.
+  Ok(Status::show_success(HttpStatus::NoContent, ()))
+}
+
+// #[derive(Debug, Deserialize)]
+// struct MultiDelete {
+//   ids: Vec<PasteId>,
+// }

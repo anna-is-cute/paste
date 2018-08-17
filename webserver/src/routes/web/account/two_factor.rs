@@ -2,6 +2,7 @@ use crate::{
   config::Config,
   database::{DbConn, models::users::User},
   errors::*,
+  redis_store::Redis,
   routes::web::{context, AddCsp, Rst, OptionalWebUser, Session},
   utils::totp::totp_raw_skew,
 };
@@ -11,6 +12,8 @@ use base32::Alphabet;
 use failure::bail;
 
 use image::{Luma, Pixel, png::PNGEncoder};
+
+use redis::Commands;
 
 use oath::HashType;
 
@@ -117,7 +120,7 @@ fn new_secret(form: Form<NewSecret>, user: OptionalWebUser, mut sess: Session, c
 }
 
 #[post("/account/2fa/validate", format = "application/x-www-form-urlencoded", data = "<form>")]
-fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, redis: Redis) -> Result<Redirect> {
   let form = form.into_inner();
 
   if !sess.check_token(&form.anti_csrf_token) {
@@ -149,6 +152,8 @@ fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn
       return Ok(Redirect::to("lastpage"));
     }
   }
+
+  redis.set_ex(format!("otp:{},{}", user.id(), form.tfa_code), "", 120)?;
 
   user.set_tfa_enabled(true);
   user.update(&conn)?;

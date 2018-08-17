@@ -11,9 +11,15 @@
     }
   }
 
-  document.getElementById('password_verify').addEventListener('input', function (e) {
-    return checkMatch(document.getElementById('password'), e.target);
-  });
+  (function () {
+    var verify = document.getElementById('password_verify');
+    if (verify === null) {
+      return;
+    }
+    verify.addEventListener('input', function (e) {
+      return checkMatch(document.getElementById('password'), e.target);
+    });
+  })();
 
   function doHides(pw, strength) {
     if (pw.value.length === 0) {

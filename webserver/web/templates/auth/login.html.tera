@@ -2,6 +2,10 @@
 
 {% block head %}
 {{ super() }}
+<script
+  defer
+  src="/static/js/password.js?v={{ resources_version }}"
+  integrity="sha384-Dtm96evk4NcixD444vbhDlxd45Qm/YYJasl2pxc7o+QjJUBTcOmmQugsoVgLhWWP"></script>
 {% endblock head %}
 
 {% block title %}Log in{% endblock title %}
@@ -37,16 +41,29 @@ Log in to your account.
 
   <div class="field">
     <label class="label">Password</label>
-    <div class="control has-icons-left">
-      <input
-        name="password"
-        class="input"
-        type="password"
-        placeholder="Your secure password"
-        required/>
-      <span class="icon is-small is-left">
-        <i class="fas fa-asterisk"></i>
-      </span>
+    <div class="field-body">
+      <div class="field">
+        <div class="field has-addons">
+          <div class="control is-expanded has-icons-left">
+            <input
+              required
+              name="password"
+              class="input"
+              type="password"
+              placeholder="Your secure password"/>
+            <span class="icon is-small is-left">
+              <i class="fas fa-asterisk"></i>
+            </span>
+          </div>
+          <div class="control">
+            <a name="password_reveal" class="button">
+              <span class="icon is-small">
+                <i class="fas fa-eye"></i>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

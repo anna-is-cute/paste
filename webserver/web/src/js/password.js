@@ -9,9 +9,13 @@
     }
   }
 
-  document
-    .getElementById('password_verify')
-    .addEventListener('input', e => checkMatch(document.getElementById('password'), e.target));
+  (function() {
+    const verify = document.getElementById('password_verify');
+    if (verify === null) {
+      return;
+    }
+    verify.addEventListener('input', e => checkMatch(document.getElementById('password'), e.target));
+  })();
 
   function doHides(pw, strength) {
     if (pw.value.length === 0) {

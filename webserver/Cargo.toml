@@ -115,9 +115,6 @@ base32 = "0.3"
 # displaying otpauth urls
 qrcode = "0.8"
 
-# handling qrcode images
-image = "0.19"
-
 # web logic
 [dependencies.rocket]
 version = "0.3"
@@ -153,3 +150,9 @@ git = "https://github.com/spk/rust-sidekiq"
 [dependencies.comrak]
 version = "0.2"
 default-features = false
+
+# handling qrcode images
+[dependencies.image]
+version = "0.19"
+default-features = false
+features = ["png_codec"]

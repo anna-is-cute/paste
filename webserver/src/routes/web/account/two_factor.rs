@@ -64,7 +64,7 @@ fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, c
   let shared_secret = base32::encode(Alphabet::RFC4648 { padding: false }, user.shared_secret().expect("missing secret"));
 
   // create the segments of the uri
-  let unsafe_label = format!("{} ({}) on {}", user.name(), user.username(), config.general.site_name);
+  let unsafe_label = format!("{} - {} ({})", config.general.site_name, user.name(), user.username());
   let label = utf8_percent_encode(&unsafe_label, PATH_SEGMENT_ENCODE_SET);
   let issuer = utf8_percent_encode(&config.general.site_name, QUERY_ENCODE_SET);
 

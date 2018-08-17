@@ -21,7 +21,7 @@ use rocket::{State, http::Status as HttpStatus};
 
 use rocket_contrib::Template;
 
-use serde_json::{json, json_internal};
+use serde_json::json;
 
 #[get("/p/<username>/<id>/revisions")]
 fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {

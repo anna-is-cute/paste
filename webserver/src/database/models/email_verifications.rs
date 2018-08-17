@@ -17,7 +17,7 @@ use chrono::{Utc, DateTime, NaiveDateTime, Duration};
 use diesel;
 use diesel::prelude::*;
 
-use serde_json::{json, json_internal};
+use serde_json::json;
 
 use sodiumoxide::crypto::pwhash::{pwhash_verify, HashedPassword as PwhashPassword};
 use sodiumoxide::randombytes;

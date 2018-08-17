@@ -8,7 +8,7 @@ use rocket::State;
 
 use rocket_contrib::Template;
 
-use serde_json::{json, json_internal};
+use serde_json::json;
 
 use std::fs::read_to_string;
 

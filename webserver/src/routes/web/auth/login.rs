@@ -6,7 +6,9 @@ use crate::{
     schema::users,
   },
   errors::*,
+  redis_store::Redis,
   routes::web::{context, Rst, OptionalWebUser, Session},
+  utils::totp::totp_raw_skew,
 };
 
 use cookie::{Cookie, SameSite};
@@ -16,6 +18,8 @@ use chrono::Duration;
 use diesel::prelude::*;
 
 use oath::HashType;
+
+use redis::Commands;
 
 use rocket::State;
 use rocket::http::Cookies;
@@ -48,7 +52,7 @@ struct RegistrationData {
 }
 
 #[post("/login", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, addr: SocketAddr) -> Result<Redirect> {
+fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, redis: Redis, addr: SocketAddr) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 
@@ -91,10 +95,16 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
   if_chain! {
     if user.tfa_enabled();
     if let Some(ss) = user.shared_secret();
-    if Some(oath::totp_raw_now(ss, 6, 0, 30, &HashType::SHA1)) != data.tfa_code;
+    if let Some(tfa_code) = data.tfa_code;
+    if !redis.exists::<_, bool>(format!("otp:{},{}", user.id(), tfa_code))?;
+    if totp_raw_skew(ss, 6, 0, 30, &HashType::SHA1).iter().any(|&x| x == tfa_code);
     then {
-      sess.add_data("error", "Invalid authentication code.");
-      return Ok(Redirect::to("/login"));
+      redis.set_ex(format!("otp:{},{}", user.id(), tfa_code), "", 120)?;
+    } else {
+      if user.tfa_enabled() {
+        sess.add_data("error", "Invalid authentication code.");
+        return Ok(Redirect::to("/login"));
+      }
     }
   }
 

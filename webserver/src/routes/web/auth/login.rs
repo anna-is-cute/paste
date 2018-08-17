@@ -79,6 +79,15 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     },
   };
 
+  if !user.check_password(&data.password) {
+    let msg = match LoginAttempt::find_increment(&conn, addr.ip())? {
+      Some(msg) => msg,
+      None => "Incorrect password.".into(),
+    };
+    sess.add_data("error", msg);
+    return Ok(Redirect::to("/login"));
+  }
+
   if_chain! {
     if user.tfa_enabled();
     if let Some(ss) = user.shared_secret();
@@ -87,15 +96,6 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
       sess.add_data("error", "Invalid authentication code.");
       return Ok(Redirect::to("/login"));
     }
-  }
-
-  if !user.check_password(&data.password) {
-    let msg = match LoginAttempt::find_increment(&conn, addr.ip())? {
-      Some(msg) => msg,
-      None => "Incorrect password.".into(),
-    };
-    sess.add_data("error", msg);
-    return Ok(Redirect::to("/login"));
   }
 
   let cookie = Cookie::build("user_id", user.id().simple().to_string())

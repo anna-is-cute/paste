@@ -13,10 +13,10 @@ before_script:
   - . .travis/libsodium.sh
 script:
   # cannot use --all because apparently upgrading sodiumoxide to 0.1 breaks lettre across projects
-  - cargo rustc --verbose -p webserver -- -Aproc-macro-derive-resolution-fallback
-  - cargo rustc --verbose -p worker_email -- -Aproc-macro-derive-resolution-fallback
-  - cargo rustc --verbose -p worker_delete_directory -- -Aproc-macro-derive-resolution-fallback
-  - cargo rustc --verbose -p worker_expire_paste -- -Aproc-macro-derive-resolution-fallback
+  - cargo build --verbose -p webserver
+  - cargo build --verbose -p worker_email
+  - cargo build --verbose -p worker_delete_directory
+  - cargo build --verbose -p worker_expire_paste
 # Remove the local crate's build files, as they only add bloat to the cache.
 # TODO: Remove unused dependency build files
 before_cache:

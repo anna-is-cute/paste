@@ -17,7 +17,7 @@ use rocket::{
 
 use serde::Serialize;
 
-use serde_json::{Value as JsonValue, json, json_internal};
+use serde_json::{Value as JsonValue, json};
 
 use uuid::Uuid;
 

@@ -1,16 +1,11 @@
 use crate::{
   config::Config,
-  database::{DbConn, schema::users, models::users::User},
+  database::{DbConn, models::users::User},
   errors::*,
   routes::web::{context, AddCsp, Rst, OptionalWebUser, Session},
-  utils::{email, HashedPassword, Validator},
 };
 
 use base32::Alphabet;
-
-use chrono::Utc;
-
-use diesel::{dsl::count, prelude::*};
 
 use failure::bail;
 
@@ -28,13 +23,9 @@ use rocket::{
 
 use rocket_contrib::Template;
 
-use serde_json::{json, json_internal};
-
-use sidekiq::Client as SidekiqClient;
+use serde_json::json;
 
 use sodiumoxide::randombytes;
-
-use unicode_segmentation::UnicodeSegmentation;
 
 use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET, QUERY_ENCODE_SET};
 
@@ -45,7 +36,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
   };
 
-  let mut ctx = context(&*config, Some(&user), &mut sess);
+  let ctx = context(&*config, Some(&user), &mut sess);
   Ok(Rst::Template(Template::render("account/2fa/index", ctx)))
 }
 
@@ -102,7 +93,7 @@ fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, c
 }
 
 #[post("/account/2fa/new_secret", format = "application/x-www-form-urlencoded", data = "<form>")]
-fn new_secret(form: Form<NewSecret>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn new_secret(form: Form<NewSecret>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   if !sess.check_token(&form.into_inner().anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Redirect::to("lastpage"));
@@ -124,7 +115,7 @@ fn new_secret(form: Form<NewSecret>, config: State<Config>, user: OptionalWebUse
 }
 
 #[post("/account/2fa/validate", format = "application/x-www-form-urlencoded", data = "<form>")]
-fn validate(form: Form<Validate>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let form = form.into_inner();
 
   if !sess.check_token(&form.anti_csrf_token) {

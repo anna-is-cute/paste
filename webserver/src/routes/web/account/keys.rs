@@ -13,7 +13,7 @@ use rocket::{
 };
 use rocket_contrib::Template;
 
-use serde_json::{json, json_internal};
+use serde_json::json;
 
 #[get("/account/keys")]
 fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {

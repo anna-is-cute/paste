@@ -19,7 +19,7 @@ use rocket::{
 
 use rocket_contrib::Template;
 
-use serde_json::{Value, json, json_internal};
+use serde_json::{Value, json};
 
 use uuid::Uuid;
 

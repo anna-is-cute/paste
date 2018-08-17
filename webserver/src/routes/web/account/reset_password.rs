@@ -32,7 +32,7 @@ use rocket::{
 
 use rocket_contrib::{Template, UUID};
 
-use serde_json::{json, json_internal};
+use serde_json::json;
 
 use sidekiq::Client as SidekiqClient;
 

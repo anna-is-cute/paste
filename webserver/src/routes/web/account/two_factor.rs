@@ -3,6 +3,7 @@ use crate::{
   database::{DbConn, models::users::User},
   errors::*,
   routes::web::{context, AddCsp, Rst, OptionalWebUser, Session},
+  utils::totp::totp_raw_skew,
 };
 
 use base32::Alphabet;
@@ -143,7 +144,7 @@ fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn
       },
     };
 
-    if oath::totp_raw_now(ss, 6, 0, 30, &HashType::SHA1) != form.tfa_code {
+    if totp_raw_skew(ss, 6, 0, 30, &HashType::SHA1).iter().all(|&x| x != form.tfa_code) {
       sess.add_data("error", "Invalid authentication code.");
       return Ok(Redirect::to("lastpage"));
     }

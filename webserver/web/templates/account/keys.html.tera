@@ -28,6 +28,7 @@ Manage API keys.
 {% endblock header_foot %}
 
 {% block main %}
+{% if keys | length != 0 %}
 <table class="table is-striped is-middle">
   <thead>
     <tr>
@@ -52,6 +53,10 @@ Manage API keys.
   </tr>
 {% endfor %}
 </table>
+{% else %}
+<em>You have no keys!</em>
+{% endif %}
+<hr/>
 <form action="/account/keys" method="post">
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div class="field has-addons">

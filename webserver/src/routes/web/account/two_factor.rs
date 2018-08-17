@@ -36,7 +36,8 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
   };
 
-  let ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess);
+  ctx["tfa_enabled"] = json!(user.tfa_enabled());
   Ok(Rst::Template(Template::render("account/2fa/index", ctx)))
 }
 
@@ -158,6 +159,59 @@ fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn
 struct Validate {
   anti_csrf_token: String,
   tfa_code: u64,
+}
+
+#[get("/account/2fa/disable")]
+fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
+  let user = match *user {
+    Some(ref u) => u,
+    None => return Ok(Rst::Redirect(Redirect::to("/login"))),
+  };
+
+  if !user.tfa_enabled() {
+    sess.add_data("error", "Your account does not have 2FA enabled.");
+    return Ok(Rst::Redirect(Redirect::to("lastpage")));
+  }
+
+  let ctx = context(&*config, Some(&user), &mut sess);
+  Ok(Rst::Template(Template::render("account/2fa/disable", ctx)))
+}
+
+#[post("/account/2fa/disable", format = "application/x-www-form-urlencoded", data = "<form>")]
+fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+  let form = form.into_inner();
+
+  if !sess.check_token(&form.anti_csrf_token) {
+    sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Redirect::to("lastpage"));
+  }
+
+  let mut user = match user.into_inner() {
+    Some(u) => u,
+    None => return Ok(Redirect::to("/login")),
+  };
+
+  if !user.tfa_enabled() {
+    sess.add_data("error", "Your account does not have 2FA enabled.");
+    return Ok(Redirect::to("lastpage"));
+  }
+
+  if !user.check_password(&form.password) {
+    sess.add_data("error", "Invalid password.");
+    return Ok(Redirect::to("/account/2fa/disable"));
+  }
+
+  user.set_tfa_enabled(false);
+  user.set_shared_secret(None);
+  user.update(&conn)?;
+
+  Ok(Redirect::to("/account/2fa"))
+}
+
+#[derive(Debug, FromForm)]
+struct Disable {
+  anti_csrf_token: String,
+  password: String,
 }
 
 fn generate_secret(conn: &DbConn, user: &mut User) -> Result<()> {

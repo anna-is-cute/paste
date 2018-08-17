@@ -1,0 +1,59 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+{% endblock head %}
+
+{% block title %}Disable 2FA{% endblock title %}
+
+{% block header_title %}
+Disable 2FA
+{% endblock header_title %}
+
+{% block header_subtitle %}
+Turn off two-factor authentication.
+{% endblock header_subtitle %}
+
+{% block header_foot %}
+<nav class="tabs is-boxed">
+  <div class="container">
+    <ul>
+      <li><a href="/account">Settings</a></li>
+      <li><a href="/account/keys">API keys</a></li>
+      <li class="is-active"><a href="/account/2fa">2FA</a></li>
+      <li><a href="/account/delete">Delete</a></li>
+    </ul>
+  </div>
+</nav>
+{% endblock header_foot %}
+
+{% block main %}
+<div class="content">
+  <p>
+    Turning off 2FA will lower the security of your account. If you'd still like to disable it,
+    enter your password below.
+  </p>
+
+  <form class="form" method="post" action="/account/2fa/disable">
+    <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+    <div class="field">
+      <div class="control has-icons-left">
+        <input
+          required
+          name="password"
+          class="input"
+          type="password"
+          placeholder="Your secure password"/>
+        <span class="icon is-small is-left">
+          <i class="fas fa-asterisk"></i>
+        </span>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control has-icons-left">
+        <button type="submit" class="button is-primary">Disable</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock main %}

@@ -38,7 +38,7 @@ Manage two-factor authentication.
 {% block main %}
 <div class="content">
   <h1 class="title">
-    {% if user.tfa_enabled %}
+    {% if tfa_enabled %}
     <span class="icon is-large has-text-success">
       <i class="fas fa-lock"></i>
     </span>
@@ -51,7 +51,7 @@ Manage two-factor authentication.
     {% endif %}
   </h1>
   <p>
-    {% if user.tfa_enabled %}
+    {% if tfa_enabled %}
     <a class="button is-primary" href="/account/2fa/disable">Turn off 2FA</a>
     {% else %}
     <a class="button is-primary" href="/account/2fa/enable">Turn on 2FA</a>

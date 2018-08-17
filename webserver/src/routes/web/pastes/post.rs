@@ -7,7 +7,7 @@ use crate::{
   utils::{FormDate, Language},
 };
 
-use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
+use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
 
 use rocket::{
   request::Form,

@@ -290,6 +290,14 @@ If paste was a movie, these would be at the end.
           Parses and processes CommonMark + GFM in order to render your Markdown files.
         </p>
       </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/seanmonstar/unicase">unicase</a>
+        </p>
+        <p>
+          Compares unicode strings without factoring in casing.
+        </p>
+      </div>
     </div>
     <!-- column two -->
     <div class="tile is-vertical is-parent">
@@ -380,6 +388,14 @@ If paste was a movie, these would be at the end.
         <p>
           Sends, creates, examines, modifies, and does anything else you could possibly want to do
           with emails.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/avacariu/rust-oath">oath</a>
+        </p>
+        <p>
+          OATH algorithms for two-factor authentication.
         </p>
       </div>
     </div>

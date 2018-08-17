@@ -20,6 +20,7 @@ Manage API keys.
     <ul>
       <li><a href="/account">Settings</a></li>
       <li class="is-active"><a href="/account/keys">API keys</a></li>
+      <li><a href="/account/2fa">2FA</a></li>
       <li><a href="/account/delete">Delete</a></li>
     </ul>
   </div>

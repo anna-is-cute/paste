@@ -23,7 +23,7 @@ use comrak::{markdown_to_html, ComrakOptions};
 
 use diesel::prelude::*;
 
-use percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
+use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
 
 use rocket::{
   http::Status as HttpStatus,

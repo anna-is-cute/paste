@@ -325,3 +325,12 @@ textarea.codesass__textarea {
 .select-all.dropdown {
   margin-bottom: 1rem;
 }
+
+.image.is-256x256 {
+  height: 256px;
+  width: 256px;
+}
+
+.shared-secret > code {
+  margin-right: .5rem;
+}

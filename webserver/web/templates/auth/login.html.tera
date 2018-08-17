@@ -48,6 +48,22 @@ Log in to your account.
         <i class="fas fa-asterisk"></i>
       </span>
     </div>
+  </div>
+
+  <div class="field">
+    <label class="label">2FA code</label>
+    <div class="control has-icons-left">
+      <input
+        name="tfa_code"
+        class="input"
+        type="text"
+        minlength="6"
+        maxlength="6"
+        placeholder="If enabled"/>
+      <span class="icon is-small is-left">
+        <i class="fas fa-lock"></i>
+      </span>
+    </div>
     <p class="help">
       <a href="/account/forgot_password">Forgot your password?</a>
     </p>
@@ -55,7 +71,7 @@ Log in to your account.
 
   <div class="field">
     <div class="control">
-      <input type="submit" class="button is-link" value="Submit"/>
+      <input type="submit" class="button is-link" value="Log in"/>
     </div>
   </div>
 </form>

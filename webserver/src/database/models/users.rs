@@ -27,6 +27,7 @@ pub struct User {
   email_verified: bool,
   #[serde(skip_serializing)]
   shared_secret: Option<Vec<u8>>,
+  #[serde(skip_serializing)]
   tfa_enabled: bool,
 }
 

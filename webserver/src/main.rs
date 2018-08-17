@@ -151,8 +151,10 @@ fn main() {
 
       routes::web::account::two_factor::get,
       routes::web::account::two_factor::enable_get,
-      routes::web::account::two_factor::new_secret,
       routes::web::account::two_factor::validate,
+      routes::web::account::two_factor::disable_get,
+      routes::web::account::two_factor::disable_post,
+      routes::web::account::two_factor::new_secret,
 
       routes::web::account::delete::get,
       routes::web::account::delete::delete,

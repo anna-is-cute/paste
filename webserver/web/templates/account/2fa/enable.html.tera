@@ -1,0 +1,90 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+<script
+  async
+  src="/static/js/zxcvbn/zxcvbn.js?v={{ resources_version }}"
+  integrity="sha384-jhGcGHNZytnBnH1wbEM3KxJYyRDy9Q0QLKjE65xk+aMqXFCdvFuYIjzMWAAWBBtR"></script>
+<script
+  defer
+  src="/static/js/password.js?v={{ resources_version }}"
+  integrity="sha384-tL5ypIrbIEhvrepZk11xXDk5aNIUPZZQsGvFNVPIcEQ0asgZwGzXKtN9vGdxEvrp"></script>
+{% endblock head %}
+
+{% block title %}2FA{% endblock title %}
+
+{% block header_title %}
+Enable 2FA
+{% endblock header_title %}
+
+{% block header_subtitle %}
+Turn on two-factor authentication.
+{% endblock header_subtitle %}
+
+{% block header_foot %}
+<nav class="tabs is-boxed">
+  <div class="container">
+    <ul>
+      <li><a href="/account">Settings</a></li>
+      <li><a href="/account/keys">API keys</a></li>
+      <li class="is-active"><a href="/account/2fa">2FA</a></li>
+      <li><a href="/account/delete">Delete</a></li>
+    </ul>
+  </div>
+</nav>
+{% endblock header_foot %}
+
+{% block main %}
+<div class="content">
+  <p>
+    Scan the QR code below using your authenticator app. If you can't scan the code, you can enter
+    the shared secret manually, <strong>without spaces</strong>:
+  </p>
+
+  <p class="shared-secret">
+    {% for segment in shared_secret_segments %}<code>{{ segment }}</code>{% endfor %}
+  </p>
+
+  <p>
+    If you want to generate a new shared secret, click the button below.
+  </p>
+
+  <form method="post" action="/account/2fa/new_secret">
+    <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+    <button type="submit" class="button">Regenerate secret</button>
+  </form>
+
+  <figure class="image is-256x256">
+    <img src="{{ qr_code | safe }}" alt="2FA QR code"/>
+  </figure>
+
+  <p>
+    After setting up the authenticator app, enter the code it has generated below.
+  </p>
+
+  <form class="form" method="post" action="/account/2fa/validate">
+    <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+    <div class="field">
+      <div class="control has-icons-left">
+        <input
+          required
+          name="tfa_code"
+          class="input"
+          type="text"
+          minlength="6"
+          maxlength="6"
+          placeholder="2FA code"/>
+        <span class="icon is-small is-left">
+          <i class="fas fa-lock"></i>
+        </span>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control has-icons-left">
+        <button type="submit" class="button is-primary">Enable</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock main %}

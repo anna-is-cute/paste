@@ -147,6 +147,11 @@ fn main() {
       routes::web::account::keys::post,
       routes::web::account::keys::delete,
 
+      routes::web::account::two_factor::get,
+      routes::web::account::two_factor::enable_get,
+      routes::web::account::two_factor::new_secret,
+      routes::web::account::two_factor::validate,
+
       routes::web::account::delete::get,
       routes::web::account::delete::delete,
 

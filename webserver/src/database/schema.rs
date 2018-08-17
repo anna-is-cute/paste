@@ -80,6 +80,8 @@ table! {
         name -> Text,
         email -> Text,
         email_verified -> Bool,
+        shared_secret -> Nullable<Bytea>,
+        tfa_enabled -> Bool,
     }
 }
 

@@ -15,6 +15,8 @@ use chrono::Duration;
 
 use diesel::prelude::*;
 
+use oath::HashType;
+
 use rocket::State;
 use rocket::http::Cookies;
 use rocket::request::Form;
@@ -39,6 +41,8 @@ struct RegistrationData {
   username: String,
   #[serde(skip)]
   password: String,
+  #[serde(skip)]
+  tfa_code: Option<u64>,
   #[serde(skip)]
   anti_csrf_token: String,
 }
@@ -74,6 +78,16 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
       return Ok(Redirect::to("/login"));
     },
   };
+
+  if_chain! {
+    if user.tfa_enabled();
+    if let Some(ss) = user.shared_secret();
+    if Some(oath::totp_raw_now(ss, 6, 0, 30, &HashType::SHA1)) != data.tfa_code;
+    then {
+      sess.add_data("error", "Invalid authentication code.");
+      return Ok(Redirect::to("/login"));
+    }
+  }
 
   if !user.check_password(&data.password) {
     let msg = match LoginAttempt::find_increment(&conn, addr.ip())? {

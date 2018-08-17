@@ -25,6 +25,9 @@ pub struct User {
   name: String,
   email: String,
   email_verified: bool,
+  #[serde(skip_serializing)]
+  shared_secret: Option<Vec<u8>>,
+  tfa_enabled: bool,
 }
 
 impl User {
@@ -70,6 +73,22 @@ impl User {
 
   pub fn set_email_verified(&mut self, verified: bool) {
     self.email_verified = verified;
+  }
+
+  pub fn shared_secret(&self) -> Option<&[u8]> {
+    self.shared_secret.as_ref().map(|x| x.as_slice())
+  }
+
+  pub fn set_shared_secret(&mut self, secret: Option<Vec<u8>>) {
+    self.shared_secret = secret;
+  }
+
+  pub fn tfa_enabled(&self) -> bool {
+    self.tfa_enabled
+  }
+
+  pub fn set_tfa_enabled(&mut self, enabled: bool) {
+    self.tfa_enabled = enabled;
   }
 
   pub fn create_email_verification(&self, conn: &DbConn, last_sent: Option<NaiveDateTime>) -> Result<(EmailVerification, Vec<u8>)> {
@@ -140,6 +159,8 @@ pub struct NewUser {
   name: Option<String>,
   email: Option<String>,
   email_verified: bool,
+  shared_secret: Option<Vec<u8>>,
+  tfa_enabled: bool,
 }
 
 impl NewUser {
@@ -157,6 +178,8 @@ impl NewUser {
       name,
       email,
       email_verified: false,
+      shared_secret: None,
+      tfa_enabled: false,
     }
   }
 }

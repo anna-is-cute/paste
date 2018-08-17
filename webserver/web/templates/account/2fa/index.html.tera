@@ -1,0 +1,92 @@
+{% extends "base" %}
+
+{% block head %}
+{{ super() }}
+<script
+  async
+  src="/static/js/zxcvbn/zxcvbn.js?v={{ resources_version }}"
+  integrity="sha384-jhGcGHNZytnBnH1wbEM3KxJYyRDy9Q0QLKjE65xk+aMqXFCdvFuYIjzMWAAWBBtR"></script>
+<script
+  defer
+  src="/static/js/password.js?v={{ resources_version }}"
+  integrity="sha384-tL5ypIrbIEhvrepZk11xXDk5aNIUPZZQsGvFNVPIcEQ0asgZwGzXKtN9vGdxEvrp"></script>
+{% endblock head %}
+
+{% block title %}2FA{% endblock title %}
+
+{% block header_title %}
+2FA
+{% endblock header_title %}
+
+{% block header_subtitle %}
+Manage two-factor authentication.
+{% endblock header_subtitle %}
+
+{% block header_foot %}
+<nav class="tabs is-boxed">
+  <div class="container">
+    <ul>
+      <li><a href="/account">Settings</a></li>
+      <li><a href="/account/keys">API keys</a></li>
+      <li class="is-active"><a href="/account/2fa">2FA</a></li>
+      <li><a href="/account/delete">Delete</a></li>
+    </ul>
+  </div>
+</nav>
+{% endblock header_foot %}
+
+{% block main %}
+<div class="content">
+  <h1 class="title">
+    {% if user.tfa_enabled %}
+    <span class="icon is-large has-text-success">
+      <i class="fas fa-lock"></i>
+    </span>
+    2FA is enabled.
+    {% else %}
+    <span class="icon is-large has-text-danger">
+      <i class="fas fa-lock-open"></i>
+    </span>
+    2FA is not enabled.
+    {% endif %}
+  </h1>
+  <p>
+    {% if user.tfa_enabled %}
+    <a class="button is-primary" href="/account/2fa/disable">Turn off 2FA</a>
+    {% else %}
+    <a class="button is-primary" href="/account/2fa/enable">Turn on 2FA</a>
+    {% endif %}
+  </p>
+
+  <p>
+    Two-factor authentication (a form of <a class="external" target="_blank" href="https://en.wikipedia.org/wiki/Multi-factor_authentication">multi-factor authentication</a>)
+    increases the security of your account by requiring you to specify a one-time password generated
+    by another device on login.
+  </p>
+  <p>
+    This feature requires a smart device or smart card and an app to generate the codes. For Android
+    and iOS devices, see the table below.
+  </p>
+  <table class="table is-striped">
+    <thead>
+      <tr>
+        <th>Android (Play Store)</th>
+        <th>iOS (App Store)</th>
+        <th>Android (F-Droid)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="external" href="https://play.google.com/store/apps/details?id=com.authy.authy">Authy</a></td>
+        <td><a class="external" href="https://itunes.apple.com/us/app/authy/id494168017">Authy</a></td>
+        <td><a class="external" href="https://f-droid.org/packages/org.shadowice.flocke.andotp/">andOTP</a></td>
+      </tr>
+      <tr>
+        <td><a class="external" href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Google Authenticator</a></td>
+        <td><a class="external" href="https://itunes.apple.com/us/app/google-authenticator/id388497605">Google Authenticator</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock main %}

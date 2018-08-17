@@ -79,9 +79,6 @@ hex = "0.3"
 # custom cookies (has to be outdated because this is the version Rocket uses)
 cookie = "0.9"
 
-# sanitizing urls
-percent-encoding = "1"
-
 # connection pooling
 r2d2 = "0.8"
 
@@ -108,6 +105,18 @@ url = "1"
 
 # comparing strings without case
 unicase = "2"
+
+# totp for two-factor authentication
+oath = "0.10"
+
+# encoding for totp shared keys
+base32 = "0.3"
+
+# displaying otpauth urls
+qrcode = "0.8"
+
+# handling qrcode images
+image = "0.19"
 
 # web logic
 [dependencies.rocket]

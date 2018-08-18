@@ -88,6 +88,9 @@ redis = "0.9"
 # redis connection pooling
 r2d2_redis = "0.8"
 
+# scheduling jobs
+sidekiq = "0.8"
+
 # username validation
 unicode_categories = "0.1"
 
@@ -140,11 +143,6 @@ features = ["postgres", "uuid", "r2d2", "chrono", "network-address"]
 [dependencies.chrono]
 version = "0.4"
 features = ["serde"]
-
-# scheduling jobs
-[dependencies.sidekiq]
-# git because version on crates.io has incompatible version of r2d2
-git = "https://github.com/spk/rust-sidekiq"
 
 # markdown rendering
 [dependencies.comrak]

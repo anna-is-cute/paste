@@ -305,7 +305,7 @@ fn generate_backup_codes(conn: &DbConn, user: UserId) -> Result<Vec<String>> {
 
   let codes: Vec<String> = (0..10)
     .map(|_| randombytes::randombytes(6))
-    .map(|x| hex::encode(x))
+    .map(hex::encode)
     .collect();
 
   let nbcs: Vec<NewBackupCode> = codes

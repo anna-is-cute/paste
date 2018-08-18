@@ -133,6 +133,11 @@ fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalWebUs
 
   let ids: Vec<PasteId> = serde_json::from_str(&deletion.ids)?;
 
+  if ids.len() > 15 {
+    sess.add_data("error", "Up to 15 pastes can be deleted at a time.");
+    return Ok(Rst::Redirect(Redirect::to("lastpage")));
+  }
+
   let err = "No pastes were deleted because an invalid paste was specified. Perhaps it was deleted already?";
   let mut pastes = Vec::with_capacity(ids.len());
   for id in ids {

@@ -2,11 +2,6 @@
   plugin,
   custom_derive,
   macro_at_most_once_rep,
-  rust_2018_preview,
-  use_extern_macros,
-  crate_in_paths,
-  crate_visibility_modifier,
-  non_modrs_mods,
   in_band_lifetimes,
 )]
 #![plugin(rocket_codegen)]

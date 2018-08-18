@@ -47,8 +47,8 @@ pub fn context(config: &Config, user: Option<&User>, session: &mut Session) -> V
     "form": session.take_form(),
     "user": user,
     "session": session,
-    "server_version": ::SERVER_VERSION,
-    "resources_version": &*::RESOURCES_VERSION,
+    "server_version": crate::SERVER_VERSION,
+    "resources_version": &*crate::RESOURCES_VERSION,
   })
 }
 

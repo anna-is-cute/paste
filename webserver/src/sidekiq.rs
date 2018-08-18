@@ -35,7 +35,7 @@ impl Job {
           E: Into<String>,
           S: Into<String>,
   {
-    let rendered = ::EMAIL_TERA
+    let rendered = crate::EMAIL_TERA
       .render(template.as_ref(), &context)
       .map_err(|e| format_err!("tera error: {}", e))?;
 

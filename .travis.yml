@@ -25,12 +25,12 @@ before_cache:
   - rm -rfv target/debug/.fingerprint/{webserver,worker_delete_directory,worker_email,worker_expire_paste}-*
   - rm -rfv target/debug/build/{webserver,worker_delete_directory,worker_email,worker_expire_paste}-*
   - rm -rfv target/debug/deps/{webserver,worker_delete_directory,worker_email,worker_expire_paste}-*
-  # apparently cargo creates this file now? no reason to reupload the whole cache for it
-  - rm -fv target/.rustc_info.json
   - cargo clean -p webserver
   - cargo clean -p worker_delete_directory
   - cargo clean -p worker_email
   - cargo clean -p worker_expire_paste
+  # apparently cargo creates this file now? no reason to reupload the whole cache for it
+  - rm -fv target/.rustc_info.json
 rust:
   - nightly-2018-08-06
 matrix:

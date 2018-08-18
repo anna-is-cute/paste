@@ -2,6 +2,7 @@ use crate::{
   config::Config,
   database::{DbConn, models::users::User},
   errors::*,
+  models::id::UserId,
   redis_store::Redis,
   routes::web::{context, AddCsp, Rst, OptionalWebUser, Session},
   utils::totp::totp_raw_skew,
@@ -40,8 +41,12 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
   };
 
+  let backups = sess.data.remove("backup_codes");
+
   let mut ctx = context(&*config, Some(&user), &mut sess);
   ctx["tfa_enabled"] = json!(user.tfa_enabled());
+  ctx["backups"] = json!(backups);
+
   Ok(Rst::Template(Template::render("account/2fa/index", ctx)))
 }
 
@@ -158,6 +163,9 @@ fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn
   user.set_tfa_enabled(true);
   user.update(&conn)?;
 
+  let backups = generate_backup_codes(&conn, user.id())?;
+  sess.add_data("backup_codes", backups.join("\n"));
+
   Ok(Redirect::to("/account/2fa"))
 }
 
@@ -211,6 +219,8 @@ fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Session, c
   user.set_shared_secret(None);
   user.update(&conn)?;
 
+  delete_backup_codes(&conn, user.id())?;
+
   Ok(Redirect::to("/account/2fa"))
 }
 
@@ -248,4 +258,41 @@ fn secret_segments(s: &str) -> Vec<&str> {
     &s[40..46],
     &s[46..],
   ]
+}
+
+fn delete_backup_codes(conn: &DbConn, user: UserId) -> Result<()> {
+  use crate::database::schema::backup_codes;
+  use diesel::prelude::*;
+
+  // delete any existing backup codes
+  diesel::delete(backup_codes::table)
+    .filter(backup_codes::user_id.eq(user))
+    .execute(&**conn)?;
+
+  Ok(())
+}
+
+fn generate_backup_codes(conn: &DbConn, user: UserId) -> Result<Vec<String>> {
+  use crate::database::schema::backup_codes;
+  use crate::database::models::backup_codes::NewBackupCode;
+  use diesel::prelude::*;
+
+  // delete any existing backup codes
+  delete_backup_codes(conn, user)?;
+
+  let codes: Vec<String> = (0..10)
+    .map(|_| randombytes::randombytes(6))
+    .map(|x| hex::encode(x))
+    .collect();
+
+  let nbcs: Vec<NewBackupCode> = codes
+    .iter()
+    .map(|x| NewBackupCode::new(user, x.clone()))
+    .collect();
+
+  diesel::insert_into(backup_codes::table)
+    .values(&nbcs)
+    .execute(&**conn)?;
+
+  Ok(codes)
 }

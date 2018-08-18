@@ -120,6 +120,10 @@ div.codesass.codesass--has-line-numbers::before {
   height: 2.5em;
 }
 
+.message.is-warning .message-body pre {
+  color: #000;
+}
+
 // fonts
 
 /* lato-regular - latin_latin-ext */

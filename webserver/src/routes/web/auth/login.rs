@@ -104,7 +104,6 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
 
     match tfa_code_s.len() {
       6 => if_chain! {
-        if user.tfa_enabled();
         if let Some(ss) = user.shared_secret();
         if let Ok(tfa_code) = tfa_code_s.parse::<u64>();
         if !redis.exists::<_, bool>(format!("otp:{},{}", user.id(), tfa_code))?;
@@ -116,7 +115,6 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
         }
       },
       12 => if_chain! {
-        if user.tfa_enabled();
         let backup_code = diesel::delete(backup_codes::table)
             .filter(backup_codes::code.eq(tfa_code_s))
             .get_result::<BackupCode>(&*conn)

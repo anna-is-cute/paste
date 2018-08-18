@@ -144,9 +144,7 @@ features = ["serde"]
 # scheduling jobs
 [dependencies.sidekiq]
 # git because version on crates.io has incompatible version of r2d2
-# git = "https://github.com/spk/rust-sidekiq"
-# until PR is merged
-git = "https://github.com/jkcclemens/rust-sidekiq"
+git = "https://github.com/spk/rust-sidekiq"
 
 # markdown rendering
 [dependencies.comrak]

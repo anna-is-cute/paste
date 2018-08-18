@@ -79,6 +79,10 @@ fn check_deletion_key(paste: &Paste, key: &DeletionKey) -> Option<(HttpStatus, E
 fn ids(info: Json<Vec<PasteId>>, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
   let ids = info.into_inner();
 
+  if ids.len() > 15 {
+    return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadParameters(Some("up to 15 pastes can be deleted at a time".into()))));
+  }
+
   let mut pastes = Vec::with_capacity(ids.len());
   for id in ids {
     let paste = match id.get(&conn)? {

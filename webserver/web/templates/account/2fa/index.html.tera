@@ -70,13 +70,21 @@ Manage two-factor authentication.
     2FA is not enabled.
     {% endif %}
   </h1>
-  <p>
+  <div class="{% if tfa_enabled %}field is-grouped{% else %}field{% endif %}">
     {% if tfa_enabled %}
-    <a class="button is-primary" href="/account/2fa/disable">Turn off 2FA</a>
+    <div class="control">
+      <a class="button is-primary" href="/account/2fa/disable">Turn off 2FA</a>
+    </div>
+    <form method="post" action="/account/2fa/new_backup_codes">
+      <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+      <div class="control">
+        <button class="button" type="submit">Generate new backup codes</button>
+      </div>
+    </form>
     {% else %}
     <a class="button is-primary" href="/account/2fa/enable">Turn on 2FA</a>
     {% endif %}
-  </p>
+  </div>
 
   <p>
     Two-factor authentication (a form of <a class="external" target="_blank" href="https://en.wikipedia.org/wiki/Multi-factor_authentication">multi-factor authentication</a>)

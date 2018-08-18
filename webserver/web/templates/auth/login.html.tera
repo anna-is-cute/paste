@@ -75,7 +75,7 @@ Log in to your account.
         class="input"
         type="text"
         minlength="6"
-        maxlength="6"
+        maxlength="12"
         placeholder="If enabled"/>
       <span class="icon is-small is-left">
         <i class="fas fa-lock"></i>

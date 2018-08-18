@@ -7,6 +7,13 @@ table! {
 }
 
 table! {
+    backup_codes (user_id, code) {
+        user_id -> Uuid,
+        code -> Varchar,
+    }
+}
+
+table! {
     deletion_keys (key) {
         key -> Uuid,
         paste_id -> Uuid,
@@ -86,6 +93,7 @@ table! {
 }
 
 joinable!(api_keys -> users (user_id));
+joinable!(backup_codes -> users (user_id));
 joinable!(deletion_keys -> pastes (paste_id));
 joinable!(email_verifications -> users (user_id));
 joinable!(files -> pastes (paste_id));
@@ -94,6 +102,7 @@ joinable!(pastes -> users (author_id));
 
 allow_tables_to_appear_in_same_query!(
     api_keys,
+    backup_codes,
     deletion_keys,
     email_verifications,
     files,

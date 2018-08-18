@@ -37,6 +37,26 @@ Manage two-factor authentication.
 
 {% block main %}
 <div class="content">
+  {% if backups %}
+  <article class="message is-warning">
+    <div class="message-header">
+      <span>Backup codes</span>
+      <button class="delete" aria-label="delete"></button>
+    </div>
+    <div class="message-body">
+      <p>
+        If you ever lose access to your 2FA device, you can use these codes instead of a generated
+        code to access your account. Each code can only be used once. They will only be displayed
+        once, so don't lose them!
+      </p>
+      <p>
+        You can generate new codes at any time while logged in. Use the button below to do so.
+      </p>
+      <pre>{{ backups }}</pre>
+    </div>
+  </article>
+  {% endif %}
+
   <h1 class="title">
     {% if tfa_enabled %}
     <span class="icon is-large has-text-success">

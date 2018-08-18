@@ -1,4 +1,5 @@
 pub mod api_keys;
+pub mod backup_codes;
 pub mod deletion_keys;
 pub mod email_verifications;
 pub mod files;

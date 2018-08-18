@@ -10,6 +10,7 @@
   in_band_lifetimes,
 )]
 #![plugin(rocket_codegen)]
+#![recursion_limit = "1024"]
 
 #![allow(proc_macro_derive_resolution_fallback)]
 

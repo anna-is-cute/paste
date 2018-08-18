@@ -103,7 +103,7 @@ fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, c
 }
 
 #[post("/account/2fa/new_secret", format = "application/x-www-form-urlencoded", data = "<form>")]
-fn new_secret(form: Form<NewSecret>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   if !sess.check_token(&form.into_inner().anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Redirect::to("lastpage"));
@@ -230,6 +230,29 @@ struct Disable {
   password: String,
 }
 
+#[post("/account/2fa/new_backup_codes", format = "application/x-www-form-urlencoded", data = "<form>")]
+fn new_backup_codes(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+  if !sess.check_token(&form.into_inner().anti_csrf_token) {
+    sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Redirect::to("lastpage"));
+  }
+
+  let user = match user.into_inner() {
+    Some(u) => u,
+    None => return Ok(Redirect::to("/login")),
+  };
+
+  if !user.tfa_enabled() {
+    sess.add_data("error", "2FA is not enabled on your account.");
+    return Ok(Redirect::to("lastpage"));
+  }
+
+  let codes = generate_backup_codes(&conn, user.id())?;
+  sess.add_data("backup_codes", codes.join("\n"));
+
+  Ok(Redirect::to("/account/2fa"))
+}
+
 fn generate_secret(conn: &DbConn, user: &mut User) -> Result<()> {
   // make the shared secret and base32 encode it
   let raw_key = randombytes::randombytes(32);
@@ -242,7 +265,7 @@ fn generate_secret(conn: &DbConn, user: &mut User) -> Result<()> {
 }
 
 #[derive(Debug, FromForm)]
-struct NewSecret {
+struct TokenOnly {
   anti_csrf_token: String,
 }
 

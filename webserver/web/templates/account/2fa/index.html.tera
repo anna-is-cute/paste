@@ -2,14 +2,6 @@
 
 {% block head %}
 {{ super() }}
-<script
-  async
-  src="/static/js/zxcvbn/zxcvbn.js?v={{ resources_version }}"
-  integrity="sha384-jhGcGHNZytnBnH1wbEM3KxJYyRDy9Q0QLKjE65xk+aMqXFCdvFuYIjzMWAAWBBtR"></script>
-<script
-  defer
-  src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-Dtm96evk4NcixD444vbhDlxd45Qm/YYJasl2pxc7o+QjJUBTcOmmQugsoVgLhWWP"></script>
 {% endblock head %}
 
 {% block title %}2FA{% endblock title %}

@@ -114,5 +114,10 @@
     progress.classList.add(color);
   }
 
-  document.getElementById('password').addEventListener('input', e => passwordStrength(e.target));
+  (function() {
+    const pass = document.getElementById('password');
+    if (pass !== null) {
+      pass.addEventListener('input', e => passwordStrength(e.target));
+    }
+  })();
 })();

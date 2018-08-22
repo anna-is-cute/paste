@@ -144,8 +144,13 @@
     progress.classList.add(color);
   }
 
-  document.getElementById('password').addEventListener('input', function (e) {
-    return passwordStrength(e.target);
-  });
+  (function () {
+    var pass = document.getElementById('password');
+    if (pass !== null) {
+      pass.addEventListener('input', function (e) {
+        return passwordStrength(e.target);
+      });
+    }
+  })();
 })();
 //# sourceMappingURL=password.js.map

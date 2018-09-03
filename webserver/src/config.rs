@@ -13,7 +13,6 @@ pub struct Config {
   #[serde(skip_deserializing)]
   pub _path: Option<PathBuf>,
   pub general: General,
-  pub recaptcha: ReCaptcha,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -22,12 +21,6 @@ pub struct General {
   pub site_domain: String,
   #[serde(default)]
   pub about_file: Option<String>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ReCaptcha {
-  pub secret_key: String,
-  pub site_key: String,
 }
 
 pub fn load_config(s: &str) -> Result<Config> {

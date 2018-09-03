@@ -139,14 +139,6 @@ If paste was a movie, these would be at the end.
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
-          <a href="https://www.google.com/recaptcha/">reCAPTCHA</a>
-        </p>
-        <p>
-          Google's system to catch and stop robots from filling out forms.
-        </p>
-      </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
           <a href="https://modernizr.com/">modernizr</a>
         </p>
         <p>

@@ -327,14 +327,6 @@ If paste was a movie, these would be at the end.
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
-          <a href="https://github.com/seanmonstar/reqwest">reqwest</a>
-        </p>
-        <p>
-          A HTTP client that's still blocking.
-        </p>
-      </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
           <a href="https://github.com/KokaKiwi/rust-hex">rust-hex</a>
         </p>
         <p>

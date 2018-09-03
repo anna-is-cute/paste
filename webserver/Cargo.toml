@@ -64,9 +64,6 @@ if_chain = "0.1"
 # splitting on graphemes
 unicode-segmentation = "1"
 
-# making requests
-reqwest = "0.8"
-
 # configuration files
 toml = "0.4"
 

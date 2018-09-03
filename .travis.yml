@@ -32,7 +32,7 @@ before_cache:
   # apparently cargo creates this file now? no reason to reupload the whole cache for it
   - rm -fv target/.rustc_info.json
 rust:
-  - nightly-2018-08-18
+  - nightly-2018-08-30
 matrix:
   fast_finish: true
 notifications:

@@ -8,20 +8,8 @@
   integrity="sha384-jhGcGHNZytnBnH1wbEM3KxJYyRDy9Q0QLKjE65xk+aMqXFCdvFuYIjzMWAAWBBtR"></script>
 <script
   defer
-  src="/static/js/register.js?v={{ resources_version }}"
-  integrity="sha384-+bKWQUeVgvyDR0KsqAdKD7lrz78x8k4DF4G1lJTgFDViRvUU7i4VBb9CXg4rouPw"></script>
-<script
-  defer
   src="/static/js/password.js?v={{ resources_version }}"
   integrity="sha384-TX1b4qxxTCFxJPqmHYPZ2mbd07JhxxFn9EjKzbgtQ78+CgTsOvyxg5zBNN6SeLiV"></script>
-<script
-  defer
-  src="/static/js/recaptcha/config.js?v={{ resources_version }}"
-  integrity="sha384-l5U/0HZcOpOmdhTbK1r5uJebO2evdFW2byo8i4VJ82CTiug/nIhnLdNmdnjpP3j2"></script>
-<script
-  defer
-  src="/static/js/recaptcha/v1531117903872/recaptcha__en.js?v={{ resources_version }}"
-  integrity="sha384-r527D48IFGBbs4MibYPpuRXVOv4WDFGgwmDwjs8cf2etjyr5t/weqbilRt7Cp1Cf"></script>
 {% endblock head %}
 
 {% block title %}
@@ -37,7 +25,7 @@ Create a new account.
 {% endblock header_subtitle %}
 
 {% block main %}
-<form id="registration_form" method="post" action="/register">
+<form method="post" action="/register">
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div class="field">
     <label class="label">Display name</label>
@@ -152,11 +140,7 @@ Create a new account.
 
   <div class="field">
     <div class="control">
-      <button
-        id="submit_button"
-        class="button is-link g-recaptcha"
-        data-sitekey="{{ config.recaptcha.site_key }}"
-        data-callback="submitRegistration">Submit</button>
+      <button type="submit" class="button is-link">Submit</button>
     </div>
   </div>
 </form>

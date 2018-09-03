@@ -7,8 +7,8 @@ use crate::{
   },
   errors::*,
   models::id::UserId,
-  routes::web::{context, AddCsp, Rst, OptionalWebUser, Session},
-  utils::{email, PasswordContext, ReCaptcha, HashedPassword, Validator},
+  routes::web::{context, Rst, OptionalWebUser, Session},
+  utils::{email, PasswordContext, HashedPassword, Validator},
 };
 
 use chrono::{Duration, Utc};
@@ -31,19 +31,13 @@ use sidekiq::Client as SidekiqClient;
 use uuid::Uuid;
 
 #[get("/register")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Rst> {
+fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Rst {
   if user.is_some() {
-    return AddCsp::none(Rst::Redirect(Redirect::to("/")));
+    return Rst::Redirect(Redirect::to("/"));
   }
+
   let ctx = context(&*config, user.as_ref(), &mut sess);
-  AddCsp::new(
-    Rst::Template(Template::render("auth/register", ctx)),
-    vec![
-      "frame-src https://www.google.com/recaptcha/",
-      // https://github.com/google/recaptcha/issues/107 get with the times, google
-      "style-src 'unsafe-inline'",
-    ],
-  )
+  Rst::Template(Template::render("auth/register", ctx))
 }
 
 #[derive(Debug, FromForm, Serialize)]
@@ -55,9 +49,6 @@ struct RegistrationData {
   password: String,
   #[serde(skip)]
   password_verify: String,
-  #[serde(skip)]
-  #[form(field = "g-recaptcha-response")]
-  recaptcha: ReCaptcha,
   #[serde(skip)]
   anti_csrf_token: String,
 }
@@ -108,11 +99,6 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
       sess.add_data("error", e);
       return Ok(Redirect::to("/register"));
     }
-  }
-
-  if !data.recaptcha.verify(&config.recaptcha.secret_key)? {
-    sess.add_data("error", "The captcha did not validate. Try again.");
-    return Ok(Redirect::to("/register"));
   }
 
   let existing_names: i64 = users::table

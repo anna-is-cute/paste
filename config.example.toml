@@ -5,15 +5,6 @@ site_domain = "paste.gg"
 # If not set, the About link in the navbar will not be displayed
 # about_file = "about.html"
 
-[recaptcha]
-# https://developers.google.com/recaptcha/docs/faq
-# With the following test keys, you will always get No CAPTCHA and all verification requests will
-# pass.
-# site key: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
-# secret key: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
-site_key = "<site_key>"
-secret_key = "<secret_key>"
-
 # Sender information for emails sent from the server
 [email.sender]
 name = ""

@@ -5,7 +5,6 @@ pub mod form_date;
 pub mod hashed_password;
 pub mod language;
 pub mod password;
-pub mod recaptcha;
 pub mod totp;
 pub mod validator;
 
@@ -15,6 +14,5 @@ pub use self::{
   hashed_password::HashedPassword,
   language::Language,
   password::PasswordContext,
-  recaptcha::ReCaptcha,
   validator::Validator,
 };

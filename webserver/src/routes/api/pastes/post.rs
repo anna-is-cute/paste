@@ -92,6 +92,7 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn, sidekiq: State<Sidek
     paste.description(),
     paste.visibility(),
     paste.created_at(),
+    paste.updated_at().ok(), // FIXME
     paste.expires(),
     deletion_key.map(|x| x.key()),
     files,

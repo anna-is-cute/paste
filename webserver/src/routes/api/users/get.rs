@@ -145,6 +145,7 @@ fn _get(page: u32, username: String, user: OptionalUser, conn: DbConn) -> RouteR
         paste.description(),
         paste.visibility(),
         paste.created_at(),
+        paste.updated_at().ok(), // FIXME
         paste.expires(),
         None,
         output_files,

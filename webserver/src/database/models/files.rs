@@ -1,4 +1,4 @@
-#![cfg_attr(feature = "cargo-clippy", allow(option_option))]
+#![allow(clippy::option_option)]
 
 use crate::{
   errors::*,

@@ -47,6 +47,7 @@ pub struct Paste {
   description: Option<String>,
   created_at: NaiveDateTime,
   expires: Option<NaiveDateTime>,
+  updated_at: Option<NaiveDateTime>,
 }
 
 impl Paste {
@@ -95,6 +96,8 @@ impl Paste {
   }
 
   pub fn updated_at(&self) -> Result<DateTime<Utc>> {
+    let db_datetime = self.updated_at.map(|x| DateTime::from_utc(x, Utc));
+
     let repo = self.repository()?;
 
     let head_id = repo.refname_to_id("HEAD")?;
@@ -105,7 +108,12 @@ impl Paste {
       .timestamp(time.seconds(), 0)
       .with_timezone(&Utc);
 
-    Ok(datetime)
+    let newest = match db_datetime {
+      Some(db) => std::cmp::max(db, datetime),
+      None => datetime,
+    };
+
+    Ok(newest)
   }
 
   pub fn update(&mut self, conn: &DbConn, sidekiq: &SidekiqClient, update: &MetadataUpdate) -> Result<()> {

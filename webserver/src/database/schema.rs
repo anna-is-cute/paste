@@ -76,6 +76,7 @@ table! {
         description -> Nullable<Text>,
         created_at -> Timestamp,
         expires -> Nullable<Timestamp>,
+        updated_at -> Nullable<Timestamp>,
     }
 }
 

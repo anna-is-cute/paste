@@ -14,4 +14,5 @@ pub struct Paste {
   pub description: Option<String>,
   pub created_at: NaiveDateTime,
   pub expires: Option<NaiveDateTime>,
+  pub updated_at: Option<NaiveDateTime>,
 }

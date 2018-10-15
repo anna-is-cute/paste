@@ -4,7 +4,10 @@
 
 This document assumes a base URL of `/api/<version>`.
 
-The current `<version>` is `v0`. Expect breakage.
+|Version|Status|
+|-------|------|
+|`v1`|**Current**, stable|
+|`v0`|Deprecated|
 
 *Note that on paste.gg, the base URL is `https://api.paste.gg/<version>`.*
 
@@ -91,6 +94,10 @@ Create a new paste.
         // (required)  the format of the file
         // specify that the content field is valid utf-8 text
         "format": "text",
+        // (optional) the syntax highlighting language to use
+        // if not specified or null, the web UI will autodetect which language to use based on
+        // extension
+        "highlight_language": null,
         // (required)  the value of the file contents
         // content of the file as valid utf-8 text
         "value": "Hello!"
@@ -122,19 +129,24 @@ Create a new paste.
     "name": "my files",
     "description": "these are my files!",
     "visibility": "public",
+    "created_at": "2018-10-15T16:02:47.114287Z",
+    "updated_at": "2018-10-15T16:02:47Z",
+    // only present if the paste expires
+    "expires": "2018-07-14T14:07:00Z",
     "files": [
       {
+        "highlight_language": null,
         "id": "ghijkl5678",
         "name": "file_1.txt"
       },
       {
+        "highlight_language": null,
         "id": "mnopqr9012",
         "name": "file_2.jpg"
       }
     ],
     // (optional) key to use when deleting this paste, if this paste was made anonymously
     "deletion_key": "ghijkl5678"
-    // TODO: include urls?
   }
 }
 ```
@@ -248,10 +260,15 @@ Get an existing paste.
     "name": "my files",
     "description": "these are my files!",
     "visibility": "public",
+    "created_at": "2018-10-15T16:05:15.784217Z",
+    "updated_at": "2018-10-15T16:05:15Z",
+    // only present if the paste expires
+    "expires": "2018-07-14T14:07:00Z",
     "files": [
       {
         "id": "def456",
         "name": "file_1.txt",
+        "highlight_language": null,
         // only included if the query param `full` is `true`
         "content": {
           "format": "text",
@@ -261,6 +278,7 @@ Get an existing paste.
       {
         "id": "ghi789",
         "name": "file_2.jpg",
+        "highlight_language": null,
         // only included if the query param `full` is `true`
         "content": {
           "format": "base64",
@@ -328,6 +346,7 @@ Get one file from an existing paste.
   "result": {
     "id": "def456",
     "name": "file_1.txt",
+    "highlight_language": null,
     "content": {
       "format": "text",
       "value": "Hello!"
@@ -368,6 +387,8 @@ When creating a new file, the `content` field is required.
     "id": "abcdef1234",
     // remove the file's name (will turn into "pastefile#")
     "name": null
+    // set the highlight language to rust
+    "highlight_language": "rust"
     // content is not modified, since no content field was included
   },
   {
@@ -461,37 +482,7 @@ Get one file from an existing paste.
   "result": {
     "id": "def456",
     "name": "file_1.txt",
-    "content": {
-      "format": "text",
-      "value": "Hello!"
-    }
-  }
-}
-```
-
-### Output (error, `400 | 403 | 404`)
-
-Standard error (see POST `/pastes`)
-
-## GET `/pastes/<id>/files/<id>`
-
-Get one file from an existing paste.
-
-### Headers
-
-- `Authorization` (optional): `Key <api_key>`
-
-  An API key is only necessary when viewing a private paste. The key must be linked to the account
-  that created the private paste.
-
-### Output (success, `200`)
-
-```javascript
-{
-  "status": "success",
-  "result": {
-    "id": "def456",
-    "name": "file_1.txt",
+    "highlight_language": null,
     "content": {
       "format": "text",
       "value": "Hello!"

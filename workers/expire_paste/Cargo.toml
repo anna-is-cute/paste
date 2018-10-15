@@ -1,5 +1,3 @@
-cargo-features = ["edition"]
-
 [package]
 name = "worker_expire_paste"
 version = "0.1.0"

@@ -124,6 +124,7 @@ impl<T> AddCsp<T> {
     AddCsp(inner, directives.into_iter().map(|x| x.as_ref().to_string()).collect())
   }
 
+  #[allow(unused)]
   pub fn none(inner: T) -> Self {
     AddCsp(inner, Default::default())
   }

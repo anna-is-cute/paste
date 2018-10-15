@@ -171,6 +171,27 @@ fn main() {
     .mount("/static", routes!{
       routes::web::static_files::get,
     })
+    .mount("/api/v1/pastes", routes![
+      routes::api::pastes::get::get_all,
+      routes::api::pastes::get::get_all_query,
+
+      routes::api::pastes::post::post,
+      routes::api::pastes::delete::delete,
+      routes::api::pastes::delete::ids,
+      routes::api::pastes::get::get_query,
+      routes::api::pastes::get::get,
+      routes::api::pastes::patch::patch,
+
+      routes::api::pastes::files::get::get,
+      routes::api::pastes::files::patch::patch,
+      routes::api::pastes::files::post::post,
+
+      routes::api::pastes::files::individual::delete::delete,
+      routes::api::pastes::files::individual::get::get,
+      routes::api::pastes::files::individual::patch::patch,
+
+      routes::api::pastes::files::individual::raw::get::get,
+    ])
     .mount("/api/v0/pastes", routes![
       routes::api::pastes::get::get_all,
       routes::api::pastes::get::get_all_query,

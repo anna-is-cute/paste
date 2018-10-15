@@ -83,8 +83,10 @@
             e();
             document.onreadystatechange = function() {
             var hash = document.location.hash;
-            document.location.hash = "";
-            document.location.hash = hash;
+            if (hash !== "") {
+                document.location.hash = "";
+                document.location.hash = hash;
+            }
             };
         };
         n.setTimeout(k, 0);

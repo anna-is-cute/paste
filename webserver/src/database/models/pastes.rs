@@ -18,7 +18,7 @@ use super::files::{File as DbFile, NewFile};
 use super::super::schema::{pastes, files};
 use super::users::User;
 
-use chrono::{NaiveDateTime, DateTime, Utc};
+use chrono::{DateTime, FixedOffset, NaiveDateTime, TimeZone, Utc};
 
 use diesel::prelude::*;
 
@@ -92,6 +92,20 @@ impl Paste {
 
   pub fn set_expires(&mut self, expires: Option<DateTime<Utc>>) {
     self.expires = expires.map(|x| x.naive_utc());
+  }
+
+  pub fn updated_at(&self) -> Result<DateTime<Utc>> {
+    let repo = self.repository()?;
+
+    let head_id = repo.refname_to_id("HEAD")?;
+    let head = repo.find_commit(head_id)?;
+
+    let time = head.time();
+    let datetime = FixedOffset::east(time.offset_minutes() * 60)
+      .timestamp(time.seconds(), 0)
+      .with_timezone(&Utc);
+
+    Ok(datetime)
   }
 
   pub fn update(&mut self, conn: &DbConn, sidekiq: &SidekiqClient, update: &MetadataUpdate) -> Result<()> {

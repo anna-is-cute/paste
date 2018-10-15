@@ -3,6 +3,7 @@
   custom_derive,
   macro_at_most_once_rep,
   in_band_lifetimes,
+  tool_lints,
 )]
 #![plugin(rocket_codegen)]
 #![recursion_limit = "1024"]

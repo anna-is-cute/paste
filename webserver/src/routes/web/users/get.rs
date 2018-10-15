@@ -149,6 +149,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
         paste.description(),
         paste.visibility(),
         paste.created_at(),
+        paste.updated_at().ok(), // FIXME
         paste.expires(),
         None,
         output_files,

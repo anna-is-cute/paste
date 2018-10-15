@@ -142,6 +142,7 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
     paste.description(),
     paste.visibility(),
     paste.created_at(),
+    paste.updated_at().ok(), // FIXME
     paste.expires(),
     None,
     files,

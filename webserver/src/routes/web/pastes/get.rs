@@ -145,6 +145,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
     paste.description(),
     paste.visibility(),
     paste.created_at(),
+    paste.updated_at().ok(), // FIXME
     paste.expires(),
     None,
     files,
@@ -219,6 +220,7 @@ fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebU
     paste.description(),
     paste.visibility(),
     paste.created_at(),
+    paste.updated_at().ok(), // FIXME
     paste.expires(),
     None,
     files,

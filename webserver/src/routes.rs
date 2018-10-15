@@ -1,4 +1,4 @@
-#![cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value, print_literal))]
+#![allow(clippy::needless_pass_by_value, clippy::print_literal)]
 
 use crate::{
   config::Config,

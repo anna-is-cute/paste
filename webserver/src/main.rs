@@ -214,6 +214,10 @@ fn main() {
 
       routes::api::pastes::files::individual::raw::get::get,
     ])
+    .mount("/api/v1/users", routes![
+      routes::api::users::get::get,
+      routes::api::users::get::get_page,
+    ])
     .mount("/api/v0/users", routes![
       routes::api::users::get::get,
       routes::api::users::get::get_page,

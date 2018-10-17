@@ -6,7 +6,7 @@ use multipart::server::Multipart;
 
 use rocket::{
   Request, Data, Outcome,
-  http::{ContentType, Status},
+  http::Status,
   data::{self, FromData},
 };
 
@@ -37,8 +37,8 @@ impl FromData for MultipartUpload {
 
   fn from_data(request: &Request, data: Data) -> data::Outcome<Self, Self::Error> {
     let boundary = match request.content_type() {
-      Some(ref ct) if **ct == ContentType::FormData => {
-        match ct.params().find(|(key, _)| *key == "boundary").map(|(_, value)| value) {
+      Some(ct) if ct.is_form_data() => {
+        match ct.params().find(|&(key, _)| key == "boundary").map(|(_, value)| value) {
           Some(b) => b,
           None => return Outcome::Forward(data),
         }

@@ -175,7 +175,8 @@ fn main() {
       routes::api::pastes::get::get_all,
       routes::api::pastes::get::get_all_query,
 
-      routes::api::pastes::post::post,
+      routes::api::pastes::post::post_json,
+      routes::api::pastes::post::post_multipart,
       routes::api::pastes::delete::delete,
       routes::api::pastes::delete::ids,
       routes::api::pastes::get::get_query,
@@ -196,7 +197,7 @@ fn main() {
       routes::api::pastes::get::get_all,
       routes::api::pastes::get::get_all_query,
 
-      routes::api::pastes::post::post,
+      routes::api::pastes::post::post_json,
       routes::api::pastes::delete::delete,
       routes::api::pastes::delete::ids,
       routes::api::pastes::get::get_query,

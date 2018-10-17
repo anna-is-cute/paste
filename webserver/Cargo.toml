@@ -113,6 +113,16 @@ base32 = "0.3"
 # displaying otpauth urls
 qrcode = "0.9"
 
+# needed to handle multipart's mime types
+# old version required because multipart depends on an old version
+mime = "0.2"
+
+# accepting multipart input
+[dependencies.multipart]
+version = "0.15"
+default-features = false
+features = ["server", "use_arc_str"]
+
 # web logic
 [dependencies.rocket]
 version = "0.3"
@@ -121,7 +131,7 @@ features = ["tls"]
 # web logic with json and uuids
 [dependencies.rocket_contrib]
 version = "0.3"
-default_features = false
+default-features = false
 features = ["json", "uuid", "tera_templates"]
 
 # unique paste-related ids

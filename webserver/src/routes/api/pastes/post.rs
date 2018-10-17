@@ -12,6 +12,7 @@ use crate::{
     status::{Status, ErrorKind},
   },
   routes::{RouteResult, OptionalUser},
+  utils::MultipartUpload,
 };
 
 use rocket::{State, http::Status as HttpStatus};
@@ -20,19 +21,10 @@ use rocket_contrib::Json;
 
 use sidekiq::Client as SidekiqClient;
 
-type InfoResult = ::std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>;
+type JsonResult = std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>;
+type MultipartResult = std::result::Result<MultipartUpload, String>;
 
-#[post("/", format = "application/json", data = "<info>")]
-fn post(info: InfoResult, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
-  // TODO: can this be a request guard?
-  let info = match info {
-    Ok(x) => x.into_inner(),
-    Err(e) => {
-      let message = format!("could not parse json: {}", e);
-      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(Some(message))));
-    },
-  };
-
+fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
   // check that file names are not the empty string
   if info.files.iter().filter_map(|x| x.name.as_ref()).any(|x| x.is_empty()) {
     return Ok(Status::show_error(
@@ -99,4 +91,29 @@ fn post(info: InfoResult, user: OptionalUser, conn: DbConn, sidekiq: State<Sidek
   );
 
   Ok(Status::show_success(HttpStatus::Created, output))
+}
+
+#[post("/", format = "multipart/form-data", data = "<info>")]
+fn post_multipart(info: MultipartResult, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
+  let info = match info {
+    Ok(x) => x.into_inner(),
+    Err(e) => {
+      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadMultipart(Some(e))));
+    },
+  };
+  _post(info, user, conn, sidekiq)
+}
+
+#[post("/", format = "application/json", data = "<info>")]
+fn post_json(info: JsonResult, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
+  // TODO: can this be a request guard?
+  let info = match info {
+    Ok(x) => x.into_inner(),
+    Err(e) => {
+      let message = format!("could not parse json: {}", e);
+      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(Some(message))));
+    },
+  };
+
+  _post(info, user, conn, sidekiq)
 }

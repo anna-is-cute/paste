@@ -38,6 +38,7 @@ impl<T> Status<T>
 pub enum ErrorKind {
   InvalidFile(#[serde(skip_serializing_if = "Option::is_none")] Option<String>),
   BadJson(#[serde(skip_serializing_if = "Option::is_none")] Option<String>),
+  BadMultipart(#[serde(skip_serializing_if = "Option::is_none")] Option<String>),
   MissingPaste,
   MissingFile,
   MissingUser,

@@ -46,6 +46,10 @@ impl FromData for MultipartUpload {
       _ => return Outcome::Forward(data),
     };
 
+    if !request.headers().contains("X-Paste") {
+      return Outcome::Forward(data);
+    }
+
     let mut mp = Multipart::with_body(data.open(), boundary);
 
     let mut entry = match mp.read_entry() {

@@ -4,12 +4,12 @@
 {{ super() }}
 <link
   title="dark"
-  rel="stylesheet alternate"
+  rel="stylesheet"
   href="/static/css/dark-style.css?v={{ resources_version }}"
   integrity="sha384-kxnP3nJo2Yuru2jBFxVqZcpgMX2QYYO28m4brk5nWp6L4cUlbsTcwbT9t4k+Kx22"/>
 <link
   title="light"
-  rel="stylesheet"
+  rel="stylesheet alternate"
   href="/static/css/style.css?v={{ resources_version }}"
   integrity="sha384-PRTBcj/SILKXKIXjorbXPrwVFetyyab5pK4BvgIBoNtRho9S3YMMHLOqfA6Pv1zZ"/>
 <script

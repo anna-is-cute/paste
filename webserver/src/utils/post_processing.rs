@@ -9,6 +9,12 @@ use html5ever::{
   interface::Attribute,
 };
 
+use crypto::{
+  hmac::Hmac,
+  mac::Mac,
+  sha1::Sha1,
+};
+
 use url::{Url, ParseError as UrlParseError};
 
 fn make_parser() -> Parser<RcDom> {
@@ -23,6 +29,35 @@ fn make_parser() -> Parser<RcDom> {
 fn walk(config: &Config, handle: Handle, external: &Attribute) {
   let node = handle;
   match node.data {
+    NodeData::Element { ref name, ref attrs, .. } if name.local == local_name!("img") => {
+      let mut attrs = attrs.borrow_mut();
+      let mut url_attr = match attrs.iter_mut().find(|x| x.name.local == local_name!("src")) {
+        Some(a) => a,
+        None => return,
+      };
+
+      let url = match Url::parse(&url_attr.value) {
+        Ok(u) => u,
+        Err(_) => return,
+      };
+
+      let mut hmac = Hmac::new(Sha1::new(), &crate::CAMO_KEY);
+      hmac.input(url.as_str().as_bytes());
+      let hmac_encoded = hex::encode(&hmac.result().code());
+
+      // FIXME: unwrap
+      let mut new_url = crate::CAMO_URL.clone();
+      new_url
+        .path_segments_mut()
+        .unwrap()
+        .pop_if_empty()
+        .push(&hmac_encoded);
+      new_url
+        .query_pairs_mut()
+        .append_pair("url", url.as_str());
+
+      url_attr.value = new_url.into_string().into();
+    },
     NodeData::Element { ref name, ref attrs, .. } if name.local == local_name!("a") => {
       let url = attrs
         .borrow()
@@ -52,7 +87,7 @@ fn walk(config: &Config, handle: Handle, external: &Attribute) {
   }
 }
 
-pub fn mark(config: &Config, src: &str) -> String {
+pub fn process(config: &Config, src: &str) -> String {
   let external = Attribute {
     name: QualName::new(None, ns!(), local_name!("class")),
     value: "external".into(),

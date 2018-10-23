@@ -14,7 +14,7 @@ use crate::{
     },
   },
   routes::web::{context, Rst, OptionalWebUser, Session},
-  utils::{external_links, Language},
+  utils::{post_processing, Language},
 };
 
 use ammonia::Builder;
@@ -134,8 +134,8 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
     };
     let md = markdown_to_html(content, &*OPTIONS);
     let cleaned = CLEANER.clean(&md).to_string();
-    let marked = external_links::mark(&*config, &cleaned);
-    rendered.insert(file.id, Some(marked));
+    let processed = post_processing::process(&*config, &cleaned);
+    rendered.insert(file.id, Some(processed));
   }
 
   let output = Output::new(

@@ -117,6 +117,9 @@ qrcode = "0.9"
 # old version required because multipart depends on an old version
 mime = "0.2"
 
+# rewriting image urls for camo with SHA1-HMAC
+rust-crypto = "0.2"
+
 # accepting multipart input
 [dependencies.multipart]
 version = "0.15"

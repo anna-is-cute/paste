@@ -3,7 +3,6 @@
   custom_derive,
   macro_at_most_once_rep,
   in_band_lifetimes,
-  tool_lints,
 )]
 #![plugin(rocket_codegen)]
 #![recursion_limit = "1024"]
@@ -53,6 +52,16 @@ lazy_static! {
     let mut tera = Tera::new(&path).expect("could not create tempating engine");
     tera.autoescape_on(vec![".html", ".htm", ".xml", ".html.tera"]);
     tera
+  };
+
+  pub static ref CAMO_URL: url::Url = {
+    let url = env::var("CAMO_URL").expect("missing CAMO_URL environment variable");
+    url::Url::parse(&url).expect("CAMO_URL could not be parsed as a URL")
+  };
+
+  pub static ref CAMO_KEY: Vec<u8> = {
+    let key = env::var("CAMO_KEY").expect("missing CAMO_KEY environment variable");
+    key.into_bytes()
   };
 }
 

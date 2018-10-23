@@ -25,15 +25,23 @@ services:
       - POSTGRES_PASSWORD=paste
   sidekiq:
     build: sidekiq
+    restart: unless-stopped
     depends_on:
       - redis
     volumes:
       - "../:/paste"
+  camo:
+    image: inventid/camo
+    restart: unless-stopped
+    environment:
+      - CAMO_KEY=${CAMO_KEY}
+      - CAMO_HOSTNAME=paste
   nginx:
     build: nginx
     restart: unless-stopped
     depends_on:
       - backend
+      - camo
     ports:
       - "80:80"
       - "443:443"

@@ -30,7 +30,6 @@ macro_rules! uuid_wrapper {
       fn serialize<S>(&self, ser: S) -> std::result::Result<S::Ok, S::Error>
         where S: serde::Serializer,
       {
-        use serde::Serialize;
         self.0.simple().to_string().serialize(ser)
       }
     }
@@ -39,7 +38,6 @@ macro_rules! uuid_wrapper {
       fn deserialize<D>(des: D) -> std::result::Result<Self, D::Error>
         where D: serde::Deserializer<'de>
       {
-        use serde::Deserialize;
         uuid::Uuid::deserialize(des).map($name)
       }
     }
@@ -76,7 +74,6 @@ macro_rules! uuid_wrapper {
 
     impl<A> diesel::deserialize::FromSql<A, diesel::pg::Pg> for $name {
       fn from_sql(bytes: Option<&[u8]>) -> diesel::deserialize::Result<Self> {
-        use diesel::deserialize::FromSql;
         uuid::Uuid::from_sql(bytes).map($name)
       }
     }

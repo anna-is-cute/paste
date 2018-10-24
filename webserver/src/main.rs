@@ -100,6 +100,8 @@ fn main() {
   };
 
   lazy_static::initialize(&EMAIL_TERA);
+  lazy_static::initialize(&CAMO_KEY);
+  lazy_static::initialize(&CAMO_URL);
 
   rocket::ignite()
     .manage(database::init_pool())

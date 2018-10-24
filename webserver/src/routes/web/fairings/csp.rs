@@ -43,6 +43,10 @@ lazy_static! {
     map.insert("script-src".into(), "'self'".into());
     map.insert("style-src".into(), "'self'".into());
     map.insert("font-src".into(), "'self'".into());
+    map.insert(
+      "img-src".into(),
+      format!("'self' {}", crate::CAMO_URL.host_str().unwrap_or("")),
+    );
     map.insert("require-sri-for".into(), "script style".into());
     map.insert("frame-ancestors".into(), "'none'".into());
     map.insert("base-uri".into(), "'none'".into());

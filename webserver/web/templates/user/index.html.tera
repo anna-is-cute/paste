@@ -165,20 +165,22 @@
           </div>
         </div>
       {% endif %}
-        <h3 class="title is-marginless">
-          <a href="/p/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
-        {% if paste.name %}
-            <span class="keeps-spaces">{{ paste.name }}</span>
-        {% else %}
-            <em>untitled paste</em>
-        {% endif %}
-          </a>
-        </h3>
-        {% if paste.description %}
-        <h4 class="subtitle is-marginless">
-          <span class="keeps-spaces">{{ paste.description }}</span>
-        </h4>
-        {% endif %}
+        <div>
+          <h3 class="title is-marginless">
+            <a href="/p/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
+          {% if paste.name %}
+              <span class="keeps-spaces">{{ paste.name }}</span>
+          {% else %}
+              <em>untitled paste</em>
+          {% endif %}
+            </a>
+          </h3>
+          {% if paste.description %}
+          <h4 class="subtitle is-marginless">
+            <span class="keeps-spaces">{{ paste.description }}</span>
+          </h4>
+          {% endif %}
+        </div>
       </div>
       {% set file_count = paste.files | length %}
       <div class="paste info">

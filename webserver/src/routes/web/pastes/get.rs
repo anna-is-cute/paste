@@ -23,6 +23,8 @@ use comrak::{markdown_to_html, ComrakOptions};
 
 use diesel::prelude::*;
 
+use fxhash::FxHashMap;
+
 use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
 
 use rocket::{
@@ -113,7 +115,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
 
   let files: Vec<OutputFile> = id.output_files(&conn, &paste, true)?;
 
-  let mut rendered: HashMap<FileId, Option<String>> = HashMap::with_capacity(files.len());
+  let mut rendered: FxHashMap<FileId, Option<String>> = HashMap::with_capacity_and_hasher(files.len(), fxhash::FxBuildHasher::default());
 
   for file in &files {
     if let Some(ref name) = file.name {

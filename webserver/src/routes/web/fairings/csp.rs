@@ -1,3 +1,5 @@
+use fxhash::FxHashMap;
+
 use rocket::{
   fairing::{Fairing, Info, Kind},
   request::Request,
@@ -36,8 +38,8 @@ impl Fairing for Csp {
 }
 
 lazy_static! {
-  static ref DEFAULT_CSP: HashMap<String, String> = {
-    let mut map = HashMap::with_capacity(9);
+  static ref DEFAULT_CSP: FxHashMap<String, String> = {
+    let mut map = HashMap::with_capacity_and_hasher(9, fxhash::FxBuildHasher::default());
     map.insert("default-src".into(), "'self'".into());
     map.insert("object-src".into(), "'none'".into());
     map.insert("script-src".into(), "'self'".into());
@@ -56,7 +58,7 @@ lazy_static! {
 }
 
 struct CspHeader {
-  directives: HashMap<String, String>,
+  directives: FxHashMap<String, String>,
 }
 
 impl CspHeader {
@@ -68,7 +70,9 @@ impl CspHeader {
 
   fn update_directive(&mut self, dir: &str, update: &str) {
     let entry = self.directives.entry(dir.to_string()).or_insert_with(Default::default);
-    *entry += " ";
+    if !entry.is_empty() {
+      *entry += " ";
+    }
     *entry += update;
   }
 }

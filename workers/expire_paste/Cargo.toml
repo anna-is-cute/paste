@@ -12,8 +12,8 @@ crate-type = ["cdylib"]
 chrono = "0.4"
 dotenv = "0.13"
 failure = "0.1"
-uuid = "0.6"
+uuid = "0.7"
 
 [dependencies.diesel]
 version = "1"
-features = ["postgres", "uuid", "chrono"]
+features = ["unstable", "postgres", "uuid", "chrono"]

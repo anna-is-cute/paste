@@ -128,7 +128,7 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
 
   sidekiq.push(ver.job(&*config, &user, &secret)?.into())?;
 
-  let cookie = Cookie::build("user_id", id.simple().to_string())
+  let cookie = Cookie::build("user_id", id.to_simple().to_string())
     .secure(true)
     .http_only(true)
     .same_site(SameSite::Lax)

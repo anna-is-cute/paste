@@ -76,7 +76,7 @@ fn expire(timestamp: i64, store_path: &str, user_id: &str, paste_id: Uuid) {
 
   let path = Path::new(store_path)
     .join(user_id)
-    .join(paste_id.simple().to_string());
+    .join(paste_id.to_simple().to_string());
   if let Err(e) = fs::remove_dir_all(path) {
     eprintln!("could not delete paste {}: {}", paste_id, e);
   }

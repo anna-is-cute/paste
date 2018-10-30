@@ -104,7 +104,7 @@ fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUs
 
           let name = files
             .iter()
-            .find(|x| x.id.simple().to_string() == name)
+            .find(|x| x.id.to_simple().to_string() == name)
             .and_then(|x| x.name.as_ref())
             .cloned();
           revision.file_name = name;

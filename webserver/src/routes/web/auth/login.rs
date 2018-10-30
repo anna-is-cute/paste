@@ -139,7 +139,7 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     return Ok(Redirect::to("/login"));
   }
 
-  let cookie = Cookie::build("user_id", user.id().simple().to_string())
+  let cookie = Cookie::build("user_id", user.id().to_simple().to_string())
     .secure(true)
     .http_only(true)
     .same_site(SameSite::Lax)

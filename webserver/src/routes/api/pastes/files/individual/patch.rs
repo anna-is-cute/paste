@@ -84,7 +84,7 @@ pub fn patch(paste_id: PasteId, file_id: FileId, file: UpdateResult, user: Requi
         let mut f = OpenOptions::new()
           .write(true)
           .truncate(true)
-          .open(files_directory.join(db_file.id().simple().to_string()))?;
+          .open(files_directory.join(db_file.id().to_simple().to_string()))?;
         f.write_all(&content.into_bytes())?;
         // FIXME: set is_binary field
       },

@@ -119,7 +119,7 @@ impl FromRequest<'a, 'r> for Session<'a, 'r> {
         Outcome::Forward(()) => return Outcome::Forward(()),
       };
 
-      let json: String = match redis.get(format!("session:{}", sess_id.simple())) {
+      let json: String = match redis.get(format!("session:{}", sess_id.to_simple())) {
         Ok(s) => s,
         Err(_) => return Outcome::Success(Session::new(SessionId(Uuid::new_v4()), req)),
       };
@@ -155,7 +155,7 @@ impl Drop for Session<'a, 'r> {
         },
       };
 
-      let id = self.id.simple().to_string();
+      let id = self.id.to_simple().to_string();
 
       match redis.set_ex(format!("session:{}", id), json, SESS_EXPIRE) {
         Ok(Value::Okay) => {},

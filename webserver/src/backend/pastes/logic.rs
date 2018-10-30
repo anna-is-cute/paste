@@ -138,7 +138,7 @@ impl PastePayload<'u> {
       let timestamp = expiration_date.timestamp();
 
       let user = match self.author {
-        Some(a) => a.id().simple().to_string(),
+        Some(a) => a.id().to_simple().to_string(),
         None => "anonymous".to_string(),
       };
 
@@ -146,7 +146,7 @@ impl PastePayload<'u> {
         Value::Number(timestamp.into()),
         Value::String(Store::directory().to_string_lossy().to_string()),
         Value::String(user),
-        Value::String(id.simple().to_string()),
+        Value::String(id.to_simple().to_string()),
       ]);
       sidekiq.push(job.into()).map_err(|e| CreateError::Internal(e.into()))?;
     }

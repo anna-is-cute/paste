@@ -30,7 +30,7 @@ macro_rules! uuid_wrapper {
       fn serialize<S>(&self, ser: S) -> std::result::Result<S::Ok, S::Error>
         where S: serde::Serializer,
       {
-        self.0.simple().to_string().serialize(ser)
+        self.0.to_simple().to_string().serialize(ser)
       }
     }
 
@@ -80,7 +80,7 @@ macro_rules! uuid_wrapper {
 
     impl std::fmt::Display for $name {
       fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.0.simple())
+        write!(f, "{}", self.0.to_simple())
       }
     }
   }

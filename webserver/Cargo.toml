@@ -65,8 +65,8 @@ unicode-segmentation = "1"
 # configuration files
 toml = "0.4"
 
-# rate limiting (has to be outdated because this is the version diesel uses)
-ipnetwork = "0.12"
+# rate limiting
+ipnetwork = "0.13"
 
 # anti-csrf tokens
 hex = "0.3"
@@ -138,17 +138,17 @@ features = ["tls"]
 [dependencies.rocket_contrib]
 version = "0.3"
 default-features = false
-features = ["json", "uuid", "tera_templates"]
+features = ["json", "tera_templates"]
 
 # unique paste-related ids
 [dependencies.uuid]
-version = "0.6"
+version = "0.7"
 features = ["v4", "serde"]
 
 # database orm
 [dependencies.diesel]
 version = "1"
-features = ["postgres", "uuid", "r2d2", "chrono", "network-address"]
+features = ["unstable", "postgres", "uuid", "r2d2", "chrono", "network-address"]
 
 # timestamp handling
 [dependencies.chrono]

@@ -217,7 +217,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
         let mut f = OpenOptions::new()
           .write(true)
           .truncate(true)
-          .open(files_directory.join(db_file.id().simple().to_string()))?;
+          .open(files_directory.join(db_file.id().to_simple().to_string()))?;
         f.write_all(&file.content.into_bytes())?;
         // FIXME: set is_binary field
 
@@ -261,7 +261,7 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
   sess.take_form();
 
   let username = utf8_percent_encode(&username, PATH_SEGMENT_ENCODE_SET);
-  Ok(Rst::Redirect(Redirect::to(&format!("/p/{}/{}", username, paste_id.simple()))))
+  Ok(Rst::Redirect(Redirect::to(&format!("/p/{}/{}", username, paste_id.to_simple()))))
 }
 
 #[derive(Debug, FromForm, Serialize)]

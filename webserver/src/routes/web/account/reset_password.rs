@@ -24,13 +24,13 @@ use cookie::{Cookie, SameSite};
 use diesel::prelude::*;
 
 use rocket::{
-  http::Cookies,
-  request::Form,
+  http::{Cookies, RawStr},
+  request::{Form, FromFormValue},
   response::Redirect,
   State,
 };
 
-use rocket_contrib::{Template, UUID};
+use rocket_contrib::Template;
 
 use serde_json::json;
 
@@ -135,7 +135,7 @@ fn reset_get(data: ResetPassword, config: State<Config>, user: OptionalWebUser, 
   }
 
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
-  ctx["pr_id"] = json!(data.id.simple().to_string());
+  ctx["pr_id"] = json!(data.id.to_simple().to_string());
   ctx["pr_secret"] = json!(&data.secret);
 
   Ok(Rst::Template(Template::render("account/reset_password", ctx)))
@@ -145,7 +145,7 @@ fn reset_get(data: ResetPassword, config: State<Config>, user: OptionalWebUser, 
 fn reset_post(data: Form<Reset>, mut sess: Session, mut cookies: Cookies, conn: DbConn) -> Result<Redirect> {
   let data = data.into_inner();
 
-  let url = format!("/account/reset_password?id={}&secret={}", data.id.simple(), data.secret);
+  let url = format!("/account/reset_password?id={}&secret={}", data.id.to_simple(), data.secret);
   let res = Ok(Redirect::to(&url));
 
   if !sess.check_token(&data.anti_csrf_token) {
@@ -198,7 +198,7 @@ fn reset_post(data: Form<Reset>, mut sess: Session, mut cookies: Cookies, conn: 
 
   sess.add_data("info", "Password updated.");
 
-  let cookie = Cookie::build("user_id", user.id().simple().to_string())
+  let cookie = Cookie::build("user_id", user.id().to_simple().to_string())
     .secure(true)
     .http_only(true)
     .same_site(SameSite::Lax)
@@ -238,15 +238,37 @@ struct ResetRequest {
 
 #[derive(FromForm)]
 struct ResetPassword {
-  id: UUID,
+  id: ResetId,
   secret: String,
 }
 
 #[derive(FromForm)]
 struct Reset {
-  id: UUID,
+  id: ResetId,
   secret: String,
   password: String,
   password_verify: String,
   anti_csrf_token: String,
+}
+
+struct ResetId(Uuid);
+
+impl std::ops::Deref for ResetId {
+  type Target = Uuid;
+
+  fn deref(&self) -> &Self::Target {
+    &self.0
+  }
+}
+
+impl<'v> FromFormValue<'v> for ResetId {
+  type Error = &'v RawStr;
+
+  /// A value is successfully parsed if `form_value` is a properly formatted
+  /// Uuid. Otherwise, the raw form value is returned.
+  #[inline(always)]
+  fn from_form_value(form_value: &'v RawStr) -> std::result::Result<ResetId, &'v RawStr> {
+    let uuid: Uuid = form_value.parse().map_err(|_| form_value)?;
+    Ok(ResetId(uuid))
+  }
 }

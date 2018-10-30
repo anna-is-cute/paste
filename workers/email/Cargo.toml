@@ -10,10 +10,9 @@ crate-type = ["cdylib"]
 
 [dependencies]
 # sending and creating emails
-lettre = "0.8"
-lettre_email = "0.8"
-# old version required because of lettre's old dependency
-native-tls = "0.1"
+lettre = { git = "https://github.com/lettre/lettre" }
+lettre_email = { git = "https://github.com/lettre/lettre" }
+native-tls = "0.2"
 
 # deserializing config
 serde = "1"

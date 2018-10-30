@@ -69,7 +69,7 @@ impl Job {
         let path = Store::directory()
           .canonicalize()
           .expect("could not canonicalize store path")
-          .join(u.simple().to_string())
+          .join(u.to_simple().to_string())
           .to_string_lossy()
           .into_owned();
         vec![

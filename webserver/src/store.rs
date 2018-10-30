@@ -19,10 +19,10 @@ impl Store {
   pub fn new_paste(author: Option<UserId>) -> Result<PasteId> {
     let id = PasteId(Uuid::new_v4());
 
-    let user_path = author.map(|x| x.simple().to_string()).unwrap_or_else(|| "anonymous".into());
+    let user_path = author.map(|x| x.to_simple().to_string()).unwrap_or_else(|| "anonymous".into());
 
     // get the path to the paste
-    let paste_path = Store::directory().join(user_path).join(id.simple().to_string());
+    let paste_path = Store::directory().join(user_path).join(id.to_simple().to_string());
 
     // get the files path for the paste
     let files_path = paste_path.join("files");

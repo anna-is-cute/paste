@@ -144,7 +144,7 @@ impl Paste {
         let timestamp = s.timestamp();
 
         let user = match self.author_id() {
-          Some(a) => a.simple().to_string(),
+          Some(a) => a.to_simple().to_string(),
           None => "anonymous".to_string(),
         };
 
@@ -152,7 +152,7 @@ impl Paste {
           Value::Number(timestamp.into()),
           Value::String(Store::directory().to_string_lossy().to_string()),
           Value::String(user),
-          Value::String(self.id().simple().to_string()),
+          Value::String(self.id().to_simple().to_string()),
         ]);
         sidekiq.push(job.into())?;
       },
@@ -183,8 +183,8 @@ impl Paste {
   }
 
   pub fn directory(&self) -> PathBuf {
-    let author = self.author_id().map(|x| x.simple().to_string()).unwrap_or_else(|| "anonymous".into());
-    Store::directory().join(author).join(self.id().simple().to_string())
+    let author = self.author_id().map(|x| x.to_simple().to_string()).unwrap_or_else(|| "anonymous".into());
+    Store::directory().join(author).join(self.id().to_simple().to_string())
   }
 
   pub fn files_directory(&self) -> PathBuf {
@@ -263,14 +263,14 @@ impl Paste {
     let binary = content.is_binary();
 
     // create file on the system
-    let file_path = self.files_directory().join(id.simple().to_string());
+    let file_path = self.files_directory().join(id.to_simple().to_string());
     let mut f = File::create(file_path)?;
     f.write_all(&content.into_bytes())?;
 
     let name = name
       .map(|s| s.as_ref().to_string()) // get a String
       .or_else(|| self.id().next_generic_name(conn).ok()) // try to get a generic name if no name specified
-      .unwrap_or_else(|| id.simple().to_string()); // fall back to uuid if necessary
+      .unwrap_or_else(|| id.to_simple().to_string()); // fall back to uuid if necessary
 
     // add file to the database
     let new_file = NewFile::new(id, self.id(), name, Some(binary), lang, None);
@@ -281,7 +281,7 @@ impl Paste {
 
   pub fn delete_file(&self, conn: &DbConn, id: FileId) -> Result<()> {
     diesel::delete(files::table.filter(files::id.eq(id))).execute(&**conn)?;
-    fs::remove_file(self.files_directory().join(id.simple().to_string()))?;
+    fs::remove_file(self.files_directory().join(id.to_simple().to_string()))?;
 
     if self.id().is_empty(conn)? {
       self.delete(conn)?;

@@ -36,7 +36,7 @@ serde_json = "1"
 git2 = "0.7"
 
 # handling binary uploads in json
-base64 = "0.9"
+base64 = "0.10"
 
 # error handling in the crate
 failure = "0.1"
@@ -108,7 +108,7 @@ unicase = "2"
 oath = "0.10"
 
 # encoding for totp shared keys
-base32 = "0.3"
+base32 = "0.4"
 
 # displaying otpauth urls
 qrcode = "0.9"

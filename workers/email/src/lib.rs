@@ -2,7 +2,7 @@
 extern crate serde_derive;
 
 use lettre::{
-  SmtpTransport, EmailTransport, ClientSecurity, ClientTlsParameters,
+  ClientSecurity, ClientTlsParameters, SmtpClient, SmtpTransport, Transport,
   smtp::authentication::{Credentials, Mechanism},
 };
 
@@ -51,7 +51,7 @@ fn do_email(path: &str, email: &str, subject: &str, content: &str) {
     },
   };
 
-  let connector = match TlsConnector::builder().and_then(|x| x.build()) {
+  let connector = match TlsConnector::new() {
     Ok(c) => c,
     Err(e) => {
       eprintln!("could not create tls connector: {}", e);
@@ -65,18 +65,17 @@ fn do_email(path: &str, email: &str, subject: &str, content: &str) {
     ),
   );
   let addr = (config.smtp.address.as_str(), config.smtp.port);
-  let builder = match SmtpTransport::builder(addr, security) {
-    Ok(b) => b,
+  let client = match SmtpClient::new(addr, security) {
+    Ok(c) => c
+      .credentials(Credentials::new(config.smtp.username, config.smtp.password))
+      .authentication_mechanism(Mechanism::Login),
     Err(e) => {
       eprintln!("could not create smtp transport builder: {}", e);
       return;
     },
   };
-  let mut transport = builder
-    .credentials(Credentials::new(config.smtp.username, config.smtp.password))
-    .authentication_mechanism(Mechanism::Login)
-    .build();
-  if let Err(e) = transport.send(&email) {
+  let mut transport = SmtpTransport::new(client);
+  if let Err(e) = transport.send(email.into()) {
     eprintln!("could not send email: {}", e);
   }
 }

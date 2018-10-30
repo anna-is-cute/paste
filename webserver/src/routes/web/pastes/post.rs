@@ -100,7 +100,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
   };
 
   if let Some(dk) = deletion_key {
-    sess.add_data("deletion_key", dk.key().simple().to_string());
+    sess.add_data("deletion_key", dk.key().to_simple().to_string());
   }
 
   match user {
@@ -116,7 +116,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
   sess.take_form();
 
   let username = utf8_percent_encode(username, PATH_SEGMENT_ENCODE_SET);
-  Ok(Redirect::to(&format!("/p/{}/{}", username, paste.id().simple())))
+  Ok(Redirect::to(&format!("/p/{}/{}", username, paste.id().to_simple())))
 }
 
 #[derive(Debug, FromForm, Serialize)]

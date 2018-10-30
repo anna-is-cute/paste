@@ -72,7 +72,7 @@ impl File {
   }
 
   pub fn path(&self, paste: &Paste) -> PathBuf {
-    paste.files_directory().join(self.id().simple().to_string())
+    paste.files_directory().join(self.id().to_simple().to_string())
   }
 
   pub fn read_content(&self, paste: &Paste) -> Result<Content> {

@@ -1,5 +1,7 @@
 use crate::{models::id::SessionId, routes::web::Session};
 
+use fxhash::FxHashMap;
+
 use rocket::{
   Outcome,
   fairing::{Fairing, Info, Kind},
@@ -11,11 +13,11 @@ use rocket::{
   response::Response,
 };
 
-use std::{collections::HashMap, sync::RwLock};
+use std::sync::RwLock;
 
 #[derive(Debug, Default)]
 pub struct LastPage {
-  map: RwLock<HashMap<SessionId, String>>,
+  map: RwLock<FxHashMap<SessionId, String>>,
 }
 
 impl LastPage {

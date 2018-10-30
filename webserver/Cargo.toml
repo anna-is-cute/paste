@@ -120,6 +120,9 @@ mime = "0.2"
 # rewriting image urls for camo with SHA1-HMAC
 rust-crypto = "0.2"
 
+# faster hashmaps (would use hashbrown but it lacks Send + Sync and serde)
+fxhash = "0.2"
+
 # accepting multipart input
 [dependencies.multipart]
 version = "0.15"

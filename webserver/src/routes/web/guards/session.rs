@@ -8,6 +8,8 @@ use chrono::{Utc, Duration};
 
 use cookie::{Cookie, SameSite};
 
+use fxhash::FxHashMap;
+
 use redis::{Commands, Value};
 
 use rocket::{
@@ -21,7 +23,7 @@ use serde_json::{Value as JsonValue, json};
 
 use uuid::Uuid;
 
-use std::{collections::HashMap, str::FromStr};
+use std::str::FromStr;
 
 // set session expiration to one day
 const SESS_EXPIRE: usize = 24 * 60 * 60;
@@ -31,9 +33,9 @@ pub struct Session<'a, 'r> where 'r: 'a {
   #[serde(skip)]
   pub request: Option<&'a Request<'r>>,
   pub id: SessionId,
-  pub data: HashMap<String, String>,
+  pub data: FxHashMap<String, String>,
   #[serde(default)]
-  pub json: HashMap<String, JsonValue>,
+  pub json: FxHashMap<String, JsonValue>,
   pub anti_csrf_tokens: Vec<AntiCsrfToken>,
 }
 

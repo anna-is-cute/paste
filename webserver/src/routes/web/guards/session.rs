@@ -8,7 +8,7 @@ use chrono::{Utc, Duration};
 
 use cookie::{Cookie, SameSite};
 
-use fxhash::FxHashMap;
+use hashbrown::HashMap;
 
 use redis::{Commands, Value};
 
@@ -33,9 +33,9 @@ pub struct Session<'a, 'r> where 'r: 'a {
   #[serde(skip)]
   pub request: Option<&'a Request<'r>>,
   pub id: SessionId,
-  pub data: FxHashMap<String, String>,
+  pub data: HashMap<String, String>,
   #[serde(default)]
-  pub json: FxHashMap<String, JsonValue>,
+  pub json: HashMap<String, JsonValue>,
   pub anti_csrf_tokens: Vec<AntiCsrfToken>,
 }
 

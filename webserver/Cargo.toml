@@ -120,15 +120,6 @@ mime = "0.2"
 # rewriting image urls for camo with SHA1-HMAC
 rust-crypto = "0.2"
 
-# faster hashmaps (would use hashbrown but it lacks Send + Sync and serde)
-fxhash = "0.2"
-
-# accepting multipart input
-[dependencies.multipart]
-version = "0.15"
-default-features = false
-features = ["server", "use_arc_str"]
-
 # web logic
 [dependencies.rocket]
 version = "0.3"
@@ -165,3 +156,14 @@ default-features = false
 version = "0.20"
 default-features = false
 features = ["png_codec"]
+
+# accepting multipart input
+[dependencies.multipart]
+version = "0.15"
+default-features = false
+features = ["server", "use_arc_str"]
+
+# faster hashmaps
+[dependencies.hashbrown]
+git = "https://github.com/Amanieu/hashbrown"
+features = ["nightly", "serde"]

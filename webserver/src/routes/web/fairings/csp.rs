@@ -1,12 +1,10 @@
-use fxhash::FxHashMap;
+use hashbrown::HashMap;
 
 use rocket::{
   fairing::{Fairing, Info, Kind},
   request::Request,
   response::Response,
 };
-
-use std::collections::HashMap;
 
 pub struct Csp;
 
@@ -38,8 +36,8 @@ impl Fairing for Csp {
 }
 
 lazy_static! {
-  static ref DEFAULT_CSP: FxHashMap<String, String> = {
-    let mut map = HashMap::with_capacity_and_hasher(9, fxhash::FxBuildHasher::default());
+  static ref DEFAULT_CSP: HashMap<String, String> = {
+    let mut map = HashMap::with_capacity(9);
     map.insert("default-src".into(), "'self'".into());
     map.insert("object-src".into(), "'none'".into());
     map.insert("script-src".into(), "'self'".into());
@@ -58,7 +56,7 @@ lazy_static! {
 }
 
 struct CspHeader {
-  directives: FxHashMap<String, String>,
+  directives: HashMap<String, String>,
 }
 
 impl CspHeader {

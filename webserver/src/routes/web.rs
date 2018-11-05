@@ -39,6 +39,46 @@ pub mod users;
 pub use self::fairings::*;
 pub use self::guards::*;
 
+#[derive(Serialize)]
+pub struct Honeypot {
+  class: String,
+  css: String,
+  integrity_hash: String,
+}
+
+impl Honeypot {
+  pub fn new() -> Self {
+    use rand::{Rng, seq::SliceRandom};
+    use sha2::{Digest, Sha384};
+
+    const ALPHA: [char; 6] = ['a', 'b', 'c', 'd', 'e', 'f'];
+    const ALPHANUMERIC: [char; 16] = ['a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    let mut rng = rand::thread_rng();
+
+    let start = ALPHA.choose(&mut rng).unwrap();
+    let end: String = ALPHANUMERIC.choose_multiple(&mut rng, 15).collect();
+    let class = format!("{}{}", start, end);
+
+    let skip = rng.gen_range(1, 4);
+
+    let css = format!(
+      "[class *= {}] {{ position: absolute; left: -100vw; width: 1px; height: 1px; }}",
+      &class[..class.len() - skip],
+    );
+
+    let mut hasher = Sha384::new();
+    hasher.input(&css);
+    let integrity_hash = format!("sha384-{}", base64::encode(&hasher.result()[..]));
+
+    Honeypot {
+      class,
+      css,
+      integrity_hash,
+    }
+  }
+}
+
 pub fn context(config: &Config, user: Option<&User>, session: &mut Session) -> Value {
   json!({
     "config": &config,

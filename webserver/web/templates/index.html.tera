@@ -32,6 +32,7 @@
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
   integrity="sha384-TNi31Rs9kaKiilKh2fvS7rSH3ulHJEOnfjm5J7fOf1GoQi5i3LGsxqzMYiYulkK8"></script>
+<style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {% endblock head %}
 
 {% block title %}
@@ -205,6 +206,11 @@ Create a new paste.
   {% include "paste/base_file" %}
 
   <div id="end_of_files"></div>
+
+  <div class="control {{ honeypot.class }}">
+    <label class="label">Email</label>
+    <input aria-hidden="true" name="email" class="input" type="text" autocomplete="off"/>
+  </div>
 
   <div class="paste-submit-buttons">
     <div class="field is-grouped">

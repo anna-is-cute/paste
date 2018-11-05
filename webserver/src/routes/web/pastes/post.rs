@@ -43,6 +43,12 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     return Ok(Redirect::to("/"));
   }
 
+  if !paste.email.is_empty() {
+    // honeypot was filled out
+    sess.add_data("error", "An error occurred. Please try again.");
+    return Ok(Redirect::to("/"));
+  }
+
   let user = if paste.anonymous.is_some() || user.is_none() {
     None
   } else {
@@ -125,6 +131,8 @@ struct PasteUpload {
   visibility: Visibility,
   description: String,
   expires: Option<FormDate>,
+  #[serde(skip)]
+  email: String,
   #[serde(skip)]
   file_name: String,
   #[serde(skip)]

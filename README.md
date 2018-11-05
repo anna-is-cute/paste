@@ -17,12 +17,12 @@ highlighting, anonymity, and secure authentication. Now there is.
 
 ## Status
 
-paste works in its current state. There may be heinous bugs, but I use it as my daily pastebin. It
-is not currently *stable*, meaning the API could change in a breaking way at any moment and that the
-web interface and routes may change at any moment, as well.
+paste's API is stable. Any breaking changes, including route renames, will come with a version bump
+to the API.
 
-However, these changes are not without good reason (and are usually debated in depth) and are few
-and far between.
+paste's web interface, backend, routes, and code are all unstable. There may be heinous bugs.
+However, I would note that both myself and a few others use paste as our daily pastebins without
+issue.
 
 ## Using a pre-existing paste server
 
@@ -81,6 +81,11 @@ If you need `./Rocket.toml`, the example file will be located at `./Rocket.examp
     REDIS_URL=redis://redis
     SIDEKIQ_URL=redis://redis/1
     EMAIL_TEMPLATES=webserver/web/emails/*
+    # if you want to enable camo, fill out the two variables below
+    # the camo url will be accessible at your externally-facing hostname, so change the name below
+    # CAMO_URL=https://your.hostname/camo/
+    # this should be a random string
+    # CAMO_KEY=BNdLplouhYWXEFHlK2v7pO8oxOcbCL3iShURSD5HVhpaJOsyYFsK7yjZx6CSYPSA
     ```
 
 ### Start the server
@@ -110,6 +115,7 @@ Done!
 - redis
 - sidekiq
 - nginx
+- camo (optional)
 
 ### Steps
 
@@ -124,10 +130,12 @@ Done!
 8. `diesel migration run --migration-dir=webserver/migrations`
 9. Make sure a redis server is running and set the URL in `.env`
 10. Start sidekiq using `sidekiq.sh` edited to be correct
-11. Preferably use `ROCKET_ENV=prod` and set a secret key in `Rocket.toml`
+11. (Optional) Start a camo server and edit .env to contain the secret key and the public-facing URL
+    for it.
+12. Preferably use `ROCKET_ENV=prod` and set a secret key in `Rocket.toml`
     - See [Rocket docs](https://rocket.rs/guide/configuration/)
-12. `target/release/paste config.toml`
-13. Reverse proxy and handle `/static/` with a webserver and not the included route. nginx configuration below.
+13. `target/release/paste config.toml`
+14. Reverse proxy and handle `/static/` with a webserver and not the included route. nginx configuration below.
 
     ```nginx
     location /static/ {

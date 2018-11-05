@@ -45,18 +45,17 @@ pub struct Honeypot {
 
 impl Honeypot {
   pub fn new() -> Self {
-    use rand::{Rng, seq::SliceRandom};
+    use rand::{Rng, distributions::{Alphanumeric, Distribution}, seq::SliceRandom};
     use sha2::{Digest, Sha384};
 
-    const ALPHA: [char; 6] = ['a', 'b', 'c', 'd', 'e', 'f'];
-    const ALPHANUMERIC: [char; 16] = ['a', 'b', 'c', 'd', 'e', 'f', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const ALPHA: [char; 52] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
     let mut rng = rand::thread_rng();
 
     let length = rng.gen_range(15, 20);
 
     let start = ALPHA.choose(&mut rng).unwrap();
-    let end: String = ALPHANUMERIC.choose_multiple(&mut rng, length).collect();
+    let end: String = Alphanumeric.sample_iter(&mut rng).take(length).collect();
     let class = format!("{}{}", start, end);
 
     let skip = rng.gen_range(1, 4);

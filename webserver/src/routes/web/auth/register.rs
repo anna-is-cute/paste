@@ -7,7 +7,7 @@ use crate::{
   },
   errors::*,
   models::id::UserId,
-  routes::web::{context, Rst, OptionalWebUser, Session},
+  routes::web::{context, AddCsp, Honeypot, Rst, OptionalWebUser, Session},
   utils::{email, PasswordContext, HashedPassword, Validator},
 };
 
@@ -26,18 +26,25 @@ use rocket::{
 
 use rocket_contrib::Template;
 
+use serde_json::json;
+
 use sidekiq::Client as SidekiqClient;
 
 use uuid::Uuid;
 
 #[get("/register")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Rst {
+fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Rst> {
   if user.is_some() {
-    return Rst::Redirect(Redirect::to("/"));
+    return AddCsp::none(Rst::Redirect(Redirect::to("/")));
   }
 
-  let ctx = context(&*config, user.as_ref(), &mut sess);
-  Rst::Template(Template::render("auth/register", ctx))
+  let honeypot = Honeypot::new();
+  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  ctx["honeypot"] = json!(honeypot);
+  AddCsp::new(
+    Rst::Template(Template::render("auth/register", ctx)),
+    vec![format!("style-src '{}'", honeypot.integrity_hash)],
+  )
 }
 
 #[derive(Debug, FromForm, Serialize)]
@@ -51,6 +58,9 @@ struct RegistrationData {
   password_verify: String,
   #[serde(skip)]
   anti_csrf_token: String,
+  #[serde(skip)]
+  #[form(field = "title")]
+  honeypot: String,
 }
 
 #[post("/register", format = "application/x-www-form-urlencoded", data = "<data>")]
@@ -60,6 +70,11 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
 
   if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
+    return Ok(Redirect::to("/register"));
+  }
+
+  if !data.honeypot.is_empty() {
+    sess.add_data("error", "An error occurred. Please try again.");
     return Ok(Redirect::to("/register"));
   }
 

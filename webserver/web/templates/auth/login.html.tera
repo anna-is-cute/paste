@@ -6,6 +6,7 @@
   defer
   src="/static/js/password.js?v={{ resources_version }}"
   integrity="sha384-TX1b4qxxTCFxJPqmHYPZ2mbd07JhxxFn9EjKzbgtQ78+CgTsOvyxg5zBNN6SeLiV"></script>
+<style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {% endblock head %}
 
 {% block title %}Log in{% endblock title %}
@@ -84,6 +85,13 @@ Log in to your account.
     <p class="help">
       <a href="/account/forgot_password">Forgot your password?</a>
     </p>
+  </div>
+
+  <div class="field {{ honeypot.class }}">
+    <div class="control">
+      <label class="label">Email</label>
+      <input aria-hidden="true" name="email" class="input" type="text" autocomplete="off"/>
+    </div>
   </div>
 
   <div class="field">

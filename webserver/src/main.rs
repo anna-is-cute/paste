@@ -54,10 +54,9 @@ lazy_static! {
     tera
   };
 
-  pub static ref CAMO_URL: url::Url = {
-    let url = env::var("CAMO_URL").expect("missing CAMO_URL environment variable");
-    url::Url::parse(&url).expect("CAMO_URL could not be parsed as a URL")
-  };
+  pub static ref CAMO_URL: Option<url::Url> = env::var("CAMO_URL")
+    .ok()
+    .map(|x| url::Url::parse(&x).expect("CAMO_URL could not be parsed as a URL"));
 
   pub static ref CAMO_KEY: Vec<u8> = {
     let key = env::var("CAMO_KEY").expect("missing CAMO_KEY environment variable");

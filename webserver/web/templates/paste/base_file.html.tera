@@ -14,7 +14,7 @@
         <div class="select">
           <select name="file_language">
             <optgroup label="Highlight language">
-              <option label="auto" selected></option>
+              <option value="" selected>auto</option>
             </optgroup>
             <optgroup>
               {% for lang in languages %}

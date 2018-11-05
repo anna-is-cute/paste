@@ -120,6 +120,12 @@ mime = "0.2"
 # rewriting image urls for camo with SHA1-HMAC
 rust-crypto = "0.2"
 
+# source of randomness
+rand = "0.6.0-pre.1"
+
+# creating sha-384 integrity hashes
+sha2 = "0.8"
+
 # web logic
 [dependencies.rocket]
 version = "0.3"

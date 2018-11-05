@@ -56,8 +56,10 @@ impl Honeypot {
 
     let mut rng = rand::thread_rng();
 
+    let length = rng.gen_range(15, 20);
+
     let start = ALPHA.choose(&mut rng).unwrap();
-    let end: String = ALPHANUMERIC.choose_multiple(&mut rng, 15).collect();
+    let end: String = ALPHANUMERIC.choose_multiple(&mut rng, length).collect();
     let class = format!("{}{}", start, end);
 
     let skip = rng.gen_range(1, 4);

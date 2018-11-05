@@ -17,14 +17,12 @@ use crate::{
 
 use base64;
 
-use chrono::{DateTime, Duration, Utc};
-
-use cookie::{Cookie, SameSite};
+use chrono::{DateTime, Utc};
 
 use diesel::prelude::*;
 
 use rocket::{
-  http::{Cookies, RawStr},
+  http::RawStr,
   request::{Form, FromFormValue},
   response::Redirect,
   State,
@@ -142,7 +140,7 @@ fn reset_get(data: ResetPassword, config: State<Config>, user: OptionalWebUser, 
 }
 
 #[post("/account/reset_password", data = "<data>")]
-fn reset_post(data: Form<Reset>, mut sess: Session, mut cookies: Cookies, conn: DbConn) -> Result<Redirect> {
+fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let data = data.into_inner();
 
   let url = format!("/account/reset_password?id={}&secret={}", data.id.to_simple(), data.secret);
@@ -198,13 +196,7 @@ fn reset_post(data: Form<Reset>, mut sess: Session, mut cookies: Cookies, conn: 
 
   sess.add_data("info", "Password updated.");
 
-  let cookie = Cookie::build("user_id", user.id().to_simple().to_string())
-    .secure(true)
-    .http_only(true)
-    .same_site(SameSite::Lax)
-    .max_age(Duration::days(30))
-    .finish();
-  cookies.add_private(cookie);
+  sess.user_id = Some(user.id());
 
   Ok(Redirect::to("lastpage"))
 }

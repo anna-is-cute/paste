@@ -1,5 +1,5 @@
 use crate::{
-  models::id::SessionId,
+  models::id::{SessionId, UserId},
   redis_store::Redis,
   routes::web::guards::AntiCsrfToken,
 };
@@ -25,14 +25,16 @@ use uuid::Uuid;
 
 use std::str::FromStr;
 
-// set session expiration to one day
-const SESS_EXPIRE: usize = 24 * 60 * 60;
+// set session expiration to 30 days
+const SESS_EXPIRE: usize = 30 * 24 * 60 * 60;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Session<'a, 'r> where 'r: 'a {
   #[serde(skip)]
   pub request: Option<&'a Request<'r>>,
   pub id: SessionId,
+  #[serde(default)]
+  pub user_id: Option<UserId>,
   pub data: HashMap<String, String>,
   #[serde(default)]
   pub json: HashMap<String, JsonValue>,
@@ -44,6 +46,7 @@ impl Session<'a, 'r> {
     Session {
       request: Some(request),
       id,
+      user_id: Default::default(),
       data: Default::default(),
       json: Default::default(),
       anti_csrf_tokens: Default::default(),
@@ -174,6 +177,7 @@ impl Drop for Session<'a, 'r> {
         let cookie = Cookie::build("session", id)
           .secure(true)
           .http_only(true)
+          .max_age(Duration::days(30))
           .same_site(SameSite::Lax)
           .finish();
         req.cookies().add_private(cookie);

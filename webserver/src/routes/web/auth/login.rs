@@ -11,10 +11,6 @@ use crate::{
   utils::totp::totp_raw_skew,
 };
 
-use cookie::{Cookie, SameSite};
-
-use chrono::Duration;
-
 use diesel::prelude::*;
 
 use oath::HashType;
@@ -22,7 +18,6 @@ use oath::HashType;
 use redis::Commands;
 
 use rocket::State;
-use rocket::http::Cookies;
 use rocket::request::Form;
 use rocket::response::Redirect;
 
@@ -62,7 +57,7 @@ struct RegistrationData {
 }
 
 #[post("/login", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, redis: Redis, addr: SocketAddr) -> Result<Redirect> {
+fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, redis: Redis, addr: SocketAddr) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 
@@ -154,13 +149,7 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
     return Ok(Redirect::to("/login"));
   }
 
-  let cookie = Cookie::build("user_id", user.id().to_simple().to_string())
-    .secure(true)
-    .http_only(true)
-    .same_site(SameSite::Lax)
-    .max_age(Duration::days(30))
-    .finish();
-  cookies.add_private(cookie);
+  sess.user_id = Some(user.id());
 
   sess.take_form();
   Ok(Redirect::to("lastpage"))

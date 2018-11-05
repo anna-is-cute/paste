@@ -10,6 +10,7 @@
   defer
   src="/static/js/password.js?v={{ resources_version }}"
   integrity="sha384-TX1b4qxxTCFxJPqmHYPZ2mbd07JhxxFn9EjKzbgtQ78+CgTsOvyxg5zBNN6SeLiV"></script>
+<style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {% endblock head %}
 
 {% block title %}
@@ -60,6 +61,13 @@ Create a new account.
       <span class="icon is-small is-left">
         <i class="fas fa-user"></i>
       </span>
+    </div>
+  </div>
+
+  <div class="field {{ honeypot.class }}">
+    <div class="control">
+      <label class="label">Title</label>
+      <input aria-hidden="true" name="title" class="input" type="text" autocomplete="off"/>
     </div>
   </div>
 

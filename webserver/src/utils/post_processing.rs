@@ -30,6 +30,10 @@ fn walk(config: &Config, handle: Handle, external: &Attribute) {
   let node = handle;
   match node.data {
     NodeData::Element { ref name, ref attrs, .. } if name.local == local_name!("img") => {
+      let mut new_url = match crate::CAMO_URL.as_ref() {
+        Some(u) => u.clone(),
+        None => return,
+      };
       let mut attrs = attrs.borrow_mut();
       let mut url_attr = match attrs.iter_mut().find(|x| x.name.local == local_name!("src")) {
         Some(a) => a,
@@ -46,7 +50,6 @@ fn walk(config: &Config, handle: Handle, external: &Attribute) {
       let hmac_encoded = hex::encode(&hmac.result().code());
 
       // FIXME: unwrap
-      let mut new_url = crate::CAMO_URL.clone();
       new_url
         .path_segments_mut()
         .unwrap()

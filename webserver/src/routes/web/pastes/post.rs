@@ -43,8 +43,7 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
     return Ok(Redirect::to("/"));
   }
 
-  if !paste.email.is_empty() {
-    // honeypot was filled out
+  if !paste.honeypot.is_empty() {
     sess.add_data("error", "An error occurred. Please try again.");
     return Ok(Redirect::to("/"));
   }
@@ -132,8 +131,6 @@ struct PasteUpload {
   description: String,
   expires: Option<FormDate>,
   #[serde(skip)]
-  email: String,
-  #[serde(skip)]
   file_name: String,
   #[serde(skip)]
   file_language: Option<Language>,
@@ -145,6 +142,9 @@ struct PasteUpload {
   anonymous: Option<String>,
   #[serde(skip)]
   anti_csrf_token: String,
+  #[serde(skip)]
+  #[form(field = "email")]
+  honeypot: String,
 }
 
 #[derive(Debug, Deserialize)]

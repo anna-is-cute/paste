@@ -5,7 +5,6 @@ use crate::{
     models::users::User,
     schema::users as users_db,
   },
-  models::id::UserId,
 };
 
 use diesel::prelude::*;
@@ -20,8 +19,6 @@ use rocket::{
 use rocket_contrib::Template;
 
 use serde_json::{Value, json};
-
-use uuid::Uuid;
 
 use std::{ops::Deref, result};
 
@@ -107,12 +104,13 @@ impl FromRequest<'a, 'r> for OptionalWebUser {
   type Error = ();
 
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
-    let id = request
-      .cookies()
-      .get_private("user_id")
-      .and_then(|x| Uuid::parse_str(x.value()).ok());
-    let id = match id {
-      Some(id) => UserId(id),
+    let session = match request.guard::<Session>() {
+      Outcome::Success(s) => s,
+      Outcome::Failure((status, _)) => return Outcome::Failure((status, ())),
+      Outcome::Forward(()) => return Outcome::Forward(()),
+    };
+    let id = match session.user_id {
+      Some(id) => id,
       None => return Outcome::Success(OptionalWebUser(None)),
     };
 

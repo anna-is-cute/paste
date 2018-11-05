@@ -11,15 +11,12 @@ use crate::{
   utils::{email, PasswordContext, HashedPassword, Validator},
 };
 
-use chrono::{Duration, Utc};
-
-use cookie::{Cookie, SameSite};
+use chrono::Utc;
 
 use diesel::{dsl::count, prelude::*};
 
 use rocket::{
   State,
-  http::Cookies,
   request::Form,
   response::Redirect,
 };
@@ -64,7 +61,7 @@ struct RegistrationData {
 }
 
 #[post("/register", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, conn: DbConn, config: State<Config>, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, config: State<Config>, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 
@@ -143,13 +140,7 @@ fn post(data: Form<RegistrationData>, mut sess: Session, mut cookies: Cookies, c
 
   sidekiq.push(ver.job(&*config, &user, &secret)?.into())?;
 
-  let cookie = Cookie::build("user_id", id.to_simple().to_string())
-    .secure(true)
-    .http_only(true)
-    .same_site(SameSite::Lax)
-    .max_age(Duration::days(30))
-    .finish();
-  cookies.add_private(cookie);
+  sess.user_id = Some(id);
 
   sess.take_form();
   Ok(Redirect::to("lastpage"))

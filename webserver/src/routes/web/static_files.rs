@@ -1,5 +1,6 @@
 use std::{io, path::PathBuf};
 
+#[cfg(debug_assertions)]
 use rocket::response::NamedFile;
 
 #[cfg(not(debug_assertions))]

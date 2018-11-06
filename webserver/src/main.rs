@@ -1,10 +1,10 @@
 #![feature(
-  plugin,
   custom_derive,
-  macro_at_most_once_rep,
+  decl_macro,
   in_band_lifetimes,
+  macro_at_most_once_rep,
+  proc_macro_hygiene,
 )]
-#![plugin(rocket_codegen)]
 #![recursion_limit = "1024"]
 
 #![allow(proc_macro_derive_resolution_fallback)]
@@ -17,6 +17,8 @@ extern crate html5ever;
 extern crate if_chain;
 #[macro_use]
 extern crate lazy_static;
+#[macro_use]
+extern crate rocket;
 #[macro_use]
 extern crate serde_derive;
 
@@ -33,7 +35,7 @@ mod utils;
 
 use crate::routes::web::fairings;
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use tera::Tera;
 
@@ -112,7 +114,7 @@ fn main() {
     .attach(fairings::AntiCsrf)
     .attach(fairings::LastPage::default())
     .attach(Template::fairing())
-    .catch(catchers![
+    .register(catchers![
       routes::bad_request,
       routes::forbidden,
       routes::internal_server_error,

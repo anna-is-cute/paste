@@ -17,11 +17,11 @@ use crate::{
 
 use rocket::{State, http::Status as HttpStatus};
 
-use rocket_contrib::Json;
+use rocket_contrib::json::{Json, JsonError};
 
 use sidekiq::Client as SidekiqClient;
 
-type JsonResult = std::result::Result<Json<Paste>, ::rocket_contrib::SerdeError>;
+type JsonResult<'a> = std::result::Result<Json<Paste>, JsonError<'a>>;
 type MultipartResult = std::result::Result<MultipartUpload, String>;
 
 fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
@@ -94,7 +94,7 @@ fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqCl
 }
 
 #[post("/", format = "multipart/form-data", data = "<info>")]
-fn post_multipart(info: MultipartResult, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
+pub fn post_multipart(info: MultipartResult, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
   let info = match info {
     Ok(x) => x.into_inner(),
     Err(e) => {
@@ -105,13 +105,16 @@ fn post_multipart(info: MultipartResult, user: OptionalUser, conn: DbConn, sidek
 }
 
 #[post("/", format = "application/json", data = "<info>")]
-fn post_json(info: JsonResult, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
+pub fn post_json<'a>(info: JsonResult<'a>, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
   // TODO: can this be a request guard?
   let info = match info {
     Ok(x) => x.into_inner(),
     Err(e) => {
-      let message = format!("could not parse json: {}", e);
-      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(Some(message))));
+      let message = match e {
+        JsonError::Io(_) => None,
+        JsonError::Parse(_, e) => Some(format!("could not parse json: {}", e)),
+      };
+      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(message)));
     },
   };
 

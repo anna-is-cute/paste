@@ -1,6 +1,6 @@
 use rocket::{http::Status as HttpStatus, response::status::Custom};
 
-use rocket_contrib::Json;
+use rocket_contrib::json::Json;
 
 use std::fmt::Debug;
 

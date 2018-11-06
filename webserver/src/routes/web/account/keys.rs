@@ -11,12 +11,12 @@ use rocket::{
   response::Redirect,
   State,
 };
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
 #[get("/account/keys")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
@@ -28,7 +28,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: Db
 }
 
 #[post("/account/keys", format = "application/x-www-form-urlencoded", data = "<new>")]
-fn post(new: Form<NewKey>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn post(new: Form<NewKey>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let new = new.into_inner();
 
   if !sess.check_token(&new.anti_csrf_token) {
@@ -52,13 +52,13 @@ fn post(new: Form<NewKey>, user: OptionalWebUser, mut sess: Session, conn: DbCon
 }
 
 #[derive(Debug, FromForm)]
-struct NewKey {
+pub struct NewKey {
   name: String,
   anti_csrf_token: String,
 }
 
 #[delete("/account/keys/<key>", data = "<data>")]
-fn delete(key: ApiKeyId, data: Form<DeleteKey>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn delete(key: ApiKeyId, data: Form<DeleteKey>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let data = data.into_inner();
 
   if !sess.check_token(&data.anti_csrf_token) {
@@ -77,6 +77,6 @@ fn delete(key: ApiKeyId, data: Form<DeleteKey>, user: OptionalWebUser, mut sess:
 }
 
 #[derive(FromForm)]
-struct DeleteKey {
+pub struct DeleteKey {
   anti_csrf_token: String,
 }

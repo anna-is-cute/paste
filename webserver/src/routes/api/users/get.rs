@@ -19,22 +19,22 @@ use crate::{
 
 use diesel::{prelude::*, dsl::count};
 
-use rocket::http::Status as HttpStatus;
+use rocket::{http::Status as HttpStatus, request::Form};
 
 use std::{fs::File, io::Read};
 
 #[get("/<username>")]
-fn get(username: String, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {
+pub fn get(username: String, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {
   _get(1, username, user, conn)
 }
 
-#[get("/<username>?<params>")]
-fn get_page(username: String, params: PageParams, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {
+#[get("/<username>?<params..>")]
+pub fn get_page(username: String, params: Form<PageParams>, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {
   _get(params.page, username, user, conn)
 }
 
 #[derive(Debug, FromForm)]
-struct PageParams {
+pub struct PageParams {
   page: u32,
 }
 

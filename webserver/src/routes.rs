@@ -23,7 +23,10 @@ use rocket::{
   },
 };
 
-use rocket_contrib::{Json, Template};
+use rocket_contrib::{
+  json::Json,
+  templates::Template,
+};
 
 use uuid::Uuid;
 
@@ -38,7 +41,7 @@ pub type RouteResult<T> = Result<Custom<Json<Status<T>>>>;
 pub mod api;
 pub mod web;
 
-enum StringOrTemplate {
+pub enum StringOrTemplate {
   String(String),
   Template(Template),
 }
@@ -64,22 +67,22 @@ fn error(req: &Request, kind: &str, template: &'static str) -> StringOrTemplate 
 }
 
 #[catch(400)]
-fn bad_request(req: &Request) -> StringOrTemplate {
+pub fn bad_request(req: &Request) -> StringOrTemplate {
   error(req, "bad_request", "error/400")
 }
 
 #[catch(403)]
-fn forbidden(req: &Request) -> StringOrTemplate {
+pub fn forbidden(req: &Request) -> StringOrTemplate {
   error(req, "forbidden", "error/403")
 }
 
 #[catch(404)]
-fn not_found(req: &Request) -> StringOrTemplate {
+pub fn not_found(req: &Request) -> StringOrTemplate {
   error(req, "not_found", "error/404")
 }
 
 #[catch(500)]
-fn internal_server_error(req: &Request) -> StringOrTemplate {
+pub fn internal_server_error(req: &Request) -> StringOrTemplate {
   error(req, "internal_server_error", "error/500")
 }
 

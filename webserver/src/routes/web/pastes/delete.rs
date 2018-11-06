@@ -29,7 +29,7 @@ use uuid::Uuid;
 use std::str::FromStr;
 
 #[delete("/p/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>", rank = 1)]
-fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let deletion = deletion.into_inner();
 
   if !sess.check_token(&deletion.anti_csrf_token) {
@@ -107,13 +107,13 @@ fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: Op
 }
 
 #[derive(Debug, FromForm)]
-struct PasteDeletion {
+pub struct PasteDeletion {
   key: Option<String>,
   anti_csrf_token: String,
 }
 
 #[delete("/p/<username>/ids", format = "application/x-www-form-urlencoded", data = "<deletion>", rank = 2)]
-fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let deletion = deletion.into_inner();
 
   if !sess.check_token(&deletion.anti_csrf_token) {
@@ -165,7 +165,7 @@ fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalWebUs
 }
 
 #[derive(Debug, FromForm)]
-struct MultiPasteDeletion {
+pub struct MultiPasteDeletion {
   anti_csrf_token: String,
   ids: String,
 }

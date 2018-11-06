@@ -17,12 +17,12 @@ use rocket::{
   },
 };
 
-use rocket_contrib::Json;
+use rocket_contrib::json::Json;
 
 use std::result;
 
 #[get("/<paste_id>/files/<file_id>/raw")]
-fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn) -> Result<FileOrError> {
+pub fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn) -> Result<FileOrError> {
   let paste = match paste_id.get(&conn)? {
     Some(paste) => paste,
     None => return Ok(FileOrError::Error(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste))),
@@ -38,7 +38,7 @@ fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn) -> 
   Ok(FileOrError::File(NamedFile::open(path)?))
 }
 
-enum FileOrError {
+pub enum FileOrError {
   File(NamedFile),
   Error(Custom<Json<Status<()>>>),
 }

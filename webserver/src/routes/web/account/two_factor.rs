@@ -26,7 +26,7 @@ use rocket::{
   State,
 };
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
@@ -35,7 +35,7 @@ use sodiumoxide::randombytes;
 use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET, QUERY_ENCODE_SET};
 
 #[get("/account/2fa")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
@@ -51,7 +51,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
 }
 
 #[get("/account/2fa/enable")]
-fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<AddCsp<Rst>> {
+pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<AddCsp<Rst>> {
   let mut user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(AddCsp::new(Rst::Redirect(Redirect::to("/login")), vec!["img-src data:"])),
@@ -103,7 +103,7 @@ fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, c
 }
 
 #[post("/account/2fa/new_secret", format = "application/x-www-form-urlencoded", data = "<form>")]
-fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   if !sess.check_token(&form.into_inner().anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Redirect::to("lastpage"));
@@ -125,7 +125,7 @@ fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, c
 }
 
 #[post("/account/2fa/validate", format = "application/x-www-form-urlencoded", data = "<form>")]
-fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, redis: Redis) -> Result<Redirect> {
+pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, redis: Redis) -> Result<Redirect> {
   let form = form.into_inner();
 
   if !sess.check_token(&form.anti_csrf_token) {
@@ -170,13 +170,13 @@ fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn
 }
 
 #[derive(Debug, FromForm)]
-struct Validate {
+pub struct Validate {
   anti_csrf_token: String,
   tfa_code: u64,
 }
 
 #[get("/account/2fa/disable")]
-fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
+pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
@@ -192,7 +192,7 @@ fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session) 
 }
 
 #[post("/account/2fa/disable", format = "application/x-www-form-urlencoded", data = "<form>")]
-fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let form = form.into_inner();
 
   if !sess.check_token(&form.anti_csrf_token) {
@@ -225,13 +225,13 @@ fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Session, c
 }
 
 #[derive(Debug, FromForm)]
-struct Disable {
+pub struct Disable {
   anti_csrf_token: String,
   password: String,
 }
 
 #[post("/account/2fa/new_backup_codes", format = "application/x-www-form-urlencoded", data = "<form>")]
-fn new_backup_codes(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn new_backup_codes(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   if !sess.check_token(&form.into_inner().anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
     return Ok(Redirect::to("lastpage"));
@@ -265,7 +265,7 @@ fn generate_secret(conn: &DbConn, user: &mut User) -> Result<()> {
 }
 
 #[derive(Debug, FromForm)]
-struct TokenOnly {
+pub struct TokenOnly {
   anti_csrf_token: String,
 }
 

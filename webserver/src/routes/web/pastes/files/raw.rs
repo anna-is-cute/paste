@@ -19,7 +19,7 @@ use rocket::{
 
 use std::{fs::File, result};
 
-enum As {
+pub enum As {
   Add(AddHeaders<File>),
   Status(HttpStatus),
 }
@@ -35,7 +35,7 @@ impl Responder<'r> for As {
 
 
 #[get("/p/<username>/<paste_id>/files/<file_id>/raw")]
-fn get(username: String, paste_id: PasteId, file_id: FileId, user: OptionalWebUser, conn: DbConn) -> Result<As> {
+pub fn get(username: String, paste_id: PasteId, file_id: FileId, user: OptionalWebUser, conn: DbConn) -> Result<As> {
   let paste: DbPaste = match paste_id.get(&conn)? {
     Some(p) => p,
     None => return Ok(As::Status(HttpStatus::NotFound)),

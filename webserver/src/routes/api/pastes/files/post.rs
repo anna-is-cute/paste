@@ -9,18 +9,21 @@ use crate::{
 
 use rocket::http::Status as HttpStatus;
 
-use rocket_contrib::Json;
+use rocket_contrib::json::{Json, JsonError};
 
-type UpdateResult = ::std::result::Result<Json<PasteFile>, ::rocket_contrib::SerdeError>;
+type UpdateResult<'a> = ::std::result::Result<Json<PasteFile>, JsonError<'a>>;
 
 #[post("/<paste_id>/files", format = "application/json", data = "<file>")]
-pub fn post(paste_id: PasteId, file: UpdateResult, user: RequiredUser, conn: DbConn) -> RouteResult<OutputFile> {
+pub fn post(paste_id: PasteId, file: UpdateResult<'a>, user: RequiredUser, conn: DbConn) -> RouteResult<OutputFile> {
   // TODO: can this be a request guard?
   let file = match file {
     Ok(x) => x.into_inner(),
     Err(e) => {
-      let message = format!("could not parse json: {}", e);
-      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(Some(message))));
+      let message = match e {
+        JsonError::Io(_) => None,
+        JsonError::Parse(_, e) => Some(format!("could not parse json: {}", e)),
+      };
+      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(message)));
     },
   };
   // verify auth

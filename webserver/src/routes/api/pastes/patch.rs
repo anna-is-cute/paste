@@ -10,20 +10,23 @@ use crate::{
 
 use rocket::{http::Status as HttpStatus, State};
 
-use rocket_contrib::Json;
+use rocket_contrib::json::{Json, JsonError};
 
 use sidekiq::Client as SidekiqClient;
 
-type UpdateResult = ::std::result::Result<Json<MetadataUpdate>, ::rocket_contrib::SerdeError>;
+type UpdateResult<'a> = ::std::result::Result<Json<MetadataUpdate>, JsonError<'a>>;
 
 #[patch("/<paste_id>", format = "application/json", data = "<info>")]
-pub fn patch(paste_id: PasteId, info: UpdateResult, user: RequiredUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<()> {
+pub fn patch(paste_id: PasteId, info: UpdateResult<'a>, user: RequiredUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<()> {
   // TODO: can this be a request guard?
   let info = match info {
     Ok(x) => x.into_inner(),
     Err(e) => {
-      let message = format!("could not parse json: {}", e);
-      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(Some(message))));
+      let message = match e {
+        JsonError::Io(_) => None,
+        JsonError::Parse(_, e) => Some(format!("could not parse json: {}", e)),
+      };
+      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(message)));
     },
   };
 

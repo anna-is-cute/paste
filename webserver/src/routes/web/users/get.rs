@@ -15,26 +15,26 @@ use crate::{
 
 use diesel::{dsl::count, prelude::*};
 
-use rocket::{State, http::Status as HttpStatus};
+use rocket::{State, http::Status as HttpStatus, request::Form};
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
 use std::{fs::File, io::Read};
 
 #[get("/u/<username>")]
-fn get(username: String, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn get(username: String, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
   _get(1, username, config, user, sess, conn)
 }
 
-#[get("/u/<username>?<params>")]
-fn get_page(username: String, params: PageParams, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
+#[get("/u/<username>?<params..>")]
+pub fn get_page(username: String, params: Form<PageParams>, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
   _get(params.page, username, config, user, sess, conn)
 }
 
 #[derive(Debug, FromForm)]
-struct PageParams {
+pub struct PageParams {
   page: u32,
 }
 

@@ -11,7 +11,7 @@ use crate::{
 use rocket::http::Status as HttpStatus;
 
 #[get("/<paste_id>/files")]
-fn get(paste_id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<OutputFile>> {
+pub fn get(paste_id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<OutputFile>> {
   let paste = match paste_id.get(&conn)? {
     Some(paste) => paste,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),

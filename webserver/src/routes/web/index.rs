@@ -6,12 +6,12 @@ use crate::{
 
 use rocket::State;
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
 #[get("/")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Template> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Template> {
   let honeypot = Honeypot::new();
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["languages"] = json!(Language::context());

@@ -19,6 +19,12 @@ macro_rules! uuid_wrapper {
       }
     }
 
+    impl rocket::http::uri::UriDisplay for $name {
+      fn fmt(&self, f: &mut rocket::http::uri::Formatter) -> std::result::Result<(), std::fmt::Error> {
+        f.write_value(self.to_simple().to_string())
+      }
+    }
+
     impl $name {
       #[allow(unused)]
       pub fn into_inner(self) -> uuid::Uuid {

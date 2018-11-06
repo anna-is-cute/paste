@@ -7,8 +7,6 @@ use crate::{
   utils::{FormDate, Language},
 };
 
-use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
-
 use rocket::{
   request::Form,
   response::Redirect,
@@ -34,7 +32,7 @@ fn handle_js(input: &str) -> Result<Vec<MultiFile>> {
 }
 
 #[post("/pastes", format = "application/x-www-form-urlencoded", data = "<paste>")]
-fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
   let paste = paste.into_inner();
   sess.set_form(&paste);
 
@@ -120,12 +118,15 @@ fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn
 
   sess.take_form();
 
-  let username = utf8_percent_encode(username, PATH_SEGMENT_ENCODE_SET);
-  Ok(Redirect::to(&format!("/p/{}/{}", username, paste.id().to_simple())))
+  Ok(Redirect::to(uri!(
+    crate::routes::web::pastes::get::users_username_id:
+    username,
+    paste.id(),
+  )))
 }
 
 #[derive(Debug, FromForm, Serialize)]
-struct PasteUpload {
+pub struct PasteUpload {
   name: String,
   visibility: Visibility,
   description: String,

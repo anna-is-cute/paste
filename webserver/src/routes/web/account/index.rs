@@ -15,14 +15,14 @@ use rocket::{
   State,
 };
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use sidekiq::Client as SidekiqClient;
 
 use unicode_segmentation::UnicodeSegmentation;
 
 #[get("/account")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
@@ -33,7 +33,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
 }
 
 #[patch("/account", format = "application/x-www-form-urlencoded", data = "<update>")]
-fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+pub fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
   let update = update.into_inner();
   sess.set_form(&update);
 
@@ -124,7 +124,7 @@ fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalWebUs
 }
 
 #[derive(Debug, FromForm, Serialize)]
-struct AccountUpdate {
+pub struct AccountUpdate {
   name: String,
   username: String,
   email: String,

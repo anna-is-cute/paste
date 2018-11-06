@@ -18,8 +18,6 @@ use crate::{
 
 use diesel::prelude::*;
 
-use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
-
 use rocket::{
   http::Status as HttpStatus,
   request::LenientForm,
@@ -79,7 +77,7 @@ fn check_paste(paste: &PasteUpdate, files: &[MultiFile]) -> result::Result<(), S
 }
 
 #[patch("/p/<username>/<paste_id>", format = "application/x-www-form-urlencoded", data = "<update>")]
-fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Rst> {
+pub fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Rst> {
   let update = update.into_inner();
   sess.set_form(&update);
 
@@ -260,12 +258,15 @@ fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, 
 
   sess.take_form();
 
-  let username = utf8_percent_encode(&username, PATH_SEGMENT_ENCODE_SET);
-  Ok(Rst::Redirect(Redirect::to(&format!("/p/{}/{}", username, paste_id.to_simple()))))
+  Ok(Rst::Redirect(Redirect::to(uri!(
+    crate::routes::web::pastes::get::users_username_id:
+    username,
+    paste_id,
+  ))))
 }
 
 #[derive(Debug, FromForm, Serialize)]
-struct PasteUpdate {
+pub struct PasteUpdate {
   name: String,
   visibility: Visibility,
   description: String,

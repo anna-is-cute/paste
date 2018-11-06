@@ -25,15 +25,13 @@ use diesel::prelude::*;
 
 use hashbrown::HashMap;
 
-use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET};
-
 use rocket::{
   http::Status as HttpStatus,
   response::Redirect,
   State,
 };
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
@@ -57,7 +55,7 @@ lazy_static! {
 }
 
 #[get("/<id>", rank = 10)]
-fn id(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
+pub fn id(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
   let result: Option<(Option<String>, DbPaste)> = pastes::table
     .left_join(users::table)
     .select((users::username.nullable(), pastes::all_columns))
@@ -75,21 +73,24 @@ fn id(id: PasteId, user: OptionalWebUser, conn: DbConn) -> Result<Rst> {
   }
 
   let username = owner.unwrap_or_else(|| "anonymous".into());
-  let owner = utf8_percent_encode(
-    &username,
-    PATH_SEGMENT_ENCODE_SET,
-  );
-  Ok(Rst::Redirect(Redirect::to(&format!("/p/{}/{}", owner, id))))
+  Ok(Rst::Redirect(Redirect::to(uri!(
+    crate::routes::web::pastes::get::users_username_id:
+    username,
+    id,
+  ))))
 }
 
 #[get("/<username>/<id>", rank = 10)]
-fn username_id(username: String, id: PasteId) -> Redirect {
-  let username = utf8_percent_encode(&username, PATH_SEGMENT_ENCODE_SET);
-  Redirect::to(&format!("/p/{}/{}", username, id))
+pub fn username_id(username: String, id: PasteId) -> Redirect {
+  Redirect::to(uri!(
+    crate::routes::web::pastes::get::users_username_id:
+    username,
+    id,
+  ))
 }
 
 #[get("/p/<username>/<id>")]
-fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -168,7 +169,7 @@ fn users_username_id(username: String, id: PasteId, config: State<Config>, user:
 }
 
 #[get("/p/<username>/<id>/edit")]
-fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),

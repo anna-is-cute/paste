@@ -6,10 +6,10 @@ use crate::{
 
 use rocket::State;
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 #[get("/credits")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Template> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Template> {
   let ctx = context(&*config, user.as_ref(), &mut sess);
   Ok(Template::render("credits", ctx))
 }

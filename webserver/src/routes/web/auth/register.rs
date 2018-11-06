@@ -21,7 +21,7 @@ use rocket::{
   response::Redirect,
 };
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
@@ -30,7 +30,7 @@ use sidekiq::Client as SidekiqClient;
 use uuid::Uuid;
 
 #[get("/register")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Rst> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Rst> {
   if user.is_some() {
     return AddCsp::none(Rst::Redirect(Redirect::to("/")));
   }
@@ -45,7 +45,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCs
 }
 
 #[derive(Debug, FromForm, Serialize)]
-struct RegistrationData {
+pub struct RegistrationData {
   name: String,
   username: String,
   email: String,
@@ -61,7 +61,7 @@ struct RegistrationData {
 }
 
 #[post("/register", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, config: State<Config>, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, config: State<Config>, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 

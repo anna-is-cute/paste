@@ -17,10 +17,10 @@ use crate::{
 
 use rocket::http::Status as HttpStatus;
 
-use rocket_contrib::Json;
+use rocket_contrib::json::Json;
 
 #[delete("/<id>", rank = 1)]
-fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
+pub fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
   let paste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
@@ -76,7 +76,7 @@ fn check_deletion_key(paste: &Paste, key: &DeletionKey) -> Option<(HttpStatus, E
 }
 
 #[delete("/ids", format = "application/json", data = "<info>", rank = 2)]
-fn ids(info: Json<Vec<PasteId>>, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
+pub fn ids(info: Json<Vec<PasteId>>, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
   let ids = info.into_inner();
 
   if ids.len() > 15 {

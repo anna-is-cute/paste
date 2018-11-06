@@ -201,7 +201,7 @@ untitled paste
       <h2 id="{{ file.id }}-title" class="title">
         <span class="keeps-spaces">{{ file.name }}</span>
       </h2>
-      {% if file.content.format == "text" and rendered | get(key=file.id) %}
+      {% if file.content.format == "text" and rendered[file.id] %}
       <div class="paste-tabs tabs" id="{{ file.id }}-tab-links">
         <ul>
           <li class="paste-rendered-tab is-active"><a>Rendered</a></li>
@@ -214,10 +214,10 @@ untitled paste
   </div>
   {% endif %}
   {% if file.content.format == "text" %}
-    {% if rendered | get(key=file.id) %}
+    {% if rendered[file.id] %}
       <div class="paste-tabs-container" data-id="{{ file.id }}">
         <div class="paste-rendered-content content">
-          {{ rendered | get(key=file.id) | safe }}
+          {{ rendered[file.id] | safe }}
         </div>
         <div class="paste-source-content is-not-displayed">
           <pre class="file-source" id="{{ file.id }}" data-ln-prefix="{{ file.name | slugify }}"><code>{{ file.content.value }}</code></pre>

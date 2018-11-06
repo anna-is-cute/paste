@@ -28,7 +28,7 @@ use sidekiq::Client as SidekiqClient;
 use sodiumoxide::randombytes;
 
 #[post("/account/send_verification", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
   let data = data.into_inner();
 
   if !sess.check_token(&data.anti_csrf_token) {
@@ -86,8 +86,8 @@ fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, mut 
   Ok(Redirect::to("/account"))
 }
 
-#[get("/account/verify?<data>")]
-fn get(data: Verification, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+#[get("/account/verify?<data..>")]
+pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let key = match base64::decode_config(&data.key, base64::URL_SAFE) {
     Ok(k) => k,
     Err(_) => {
@@ -135,12 +135,12 @@ fn get(data: Verification, user: OptionalWebUser, mut sess: Session, conn: DbCon
 }
 
 #[derive(Debug, FromForm)]
-struct Verification {
+pub struct Verification {
   id: EmailVerificationId,
   key: String,
 }
 
 #[derive(Debug, FromForm)]
-struct Resend {
+pub struct Resend {
   anti_csrf_token: String,
 }

@@ -28,7 +28,7 @@ use rocket::{
   State,
 };
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
@@ -39,13 +39,13 @@ use uuid::Uuid;
 use std::net::SocketAddr;
 
 #[get("/account/forgot_password")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Template {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Template {
   let ctx = context(&*config, user.as_ref(), &mut sess);
   Template::render("account/forgot_password", ctx)
 }
 
 #[post("/account/forgot_password", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, addr: SocketAddr) -> Result<Redirect> {
+pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, addr: SocketAddr) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 
@@ -125,8 +125,8 @@ fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn
   res
 }
 
-#[get("/account/reset_password?<data>")]
-fn reset_get(data: ResetPassword, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+#[get("/account/reset_password?<data..>")]
+pub fn reset_get(data: Form<ResetPassword>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   if check_reset(&conn, *data.id, &data.secret).is_none() {
     sess.add_data("error", "Invalid password reset URL.");
     return Ok(Rst::Redirect(Redirect::to("/account/forgot_password")));
@@ -140,11 +140,16 @@ fn reset_get(data: ResetPassword, config: State<Config>, user: OptionalWebUser, 
 }
 
 #[post("/account/reset_password", data = "<data>")]
-fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<Redirect> {
   let data = data.into_inner();
 
-  let url = format!("/account/reset_password?id={}&secret={}", data.id.to_simple(), data.secret);
-  let res = Ok(Redirect::to(&url));
+  let res = Ok(Redirect::to(uri!(
+    crate::routes::web::account::reset_password::reset_get:
+    ResetPassword {
+      id: data.id,
+      secret: data.secret.clone(),
+    },
+  )));
 
   if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
@@ -183,7 +188,7 @@ fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<Redi
     );
     if let Err(e) = pw_ctx.validate() {
       sess.add_data("error", e);
-      return Ok(Redirect::to(&url));
+      return res;
     }
   }
 
@@ -222,20 +227,20 @@ fn check_reset(conn: &DbConn, id: Uuid, secret: &str) -> Option<PasswordReset> {
 }
 
 #[derive(FromForm, Serialize)]
-struct ResetRequest {
+pub struct ResetRequest {
   #[serde(skip)]
   anti_csrf_token: String,
   email: String,
 }
 
-#[derive(FromForm)]
-struct ResetPassword {
+#[derive(FromForm, UriDisplay)]
+pub struct ResetPassword {
   id: ResetId,
   secret: String,
 }
 
 #[derive(FromForm)]
-struct Reset {
+pub struct Reset {
   id: ResetId,
   secret: String,
   password: String,
@@ -243,6 +248,7 @@ struct Reset {
   anti_csrf_token: String,
 }
 
+#[derive(Clone, Copy)]
 struct ResetId(Uuid);
 
 impl std::ops::Deref for ResetId {
@@ -262,5 +268,12 @@ impl<'v> FromFormValue<'v> for ResetId {
   fn from_form_value(form_value: &'v RawStr) -> std::result::Result<ResetId, &'v RawStr> {
     let uuid: Uuid = form_value.parse().map_err(|_| form_value)?;
     Ok(ResetId(uuid))
+  }
+}
+
+impl rocket::http::uri::UriDisplay for ResetId {
+  fn fmt(&self, f: &mut rocket::http::uri::Formatter) -> std::result::Result<(), std::fmt::Error> {
+    use std::fmt::Write;
+    f.write_fmt(format_args!("{}", self.to_simple()))
   }
 }

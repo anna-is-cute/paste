@@ -16,7 +16,7 @@ use rocket::{
   response::{Responder, Response, Redirect},
 };
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use serde_json::{Value, json};
 

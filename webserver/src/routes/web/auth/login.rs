@@ -21,14 +21,14 @@ use rocket::State;
 use rocket::request::Form;
 use rocket::response::Redirect;
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
 use std::net::SocketAddr;
 
 #[get("/login")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Rst> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Rst> {
   if user.is_some() {
     return AddCsp::none(Rst::Redirect(Redirect::to("lastpage")));
   }
@@ -43,7 +43,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCs
 }
 
 #[derive(Debug, FromForm, Serialize)]
-struct RegistrationData {
+pub struct RegistrationData {
   username: String,
   #[serde(skip)]
   password: String,
@@ -57,7 +57,7 @@ struct RegistrationData {
 }
 
 #[post("/login", format = "application/x-www-form-urlencoded", data = "<data>")]
-fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, redis: Redis, addr: SocketAddr) -> Result<Redirect> {
+pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, redis: Redis, addr: SocketAddr) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 

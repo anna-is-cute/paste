@@ -12,12 +12,12 @@ use rocket::{
   State,
 };
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 use sidekiq::Client as SidekiqClient;
 
 #[get("/account/delete")]
-fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
   let user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(Rst::Redirect(Redirect::to("/login"))),
@@ -28,7 +28,7 @@ fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Resul
 }
 
 #[delete("/account", format = "application/x-www-form-urlencoded", data = "<delete>")]
-fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
   let delete = delete.into_inner();
 
   if !sess.check_token(&delete.anti_csrf_token) {
@@ -55,7 +55,7 @@ fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Session,
 }
 
 #[derive(Debug, FromForm)]
-struct DeleteRequest {
+pub struct DeleteRequest {
   username: String,
   anti_csrf_token: String,
 }

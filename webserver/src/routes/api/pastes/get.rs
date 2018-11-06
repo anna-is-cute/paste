@@ -20,29 +20,29 @@ use crate::{
 
 use diesel::prelude::*;
 
-use rocket::http::Status as HttpStatus;
+use rocket::{http::Status as HttpStatus, request::Form};
 
 use std::cmp::max;
 
 #[derive(Debug, Serialize)]
-struct AllPaste {
+pub struct AllPaste {
   id: PasteId,
   #[serde(flatten)]
   metadata: Metadata,
 }
 
 #[derive(Debug, FromForm)]
-struct AllQuery {
+pub struct AllQuery {
   limit: Option<u8>,
 }
 
-#[get("/?<query>")]
-fn get_all_query(query: AllQuery, conn: DbConn) -> RouteResult<Vec<AllPaste>> {
-  _get_all(Some(query), conn)
+#[get("/?<query..>")]
+pub fn get_all_query(query: Form<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>> {
+  _get_all(Some(query.into_inner()), conn)
 }
 
 #[get("/")]
-fn get_all(conn: DbConn) -> RouteResult<Vec<AllPaste>> {
+pub fn get_all(conn: DbConn) -> RouteResult<Vec<AllPaste>> {
   _get_all(None, conn)
 }
 
@@ -74,23 +74,23 @@ fn _get_all(query: Option<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>>
 }
 
 #[derive(Debug, Default, FromForm)]
-struct Query {
+pub struct Full {
   full: Option<bool>,
 }
 
 // routes separated because of https://github.com/SergioBenitez/Rocket/issues/376
 
 #[get("/<id>")]
-fn get(id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
+pub fn get(id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
   _get(id, None, user, conn)
 }
 
-#[get("/<id>?<query>")]
-fn get_query(id: PasteId, query: Query, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
-  _get(id, Some(query), user, conn)
+#[get("/<id>?<query..>")]
+pub fn get_query(id: PasteId, query: Form<Full>, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
+  _get(id, Some(query.into_inner()), user, conn)
 }
 
-fn _get(id: PasteId, query: Option<Query>, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
+fn _get(id: PasteId, query: Option<Full>, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
   let paste = match id.get(&conn)? {
     Some(paste) => paste,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),

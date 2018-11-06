@@ -25,7 +25,7 @@ git2 = "0.7"
 
 [dependencies]
 # all web logic
-rocket_codegen = "0.3"
+rocket_codegen = "0.4.0-rc.1"
 
 # json serialization and deserialization
 serde = "1"
@@ -71,8 +71,8 @@ ipnetwork = "0.13"
 # anti-csrf tokens
 hex = "0.3"
 
-# custom cookies (has to be outdated because this is the version Rocket uses)
-cookie = "0.9"
+# custom cookies
+cookie = "0.11"
 
 # connection pooling
 r2d2 = "0.8"
@@ -128,12 +128,12 @@ sha2 = "0.8"
 
 # web logic
 [dependencies.rocket]
-version = "0.3"
+version = "0.4.0-rc.1"
 features = ["tls"]
 
 # web logic with json and uuids
 [dependencies.rocket_contrib]
-version = "0.3"
+version = "0.4.0-rc.1"
 default-features = false
 features = ["json", "tera_templates"]
 

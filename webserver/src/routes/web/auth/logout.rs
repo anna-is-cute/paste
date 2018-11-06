@@ -6,7 +6,7 @@ use rocket::{
 };
 
 #[post("/logout", data = "<data>")]
-fn post(data: Form<Logout>, mut sess: Session) -> Redirect {
+pub fn post(data: Form<Logout>, mut sess: Session) -> Redirect {
   let data = data.into_inner();
   if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
@@ -19,6 +19,6 @@ fn post(data: Form<Logout>, mut sess: Session) -> Redirect {
 }
 
 #[derive(FromForm)]
-struct Logout {
+pub struct Logout {
   anti_csrf_token: String,
 }

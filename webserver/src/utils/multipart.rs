@@ -7,7 +7,7 @@ use multipart::server::Multipart;
 use rocket::{
   Request, Data, Outcome,
   http::Status,
-  data::{self, FromData},
+  data::{self, FromDataSimple},
 };
 
 use std::io::Read;
@@ -32,7 +32,7 @@ impl MultipartUpload {
   }
 }
 
-impl FromData for MultipartUpload {
+impl FromDataSimple for MultipartUpload {
   type Error = String;
 
   fn from_data(request: &Request, data: Data) -> data::Outcome<Self, Self::Error> {

@@ -10,7 +10,7 @@ use crate::{
 use rocket::http::Status as HttpStatus;
 
 #[delete("/<paste_id>/files/<file_id>")]
-fn delete(paste_id: PasteId, file_id: FileId, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
+pub fn delete(paste_id: PasteId, file_id: FileId, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
   let paste = match paste_id.get(&conn)? {
     Some(paste) => paste,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),

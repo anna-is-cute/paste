@@ -15,20 +15,23 @@ use diesel::prelude::*;
 
 use rocket::http::Status as HttpStatus;
 
-use rocket_contrib::Json;
+use rocket_contrib::json::{Json, JsonError};
 
 use std::{fs::OpenOptions, io::Write};
 
-type UpdateResult = ::std::result::Result<Json<PasteFileUpdate>, ::rocket_contrib::SerdeError>;
+type UpdateResult<'a> = ::std::result::Result<Json<PasteFileUpdate>, JsonError<'a>>;
 
 #[patch("/<paste_id>/files/<file_id>", format = "application/json", data = "<file>")]
-pub fn patch(paste_id: PasteId, file_id: FileId, file: UpdateResult, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
+pub fn patch(paste_id: PasteId, file_id: FileId, file: UpdateResult<'a>, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
   // TODO: can this be a request guard?
   let file = match file {
     Ok(x) => x.into_inner(),
     Err(e) => {
-      let message = format!("could not parse json: {}", e);
-      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(Some(message))));
+      let message = match e {
+        JsonError::Io(_) => None,
+        JsonError::Parse(_, e) => Some(format!("could not parse json: {}", e)),
+      };
+      return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadJson(message)));
     },
   };
   // verify auth

@@ -67,7 +67,7 @@ Create a new account.
   <div class="field {{ honeypot.class }}">
     <div class="control">
       <label class="label">Title</label>
-      <input aria-hidden="true" name="title" class="input" type="text" autocomplete="off"/>
+      <input tabindex="-1" aria-hidden="true" name="title" class="input" type="text" autocomplete="off"/>
     </div>
   </div>
 

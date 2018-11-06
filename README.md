@@ -98,7 +98,7 @@ If you need `./Rocket.toml`, the example file will be located at `./Rocket.examp
 
 ```sh
 # from the repo root
-docker-compose -f .docker/docker-compose.yml up
+docker-compose -p paste -f .docker/docker-compose.yml up
 ```
 
 If everything is configured correctly, it should start up, and you should see `Rocket has launched

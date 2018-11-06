@@ -209,7 +209,7 @@ Create a new paste.
 
   <div class="control {{ honeypot.class }}">
     <label class="label">Email</label>
-    <input aria-hidden="true" name="email" class="input" type="text" autocomplete="off"/>
+    <input tabindex="-1" aria-hidden="true" name="email" class="input" type="text" autocomplete="off"/>
   </div>
 
   <div class="paste-submit-buttons">

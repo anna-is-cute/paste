@@ -137,20 +137,11 @@ impl Deref for OptionalWebUser {
   }
 }
 
+#[derive(Responder)]
 pub enum Rst {
   Redirect(Redirect),
   Status(HttpStatus),
   Template(Template),
-}
-
-impl Responder<'r> for Rst {
-  fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
-    match self {
-      Rst::Redirect(r) => r.respond_to(request),
-      Rst::Status(s) => Err(s),
-      Rst::Template(t) => t.respond_to(request),
-    }
-  }
 }
 
 pub struct AddCsp<T>(T, Vec<String>);

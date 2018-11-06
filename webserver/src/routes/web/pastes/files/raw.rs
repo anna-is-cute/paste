@@ -11,28 +11,15 @@ use crate::{
 
 use diesel::prelude::*;
 
-use rocket::{
-  http::{Status as HttpStatus},
-  request::Request,
-  response::{Responder, Response},
-};
+use rocket::http::Status as HttpStatus;
 
-use std::{fs::File, result};
+use std::fs::File;
 
+#[derive(Responder)]
 pub enum As {
   Add(AddHeaders<File>),
   Status(HttpStatus),
 }
-
-impl Responder<'r> for As {
-  fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
-    match self {
-      As::Add(r) => r.respond_to(request),
-      As::Status(r) => Err(r),
-    }
-  }
-}
-
 
 #[get("/p/<username>/<paste_id>/files/<file_id>/raw")]
 pub fn get(username: String, paste_id: PasteId, file_id: FileId, user: OptionalWebUser, conn: DbConn) -> Result<As> {

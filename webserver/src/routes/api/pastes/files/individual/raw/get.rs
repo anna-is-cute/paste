@@ -10,16 +10,13 @@ use crate::{
 
 use rocket::{
   http::Status as HttpStatus,
-  request::Request,
   response::{
-    Responder, Response, NamedFile,
+    NamedFile,
     status::Custom,
   },
 };
 
 use rocket_contrib::json::Json;
-
-use std::result;
 
 #[get("/<paste_id>/files/<file_id>/raw")]
 pub fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn) -> Result<FileOrError> {
@@ -38,16 +35,8 @@ pub fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn)
   Ok(FileOrError::File(NamedFile::open(path)?))
 }
 
+#[derive(Responder)]
 pub enum FileOrError {
   File(NamedFile),
   Error(Custom<Json<Status<()>>>),
-}
-
-impl Responder<'r> for FileOrError {
-  fn respond_to(self, request: &Request) -> result::Result<Response<'r>, HttpStatus> {
-    match self {
-      FileOrError::File(f) => f.respond_to(request),
-      FileOrError::Error(e) => e.respond_to(request),
-    }
-  }
 }

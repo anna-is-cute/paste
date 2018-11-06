@@ -2,6 +2,10 @@
 
 {% block head %}
 {{ super() }}
+<script
+  defer
+  src="/static/js/password.js?v={{ resources_version }}"
+  integrity="sha384-TX1b4qxxTCFxJPqmHYPZ2mbd07JhxxFn9EjKzbgtQ78+CgTsOvyxg5zBNN6SeLiV"></script>
 {% endblock head %}
 
 {% block title %}Delete account{% endblock title %}
@@ -47,7 +51,7 @@
       immediately cease being accessible and will eventually be deleted off of the server by a task.
     </p>
     <p>
-      If you really want to delete your account, type your username in the box below and click the
+      If you really want to delete your account, type your password in the box below and click the
       button. You will be redirected to the home page after your account is deleted.
     </p>
   </div>
@@ -55,23 +59,32 @@
 <form action="/account" method="post">
   <input type="hidden" name="_method" value="delete"/>
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
-  <div class="field has-addons">
-    <div class="control is-expanded">
-      <input
-        name="username"
-        class="input"
-        type="text"
-        placeholder="{{ user.username }}"
-        autocorrect="off"
-        autocapitalize="off"
-        required/>
-      <p class="help">
-        Type your username to confirm account deletion.
-      </p>
+  <div class="field">
+    <div class="field has-addons">
+      <div class="control is-expanded has-icons-left">
+        <input
+          required
+          autocorrect="off"
+          autocapitalize="off"
+          name="password"
+          class="input"
+          type="password"
+          placeholder="Your secure password"/>
+        <span class="icon is-small is-left">
+          <i class="fas fa-asterisk"></i>
+        </span>
+      </div>
+      <div class="control">
+        <a name="password_reveal" class="button">
+          <span class="icon is-small">
+            <i class="fas fa-eye"></i>
+          </span>
+        </a>
+      </div>
     </div>
-    <div class="control">
-      <button class="button is-danger" type="submit">Delete my account</button>
-    </div>
+    <p class="help">
+      Type your password to confirm account deletion.
+    </p>
   </div>
 </form>
 {% endblock main %}

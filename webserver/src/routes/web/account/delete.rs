@@ -41,8 +41,8 @@ pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Sess
     None => return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get))),
   };
 
-  if delete.username != user.username() {
-    sess.add_data("error", "That username does not match your username.");
+  if !user.check_password(&delete.password) {
+    sess.add_data("error", "Incorrect password.");
     return Ok(Redirect::to(uri!(get)));
   }
 
@@ -56,6 +56,6 @@ pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Sess
 
 #[derive(Debug, FromForm)]
 pub struct DeleteRequest {
-  username: String,
+  password: String,
   anti_csrf_token: String,
 }

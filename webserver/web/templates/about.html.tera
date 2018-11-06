@@ -16,8 +16,9 @@ About
 <div class="content">
   {{ about | safe }}
   <p>
-    {{ config.general.site_name }} runs on <a href="https://github.com/jkcclemens/paste">paste</a>,
-    an open-source project dedicated to making a sensible, modern pastebin that anyone can host.
+    {{ config.general.site_name }} runs on
+    <a class="external" href="https://github.com/jkcclemens/paste">paste</a>, an open-source project
+    dedicated to making a sensible, modern pastebin that anyone can host.
   </p>
 </div>
 {% endblock main %}

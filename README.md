@@ -6,6 +6,7 @@
 [![dependency status](https://deps.rs/repo/github/jkcclemens/paste/status.svg)](https://deps.rs/repo/github/jkcclemens/paste)
 [![patreon](https://img.shields.io/badge/donate-patreon-blue.svg)](https://www.patreon.com/jkcclemens/overview)
 [![paypal](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/jkcclemens)
+[![discord](https://img.shields.io/badge/contact-discord-7289DA.svg)](https://discord.gg/EnqSwJK)
 
 ## Idea
 
@@ -23,6 +24,11 @@ to the API.
 paste's web interface, backend, routes, and code are all unstable. There may be heinous bugs.
 However, I would note that both myself and a few others use paste as our daily pastebins without
 issue.
+
+## Contact
+
+Join the [Discord server](https://discord.gg/EnqSwJK) for questions, comments, and general paste-y
+community!
 
 ## Using a pre-existing paste server
 
@@ -159,7 +165,3 @@ Bash shell in the working environment.
 ## API
 
 See the [paste API documentation](/api.md).
-
-## Contact
-
-Join the [Discord server](https://discord.gg/EnqSwJK)!

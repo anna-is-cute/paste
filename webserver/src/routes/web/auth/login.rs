@@ -63,17 +63,17 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, redis
 
   if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
-    return Ok(Redirect::to("/login"));
+    return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
 
   if !data.honeypot.is_empty() {
     sess.add_data("error", "An error occurred. Please try again.");
-    return Ok(Redirect::to("/login"));
+    return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
 
   if let Some(msg) = LoginAttempt::find_check(&conn, addr.ip())? {
     sess.add_data("error", msg);
-    return Ok(Redirect::to("/login"));
+    return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
 
   let user: Option<User> = users::table
@@ -89,7 +89,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, redis
         None => "Username not found.".into(),
       };
       sess.add_data("error", msg);
-      return Ok(Redirect::to("/login"));
+      return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
     },
   };
 
@@ -99,7 +99,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, redis
       None => "Incorrect password.".into(),
     };
     sess.add_data("error", msg);
-    return Ok(Redirect::to("/login"));
+    return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
 
   let tfa_check = || -> Result<bool> {
@@ -146,7 +146,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, redis
       None => "Invalid authentication code.".into(),
     };
     sess.add_data("error", msg);
-    return Ok(Redirect::to("/login"));
+    return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
 
   sess.user_id = Some(user.id());

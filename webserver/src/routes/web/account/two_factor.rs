@@ -38,7 +38,7 @@ use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET, QUERY_
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
-    None => return Ok(Rst::Redirect(Redirect::to("/login"))),
+    None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
   let backups = sess.data.remove("backup_codes");
@@ -54,7 +54,7 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> R
 pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<AddCsp<Rst>> {
   let mut user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(AddCsp::new(Rst::Redirect(Redirect::to("/login")), vec!["img-src data:"])),
+    None => return Ok(AddCsp::new(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get))), vec!["img-src data:"])),
   };
 
   if user.tfa_enabled() {
@@ -111,7 +111,7 @@ pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Sessio
 
   let mut user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(Redirect::to("/login")),
+    None => return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get))),
   };
 
   if user.tfa_enabled() {
@@ -135,7 +135,7 @@ pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, 
 
   let mut user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(Redirect::to("/login")),
+    None => return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get))),
   };
 
   if user.tfa_enabled() {
@@ -148,7 +148,7 @@ pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, 
       Some(s) => s,
       None => {
         sess.add_data("error", "No shared secret has been generated yet.");
-        return Ok(Redirect::to("/account/2fa"));
+        return Ok(Redirect::to(uri!(get)));
       },
     };
 
@@ -166,7 +166,7 @@ pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, 
   let backups = generate_backup_codes(&conn, user.id())?;
   sess.add_data("backup_codes", backups.join("\n"));
 
-  Ok(Redirect::to("/account/2fa"))
+  Ok(Redirect::to(uri!(get)))
 }
 
 #[derive(Debug, FromForm)]
@@ -179,7 +179,7 @@ pub struct Validate {
 pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
-    None => return Ok(Rst::Redirect(Redirect::to("/login"))),
+    None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
   if !user.tfa_enabled() {
@@ -202,7 +202,7 @@ pub fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Sessio
 
   let mut user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(Redirect::to("/login")),
+    None => return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get))),
   };
 
   if !user.tfa_enabled() {
@@ -212,7 +212,7 @@ pub fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Sessio
 
   if !user.check_password(&form.password) {
     sess.add_data("error", "Invalid password.");
-    return Ok(Redirect::to("/account/2fa/disable"));
+    return Ok(Redirect::to(uri!(disable_get)));
   }
 
   user.set_tfa_enabled(false);
@@ -221,7 +221,7 @@ pub fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Sessio
 
   delete_backup_codes(&conn, user.id())?;
 
-  Ok(Redirect::to("/account/2fa"))
+  Ok(Redirect::to(uri!(get)))
 }
 
 #[derive(Debug, FromForm)]
@@ -239,7 +239,7 @@ pub fn new_backup_codes(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: 
 
   let user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(Redirect::to("/login")),
+    None => return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get))),
   };
 
   if !user.tfa_enabled() {
@@ -250,7 +250,7 @@ pub fn new_backup_codes(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: 
   let codes = generate_backup_codes(&conn, user.id())?;
   sess.add_data("backup_codes", codes.join("\n"));
 
-  Ok(Redirect::to("/account/2fa"))
+  Ok(Redirect::to(uri!(get)))
 }
 
 fn generate_secret(conn: &DbConn, user: &mut User) -> Result<()> {

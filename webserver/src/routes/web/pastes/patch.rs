@@ -88,7 +88,7 @@ pub fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: Paste
 
   let user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(Rst::Redirect(Redirect::to("/login"))),
+    None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
   let mut paste: DbPaste = match paste_id.get(&conn)? {

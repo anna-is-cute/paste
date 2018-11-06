@@ -32,7 +32,7 @@ use uuid::Uuid;
 #[get("/register")]
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Rst> {
   if user.is_some() {
-    return AddCsp::none(Rst::Redirect(Redirect::to("/")));
+    return AddCsp::none(Rst::Redirect(Redirect::to(uri!(crate::routes::web::index::get))));
   }
 
   let honeypot = Honeypot::new();
@@ -67,36 +67,36 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, confi
 
   if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
-    return Ok(Redirect::to("/register"));
+    return Ok(Redirect::to(uri!(get)));
   }
 
   if !data.honeypot.is_empty() {
     sess.add_data("error", "An error occurred. Please try again.");
-    return Ok(Redirect::to("/register"));
+    return Ok(Redirect::to(uri!(get)));
   }
 
   if data.username.is_empty() || data.name.is_empty()  || data.email.is_empty() || data.password.is_empty() {
     sess.add_data("error", "No fields can be empty.");
-    return Ok(Redirect::to("/register"));
+    return Ok(Redirect::to(uri!(get)));
   }
   let username = match Validator::validate_username(&data.username) {
     Ok(u) => u,
     Err(e) => {
       sess.add_data("error", format!("Invalid username: {}.", e));
-      return Ok(Redirect::to("/register"));
+      return Ok(Redirect::to(uri!(get)));
     },
   };
   let display_name = match Validator::validate_display_name(&data.name) {
     Ok(d) => d.into_owned(),
     Err(e) => {
       sess.add_data("error", format!("Invalid display name: {}.", e));
-      return Ok(Redirect::to("/register"));
+      return Ok(Redirect::to(uri!(get)));
     },
   };
 
   if !email::check_email(&data.email) {
     sess.add_data("error", "Invalid email.");
-    return Ok(Redirect::to("/register"));
+    return Ok(Redirect::to(uri!(get)));
   }
 
   {
@@ -109,7 +109,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, confi
     );
     if let Err(e) = pw_ctx.validate() {
       sess.add_data("error", e);
-      return Ok(Redirect::to("/register"));
+      return Ok(Redirect::to(uri!(get)));
     }
   }
 
@@ -119,7 +119,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, confi
     .get_result(&*conn)?;
   if existing_names > 0 {
     sess.add_data("error", "A user with that username already exists.");
-    return Ok(Redirect::to("/register"));
+    return Ok(Redirect::to(uri!(get)));
   }
 
   let id = UserId(Uuid::new_v4());

@@ -38,12 +38,12 @@ pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, 
 
   if !sess.check_token(&paste.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
-    return Ok(Redirect::to("/"));
+    return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
   }
 
   if !paste.honeypot.is_empty() {
     sess.add_data("error", "An error occurred. Please try again.");
-    return Ok(Redirect::to("/"));
+    return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
   }
 
   let user = if paste.anonymous.is_some() || user.is_none() {
@@ -57,7 +57,7 @@ pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, 
       Ok(f) => f,
       Err(_) => {
         sess.add_data("error", "Invalid JSON. Did you tamper with the form?");
-        return Ok(Redirect::to("/"));
+        return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
       },
     },
     None => handle_non_js(&paste),
@@ -98,7 +98,7 @@ pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, 
     Err(e) => {
       let msg = e.into_web_message()?;
       sess.add_data("error", msg);
-      return Ok(Redirect::to("/"));
+      return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
     },
   };
 

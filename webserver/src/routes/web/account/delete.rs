@@ -20,7 +20,7 @@ use sidekiq::Client as SidekiqClient;
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
   let user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(Rst::Redirect(Redirect::to("/login"))),
+    None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
   let ctx = context(&*config, Some(&user), &mut sess);
@@ -33,17 +33,17 @@ pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Sess
 
   if !sess.check_token(&delete.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
-    return Ok(Redirect::to("/account/delete"));
+    return Ok(Redirect::to(uri!(get)));
   }
 
   let user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(Redirect::to("/login")),
+    None => return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get))),
   };
 
   if delete.username != user.username() {
     sess.add_data("error", "That username does not match your username.");
-    return Ok(Redirect::to("/account/delete"));
+    return Ok(Redirect::to(uri!(get)));
   }
 
   user.delete(&conn)?;
@@ -51,7 +51,7 @@ pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Sess
   sidekiq.push(Job::DeleteAllPastes(user.id()).into())?;
 
   sess.add_data("info", "Account deleted.");
-  Ok(Redirect::to("/"))
+  Ok(Redirect::to(uri!(crate::routes::web::index::get)))
 }
 
 #[derive(Debug, FromForm)]

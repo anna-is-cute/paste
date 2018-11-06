@@ -33,17 +33,17 @@ pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, 
 
   if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
-    return Ok(Redirect::to("/account/delete"));
+    return Ok(Redirect::to(uri!(super::index::get)));
   }
 
   let user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(Redirect::to("/login")),
+    None => return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get))),
   };
 
   if user.email_verified() {
     sess.add_data("error", "Your email is already verified.");
-    return Ok(Redirect::to("/account"));
+    return Ok(Redirect::to(uri!(super::index::get)));
   }
 
   let ver: Option<EmailVerification> = email_verifications::table
@@ -62,7 +62,7 @@ pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, 
 
   if !ver.can_send_again() {
     sess.add_data("error", "You must wait 15 minutes between verification email resends.");
-    return Ok(Redirect::to("/account"));
+    return Ok(Redirect::to(uri!(super::index::get)));
   }
 
   let secret = match secret {
@@ -83,7 +83,7 @@ pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, 
   sidekiq.push(ver.job(&config, &user, &secret)?.into())?;
 
   sess.add_data("info", "Email sent.");
-  Ok(Redirect::to("/account"))
+  Ok(Redirect::to(uri!(super::index::get)))
 }
 
 #[get("/account/verify?<data..>")]
@@ -92,18 +92,18 @@ pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, c
     Ok(k) => k,
     Err(_) => {
       sess.add_data("error", "Invalid email verification.");
-      return Ok(Redirect::to("/account"));
+      return Ok(Redirect::to(uri!(super::index::get)));
     },
   };
 
   let mut user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(Redirect::to("/login")),
+    None => return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get))),
   };
 
   if user.email_verified() {
     sess.add_data("error", "Your email is already verified.");
-    return Ok(Redirect::to("/account"));
+    return Ok(Redirect::to(uri!(super::index::get)));
   }
 
   let verification: Option<EmailVerification> = email_verifications::table
@@ -116,13 +116,13 @@ pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, c
     Some(v) => v,
     None => {
       sess.add_data("error", "Invalid email verification.");
-      return Ok(Redirect::to("/account"));
+      return Ok(Redirect::to(uri!(super::index::get)));
     },
   };
 
   if !verification.check(&key) {
     sess.add_data("error", "Invalid email verification");
-    return Ok(Redirect::to("/account"));
+    return Ok(Redirect::to(uri!(super::index::get)));
   }
 
   user.set_email_verified(true);
@@ -131,7 +131,7 @@ pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, c
   diesel::delete(&verification).execute(&*conn)?;
 
   sess.add_data("info", "Email verified.");
-  Ok(Redirect::to("/account"))
+  Ok(Redirect::to(uri!(super::index::get)))
 }
 
 #[derive(Debug, FromForm)]

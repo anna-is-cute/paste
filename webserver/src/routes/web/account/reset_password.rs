@@ -49,7 +49,7 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
   let data = data.into_inner();
   sess.set_form(&data);
 
-  let res = Ok(Redirect::to("/account/forgot_password"));
+  let res = Ok(Redirect::to(uri!(get)));
 
   if !sess.check_token(&data.anti_csrf_token) {
     sess.add_data("error", "Invalid anti-CSRF token.");
@@ -129,7 +129,7 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
 pub fn reset_get(data: Form<ResetPassword>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   if check_reset(&conn, *data.id, &data.secret).is_none() {
     sess.add_data("error", "Invalid password reset URL.");
-    return Ok(Rst::Redirect(Redirect::to("/account/forgot_password")));
+    return Ok(Rst::Redirect(Redirect::to(uri!(get))));
   }
 
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
@@ -174,7 +174,7 @@ pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<
     None => {
       diesel::delete(&reset).execute(&*conn)?;
       sess.add_data("error", "That account does not exist.");
-      return Ok(Redirect::to("/account/forgot_password"));
+      return Ok(Redirect::to(uri!(get)));
     },
   };
 

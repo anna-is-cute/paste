@@ -172,7 +172,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 pub fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(Rst::Redirect(Redirect::to("/login"))),
+    None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
   let paste: DbPaste = match id.get(&conn)? {

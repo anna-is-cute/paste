@@ -12,13 +12,11 @@ use base32::Alphabet;
 
 use failure::bail;
 
-use image::{Luma, Pixel, png::PNGEncoder};
-
 use redis::Commands;
 
 use oath::HashType;
 
-use qrcode::QrCode;
+use qrcode::{QrCode, render::svg};
 
 use rocket::{
   request::Form,
@@ -82,19 +80,14 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
     Err(e) => bail!("could not create qr code: {}", e),
   };
   let img = qr
-    .render::<Luma<u8>>()
-    .min_dimensions(512, 512)
+    .render::<svg::Color>()
+    .min_dimensions(256, 256)
     .max_dimensions(512, 512)
     .build();
-  let mut png: Vec<u8> = Vec::with_capacity(8192);
-  PNGEncoder::new(&mut png).encode(&*img, img.width(), img.height(), Luma::<u8>::color_type())?;
-
-  // make a data uri for the qr code
-  let qr_img = format!("data:image/png;base64,{}", base64::encode(&png));
 
   let mut ctx = context(&*config, Some(&user), &mut sess);
   ctx["shared_secret_segments"] = json!(secret_segments(&shared_secret));
-  ctx["qr_code"] = json!(qr_img);
+  ctx["qr_code"] = json!(img);
 
   Ok(AddCsp::new(
     Rst::Template(Template::render("account/2fa/enable", ctx)),

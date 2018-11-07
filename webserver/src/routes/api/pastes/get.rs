@@ -22,7 +22,7 @@ use diesel::prelude::*;
 
 use rocket::{http::Status as HttpStatus, request::Form};
 
-use std::cmp::max;
+use std::cmp::min;
 
 #[derive(Debug, Serialize)]
 pub struct AllPaste {
@@ -47,7 +47,7 @@ pub fn get_all(conn: DbConn) -> RouteResult<Vec<AllPaste>> {
 }
 
 fn _get_all(query: Option<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>> {
-  let limit = max(100, query.and_then(|x| x.limit).unwrap_or(5));
+  let limit = min(100, query.and_then(|x| x.limit).unwrap_or(5));
 
   let pastes: Vec<DbPaste> = pastes::table
     .filter(pastes::visibility.eq(Visibility::Public))

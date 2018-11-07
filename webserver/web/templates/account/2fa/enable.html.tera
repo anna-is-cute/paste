@@ -48,7 +48,7 @@ Turn on two-factor authentication.
   </form>
 
   <figure class="image is-256x256">
-    <img src="{{ qr_code | safe }}" alt="2FA QR code"/>
+    {{ qr_code | safe }}
   </figure>
 
   <p>

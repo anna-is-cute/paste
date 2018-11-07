@@ -110,9 +110,6 @@ oath = "0.10"
 # encoding for totp shared keys
 base32 = "0.4"
 
-# displaying otpauth urls
-qrcode = "0.9"
-
 # needed to handle multipart's mime types
 # old version required because multipart depends on an old version
 mime = "0.2"
@@ -157,12 +154,6 @@ features = ["serde"]
 version = "0.3"
 default-features = false
 
-# handling qrcode images
-[dependencies.image]
-version = "0.20"
-default-features = false
-features = ["png_codec"]
-
 # accepting multipart input
 [dependencies.multipart]
 version = "0.15"
@@ -173,3 +164,10 @@ features = ["server", "use_arc_str"]
 [dependencies.hashbrown]
 git = "https://github.com/Amanieu/hashbrown"
 features = ["nightly", "serde"]
+
+# displaying otpauth urls
+[dependencies.qrcode]
+git = "https://github.com/jkcclemens/qrcode-rust"
+branch = "personal"
+default-features = false
+features = ["svg"]

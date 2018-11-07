@@ -23,6 +23,8 @@ $pagination-hover-color: $grey-lighter;
 // make tags not blend in
 $tag-background-color: lighten($grey-darker, 5);
 
+$dimensions: 16 24 32 48 64 96 128 256;
+
 @import "bulma/sass/utilities/derived-variables";
 
 @import "bulma/bulma";

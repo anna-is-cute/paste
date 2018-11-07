@@ -81,6 +81,9 @@
           </span>
         </a>
       </div>
+      <div class="control">
+        <button class="button is-danger" type="submit">Delete my account</button>
+      </div>
     </div>
     <p class="help">
       Type your password to confirm account deletion.

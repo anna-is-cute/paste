@@ -23,7 +23,7 @@ use serde_json::json;
 
 use std::{fs::File, io::Read};
 
-#[derive(Debug, FromForm)]
+#[derive(Debug, FromForm, UriDisplay)]
 pub struct PageParams {
   page: u32,
 }

@@ -86,8 +86,8 @@ Edit untitled paste
       </div>
       <div class="left tabs">
         <ul>
-          <li><a href="/p/{{ author_name | safe | urlencode(safe="") }}/{{ paste.id }}">files</a></li>
-          <li><a href="/p/{{ author_name | safe | urlencode(safe="") }}/{{ paste.id }}/revisions">revisions <span class="right tag">{{ num_commits }}</span></a></li>
+          <li><a href="{{ links.files }}">files</a></li>
+          <li><a href="{{ links.revisions }}">revisions <span class="right tag">{{ num_commits }}</span></a></li>
         </ul>
       </div>
     </div>

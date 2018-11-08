@@ -150,11 +150,12 @@ pub fn get(username: String, id: PasteId, config: State<Config>, user: OptionalW
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
 
-  let mut ctx = context(&*config, user.into_inner().as_ref(), &mut sess);
+  let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["paste"] = json!(output);
   ctx["num_commits"] = json!(count);
   ctx["author_name"] = json!(author_name);
   ctx["revisions"] = json!(all_revisions);
+  ctx["links"] = json!(super::paste_links(paste.id(), &author_name, user.as_ref()));
 
   Ok(Rst::Template(Template::render("paste/revisions", ctx)))
 }

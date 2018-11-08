@@ -156,6 +156,18 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
 
+  let mut links = super::paste_links(paste.id(), &author_name, user.as_ref());
+  links.add_value(
+    "raw_files",
+    output
+      .files
+      .iter()
+      .fold(&mut crate::routes::web::Links::default(), |acc, x| acc.add(
+        x.id.to_simple().to_string(),
+        uri!(crate::routes::web::pastes::files::raw::get: &author_name, paste.id(), x.id),
+      )),
+  );
+
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["paste"] = json!(output);
   ctx["num_commits"] = json!(paste.num_commits()?);
@@ -164,6 +176,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
   ctx["deletion_key"] = json!(sess.data.remove(&format!("deletion_key_{}", paste.id().to_simple())));
   ctx["is_owner"] = json!(is_owner);
   ctx["author_name"] = json!(author_name);
+  ctx["links"] = json!(links);
 
   Ok(Rst::Template(Template::render("paste/index", ctx)))
 }
@@ -237,6 +250,7 @@ pub fn edit(username: String, id: PasteId, config: State<Config>, user: Optional
   ctx["num_commits"] = json!(paste.num_commits()?);
   ctx["is_owner"] = json!(is_owner);
   ctx["author_name"] = json!(author_name);
+  ctx["links"] = json!(super::paste_links(paste.id(), &author_name, Some(&user)));
 
   Ok(Rst::Template(Template::render("paste/edit", ctx)))
 }

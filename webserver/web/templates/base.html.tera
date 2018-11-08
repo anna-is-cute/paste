@@ -145,7 +145,7 @@
       <li><a href="https://github.com/jkcclemens/paste/commit/{{ server_version }}">server: {{ server_version | truncate(length=7) | replace(from="…", to="") }}</a></li>
       <li><a href="https://github.com/jkcclemens/paste/commit/{{ resources_version }}">resources: {{ resources_version | truncate(length=7) | replace(from="…", to="") }}</a></li>
       <li><a href="/credits">credits</a></li>
-      <li class="is-active"><a>&copy; 2018</a></li>
+      <li class="is-active"><a>&copy; {{ now() | date(format="%Y") }}</a></li>
     </ul>
   </nav>
 </footer>

@@ -23,22 +23,14 @@ use serde_json::json;
 
 use std::{fs::File, io::Read};
 
-#[get("/u/<username>")]
-pub fn get(username: String, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
-  _get(1, username, config, user, sess, conn)
-}
-
-#[get("/u/<username>?<params..>")]
-pub fn get_page(username: String, params: Form<PageParams>, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
-  _get(params.page, username, config, user, sess, conn)
-}
-
 #[derive(Debug, FromForm)]
 pub struct PageParams {
   page: u32,
 }
 
-fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+#[get("/u/<username>?<params..>")]
+pub fn get(username: String, params: Option<Form<PageParams>>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+  let page = params.map(|x| x.page).unwrap_or(1);
   // TODO: make PositiveNumber struct or similar (could make Positive<num::Integer> or something)
   if page == 0 {
     return Ok(Rst::Status(HttpStatus::NotFound));

@@ -12,15 +12,15 @@
   integrity="sha384-TX1b4qxxTCFxJPqmHYPZ2mbd07JhxxFn9EjKzbgtQ78+CgTsOvyxg5zBNN6SeLiV"></script>
 {% endblock head %}
 
-{% block title %}Account{% endblock title %}
+{% block title -%}Account{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 Account
-{% endblock header_title %}
+{%- endblock header_title %}
 
-{% block header_subtitle %}
+{% block header_subtitle -%}
 Manage account settings.
-{% endblock header_subtitle %}
+{%- endblock header_subtitle %}
 
 {% block header_foot %}
 <nav class="tabs is-boxed">

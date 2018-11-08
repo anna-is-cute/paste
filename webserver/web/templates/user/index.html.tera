@@ -42,9 +42,9 @@
   integrity="sha384-ZRNB7Q+d2cw5nKPIP3gBP58TnspQ+F001MRqjNMPkNM0EtgaYuAbHHJc2ESs352/"></script>
 {% endblock head %}
 
-{% block title %}
+{% block title -%}
 {{ target.name }}'s pastes
-{% endblock title %}
+{%- endblock title %}
 
 {% block header %}
 <section class="hero is-dark">

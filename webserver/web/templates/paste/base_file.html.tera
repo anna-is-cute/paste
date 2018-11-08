@@ -17,9 +17,9 @@
               <option value="" selected>auto</option>
             </optgroup>
             <optgroup>
-              {% for lang in languages %}
+              {%- for lang in languages %}
               <option value="{{ lang.0 }}">{{ lang.1 }}</option>
-              {% endfor %}
+              {%- endfor %}
             </optgroup>
           </select>
           <span class="icon is-small is-left">

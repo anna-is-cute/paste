@@ -45,13 +45,13 @@
   integrity="sha384-nvZWXhPMbi0ixdPLjUPfx2htsDNlNiypOV+5mX4XOwbZ2aDQjY7yw5Jd2HSf9cUr"></script>
 {% endblock head %}
 
-{% block title %}
+{% block title -%}
   {% if paste.name %}
 {{ paste.name }}
   {% else %}
 untitled paste
   {% endif %}
-{% endblock title %}
+{%- endblock title %}
 
 {% block header %}
 <section class="hero is-dark">

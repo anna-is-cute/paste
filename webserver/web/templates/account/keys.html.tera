@@ -4,15 +4,15 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}API keys{% endblock title %}
+{% block title -%}API keys{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 API keys
-{% endblock header_title %}
+{%- endblock header_title %}
 
-{% block header_subtitle %}
+{% block header_subtitle -%}
 Manage API keys.
-{% endblock header_subtitle %}
+{%- endblock header_subtitle %}
 
 {% block header_foot %}
 <nav class="tabs is-boxed">

@@ -4,17 +4,17 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}
+{% block title -%}
 403
-{% endblock title %}
+{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 403
-{% endblock header_title %}
+{%- endblock header_title %}
 
-{% block header_subtitle %}
+{% block header_subtitle -%}
 Forbidden.
-{% endblock header_subtitle %}
+{%- endblock header_subtitle %}
 
 {% block main %}
 You're not allowed to see or do whatever it was you were trying to see or do. Stop it.

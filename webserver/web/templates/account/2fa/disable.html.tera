@@ -8,15 +8,15 @@
   integrity="sha384-TX1b4qxxTCFxJPqmHYPZ2mbd07JhxxFn9EjKzbgtQ78+CgTsOvyxg5zBNN6SeLiV"></script>
 {% endblock head %}
 
-{% block title %}Disable 2FA{% endblock title %}
+{% block title -%}Disable 2FA{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 Disable 2FA
-{% endblock header_title %}
+{%- endblock header_title %}
 
-{% block header_subtitle %}
+{% block header_subtitle -%}
 Turn off two-factor authentication.
-{% endblock header_subtitle %}
+{%- endblock header_subtitle %}
 
 {% block header_foot %}
 <nav class="tabs is-boxed">

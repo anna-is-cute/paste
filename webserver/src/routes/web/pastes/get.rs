@@ -161,7 +161,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
   ctx["num_commits"] = json!(paste.num_commits()?);
   ctx["rendered"] = json!(rendered);
   ctx["user"] = json!(*user);
-  ctx["deletion_key"] = json!(sess.data.remove("deletion_key"));
+  ctx["deletion_key"] = json!(sess.data.remove(&format!("deletion_key_{}", paste.id().to_simple())));
   ctx["is_owner"] = json!(is_owner);
   ctx["author_name"] = json!(author_name);
 

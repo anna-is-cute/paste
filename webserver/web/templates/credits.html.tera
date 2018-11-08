@@ -4,17 +4,17 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}
+{% block title -%}
 Credits
-{% endblock title %}
+{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 Credits
-{% endblock header_title %}
+{%- endblock header_title %}
 
-{% block header_subtitle %}
+{% block header_subtitle -%}
 If paste was a movie, these would be at the end.
-{% endblock header_subtitle %}
+{%- endblock header_subtitle %}
 
 {% block main %}
 <section class="section">

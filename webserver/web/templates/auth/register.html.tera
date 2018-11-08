@@ -13,17 +13,17 @@
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {% endblock head %}
 
-{% block title %}
+{% block title -%}
 Register
-{% endblock title %}
+{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 Register
-{% endblock header_title %}
+{%- endblock header_title %}
 
-{% block header_subtitle %}
+{% block header_subtitle -%}
 Create a new account.
-{% endblock header_subtitle %}
+{%- endblock header_subtitle %}
 
 {% block main %}
 <form method="post" action="/register">

@@ -4,17 +4,17 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}
+{% block title -%}
 400
-{% endblock title %}
+{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 400
-{% endblock header_title %}
+{%- endblock header_title %}
 
-{% block header_subtitle %}
+{% block header_subtitle -%}
 Bad request.
-{% endblock header_subtitle %}
+{%- endblock header_subtitle %}
 
 {% block main %}
 Your request was bad. This error message is bad.

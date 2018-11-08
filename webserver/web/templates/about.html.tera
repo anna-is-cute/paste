@@ -4,13 +4,13 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}
+{% block title -%}
 About
-{% endblock title %}
+{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 About
-{% endblock header_title %}
+{%- endblock header_title %}
 
 {% block main %}
 <div class="content">

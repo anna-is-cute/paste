@@ -35,17 +35,17 @@
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {% endblock head %}
 
-{% block title %}
+{% block title -%}
 New
-{% endblock title %}
+{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 New paste
-{% endblock header_title %}
+{%- endblock header_title %}
 
-{% block header_subtitle %}
+{% block header_subtitle -%}
 Create a new paste.
-{% endblock header_subtitle %}
+{%- endblock header_subtitle %}
 
 {% block main %}
 <form id="paste_upload" action="/pastes" method="post">

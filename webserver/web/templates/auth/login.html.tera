@@ -9,15 +9,15 @@
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {% endblock head %}
 
-{% block title %}Log in{% endblock title %}
+{% block title -%}Log in{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 Log in
-{% endblock header_title %}
+{%- endblock header_title %}
 
-{% block header_subtitle %}
+{% block header_subtitle -%}
 Log in to your account.
-{% endblock header_subtitle %}
+{%- endblock header_subtitle %}
 
 {% block main %}
 <form method="post" action="/login">

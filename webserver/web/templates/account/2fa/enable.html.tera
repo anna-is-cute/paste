@@ -4,15 +4,15 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}Enable 2FA{% endblock title %}
+{% block title -%}Enable 2FA{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 Enable 2FA
-{% endblock header_title %}
+{%- endblock header_title %}
 
-{% block header_subtitle %}
+{% block header_subtitle -%}
 Turn on two-factor authentication.
-{% endblock header_subtitle %}
+{%- endblock header_subtitle %}
 
 {% block header_foot %}
 <nav class="tabs is-boxed">

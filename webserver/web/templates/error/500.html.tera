@@ -4,17 +4,17 @@
 {{ super() }}
 {% endblock head %}
 
-{% block title %}
+{% block title -%}
 500
-{% endblock title %}
+{%- endblock title %}
 
-{% block header_title %}
+{% block header_title -%}
 500
-{% endblock header_title %}
+{%- endblock header_title %}
 
-{% block header_subtitle %}
+{% block header_subtitle -%}
 Internal server error.
-{% endblock header_subtitle %}
+{%- endblock header_subtitle %}
 
 {% block main %}
 Otherwise known as "we goofed." This is always a bug, so feel free to

@@ -8,7 +8,7 @@
   integrity="sha384-TX1b4qxxTCFxJPqmHYPZ2mbd07JhxxFn9EjKzbgtQ78+CgTsOvyxg5zBNN6SeLiV"></script>
 {% endblock head %}
 
-{% block title %}Delete account{% endblock title %}
+{% block title -%}Delete account{%- endblock title %}
 
 {% block header %}
 <section class="hero is-danger">

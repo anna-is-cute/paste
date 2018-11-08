@@ -75,7 +75,7 @@
         {% if user %}
           <a
             class="navbar-link"
-            href="/u/{{ user.username | urlencode(safe="") }}">{{ user.name }}</a>
+            href="/u/{{ user.username | safe | urlencode(safe="") }}">{{ user.name }}</a>
         {% else %}
           <a class="navbar-link" href="/login">Log in</a>
         {% endif %}

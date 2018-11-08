@@ -83,7 +83,7 @@
 {% block main %}
 {% if user and target.id == user.id %}
 <div id="deletion_modal" class="modal">
-  <form id="deletion_form" action="/p/{{ target.username | urlencode(safe="") }}/ids" method="post">
+  <form id="deletion_form" action="/p/{{ target.username | safe | urlencode(safe="") }}/ids" method="post">
     <input type="hidden" name="_method" value="delete"/>
     <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
     <div class="modal-background closes-modal" data-modal-id="deletion_modal"></div>
@@ -134,12 +134,12 @@
   {% if page == 1 %}
     <a class="pagination-previous" disabled>Previous</a>
   {% else %}
-    <a href="/u/{{ target.username | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
+    <a href="/u/{{ target.username | safe | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
   {% endif %}
   {% if page == last_page %}
     <a class="pagination-next" disabled>Next</a>
   {% else %}
-    <a href="/u/{{ target.username | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
+    <a href="/u/{{ target.username | safe | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
   {% endif %}
 </nav>
 
@@ -167,7 +167,7 @@
       {% endif %}
         <div>
           <h3 class="title is-marginless">
-            <a href="/p/{{ target.username | urlencode(safe="") }}/{{ paste.id }}">
+            <a href="/p/{{ target.username | safe | urlencode(safe="") }}/{{ paste.id }}">
           {% if paste.name %}
               <span class="keeps-spaces">{{ paste.name }}</span>
           {% else %}
@@ -216,12 +216,12 @@
   {% if page == 1 %}
     <a class="pagination-previous" disabled>Previous</a>
   {% else %}
-    <a href="/u/{{ target.username | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
+    <a href="/u/{{ target.username | safe | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
   {% endif %}
   {% if page == last_page %}
     <a class="pagination-next" disabled>Next</a>
   {% else %}
-    <a href="/u/{{ target.username | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
+    <a href="/u/{{ target.username | safe | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
   {% endif %}
 </nav>
 {% endif %}

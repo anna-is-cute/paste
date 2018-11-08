@@ -1,6 +1,6 @@
 {% extends "base" %}
 
-{% block head %}
+{% block head -%}
 {{ super() }}
 <link
   title="dark"
@@ -40,7 +40,7 @@
   defer
   src="/static/js/modal.js?v={{ resources_version }}"
   integrity="sha384-ZRNB7Q+d2cw5nKPIP3gBP58TnspQ+F001MRqjNMPkNM0EtgaYuAbHHJc2ESs352/"></script>
-{% endblock head %}
+{%- endblock head %}
 
 {% block title -%}
 {{ target.name }}'s pastes

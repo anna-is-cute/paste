@@ -1,6 +1,6 @@
 {% extends "base" %}
 
-{% block head %}
+{% block head -%}
 {{ super() }}
 <link
   title="dark"
@@ -33,7 +33,7 @@
   src="/static/js/editor.js?v={{ resources_version }}"
   integrity="sha384-TNi31Rs9kaKiilKh2fvS7rSH3ulHJEOnfjm5J7fOf1GoQi5i3LGsxqzMYiYulkK8"></script>
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
-{% endblock head %}
+{%- endblock head %}
 
 {% block title -%}
 New
@@ -59,7 +59,7 @@ Create a new paste.
             name="name"
             class="input"
             type="text"
-            {% if form.name %}value="{{ form.name }}"{% endif %}
+            {%- if form.name %}value="{{ form.name }}"{% endif %}
             placeholder="Paste name"/>
         </div>
       </div>
@@ -70,7 +70,7 @@ Create a new paste.
             name="description"
             class="input"
             type="text"
-            {% if form.description %}value="{{ form.description }}"{% endif %}
+            {%- if form.description %}value="{{ form.description }}"{% endif %}
             placeholder="Paste description"/>
         </div>
       </div>
@@ -82,13 +82,13 @@ Create a new paste.
           <div class="select is-fullwidth">
             <select name="visibility">
               <option
-                {% if form.visibility and form.visibility == "public" %}selected{% endif %}>public</option>
+                {%- if form.visibility and form.visibility == "public" %}selected{% endif %}>public</option>
               <option
-                {% if not form.visibility or form.visibility == "unlisted" %} selected{% endif %}>unlisted</option>
-            {% if user %}
+                {%- if not form.visibility or form.visibility == "unlisted" %} selected{% endif %}>unlisted</option>
+            {%- if user %}
               <option
-                {% if form.visibility and form.visibility == "private" %}selected{% endif %}>private</option>
-            {% endif %}
+                {%- if form.visibility and form.visibility == "private" %}selected{% endif %}>private</option>
+            {%- endif %}
             </select>
             <span class="icon is-small is-left">
               <i class="fas fa-globe"></i>
@@ -223,11 +223,11 @@ Create a new paste.
       <div class="control">
         <button class="button" name="anonymous" type="submit">Submit anonymously</button>
       </div>
-    {% if user %}
+    {%- if user %}
       <div class="control">
         <button class="button is-link" type="submit">Submit</button>
       </div>
-    {% endif %}
+    {%- endif %}
     </div>
   </div>
 </form>

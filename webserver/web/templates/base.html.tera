@@ -1,6 +1,6 @@
 {% extends "frame" %}
 
-{% block head %}
+{% block head -%}
 {{ super() }}
 <link
   title="dark"
@@ -45,9 +45,9 @@
 <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/static/favicons/favicon-114.png"/>
 <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/favicons/favicon-72.png"/>
 <link rel="apple-touch-icon-precomposed" href="/static/favicons/favicon-57.png"/>
-{% endblock head %}
+{%- endblock head %}
 
-{% block body %}
+{% block body -%}
 <div class="wrapper">
   <nav class="navbar">
     <div class="navbar-brand">
@@ -68,19 +68,19 @@
         <a class="navbar-item" href="/">New</a>
       </div>
       <div class="navbar-end">
-      {% if config.general.about_file %}
+      {%- if config.general.about_file %}
         <a class="navbar-item" href="/about">About</a>
       {% endif %}
         <div class="navbar-item has-dropdown is-hoverable">
-        {% if user %}
+        {%- if user %}
           <a
             class="navbar-link"
             href="/u/{{ user.username | safe | urlencode(safe="") }}">{{ user.name }}</a>
-        {% else %}
+        {%- else -%}
           <a class="navbar-link" href="/login">Log in</a>
-        {% endif %}
+        {%- endif %}
           <div class="navbar-dropdown is-right">
-          {% if user %}
+          {%- if user %}
             <span class="navbar-item">{{ user.username }}</span>
             <hr class="navbar-divider"/>
             <a class="navbar-item" href="/account">Settings</a>
@@ -88,9 +88,9 @@
               <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
               <button type="submit" class="navbar-item button-link">Log out</button>
             </form>
-          {% else %}
+          {%- else -%}
             <a class="navbar-item" href="/register">Register</a>
-          {% endif %}
+          {%- endif %}
             <hr class="navbar-divider"/>
             <a class="navbar-item" id="swap_theme">Swap theme</a>
           </div>
@@ -99,7 +99,7 @@
     </div>
   </nav>
 
-{% block header %}
+{%- block header %}
   <section class="hero is-dark">
     <div class="hero-body">
       <div class="container">
@@ -113,27 +113,27 @@
     </div>
     <div class="hero-foot">
       <div class="container">
-        {% block header_foot %}{% endblock header_foot %}
+        {%- block header_foot -%}{%- endblock header_foot -%}
       </div>
     </div>
   </section>
-{% endblock header %}
+{% endblock header -%}
 
   <main class="section">
     <div class="container">
-      {% if error %}
+      {%- if error %}
       <div class="notification is-warning">
         <button class="delete"></button>
         {{ error }}
       </div>
-      {% endif %}
-      {% if info %}
+      {% endif -%}
+      {%- if info %}
       <div class="notification is-info">
         <button class="delete"></button>
         {{ info }}
       </div>
-      {% endif %}
-{% block main %}{% endblock main %}
+      {% endif -%}
+{% block main -%}{%- endblock main %}
     </div>
   </main>
 

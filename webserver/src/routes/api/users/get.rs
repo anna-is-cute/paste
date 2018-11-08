@@ -23,22 +23,14 @@ use rocket::{http::Status as HttpStatus, request::Form};
 
 use std::{fs::File, io::Read};
 
-#[get("/<username>")]
-pub fn get(username: String, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {
-  _get(1, username, user, conn)
-}
-
-#[get("/<username>?<params..>")]
-pub fn get_page(username: String, params: Form<PageParams>, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {
-  _get(params.page, username, user, conn)
-}
-
 #[derive(Debug, FromForm)]
 pub struct PageParams {
   page: u32,
 }
 
-fn _get(page: u32, username: String, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {
+#[get("/<username>?<params..>")]
+pub fn get(username: String, params: Option<Form<PageParams>>, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {
+  let page = params.map(|x| x.page).unwrap_or(1);
   // TODO: make PositiveNumber struct or similar (could make Positive<num::Integer> or something)
   if page == 0 {
     return Ok(Status::show_error(

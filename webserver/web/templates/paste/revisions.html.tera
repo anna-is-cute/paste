@@ -1,6 +1,6 @@
 {% extends "base" %}
 
-{% block head %}
+{% block head -%}
 {{ super() }}
 {% if paste.visibility != "public" %}
 <meta name="robots" content="noindex, nofollow"/>
@@ -39,7 +39,7 @@
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
   integrity="sha384-nvZWXhPMbi0ixdPLjUPfx2htsDNlNiypOV+5mX4XOwbZ2aDQjY7yw5Jd2HSf9cUr"></script>
-{% endblock head %}
+{%- endblock head %}
 
 {% block title -%}
   Revisions for

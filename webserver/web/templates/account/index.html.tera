@@ -1,6 +1,6 @@
 {% extends "base" %}
 
-{% block head %}
+{% block head -%}
 {{ super() }}
 <script
   async
@@ -10,7 +10,7 @@
   defer
   src="/static/js/password.js?v={{ resources_version }}"
   integrity="sha384-TX1b4qxxTCFxJPqmHYPZ2mbd07JhxxFn9EjKzbgtQ78+CgTsOvyxg5zBNN6SeLiV"></script>
-{% endblock head %}
+{%- endblock head %}
 
 {% block title -%}Account{%- endblock title %}
 

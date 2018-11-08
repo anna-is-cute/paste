@@ -1,13 +1,13 @@
 {% extends "base" %}
 
-{% block head %}
+{% block head -%}
 {{ super() }}
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
   integrity="sha384-TX1b4qxxTCFxJPqmHYPZ2mbd07JhxxFn9EjKzbgtQ78+CgTsOvyxg5zBNN6SeLiV"></script>
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
-{% endblock head %}
+{%- endblock head %}
 
 {% block title -%}Log in{%- endblock title %}
 

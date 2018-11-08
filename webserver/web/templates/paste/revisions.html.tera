@@ -58,7 +58,7 @@ untitled paste
         <div class="field is-grouped">
           {% if is_owner %}
           <div class="control">
-            <a class="button is-info is-large" href="/p/{{ author_name | safe | urlencode(safe="") }}/{{ paste.id }}/edit">
+            <a class="button is-info is-large" href="{{ links.edit }}">
               <span class="icon is-large">
                 <i class="fas fa-pencil-alt"></i>
               </span>
@@ -107,8 +107,8 @@ untitled paste
       </div>
       <div class="left tabs">
         <ul>
-          <li><a href="/p/{{ author_name | safe | urlencode(safe="") }}/{{ paste.id }}">files</a></li>
-          <li class="is-active"><a href="/p/{{ author_name | safe | urlencode(safe="") }}/{{ paste.id }}/revisions">revisions <span class="right tag">{{ num_commits }}</span></a></li>
+          <li><a href="{{ links.files }}">files</a></li>
+          <li class="is-active"><a href="{{ links.revisions }}">revisions <span class="right tag">{{ num_commits }}</span></a></li>
         </ul>
       </div>
     </div>

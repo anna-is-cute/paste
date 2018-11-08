@@ -190,7 +190,7 @@ Create a new paste.
       </div>
       <div class="control">
         <label class="label">Days</label>
-        <input id="relative-days" class="input" type="number" min="0" max="31" value="0"/>
+        <input id="relative-days" class="input" type="number" min="0" max="364" value="0"/>
       </div>
       <div class="control">
         <label class="label">Hours</label>

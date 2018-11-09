@@ -44,7 +44,7 @@ impl Fairing for AntiCsrf {
 
   fn on_request(&self, req: &mut Request, _: &Data) {
     // generate a token for every get request
-    if req.method() != Method::Get {
+    if req.method() != Method::Get && req.method() != Method::Head {
       return;
     }
     AntiCsrf::on_get(req);

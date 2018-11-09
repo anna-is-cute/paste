@@ -66,13 +66,7 @@
           {{ target.name }}'s pastes
         </h1>
         <h2 class="subtitle">
-          {# can't use pluralize filter because we're stuck on old Tera, which counts 0 as singular #}
-          {{ total }}
-          {% if total == 1 %}
-            paste.
-          {% else %}
-            pastes.
-          {% endif %}
+          {{ total }} paste{{ total | pluralize }}.
         </h2>
       </div>
     </div>
@@ -83,7 +77,7 @@
 {% block main %}
 {% if user and target.id == user.id %}
 <div id="deletion_modal" class="modal">
-  <form id="deletion_form" action="/p/{{ target.username | safe | urlencode(safe="") }}/ids" method="post">
+  <form id="deletion_form" action="{{ links.delete_multiple }}" method="post">
     <input type="hidden" name="_method" value="delete"/>
     <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
     <div class="modal-background closes-modal" data-modal-id="deletion_modal"></div>
@@ -134,12 +128,12 @@
   {% if page == 1 %}
     <a class="pagination-previous" disabled>Previous</a>
   {% else %}
-    <a href="/u/{{ target.username | safe | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
+    <a href="{{ links.prev_page }}" class="pagination-previous">Previous</a>
   {% endif %}
   {% if page == last_page %}
     <a class="pagination-next" disabled>Next</a>
   {% else %}
-    <a href="/u/{{ target.username | safe | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
+    <a href="{{ links.next_page }}" class="pagination-next">Next</a>
   {% endif %}
 </nav>
 
@@ -167,7 +161,7 @@
       {% endif %}
         <div>
           <h3 class="title is-marginless">
-            <a href="/p/{{ target.username | safe | urlencode(safe="") }}/{{ paste.id }}">
+            <a href="{{ links.pastes[paste.id] }}">
           {% if paste.name %}
               <span class="keeps-spaces">{{ paste.name }}</span>
           {% else %}
@@ -216,12 +210,12 @@
   {% if page == 1 %}
     <a class="pagination-previous" disabled>Previous</a>
   {% else %}
-    <a href="/u/{{ target.username | safe | urlencode(safe="") }}?page={{ page - 1 }}" class="pagination-previous">Previous</a>
+    <a href="{{ links.prev_page }}" class="pagination-previous">Previous</a>
   {% endif %}
   {% if page == last_page %}
     <a class="pagination-next" disabled>Next</a>
   {% else %}
-    <a href="/u/{{ target.username | safe | urlencode(safe="") }}?page={{ page + 1 }}" class="pagination-next">Next</a>
+    <a href="{{ links.next_page }}" class="pagination-next">Next</a>
   {% endif %}
 </nav>
 {% endif %}

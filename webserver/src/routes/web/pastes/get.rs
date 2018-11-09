@@ -250,7 +250,13 @@ pub fn edit(username: String, id: PasteId, config: State<Config>, user: Optional
   ctx["num_commits"] = json!(paste.num_commits()?);
   ctx["is_owner"] = json!(is_owner);
   ctx["author_name"] = json!(author_name);
-  ctx["links"] = json!(super::paste_links(paste.id(), &author_name, Some(&user)));
+  ctx["links"] = json!(
+    super::paste_links(paste.id(), &author_name, Some(&user))
+      .add(
+        "patch",
+        uri!(crate::routes::web::pastes::patch::patch: &author_name, paste.id()),
+      )
+  );
 
   Ok(Rst::Template(Template::render("paste/edit", ctx)))
 }

@@ -17,6 +17,8 @@ use rocket::{
 
 use rocket_contrib::templates::Template;
 
+use serde_json::json;
+
 use sidekiq::Client as SidekiqClient;
 
 use unicode_segmentation::UnicodeSegmentation;
@@ -28,7 +30,11 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> R
     None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
-  let ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess);
+  ctx["links"] = json!(links!(super::account_links(),
+    "send_verification" => uri!(crate::routes::web::account::verify::resend),
+    "patch_account" => uri!(crate::routes::web::account::index::patch),
+  ));
   Ok(Rst::Template(Template::render("account/index", ctx)))
 }
 

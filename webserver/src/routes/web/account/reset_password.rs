@@ -40,7 +40,10 @@ use std::net::SocketAddr;
 
 #[get("/account/forgot_password")]
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Template {
-  let ctx = context(&*config, user.as_ref(), &mut sess);
+  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  ctx["links"] = json!(links!(
+    "forgot_password" => uri!(crate::routes::web::account::reset_password::post),
+  ));
   Template::render("account/forgot_password", ctx)
 }
 
@@ -135,6 +138,9 @@ pub fn reset_get(data: Form<ResetPassword>, config: State<Config>, user: Optiona
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["pr_id"] = json!(data.id.to_simple().to_string());
   ctx["pr_secret"] = json!(&data.secret);
+  ctx["links"] = json!(links!(
+    "reset" => uri!(crate::routes::web::account::reset_password::reset_post),
+  ));
 
   Ok(Rst::Template(Template::render("account/reset_password", ctx)))
 }

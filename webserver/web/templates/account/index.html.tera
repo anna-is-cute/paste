@@ -26,10 +26,10 @@ Manage account settings.
 <nav class="tabs is-boxed">
   <div class="container">
     <ul>
-      <li class="is-active"><a href="/account">Settings</a></li>
-      <li><a href="/account/keys">API keys</a></li>
-      <li><a href="/account/2fa">2FA</a></li>
-      <li><a href="/account/delete">Delete</a></li>
+      <li class="is-active"><a href="{{ links.settings }}">Settings</a></li>
+      <li><a href="{{ links.keys }}">API keys</a></li>
+      <li><a href="{{ links.tfa }}">2FA</a></li>
+      <li><a href="{{ links.delete_account }}">Delete</a></li>
     </ul>
   </div>
 </nav>
@@ -46,7 +46,7 @@ Manage account settings.
     <p>
       Click the button below to resend a verification email.
     </p>
-    <form action="/account/send_verification" method="post">
+    <form action="{{ links.send_verification }}" method="post">
       <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
       <button type="submit" class="button is-link">Send verification email</button>
     </form>
@@ -54,7 +54,7 @@ Manage account settings.
 </div>
 {% endif %}
 
-<form action="/account" method="post">
+<form action="{{ links.patch_account }}" method="post">
   <input type="hidden" name="_method" value="patch"/>
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div class="field is-horizontal">

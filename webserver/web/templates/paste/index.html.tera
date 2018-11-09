@@ -61,8 +61,7 @@ untitled paste
         <div class="field is-grouped">
           {% if is_owner %}
           <div class="control">
-          <a class="button is-info is-large" href="{{ links.edit }}">
-            {# <a class="button is-info is-large" href="/p/{{ author_name | safe | urlencode(safe="") }}/{{ paste.id }}/edit"> #}
+            <a class="button is-info is-large" href="{{ links.edit }}">
               <span class="icon is-large">
                 <i class="fas fa-pencil-alt"></i>
               </span>
@@ -82,7 +81,7 @@ untitled paste
       </div>
       <div class="left">
         {% if paste.author %}
-        <a class="has-text-grey" href="/u/{{ author_name | safe | urlencode(safe="") }}">
+        <a class="has-text-grey" href="{{ links.author_page }}">
           <span class="keeps-spaces">{{ paste.author.name }}</span>
         </a>
         {% endif %}

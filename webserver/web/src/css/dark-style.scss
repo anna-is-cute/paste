@@ -1,3 +1,5 @@
+$bulmaswatch-import-font: false;
+
 @import "bulmaswatch/darkly/variables";
 @import "bulma/sass/utilities/initial-variables";
 @import "bulma/sass/utilities/functions";
@@ -23,7 +25,11 @@ $pagination-hover-color: $grey-lighter;
 // make tags not blend in
 $tag-background-color: lighten($grey-darker, 5);
 
+// add 256 for figures
 $dimensions: 16 24 32 48 64 96 128 256;
+
+// change body size back to normal
+$body-size: 1rem;
 
 @import "bulma/sass/utilities/derived-variables";
 

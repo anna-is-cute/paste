@@ -112,7 +112,7 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
         "https://{}/account/reset_password?id={}&secret={}",
         config.general.site_domain,
         reset.id,
-        base64::encode_config(&key, base64::URL_SAFE),
+        base64::encode_config(&key, base64::URL_SAFE_NO_PAD),
       ),
     }),
     config._path.as_ref().unwrap(),
@@ -207,7 +207,7 @@ pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<
 }
 
 fn check_reset(conn: &DbConn, id: Uuid, secret: &str) -> Option<PasswordReset> {
-  let secret = base64::decode_config(secret, base64::URL_SAFE).ok()?;
+  let secret = base64::decode_config(secret, base64::URL_SAFE_NO_PAD).ok()?;
 
   let reset: PasswordReset = password_resets::table
     .find(id)

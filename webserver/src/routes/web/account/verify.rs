@@ -88,7 +88,7 @@ pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, 
 
 #[get("/account/verify?<data..>")]
 pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
-  let key = match base64::decode_config(&data.key, base64::URL_SAFE) {
+  let key = match base64::decode_config(&data.key, base64::URL_SAFE_NO_PAD) {
     Ok(k) => k,
     Err(_) => {
       sess.add_data("error", "Invalid email verification.");

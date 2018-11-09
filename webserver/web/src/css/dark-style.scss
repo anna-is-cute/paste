@@ -28,8 +28,9 @@ $tag-background-color: lighten($grey-darker, 5);
 // add 256 for figures
 $dimensions: 16 24 32 48 64 96 128 256;
 
-// change body size back to normal
-$body-size: 1rem;
+// change body size and size-6 back to normal
+$body-size: 16px;
+$size-6: 1rem;
 
 @import "bulma/sass/utilities/derived-variables";
 

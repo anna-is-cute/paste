@@ -47,7 +47,7 @@ impl EmailVerification {
           "https://{}/account/verify?id={}&key={}",
           config.general.site_domain,
           self.id.to_simple(),
-          base64::encode_config(secret, base64::URL_SAFE),
+          base64::encode_config(secret, base64::URL_SAFE_NO_PAD),
         ),
       }),
       config._path.as_ref().unwrap(),

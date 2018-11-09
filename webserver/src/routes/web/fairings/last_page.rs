@@ -60,7 +60,7 @@ impl Fairing for LastPage {
   }
 
   fn on_response(&self, req: &Request, resp: &mut Response) {
-    if req.method() == Method::Get && resp.status() != HttpStatus::SeeOther {
+    if (req.method() == Method::Get || req.method() == Method::Head) && resp.status() != HttpStatus::SeeOther {
       self.store(req);
       return;
     }

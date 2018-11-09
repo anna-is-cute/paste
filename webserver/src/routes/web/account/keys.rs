@@ -3,7 +3,7 @@ use crate::{
   database::DbConn,
   errors::*,
   models::id::ApiKeyId,
-  routes::web::{context, Rst, OptionalWebUser, Session},
+  routes::web::{context, Links, Rst, OptionalWebUser, Session},
 };
 
 use rocket::{
@@ -22,8 +22,23 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn
     None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
+  let keys = user.keys(&conn)?;
+
   let mut ctx = context(&*config, Some(&user), &mut sess);
-  ctx["keys"] = json!(&user.keys(&conn)?);
+  ctx["keys"] = json!(&keys);
+  ctx["links"] = json!(
+    links!(super::account_links(),
+      "add_key" => uri!(crate::routes::web::account::keys::post),
+    ).add_value(
+      "delete_key_links",
+      keys
+        .iter()
+        .fold(&mut Links::default(), |l, x| l.add(x.key.to_simple().to_string(), uri!(
+          crate::routes::web::account::keys::delete:
+          x.key,
+        )))
+    )
+  );
   Ok(Rst::Template(Template::render("account/keys", ctx)))
 }
 

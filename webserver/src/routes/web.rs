@@ -25,11 +25,14 @@ use serde_json::{Value, json};
 use std::{ops::Deref, result};
 
 macro_rules! links {
-  ($links:expr, $($key:expr => $val: expr),+$(,)?) => {{
+  ($links:expr, $($key:expr => $val:expr),+$(,)?) => {{
     let mut ls = $links;
     ls
       $(.add($key, $val))+;
     ls
+  }};
+  ($($key:expr => $val:expr),+$(,)?) => {{
+    links!(crate::routes::web::Links::default(), $($key => $val),+)
   }};
 }
 
@@ -144,9 +147,9 @@ pub fn context(config: &Config, user: Option<&User>, session: &mut Session) -> V
     "server_version": crate::SERVER_VERSION,
     "resources_version": &*crate::RESOURCES_VERSION,
     "static_links": &*STATIC_LINKS,
-    // "user_page": user
-    //   .as_ref()
-    //   .map(|x| uri!(crate::routes::web::users::get::get: x.username(), None).to_string()),
+    "user_page": user
+      .as_ref()
+      .map(|x| uri!(crate::routes::web::users::get::get: x.username()).to_string()),
   })
 }
 

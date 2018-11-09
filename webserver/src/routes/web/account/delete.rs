@@ -14,6 +14,8 @@ use rocket::{
 
 use rocket_contrib::templates::Template;
 
+use serde_json::json;
+
 use sidekiq::Client as SidekiqClient;
 
 #[get("/account/delete")]
@@ -23,7 +25,10 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> R
     None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
-  let ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess);
+  ctx["links"] = json!(links!(super::account_links(),
+    "delete_account_action" => uri!(crate::routes::web::account::delete::delete),
+  ));
   Ok(Rst::Template(Template::render("account/delete", ctx)))
 }
 

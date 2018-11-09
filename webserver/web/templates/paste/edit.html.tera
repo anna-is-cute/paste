@@ -96,7 +96,7 @@ Edit untitled paste
 {% endblock header %}
 
 {% block main %}
-<form id="paste_upload" method="post" action="/p/{{ author_name | safe | urlencode(safe="") }}/{{ paste.id }}">
+<form id="paste_upload" method="post" action="{{ links.patch }}">
   <input type="hidden" name="_method" value="patch"/>
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div>

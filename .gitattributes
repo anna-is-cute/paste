@@ -17,3 +17,5 @@ webserver/web/static/js/* linguist-generated
 webserver/src/models/id/*.rs linguist-language=Rust
 
 # brotli modules are lfs
+.docker/nginx/extra_modules/ngx_http_brotli_filter_module.so filter=lfs diff=lfs merge=lfs -text
+.docker/nginx/extra_modules/ngx_http_brotli_static_module.so filter=lfs diff=lfs merge=lfs -text

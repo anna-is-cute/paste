@@ -51,7 +51,7 @@
 <div class="wrapper">
   <nav class="navbar">
     <div class="navbar-brand">
-      <a class="navbar-item" href="/">
+      <a class="navbar-item" href="{{ static_links.index }}">
         <span class="icon">
           <i class="fas fa-paste"></i>
         </span>
@@ -65,31 +65,31 @@
     </div>
     <div id="menu" class="navbar-menu">
       <div class="navbar-start">
-        <a class="navbar-item" href="/">New</a>
+        <a class="navbar-item" href="{{ static_links.index }}">New</a>
       </div>
       <div class="navbar-end">
       {%- if config.general.about_file %}
-        <a class="navbar-item" href="/about">About</a>
+        <a class="navbar-item" href="{{ static_links.about }}">About</a>
       {% endif %}
         <div class="navbar-item has-dropdown is-hoverable">
         {%- if user %}
           <a
             class="navbar-link"
-            href="/u/{{ user.username | safe | urlencode(safe="") }}">{{ user.name }}</a>
+            href="{{ user_page }}">{{ user.name }}</a>
         {%- else -%}
-          <a class="navbar-link" href="/login">Log in</a>
+          <a class="navbar-link" href="{{ static_links.login }}">Log in</a>
         {%- endif %}
           <div class="navbar-dropdown is-right">
           {%- if user %}
             <span class="navbar-item">{{ user.username }}</span>
             <hr class="navbar-divider"/>
-            <a class="navbar-item" href="/account">Settings</a>
-            <form action="/logout" method="post">
+            <a class="navbar-item" href="{{ static_links.settings }}">Settings</a>
+            <form action="{{ static_links.logout }}" method="post">
               <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
               <button type="submit" class="navbar-item button-link">Log out</button>
             </form>
           {%- else -%}
-            <a class="navbar-item" href="/register">Register</a>
+            <a class="navbar-item" href="{{ static_links.register }}">Register</a>
           {%- endif %}
             <hr class="navbar-divider"/>
             <a class="navbar-item" id="swap_theme">Swap theme</a>
@@ -144,7 +144,7 @@
       <li><a href="https://github.com/jkcclemens/paste">code</a></li>
       <li><a href="https://github.com/jkcclemens/paste/commit/{{ server_version }}">server: {{ server_version | truncate(length=7) | replace(from="…", to="") }}</a></li>
       <li><a href="https://github.com/jkcclemens/paste/commit/{{ resources_version }}">resources: {{ resources_version | truncate(length=7) | replace(from="…", to="") }}</a></li>
-      <li><a href="/credits">credits</a></li>
+      <li><a href="{{ static_links.credits }}">credits</a></li>
       <li class="is-active"><a>&copy; {{ now() | date(format="%Y") }}</a></li>
     </ul>
   </nav>

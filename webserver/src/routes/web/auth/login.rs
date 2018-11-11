@@ -36,6 +36,10 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> A
   let honeypot = Honeypot::new();
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["honeypot"] = json!(honeypot);
+  ctx["links"] = json!(links!(
+    "login_action" => uri!(crate::routes::web::auth::login::post),
+    "forgot_password" => uri!(crate::routes::web::account::reset_password::get),
+  ));
   AddCsp::new(
     Rst::Template(Template::render("auth/login", ctx)),
     vec![format!("style-src '{}'", honeypot.integrity_hash)],

@@ -26,7 +26,7 @@ Create a new account.
 {%- endblock header_subtitle %}
 
 {% block main %}
-<form method="post" action="/register">
+<form method="post" action="{{ links.register_action }}">
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div class="field">
     <label class="label">Display name</label>

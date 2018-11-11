@@ -26,10 +26,10 @@
     <nav class="tabs is-boxed">
       <div class="container">
         <ul>
-          <li><a href="/account">Settings</a></li>
-          <li><a href="/account/keys">API keys</a></li>
-          <li><a href="/account/2fa">2FA</a></li>
-          <li class="is-active"><a href="/account/delete">Delete</a></li>
+          <li><a href="{{ links.settings }}">Settings</a></li>
+          <li><a href="{{ links.keys }}">API keys</a></li>
+          <li><a href="{{ links.tfa }}">2FA</a></li>
+          <li class="is-active"><a href="{{ links.delete_account }}">Delete</a></li>
         </ul>
       </div>
     </nav>
@@ -56,7 +56,7 @@
     </p>
   </div>
 </div>
-<form action="/account" method="post">
+<form action="{{ links.delete_account_action }}" method="post">
   <input type="hidden" name="_method" value="delete"/>
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div class="field">

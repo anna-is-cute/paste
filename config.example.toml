@@ -5,6 +5,11 @@ site_domain = "paste.gg"
 # If not set, the About link in the navbar will not be displayed
 # about_file = "about.html"
 
+[admin]
+# A random key used to become the first admin. Anyone who knows or guesses this can become an admin
+# if there are no other admins registered. This can be unset once one admin is registered.
+# key = ""
+
 # Sender information for emails sent from the server
 [email.sender]
 name = ""

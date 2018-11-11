@@ -29,6 +29,7 @@ pub struct User {
   shared_secret: Option<Vec<u8>>,
   #[serde(skip_serializing)]
   tfa_enabled: bool,
+  admin: bool,
 }
 
 impl User {
@@ -90,6 +91,14 @@ impl User {
 
   pub fn set_tfa_enabled(&mut self, enabled: bool) {
     self.tfa_enabled = enabled;
+  }
+
+  pub fn admin(&self) -> bool {
+    self.admin
+  }
+
+  pub fn set_admin(&mut self, admin: bool) {
+    self.admin = admin;
   }
 
   pub fn create_email_verification(&self, conn: &DbConn, last_sent: Option<NaiveDateTime>) -> Result<(EmailVerification, Vec<u8>)> {

@@ -164,7 +164,6 @@ features = ["nightly", "serde"]
 
 # displaying otpauth urls
 [dependencies.qrcode]
-git = "https://github.com/jkcclemens/qrcode-rust"
-branch = "personal"
+git = "https://github.com/kennytm/qrcode-rust"
 default-features = false
 features = ["svg"]

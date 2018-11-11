@@ -33,6 +33,7 @@ Create a new account.
     <div class="control has-icons-left">
       <input
         required
+        autofocus
         id="name"
         name="name"
         class="input"

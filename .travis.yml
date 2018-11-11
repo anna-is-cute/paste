@@ -12,11 +12,7 @@ before_script:
   - .travis/cache_check.sh
   - . .travis/libsodium.sh
 script:
-  # cannot use --all because apparently upgrading sodiumoxide to 0.1 breaks lettre across projects
-  - cargo build --verbose -p webserver
-  - cargo build --verbose -p worker_email
-  - cargo build --verbose -p worker_delete_directory
-  - cargo build --verbose -p worker_expire_paste
+  - cargo build --verbose --all
 # Remove the local crate's build files, as they only add bloat to the cache.
 # TODO: Remove unused dependency build files
 before_cache:

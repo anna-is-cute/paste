@@ -44,6 +44,11 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> R
   let mut ctx = context(&*config, Some(&user), &mut sess);
   ctx["tfa_enabled"] = json!(user.tfa_enabled());
   ctx["backups"] = json!(backups);
+  ctx["links"] = json!(links!(super::account_links(),
+    "enable" => uri!(crate::routes::web::account::two_factor::enable_get),
+    "disable" => uri!(crate::routes::web::account::two_factor::disable_get),
+    "new_backup_codes" => uri!(crate::routes::web::account::two_factor::new_backup_codes),
+  ));
 
   Ok(Rst::Template(Template::render("account/2fa/index", ctx)))
 }
@@ -88,6 +93,10 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
   let mut ctx = context(&*config, Some(&user), &mut sess);
   ctx["shared_secret_segments"] = json!(secret_segments(&shared_secret));
   ctx["qr_code"] = json!(img);
+  ctx["links"] = json!(links!(super::account_links(),
+    "new_secret" => uri!(crate::routes::web::account::two_factor::new_secret),
+    "validate" => uri!(crate::routes::web::account::two_factor::validate),
+  ));
 
   Ok(AddCsp::new(
     Rst::Template(Template::render("account/2fa/enable", ctx)),
@@ -180,7 +189,10 @@ pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessi
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 
-  let ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess);
+  ctx["links"] = json!(links!(super::account_links(),
+    "disable" => uri!(crate::routes::web::account::two_factor::disable_post),
+  ));
   Ok(Rst::Template(Template::render("account/2fa/disable", ctx)))
 }
 

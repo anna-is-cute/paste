@@ -18,10 +18,10 @@ Manage two-factor authentication.
 <nav class="tabs is-boxed">
   <div class="container">
     <ul>
-      <li><a href="/account">Settings</a></li>
-      <li><a href="/account/keys">API keys</a></li>
-      <li class="is-active"><a href="/account/2fa">2FA</a></li>
-      <li><a href="/account/delete">Delete</a></li>
+      <li><a href="{{ links.settings }}">Settings</a></li>
+      <li><a href="{{ links.keys }}">API keys</a></li>
+      <li class="is-active"><a href="{{ links.tfa }}">2FA</a></li>
+      <li><a href="{{ links.delete_account }}">Delete</a></li>
     </ul>
   </div>
 </nav>
@@ -65,16 +65,16 @@ Manage two-factor authentication.
   <div class="{% if tfa_enabled %}field is-grouped{% else %}field{% endif %}">
     {% if tfa_enabled %}
     <div class="control">
-      <a class="button is-primary" href="/account/2fa/disable">Turn off 2FA</a>
+      <a class="button is-primary" href="{{ links.disable }}">Turn off 2FA</a>
     </div>
-    <form method="post" action="/account/2fa/new_backup_codes">
+    <form method="post" action="{{ links.new_backup_codes }}">
       <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
       <div class="control">
         <button class="button" type="submit">Generate new backup codes</button>
       </div>
     </form>
     {% else %}
-    <a class="button is-primary" href="/account/2fa/enable">Turn on 2FA</a>
+    <a class="button is-primary" href="{{ links.enable }}">Turn on 2FA</a>
     {% endif %}
   </div>
 

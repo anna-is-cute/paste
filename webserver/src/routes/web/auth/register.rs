@@ -38,6 +38,9 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> A
   let honeypot = Honeypot::new();
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["honeypot"] = json!(honeypot);
+  ctx["links"] = json!(links!(
+    "register_action" => uri!(crate::routes::web::auth::register::post),
+  ));
   AddCsp::new(
     Rst::Template(Template::render("auth/register", ctx)),
     vec![format!("style-src '{}'", honeypot.integrity_hash)],

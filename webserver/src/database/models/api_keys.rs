@@ -6,9 +6,9 @@ use crate::models::id::{UserId, ApiKeyId};
 #[primary_key(key)]
 #[belongs_to(User)]
 pub struct ApiKey {
-  key: ApiKeyId,
-  user_id: UserId,
-  name: String,
+  pub(crate) key: ApiKeyId,
+  pub(crate) user_id: UserId,
+  pub(crate) name: String,
 }
 
 #[derive(Insertable)]

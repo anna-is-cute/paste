@@ -10,7 +10,7 @@ use crate::{
     Visibility, Content,
     output::{Output, OutputAuthor},
   },
-  routes::web::{context, Rst, OptionalWebUser, Session},
+  routes::web::{context, Rst, Links, OptionalWebUser, Session},
 };
 
 use diesel::{dsl::count, prelude::*};
@@ -23,14 +23,22 @@ use serde_json::json;
 
 use std::{fs::File, io::Read};
 
-#[derive(Debug, FromForm)]
+#[get("/u/<username>")]
+pub fn get(username: String, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
+  _get(1, username, config, user, sess, conn)
+}
+
+#[get("/u/<username>?<params..>")]
+pub fn get_page(username: String, params: Form<PageParams>, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
+  _get(params.page, username, config, user, sess, conn)
+}
+
+#[derive(Debug, FromForm, UriDisplay)]
 pub struct PageParams {
   page: u32,
 }
 
-#[get("/u/<username>?<params..>")]
-pub fn get(username: String, params: Option<Form<PageParams>>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
-  let page = params.map(|x| x.page).unwrap_or(1);
+fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   // TODO: make PositiveNumber struct or similar (could make Positive<num::Integer> or something)
   if page == 0 {
     return Ok(Rst::Status(HttpStatus::NotFound));
@@ -156,5 +164,43 @@ pub fn get(username: String, params: Option<Form<PageParams>>, config: State<Con
   ctx["target"] = json!(target);
   ctx["page"] = json!(page);
   ctx["total"] = json!(total_pastes);
+  ctx["links"] = json!(user_links(user.as_ref(), &target, &outputs, page));
   Ok(Rst::Template(Template::render("user/index", ctx)))
+}
+
+fn user_links(user: Option<&User>, target: &User, pastes: &[Output], page: u32) -> Links {
+  let mut links = links!(
+    "next_page" => uri!(crate::routes::web::users::get::get_page:
+      target.username(),
+      PageParams {
+        page: page + 1,
+      },
+    ),
+    "prev_page" => if page <= 2 {
+      uri!(crate::routes::web::users::get::get: target.username())
+    } else {
+      uri!(crate::routes::web::users::get::get_page:
+        target.username(),
+        PageParams {
+          page: page - 1,
+        },
+      )
+    },
+  );
+
+  if let Some(ref u) = user {
+    links.add("delete_multiple", uri!(crate::routes::web::pastes::delete::ids: u.username()));
+  }
+
+  links.add_value(
+    "pastes",
+    pastes
+      .iter()
+      .fold(&mut Links::default(), |l, x| l.add(
+        x.id.to_simple().to_string(),
+        uri!(crate::routes::web::pastes::get::users_username_id: target.username(), x.id),
+      )),
+  );
+
+  links
 }

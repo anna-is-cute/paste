@@ -20,7 +20,7 @@ Log in to your account.
 {%- endblock header_subtitle %}
 
 {% block main %}
-<form method="post" action="/login">
+<form method="post" action="{{ links.login_action }}">
   <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
   <div class="field">
     <label class="label">Username</label>
@@ -83,7 +83,7 @@ Log in to your account.
       </span>
     </div>
     <p class="help">
-      <a href="/account/forgot_password">Forgot your password?</a>
+      <a href="{{ links.forgot_password }}">Forgot your password?</a>
     </p>
   </div>
 

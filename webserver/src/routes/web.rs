@@ -9,6 +9,8 @@ use crate::{
 
 use diesel::prelude::*;
 
+use hashbrown::HashMap;
+
 use rocket::{
   State, Outcome,
   http::{Header, Status as HttpStatus},
@@ -21,6 +23,18 @@ use rocket_contrib::templates::Template;
 use serde_json::{Value, json};
 
 use std::{ops::Deref, result};
+
+macro_rules! links {
+  ($links:expr, $($key:expr => $val:expr),+$(,)?) => {{
+    let mut ls = $links;
+    ls
+      $(.add($key, $val))+;
+    ls
+  }};
+  ($($key:expr => $val:expr),+$(,)?) => {{
+    links!(crate::routes::web::Links::default(), $($key => $val),+)
+  }};
+}
 
 pub mod about;
 pub mod account;
@@ -77,6 +91,51 @@ impl Honeypot {
   }
 }
 
+#[derive(Debug, Default)]
+pub struct Links {
+  links: HashMap<String, Value>,
+}
+
+impl serde::Serialize for Links {
+  fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where S: serde::Serializer,
+  {
+    self.links.serialize(serializer)
+  }
+}
+
+impl Links {
+  pub fn add_value<K, V>(&mut self, key: K, value: V) -> &mut Self
+    where K: Into<String>,
+          V: serde::Serialize,
+  {
+    self.links.insert(key.into(), json!(value));
+
+    self
+  }
+
+  pub fn add<K>(&mut self, key: K, uri: rocket::http::uri::Origin) -> &mut Self
+    where K: Into<String>,
+  {
+    self.add_value(key, uri.to_string())
+  }
+}
+
+lazy_static! {
+  static ref STATIC_LINKS: Links = {
+    let mut links = Links::default();
+    links
+      .add("index", uri!(crate::routes::web::index::get))
+      .add("about", uri!(crate::routes::web::about::get))
+      .add("login", uri!(crate::routes::web::auth::login::get))
+      .add("logout", uri!(crate::routes::web::auth::logout::post))
+      .add("register", uri!(crate::routes::web::auth::register::get))
+      .add("settings", uri!(crate::routes::web::account::index::get))
+      .add("credits", uri!(crate::routes::web::credits::get));
+    links
+  };
+}
+
 pub fn context(config: &Config, user: Option<&User>, session: &mut Session) -> Value {
   json!({
     "config": &config,
@@ -87,6 +146,10 @@ pub fn context(config: &Config, user: Option<&User>, session: &mut Session) -> V
     "session": session,
     "server_version": crate::SERVER_VERSION,
     "resources_version": &*crate::RESOURCES_VERSION,
+    "static_links": &*STATIC_LINKS,
+    "user_page": user
+      .as_ref()
+      .map(|x| uri!(crate::routes::web::users::get::get: x.username()).to_string()),
   })
 }
 

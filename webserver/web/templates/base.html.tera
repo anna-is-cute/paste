@@ -84,8 +84,8 @@
             <span class="navbar-item">{{ user.username }}</span>
             <hr class="navbar-divider"/>
             <a class="navbar-item" href="{{ static_links.settings }}">Settings</a>
-          {%- if user.admin %}
-            <a class="navbar-item" href="#">Admin</a>
+          {%- if user.admin != "none" %}
+            <a class="navbar-item" href="{{ static_links.admin }}">Admin</a>
           {%- endif %}
             <form action="{{ static_links.logout }}" method="post">
               <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>

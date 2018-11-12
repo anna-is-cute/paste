@@ -179,6 +179,11 @@ fn main() {
 
       routes::web::account::adminify::get,
 
+      routes::web::admin::index::get,
+      routes::web::admin::maintenance::get,
+      routes::web::admin::pastes::get,
+      routes::web::admin::users::get,
+
       routes::web::users::get::get,
       routes::web::users::get::get_page,
     ])

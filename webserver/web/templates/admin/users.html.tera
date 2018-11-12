@@ -1,0 +1,61 @@
+{% extends "base" %}
+
+{% block head -%}
+{{ super() }}
+{%- endblock head %}
+
+{% block title -%}Users{%- endblock title %}
+
+{% block header_title -%}
+Users
+{%- endblock header_title %}
+
+{% block header_subtitle -%}
+Manage all users.
+{%- endblock header_subtitle %}
+
+{% block header_foot %}
+<nav class="tabs is-boxed">
+  <div class="container">
+    <ul>
+      <li><a href="{{ links.overview }}">Overview</a></li>
+      <li><a href="{{ links.pastes }}">Pastes</a></li>
+      <li class="is-active"><a href="{{ links.users }}">Users</a></li>
+      <li><a href="{{ links.maintenance }}">Maintenance</a></li>
+    </ul>
+  </div>
+</nav>
+{% endblock header_foot %}
+
+{% block main %}
+<table class="table is-striped is-fullwidth">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Email verified</th>
+      <th>2FA enabled</th>
+      <th>Admin</th>
+    </tr>
+  </thead>
+  <tbody>
+  {%- for user in users %}
+    <tr>
+      <td>{{ user.name }}</td>
+      <td>{{ user.username }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.email_verified }}</td>
+      <td>
+        {%- if user.shared_secret -%}
+          true
+        {%- else -%}
+          false
+        {%- endif -%}
+      </td>
+      <td>{{ user.admin }}</td>
+    </tr>
+  {%- endfor %}
+  </tbody>
+</table>
+{% endblock main %}

@@ -5,6 +5,7 @@ use crate::{
     schema::users,
   },
   errors::*,
+  models::user::Admin,
   routes::web::{OptionalWebUser, Session},
 };
 
@@ -35,14 +36,14 @@ pub fn get(key: String, config: State<Config>, user: OptionalWebUser, mut sess: 
     return Ok(Redirect::to("lastpage"));
   }
 
-  if user.admin() {
+  if user.is_admin() {
     sess.add_data("error", "You're already an admin.");
     return Ok(Redirect::to("lastpage"));
   }
 
   let num_admins: i64 = users::table
     .select(diesel::dsl::count_star())
-    .filter(users::admin.eq(true))
+    .filter(users::admin.gt(Admin::None))
     .first(&*conn)?;
 
   if num_admins > 0 {
@@ -50,7 +51,7 @@ pub fn get(key: String, config: State<Config>, user: OptionalWebUser, mut sess: 
     return Ok(Redirect::to("lastpage"));
   }
 
-  user.set_admin(true);
+  user.set_admin(Admin::Super);
   user.update(&conn)?;
 
   sess.add_data("info", "You are now an admin.");

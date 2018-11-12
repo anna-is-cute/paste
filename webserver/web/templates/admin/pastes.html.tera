@@ -1,0 +1,89 @@
+{% extends "base" %}
+
+{% block head -%}
+{{ super() }}
+<script
+  defer
+  src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
+  integrity="sha384-5zARgXuvMiKGWrda+raHXOlTw717huPS47iQABU10DXHGQJ+7PE/PPghBZSmzaNU"></script>
+<script
+  defer
+  src="/static/js/timestamps.js?v={{ resources_version }}"
+  integrity="sha384-nvZWXhPMbi0ixdPLjUPfx2htsDNlNiypOV+5mX4XOwbZ2aDQjY7yw5Jd2HSf9cUr"></script>
+{%- endblock head %}
+
+{% block title -%}Pastes{%- endblock title %}
+
+{% block header_title -%}
+Pastes
+{%- endblock header_title %}
+
+{% block header_subtitle -%}
+Manage all pastes.
+{%- endblock header_subtitle %}
+
+{% block header_foot %}
+<nav class="tabs is-boxed">
+  <div class="container">
+    <ul>
+      <li><a href="{{ links.overview }}">Overview</a></li>
+      <li class="is-active"><a href="{{ links.pastes }}">Pastes</a></li>
+      <li><a href="{{ links.users }}">Users</a></li>
+      <li><a href="{{ links.maintenance }}">Maintenance</a></li>
+    </ul>
+  </div>
+</nav>
+{% endblock header_foot %}
+
+{% block main %}
+<table class="table is-striped is-fullwidth">
+  <thead>
+    <tr>
+      <th>Link</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Visibility</th>
+      <th>Author</th>
+      <th>Files</th>
+      <th>Created</th>
+      <th>Expires</th>
+    </tr>
+  </thead>
+  <tbody>
+  {%- for paste in pastes %}
+    <tr>
+      <td><a href="{{ links.paste_links[paste.id] }}">Link</a></td>
+      <td>
+        {%- if paste.name -%}
+          {{ paste.name }}
+        {%- else -%}
+          <em class="has-text-grey-light">empty</em>
+        {%- endif -%}
+      </td>
+      <td>
+        {%- if paste.description -%}
+          {{ paste.description }}
+        {%- else -%}
+          <em class="has-text-grey-light">empty</em>
+        {%- endif -%}
+      </td>
+      <td>{{ paste.visibility }}</td>
+      <td>
+        {%- if paste.author -%}
+          {{ paste.author.username }}
+        {%- else -%}
+          <em class="has-text-grey-light">anonymous</em>
+        {%- endif -%}
+      </td>
+      <td>{{ paste.files | length }}</td>
+      <td class="timestamp" data-timestamp="{{ paste.created_at }}">{{ paste.created_at | date(format="%Y-%m-%d %H:%M:%S") }} UTC</td>
+    {%- if paste.expires %}
+      <td class="timestamp" data-timestamp="{{ paste.expires }}">{{ paste.expires | date(format="%Y-%m-%d %H:%M:%S") }} UTC</td>
+    {%- else %}
+      <td><em class="has-text-grey-light">never</em></td>
+    {%- endif %}
+    </tr>
+  {%- endfor %}
+  </tbody>
+</table>
+{% endblock main %}

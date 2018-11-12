@@ -1,6 +1,9 @@
 use crate::{
   errors::*,
-  models::id::{ApiKeyId, UserId},
+  models::{
+    id::{ApiKeyId, UserId},
+    user::Admin,
+  },
 };
 
 use super::api_keys::{ApiKey, NewApiKey};
@@ -29,7 +32,7 @@ pub struct User {
   shared_secret: Option<Vec<u8>>,
   #[serde(skip_serializing)]
   tfa_enabled: bool,
-  admin: bool,
+  admin: Admin,
 }
 
 impl User {
@@ -93,12 +96,20 @@ impl User {
     self.tfa_enabled = enabled;
   }
 
-  pub fn admin(&self) -> bool {
+  pub fn admin(&self) -> Admin {
     self.admin
   }
 
-  pub fn set_admin(&mut self, admin: bool) {
+  pub fn set_admin(&mut self, admin: Admin) {
     self.admin = admin;
+  }
+
+  pub fn is_admin(&self) -> bool {
+    self.admin == Admin::Normal || self.admin == Admin::Super
+  }
+
+  pub fn is_superadmin(&self) -> bool {
+    self.admin == Admin::Super
   }
 
   pub fn create_email_verification(&self, conn: &DbConn, last_sent: Option<NaiveDateTime>) -> Result<(EmailVerification, Vec<u8>)> {

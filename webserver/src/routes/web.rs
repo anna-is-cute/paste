@@ -38,6 +38,7 @@ macro_rules! links {
 
 pub mod about;
 pub mod account;
+pub mod admin;
 pub mod auth;
 pub mod credits;
 pub mod fairings;
@@ -131,6 +132,7 @@ lazy_static! {
       .add("logout", uri!(crate::routes::web::auth::logout::post))
       .add("register", uri!(crate::routes::web::auth::register::get))
       .add("settings", uri!(crate::routes::web::account::index::get))
+      .add("admin", uri!(crate::routes::web::admin::index::get))
       .add("credits", uri!(crate::routes::web::credits::get));
     links
   };

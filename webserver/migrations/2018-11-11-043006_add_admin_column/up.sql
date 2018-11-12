@@ -1,1 +1,1 @@
-alter table users add column admin boolean not null default false
+alter table users add column admin smallint not null default 0

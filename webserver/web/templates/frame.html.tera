@@ -7,7 +7,7 @@
   <title>{% block title %}{% endblock title %} · {{ config.general.site_name }}</title>
   <script
     src="/static/js/detect-js.js?v={{ resources_version }}"
-    integrity="sha384-EAJs4QmJOF68q7feRHS8qz+VOEKfY2VPxa8PopE+EfWQR/a1msLTIiFFillVRB2P"></script>
+    integrity="sha384-hb585iSQY33B+htUHriY0UFxVxcJriGNaZWcneUcP/zvFpuSmG5ueKdj4czPvZoq"></script>
   {%- endblock head -%}
 </head>
 <body>

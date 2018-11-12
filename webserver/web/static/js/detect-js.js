@@ -1,8 +1,6 @@
 'use strict';
 
 (function () {
-  var cl = document.children[0].classList;
-  cl.remove('no-js');
-  cl.add('js');
+  document.children[0].className = 'js';
 })();
 //# sourceMappingURL=detect-js.js.map

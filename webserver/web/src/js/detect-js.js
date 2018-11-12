@@ -1,1 +1,1 @@
-document.children[0].className='js';
+document.children[0].className = 'js';

@@ -27,7 +27,7 @@ use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
-use std::{cmp::min, fs::File, io::Read};
+use std::{fs::File, io::Read};
 
 #[get("/u/<username>", rank = 3)]
 pub fn get(username: String, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
@@ -124,7 +124,7 @@ fn _get(rel: Relative, username: String, config: State<Config>, user: OptionalWe
 
     let author = OutputAuthor::new(target.id(), target.username(), target.name());
 
-    let mut outputs = Vec::with_capacity(min(15, pastes.len()));
+    let mut outputs = Vec::with_capacity(pastes.len());
 
     for paste in pastes {
       let id = paste.id();

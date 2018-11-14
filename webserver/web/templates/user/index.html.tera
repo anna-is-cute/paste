@@ -120,21 +120,18 @@
 {% endif %}
 {% endif %}
 
-{% set last_page = total / 15 %}
-{% set last_page = last_page | round(method="ceil") %}
-
-{% if last_page > 1 %}
+{% if links.prev_page or links.next_page %}
 <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-  {% if page == 1 %}
-    <a class="pagination-previous" disabled>Previous</a>
-  {% else %}
-    <a href="{{ links.prev_page }}" class="pagination-previous">Previous</a>
-  {% endif %}
-  {% if page == last_page %}
-    <a class="pagination-next" disabled>Next</a>
-  {% else %}
-    <a href="{{ links.next_page }}" class="pagination-next">Next</a>
-  {% endif %}
+{% if links.prev_page %}
+  <a href="{{ links.prev_page }}" class="pagination-previous">Previous</a>
+{% else %}
+  <a class="pagination-previous" disabled>Previous</a>
+{% endif %}
+{% if links.next_page %}
+  <a href="{{ links.next_page }}" class="pagination-next">Next</a>
+{% else %}
+  <a class="pagination-next" disabled>Next</a>
+{% endif %}
 </nav>
 
 <hr/>
@@ -201,22 +198,20 @@
   </div>
 {% endfor %}
 
-{% if last_page > 1 %}
+{% if links.prev_page or links.next_page %}
 <hr/>
 
 <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-  {% set last_page = total / 15 %}
-  {% set last_page = last_page | round(method="ceil") %}
-  {% if page == 1 %}
-    <a class="pagination-previous" disabled>Previous</a>
-  {% else %}
-    <a href="{{ links.prev_page }}" class="pagination-previous">Previous</a>
-  {% endif %}
-  {% if page == last_page %}
-    <a class="pagination-next" disabled>Next</a>
-  {% else %}
-    <a href="{{ links.next_page }}" class="pagination-next">Next</a>
-  {% endif %}
+{% if links.prev_page %}
+  <a href="{{ links.prev_page }}" class="pagination-previous">Previous</a>
+{% else %}
+  <a class="pagination-previous" disabled>Previous</a>
+{% endif %}
+{% if links.next_page %}
+  <a href="{{ links.next_page }}" class="pagination-next">Next</a>
+{% else %}
+  <a class="pagination-next" disabled>Next</a>
+{% endif %}
 </nav>
 {% endif %}
 {% endblock main %}

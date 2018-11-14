@@ -178,7 +178,8 @@ fn main() {
       routes::web::account::reset_password::reset_post,
 
       routes::web::users::get::get,
-      routes::web::users::get::get_page,
+      routes::web::users::get::get_before,
+      routes::web::users::get::get_after,
     ])
     .mount("/static", routes!{
       routes::web::static_files::get,

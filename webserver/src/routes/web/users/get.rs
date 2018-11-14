@@ -6,43 +6,52 @@ use crate::{
     schema::{users, pastes},
   },
   errors::*,
-  models::paste::{
-    Visibility, Content,
-    output::{Output, OutputAuthor},
+  models::{
+    id::PasteId,
+    paste::{
+      Visibility, Content,
+      output::{Output, OutputAuthor},
+    },
   },
   routes::web::{context, Rst, Links, OptionalWebUser, Session},
+  utils::UrlDate,
 };
+
+use chrono::{DateTime, Utc};
 
 use diesel::{dsl::count, prelude::*};
 
-use rocket::{State, http::Status as HttpStatus, request::Form};
+use rocket::{State, http::Status as HttpStatus};
 
 use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
-use std::{fs::File, io::Read};
+use std::{cmp::min, fs::File, io::Read};
 
-#[get("/u/<username>")]
+#[get("/u/<username>", rank = 3)]
 pub fn get(username: String, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
-  _get(1, username, config, user, sess, conn)
+  _get(Relative::Before(Utc::now()), username, config, user, sess, conn)
 }
 
-#[get("/u/<username>?<params..>")]
-pub fn get_page(username: String, params: Form<PageParams>, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
-  _get(params.page, username, config, user, sess, conn)
+#[get("/u/<username>?<after>", rank = 2)]
+pub fn get_after(username: String, after: UrlDate, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
+  println!("after: {}", *after);
+  _get(Relative::After(after.into_inner()), username, config, user, sess, conn)
 }
 
-#[derive(Debug, FromForm, UriDisplay)]
-pub struct PageParams {
-  page: u32,
+#[get("/u/<username>?<before>", rank = 1)]
+pub fn get_before(username: String, before: UrlDate, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
+  println!("before: {}", *before);
+  _get(Relative::Before(before.into_inner()), username, config, user, sess, conn)
 }
 
-fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
-  // TODO: make PositiveNumber struct or similar (could make Positive<num::Integer> or something)
-  if page == 0 {
-    return Ok(Rst::Status(HttpStatus::NotFound));
-  }
+enum Relative {
+  Before(DateTime<Utc>),
+  After(DateTime<Utc>),
+}
+
+fn _get(rel: Relative, username: String, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let target: User = match users::table.filter(users::username.eq(&username)).first(&*conn).optional()? {
     Some(u) => u,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -56,32 +65,66 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
   }
   let total_pastes: i64 = query.get_result(&*conn)?;
 
-  let outputs = if total_pastes == 0 && page == 1 {
+  let (mut can_prev, mut can_next) = (false, false);
+
+  let outputs: Vec<Output> = if total_pastes == 0 {
     Vec::default()
   } else {
-    let page = i64::from(page);
-    let offset = (page - 1) * 15;
-    if offset >= total_pastes {
-      return Ok(Rst::Status(HttpStatus::NotFound));
+    let mut query_1 = DbPaste::belonging_to(&target)
+      .limit(16)
+      .into_boxed();
+    let mut query_2 = DbPaste::belonging_to(&target)
+      .select(pastes::id)
+      .limit(1)
+      .into_boxed();
+
+    if Some(target.id()) != user.as_ref().map(|x| x.id()) {
+      query_1 = query_1.filter(pastes::visibility.eq(Visibility::Public));
+      query_2 = query_2.filter(pastes::visibility.eq(Visibility::Public));
     }
-    let pastes: Vec<DbPaste> = if Some(target.id()) == user.as_ref().map(|x| x.id()) {
-      DbPaste::belonging_to(&target)
-        .order_by(pastes::created_at.desc())
-        .offset(offset)
-        .limit(15)
-        .load(&*conn)?
-    } else {
-      DbPaste::belonging_to(&target)
-        .filter(pastes::visibility.eq(Visibility::Public))
-        .order_by(pastes::created_at.desc())
-        .offset(offset)
-        .limit(15)
-        .load(&*conn)?
-    };
+
+    match rel {
+      Relative::Before(ref date) => {
+        query_1 = query_1
+          .order_by(pastes::created_at.desc())
+          .filter(pastes::created_at.lt(date.naive_utc()));
+        query_2 = query_2.order_by(pastes::created_at.desc());
+      },
+      Relative::After(ref date) => {
+        query_1 = query_1
+          .order_by(pastes::created_at.asc())
+          .filter(pastes::created_at.gt(date.naive_utc()));
+        query_2 = query_2.order_by(pastes::created_at.asc());
+      },
+    }
+
+    let mut pastes: Vec<DbPaste> = query_1.load(&*conn)?;
+
+    let edge_paste: Option<PasteId> = query_2.first(&*conn).optional()?;
+    if let Some(ref p) = pastes.iter().next() {
+      let can = Some(p.id()) != edge_paste;
+      match rel {
+        Relative::Before(_) => can_prev = can,
+        Relative::After(_) => can_next = can,
+      }
+    }
+
+    if pastes.len() == 16 {
+      match rel {
+        Relative::Before(_) => can_next = true,
+        Relative::After(_) => can_prev = true,
+      }
+    }
+
+    pastes.truncate(15);
+
+    if let Relative::After(_) = rel {
+      pastes.reverse();
+    }
 
     let author = OutputAuthor::new(target.id(), target.username(), target.name());
 
-    let mut outputs = Vec::with_capacity(pastes.len());
+    let mut outputs = Vec::with_capacity(min(15, pastes.len()));
 
     for paste in pastes {
       let id = paste.id();
@@ -162,31 +205,47 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["pastes"] = json!(outputs);
   ctx["target"] = json!(target);
-  ctx["page"] = json!(page);
   ctx["total"] = json!(total_pastes);
-  ctx["links"] = json!(user_links(user.as_ref(), &target, &outputs, page));
+  ctx["links"] = json!(user_links(
+    user.as_ref(),
+    &target,
+    &outputs,
+    if can_prev {
+      outputs.iter().next().and_then(|x| x.paste.metadata.created_at)
+    } else {
+      None
+    },
+    if can_next {
+      outputs.iter().last().and_then(|x| x.paste.metadata.created_at)
+    } else {
+      None
+    },
+  ));
   Ok(Rst::Template(Template::render("user/index", ctx)))
 }
 
-fn user_links(user: Option<&User>, target: &User, pastes: &[Output], page: u32) -> Links {
-  let mut links = links!(
-    "next_page" => uri!(crate::routes::web::users::get::get_page:
-      target.username(),
-      PageParams {
-        page: page + 1,
-      },
-    ),
-    "prev_page" => if page <= 2 {
-      uri!(crate::routes::web::users::get::get: target.username())
-    } else {
-      uri!(crate::routes::web::users::get::get_page:
+fn user_links(user: Option<&User>, target: &User, pastes: &[Output], first_date: Option<DateTime<Utc>>, last_date: Option<DateTime<Utc>>) -> Links {
+  let mut links = Links::default();
+
+  if let Some(first_date) = first_date {
+    links.add(
+      "prev_page",
+      uri!(crate::routes::web::users::get::get_after:
         target.username(),
-        PageParams {
-          page: page - 1,
-        },
-      )
-    },
-  );
+        UrlDate::from(first_date),
+      ),
+    );
+  }
+
+  if let Some(last_date) = last_date {
+    links.add(
+      "next_page",
+      uri!(crate::routes::web::users::get::get_before:
+        target.username(),
+        UrlDate::from(last_date),
+      ),
+    );
+  }
 
   if let Some(ref u) = user {
     links.add("delete_multiple", uri!(crate::routes::web::pastes::delete::ids: u.username()));

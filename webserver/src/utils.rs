@@ -7,6 +7,7 @@ pub mod language;
 pub mod multipart;
 pub mod password;
 pub mod totp;
+pub mod url_date;
 pub mod validator;
 
 pub use self::{
@@ -16,5 +17,6 @@ pub use self::{
   language::Language,
   multipart::MultipartUpload,
   password::PasswordContext,
+  url_date::UrlDate,
   validator::Validator,
 };

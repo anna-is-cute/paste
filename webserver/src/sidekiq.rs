@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   errors::*,
   models::id::UserId,
   store::Store,
@@ -12,8 +13,8 @@ use sidekiq::{Value, JobOpts};
 
 use std::path::PathBuf;
 
-pub enum Job {
-  DeleteAllPastes(UserId),
+pub enum Job<'c> {
+  DeleteAllPastes(&'c Config, UserId),
   Email {
     config_path: PathBuf,
     email: String,
@@ -27,8 +28,8 @@ pub enum Job {
   },
 }
 
-impl Job {
-  pub fn email<T, C, P, E, S>(template: T, context: C, path: P, email: E, subject: S) -> Result<Job>
+impl Job<'c> {
+  pub fn email<T, C, P, E, S>(template: T, context: C, path: P, email: E, subject: S) -> Result<Job<'c>>
     where T: AsRef<str>,
           C: Serialize,
           P: Into<PathBuf>,
@@ -47,7 +48,7 @@ impl Job {
     })
   }
 
-  pub fn queue<C: Into<String>>(class: C, timestamp: i64, args: Vec<Value>) -> Job {
+  pub fn queue<C: Into<String>>(class: C, timestamp: i64, args: Vec<Value>) -> Job<'c> {
     Job::Queue {
       class: class.into(),
       timestamp,
@@ -57,7 +58,7 @@ impl Job {
 
   fn class(&self) -> &str {
     match *self {
-      Job::DeleteAllPastes(_) => "DeleteDirectory",
+      Job::DeleteAllPastes(_, _) => "DeleteDirectory",
       Job::Email { .. } => "Email",
       Job::Queue { .. } => "Queue",
     }
@@ -65,10 +66,9 @@ impl Job {
 
   fn args(&self) -> Vec<Value> {
     match *self {
-      Job::DeleteAllPastes(u) => {
-        let path = Store::directory()
-          .canonicalize()
-          .expect("could not canonicalize store path")
+      Job::DeleteAllPastes(config, u) => {
+        let path = Store::new(config)
+          .directory()
           .join(u.to_simple().to_string())
           .to_string_lossy()
           .into_owned();
@@ -92,7 +92,7 @@ impl Job {
 
   fn opts(&self) -> JobOpts {
     match *self {
-      Job::DeleteAllPastes(_) | Job::Queue { .. } => JobOpts {
+      Job::DeleteAllPastes(_, _) | Job::Queue { .. } => JobOpts {
         queue: "low".into(),
         .. Default::default()
       },
@@ -101,7 +101,7 @@ impl Job {
   }
 }
 
-impl From<Job> for sidekiq::Job {
+impl From<Job<'c>> for sidekiq::Job {
   fn from(j: Job) -> Self {
     sidekiq::Job::new(
       j.class().to_string(),

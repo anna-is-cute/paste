@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::{
     DbConn,
     models::{
@@ -20,7 +21,7 @@ use diesel::prelude::*;
 
 use rocket::{
   http::Status as HttpStatus,
-  request::Form,
+  request::{Form, State},
   response::Redirect,
 };
 
@@ -29,7 +30,7 @@ use uuid::Uuid;
 use std::str::FromStr;
 
 #[delete("/p/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>", rank = 1)]
-pub fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let deletion = deletion.into_inner();
 
   if !sess.check_token(&deletion.anti_csrf_token) {
@@ -100,7 +101,7 @@ pub fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, user
 
   // should be authed beyond this point
 
-  paste.delete(&conn)?;
+  paste.delete(&*config, &conn)?;
 
   sess.add_data("info", "Paste deleted.");
   Ok(Rst::Redirect(Redirect::to("/")))
@@ -113,7 +114,7 @@ pub struct PasteDeletion {
 }
 
 #[delete("/p/<username>/ids", format = "application/x-www-form-urlencoded", data = "<deletion>", rank = 2)]
-pub fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalWebUser, mut sess: Session, conn: DbConn, config: State<Config>) -> Result<Rst> {
   let deletion = deletion.into_inner();
 
   if !sess.check_token(&deletion.anti_csrf_token) {
@@ -157,7 +158,7 @@ pub fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalW
   }
 
   for paste in &pastes {
-    paste.delete(&conn)?;
+    paste.delete(&*config, &conn)?;
   }
 
   sess.add_data("info", format!("{} paste{} deleted.", pastes.len(), if pastes.len() == 1 { "" } else { "s" }));

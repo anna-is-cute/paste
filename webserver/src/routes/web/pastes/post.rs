@@ -1,5 +1,6 @@
 use crate::{
   backend::{errors::BackendError, pastes::*},
+  config::Config,
   database::DbConn,
   errors::*,
   models::paste::{Visibility, Content},
@@ -32,7 +33,7 @@ fn handle_js(input: &str) -> Result<Vec<MultiFile>> {
 }
 
 #[post("/pastes", format = "application/x-www-form-urlencoded", data = "<paste>")]
-pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> Result<Redirect> {
   let paste = paste.into_inner();
   sess.set_form(&paste);
 
@@ -93,7 +94,7 @@ pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, 
     files,
   };
 
-  let CreateSuccess { paste, deletion_key, .. } = match pp.create(&conn, &*sidekiq) {
+  let CreateSuccess { paste, deletion_key, .. } = match pp.create(&*config, &conn, &*sidekiq) {
     Ok(s) => s,
     Err(e) => {
       let msg = e.into_web_message()?;
@@ -110,8 +111,8 @@ pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, 
   }
 
   match user {
-    Some(ref u) => paste.commit(u.name(), u.email(), "create paste via web")?,
-    None => paste.commit("Anonymous", "none", "create paste via web")?,
+    Some(ref u) => paste.commit(&*config, u.name(), u.email(), "create paste via web")?,
+    None => paste.commit(&*config, "Anonymous", "none", "create paste via web")?,
   }
 
   let username = match user {

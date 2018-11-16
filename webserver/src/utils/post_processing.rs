@@ -26,23 +26,40 @@ fn make_parser() -> Parser<RcDom> {
   )
 }
 
-fn walk(config: &Config, handle: Handle, external: &Attribute) {
+fn walk(config: &Config, handle: Handle, external: &Attribute) -> bool {
   let node = handle;
+
+  node
+    .children
+    .borrow_mut()
+    .retain(|child| walk(config, child.clone(), external));
+
   match node.data {
+    NodeData::Element { ref name, ref attrs, .. } if &*name.local == "input" => {
+      let attrs = attrs.borrow();
+      let type_attr = match attrs.iter().find(|x| &*x.name.local == "type") {
+        Some(a) => a,
+        None => return false,
+      };
+
+      if type_attr.value.trim().is_empty() {
+        return false;
+      }
+    },
     NodeData::Element { ref name, ref attrs, .. } if name.local == local_name!("img") => {
       let mut new_url = match crate::CAMO_URL.as_ref() {
         Some(u) => u.clone(),
-        None => return,
+        None => return true,
       };
       let mut attrs = attrs.borrow_mut();
       let mut url_attr = match attrs.iter_mut().find(|x| x.name.local == local_name!("src")) {
         Some(a) => a,
-        None => return,
+        None => return true,
       };
 
       let url = match Url::parse(&url_attr.value) {
         Ok(u) => u,
-        Err(_) => return,
+        Err(_) => return true,
       };
 
       let mut hmac = Hmac::new(Sha1::new(), &crate::CAMO_KEY);
@@ -85,9 +102,7 @@ fn walk(config: &Config, handle: Handle, external: &Attribute) {
     _ => {},
   }
 
-  for child in node.children.borrow().iter() {
-    walk(config, child.clone(), external);
-  }
+  true
 }
 
 pub fn process(config: &Config, src: &str) -> String {

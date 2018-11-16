@@ -41,15 +41,18 @@ lazy_static! {
     ext_strikethrough: true,
     ext_table: true,
     ext_autolink: true,
-    // let's see how https://github.com/notriddle/ammonia/issues/100 turns out
-    // ext_tasklist: true,
+    ext_tasklist: true,
     ext_footnotes: true,
     .. Default::default()
   };
 
   static ref CLEANER: Builder<'static> = {
     let mut b = Builder::default();
-    b.link_rel(Some("noopener noreferrer nofollow"));
+    b
+      .link_rel(Some("noopener noreferrer nofollow"))
+      .add_tags(std::iter::once("input"))
+      .add_tag_attribute_values("input", "checked", vec!["", "checked"].into_iter())
+      .add_tag_attribute_values("input", "type", std::iter::once("checkbox"));
     b
   };
 }

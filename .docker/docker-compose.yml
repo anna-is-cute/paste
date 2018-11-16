@@ -1,7 +1,10 @@
 version: '3'
 services:
+  # This will run the latest published, successfully built commit on master.
+  # Options for running other branches (e.g. stable) are coming soon.
+  # You probably want to keep this uncommented if you're just planning on running paste normally.
   backend:
-    image: akpmakesjenkins/test-paste
+    image: jkcclemens/paste-prebuilt
     restart: unless-stopped
     volumes:
       - "../config.toml:/paste/config.toml:ro"
@@ -16,6 +19,22 @@ services:
       - sidekiq
     environment:
       - ROCKET_ENV=prod
+  # This will run whatever is in your checked-out repository by compiling it then executing it.
+  # You probably only want to uncomment this if you're doing development on paste.
+  # backend:
+  #   build: run
+  #   command: /run.sh --release
+  #   restart: unless-stopped
+  #   volumes:
+  #     - "../:/paste:cached"
+  #     - "./run/.cargo/registry:/root/.cargo/registry:cached"
+  #     - "./run/.cargo/git:/root/.cargo/git:cached"
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #     - sidekiq
+  #   environment:
+  #     - ROCKET_ENV=prod
   redis:
     image: redis:alpine
     restart: unless-stopped
@@ -27,6 +46,8 @@ services:
       - POSTGRES_PASSWORD=paste
   sidekiq:
     build: sidekiq
+    # Uncomment this if you're doing development on paste to use the sidekiq.sh in the repo root.
+    # command: /paste/sidekiq.sh
     restart: unless-stopped
     depends_on:
       - redis

@@ -12,8 +12,6 @@
 #[macro_use]
 extern crate diesel;
 #[macro_use]
-extern crate html5ever;
-#[macro_use]
 extern crate if_chain;
 #[macro_use]
 extern crate lazy_static;

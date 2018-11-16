@@ -13,6 +13,7 @@ pub struct Config {
   #[serde(skip_deserializing)]
   pub _path: Option<PathBuf>,
   pub general: General,
+  pub store: Store,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -21,6 +22,11 @@ pub struct General {
   pub site_domain: String,
   #[serde(default)]
   pub about_file: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Store {
+  pub path: PathBuf,
 }
 
 pub fn load_config(s: &str) -> Result<Config> {

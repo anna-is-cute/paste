@@ -1,6 +1,7 @@
 #![allow(clippy::option_option)]
 
 use crate::{
+  config::Config,
   errors::*,
   models::{
     id::{FileId, PasteId},
@@ -61,9 +62,9 @@ impl File {
     &self.created_at
   }
 
-  pub fn as_output_file(&self, with_content: bool, paste: &Paste) -> Result<OutputFile> {
+  pub fn as_output_file(&self, config: &Config, with_content: bool, paste: &Paste) -> Result<OutputFile> {
     let content = if with_content {
-      Some(self.read_content(paste)?)
+      Some(self.read_content(config, paste)?)
     } else {
       None
     };
@@ -71,12 +72,12 @@ impl File {
     Ok(OutputFile::new(self.id(), Some(self.name()), self.highlight_language(), content))
   }
 
-  pub fn path(&self, paste: &Paste) -> PathBuf {
-    paste.files_directory().join(self.id().to_simple().to_string())
+  pub fn path(&self, config: &Config, paste: &Paste) -> PathBuf {
+    paste.files_directory(config).join(self.id().to_simple().to_string())
   }
 
-  pub fn read_content(&self, paste: &Paste) -> Result<Content> {
-    let mut file = FsFile::open(self.path(paste))?;
+  pub fn read_content(&self, config: &Config, paste: &Paste) -> Result<Content> {
+    let mut file = FsFile::open(self.path(config, paste))?;
     let mut data = Vec::new();
     file.read_to_end(&mut data)?;
 

@@ -115,7 +115,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
     return Ok(Rst::Status(status));
   }
 
-  let files: Vec<OutputFile> = id.output_files(&conn, &paste, true)?;
+  let files: Vec<OutputFile> = id.output_files(&*config, &conn, &paste, true)?;
 
   let mut rendered: HashMap<FileId, Option<String>> = HashMap::with_capacity(files.len());
 
@@ -149,7 +149,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
     paste.description(),
     paste.visibility(),
     paste.created_at(),
-    paste.updated_at().ok(), // FIXME
+    paste.updated_at(&*config).ok(), // FIXME
     paste.expires(),
     None,
     files,
@@ -173,7 +173,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["paste"] = json!(output);
-  ctx["num_commits"] = json!(paste.num_commits()?);
+  ctx["num_commits"] = json!(paste.num_commits(&*config)?);
   ctx["rendered"] = json!(rendered);
   ctx["user"] = json!(*user);
   ctx["deletion_key"] = json!(sess.data.remove(&format!("deletion_key_{}", paste.id().to_simple())));
@@ -228,7 +228,7 @@ pub fn edit(username: String, id: PasteId, config: State<Config>, user: Optional
 
   // should be authed beyond this point
 
-  let files: Vec<OutputFile> = id.output_files(&conn, &paste, true)?;
+  let files: Vec<OutputFile> = id.output_files(&*config, &conn, &paste, true)?;
 
   let output = Output::new(
     id,
@@ -237,7 +237,7 @@ pub fn edit(username: String, id: PasteId, config: State<Config>, user: Optional
     paste.description(),
     paste.visibility(),
     paste.created_at(),
-    paste.updated_at().ok(), // FIXME
+    paste.updated_at(&*config).ok(), // FIXME
     paste.expires(),
     None,
     files,
@@ -250,7 +250,7 @@ pub fn edit(username: String, id: PasteId, config: State<Config>, user: Optional
   let mut ctx = context(&*config, Some(&user), &mut sess);
   ctx["paste"] = json!(output);
   ctx["languages"] = json!(Language::context());
-  ctx["num_commits"] = json!(paste.num_commits()?);
+  ctx["num_commits"] = json!(paste.num_commits(&*config)?);
   ctx["is_owner"] = json!(is_owner);
   ctx["author_name"] = json!(author_name);
   ctx["links"] = json!(

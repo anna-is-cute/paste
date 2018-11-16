@@ -85,11 +85,18 @@ fn main() {
       let path = match PathBuf::from(config_path).canonicalize() {
         Ok(p) => p,
         Err(e) => {
-          println!("could not canonicalize config path: {}", e);
+          println!("could not canonicalise config path: {}", e);
           return;
         },
       };
       c._path = Some(path);
+      c.store.path = match c.store.path.canonicalize() {
+        Ok(p) => p,
+        Err(e) => {
+          println!("could not canonicalise store path: {}", e);
+          return;
+        },
+      };
       c
     },
     Err(e) => {

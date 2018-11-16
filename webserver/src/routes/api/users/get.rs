@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::{
     DbConn,
     models::{
@@ -19,18 +20,18 @@ use crate::{
 
 use diesel::{prelude::*, dsl::count};
 
-use rocket::{http::Status as HttpStatus, request::Form};
+use rocket::{http::Status as HttpStatus, request::Form, State};
 
 use std::{fs::File, io::Read};
 
 #[get("/<username>")]
-pub fn get(username: String, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {
-  _get(1, username, user, conn)
+pub fn get(username: String, user: OptionalUser, conn: DbConn, config: State<Config>) -> RouteResult<Vec<Output>> {
+  _get(1, username, user, conn, config)
 }
 
 #[get("/<username>?<params..>")]
-pub fn get_page(username: String, params: Form<PageParams>, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {
-  _get(params.page, username, user, conn)
+pub fn get_page(username: String, params: Form<PageParams>, user: OptionalUser, conn: DbConn, config: State<Config>) -> RouteResult<Vec<Output>> {
+  _get(params.page, username, user, conn, config)
 }
 
 #[derive(Debug, FromForm)]
@@ -38,7 +39,7 @@ pub struct PageParams {
   page: u32,
 }
 
-fn _get(page: u32, username: String, user: OptionalUser, conn: DbConn) -> RouteResult<Vec<Output>> {
+fn _get(page: u32, username: String, user: OptionalUser, conn: DbConn, config: State<Config>) -> RouteResult<Vec<Output>> {
   // TODO: make PositiveNumber struct or similar (could make Positive<num::Integer> or something)
   if page == 0 {
     return Ok(Status::show_error(
@@ -98,11 +99,11 @@ fn _get(page: u32, username: String, user: OptionalUser, conn: DbConn) -> RouteR
       let mut bytes = [0; LEN];
 
       for file in files {
-        let mut f = file.as_output_file(false, &paste)?;
+        let mut f = file.as_output_file(&*config, false, &paste)?;
 
         // TODO: maybe store this in database or its own file?
         if !has_preview && file.is_binary() != Some(true) {
-          let path = file.path(&paste);
+          let path = file.path(&*config, &paste);
           let read = File::open(path)?.read(&mut bytes)?;
           let full = read < LEN;
           let end = if read == LEN { read - 1 } else { read };
@@ -145,7 +146,7 @@ fn _get(page: u32, username: String, user: OptionalUser, conn: DbConn) -> RouteR
         paste.description(),
         paste.visibility(),
         paste.created_at(),
-        paste.updated_at().ok(), // FIXME
+        paste.updated_at(&*config).ok(), // FIXME
         paste.expires(),
         None,
         output_files,

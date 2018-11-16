@@ -6,8 +6,10 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends build
 
 RUN gem install sidekiq ffi
 
+ADD sidekiq.sh /sidekiq.sh
+
 WORKDIR /paste
 
 STOPSIGNAL SIGKILL
 
-CMD ./sidekiq.sh
+CMD /sidekiq.sh

@@ -1,19 +1,40 @@
 version: '3'
 services:
+  # This will run the latest published, successfully built commit on master.
+  # Options for running other branches (e.g. stable) are coming soon.
+  # You probably want to keep this uncommented if you're just planning on running paste normally.
   backend:
-    build: run
-    command: /run.sh --release
+    image: jkcclemens/paste-prebuilt
     restart: unless-stopped
     volumes:
-      - "../:/paste:cached"
-      - "./run/.cargo/registry:/root/.cargo/registry:cached"
-      - "./run/.cargo/git:/root/.cargo/git:cached"
+      - "../config.toml:/paste/config.toml:ro"
+      - "../Rocket.toml:/paste/Rocket.toml:ro"
+      - "../.env:/paste/.env:ro"
+      - "../webserver/web:/paste/web:ro"
+      - "./nginx/certs:/paste/certs:ro"
+      - "libraries:/libraries"
     depends_on:
       - postgres
       - redis
       - sidekiq
     environment:
       - ROCKET_ENV=prod
+  # This will run whatever is in your checked-out repository by compiling it then executing it.
+  # You probably only want to uncomment this if you're doing development on paste.
+  # backend:
+  #   build: run
+  #   command: /run.sh --release
+  #   restart: unless-stopped
+  #   volumes:
+  #     - "../:/paste:cached"
+  #     - "./run/.cargo/registry:/root/.cargo/registry:cached"
+  #     - "./run/.cargo/git:/root/.cargo/git:cached"
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #     - sidekiq
+  #   environment:
+  #     - ROCKET_ENV=prod
   redis:
     image: redis:alpine
     restart: unless-stopped
@@ -25,11 +46,14 @@ services:
       - POSTGRES_PASSWORD=paste
   sidekiq:
     build: sidekiq
+    # Uncomment this if you're doing development on paste to use the sidekiq.sh in the repo root.
+    # command: /paste/sidekiq.sh
     restart: unless-stopped
     depends_on:
       - redis
     volumes:
       - "../:/paste"
+      - "libraries:/libraries:ro"
   camo:
     image: inventid/camo
     restart: unless-stopped
@@ -51,3 +75,5 @@ services:
       - "./nginx/certs:/etc/nginx/certs:ro"
       - "./nginx/extra_modules:/etc/nginx/extra_modules:ro"
       - "../webserver/web/static:/etc/nginx/web/static:ro"
+volumes:
+  libraries:

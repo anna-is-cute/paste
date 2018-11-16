@@ -8,7 +8,7 @@ RUN gem install sidekiq ffi
 
 ADD sidekiq.sh /sidekiq.sh
 
-WORKDIR /paste
+WORKDIR /repo
 
 STOPSIGNAL SIGKILL
 

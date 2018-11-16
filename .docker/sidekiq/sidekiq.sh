@@ -36,7 +36,7 @@ while IFS=' ' read -r checksum name; do
   done
 done < $SHASUMS
 
-PASTE=/paste/
+PASTE=/repo/
 
 source "$PASTE/$ENV_FILE"
 unset REDIS_URL

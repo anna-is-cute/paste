@@ -13,6 +13,7 @@ services:
       - "../webserver/web:/paste/web:ro"
       - "./nginx/certs:/paste/certs:ro"
       - "libraries:/libraries"
+      - "store:/paste/store"
     depends_on:
       - postgres
       - redis
@@ -52,8 +53,9 @@ services:
     depends_on:
       - redis
     volumes:
-      - "../:/paste"
+      - "../:/repo:ro"
       - "libraries:/libraries:ro"
+      - "store:/paste/store"
   camo:
     image: inventid/camo
     restart: unless-stopped
@@ -77,3 +79,4 @@ services:
       - "../webserver/web/static:/etc/nginx/web/static:ro"
 volumes:
   libraries:
+  store:

@@ -21,7 +21,7 @@ pipeline {
               mkdir -p exec
               cd exec
               cp ../target/release/{webserver,libworker_*.so} ./
-              find . -name "*.so" -print0 | xargs -0 shasum >> shasums
+              find . -name "*.so" -print0 | xargs -0 shasum -a 256 >> shasums
               cd ../
               cp .docker/paste/* .
               cp .gitignore .dockerignore

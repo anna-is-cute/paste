@@ -26,7 +26,7 @@ while IFS=' ' read -r checksum name; do
   while [ ! -f "$local_path" ]; do sleep 1; done
   # try to validate checksum three times
   for i in {1..3}; do
-    local_checksum=$(shasum "$local_path" | cut -d' ' -f1)
+    local_checksum=$(shasum -a 256 "$local_path" | cut -d' ' -f1)
     [ "$local_checksum" == "$checksum" ] && break
     if [ "$i" == "3" ]; then
       echo "could not verify integrity of $name. expected checksum $checksum but got $local_checksum."

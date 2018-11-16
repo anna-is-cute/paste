@@ -1,7 +1,7 @@
 use crate::config::Config;
 
 use html5ever::{
-  parse_fragment, serialize, QualName, Parser,
+  local_name, namespace_url, ns, parse_fragment, serialize, Parser, QualName,
   driver::ParseOpts,
   rcdom::{NodeData, RcDom, Handle},
   tendril::TendrilSink,
@@ -46,13 +46,13 @@ fn walk(config: &Config, handle: Handle, external: &Attribute) -> bool {
         return false;
       }
     },
-    NodeData::Element { ref name, ref attrs, .. } if name.local == local_name!("img") => {
+    NodeData::Element { ref name, ref attrs, .. } if &*name.local == "img" => {
       let mut new_url = match crate::CAMO_URL.as_ref() {
         Some(u) => u.clone(),
         None => return true,
       };
       let mut attrs = attrs.borrow_mut();
-      let mut url_attr = match attrs.iter_mut().find(|x| x.name.local == local_name!("src")) {
+      let mut url_attr = match attrs.iter_mut().find(|x| &*x.name.local == "src") {
         Some(a) => a,
         None => return true,
       };
@@ -78,11 +78,11 @@ fn walk(config: &Config, handle: Handle, external: &Attribute) -> bool {
 
       url_attr.value = new_url.into_string().into();
     },
-    NodeData::Element { ref name, ref attrs, .. } if name.local == local_name!("a") => {
+    NodeData::Element { ref name, ref attrs, .. } if &*name.local == "a" => {
       let url = attrs
         .borrow()
         .iter()
-        .find(|x| x.name.local == local_name!("href"))
+        .find(|x| &*x.name.local == "href")
         .map(|x| Url::parse(&x.value));
       match url {
         // mark the url as external if it doesn't point to our host

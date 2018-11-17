@@ -1,18 +1,18 @@
+# Use this file for doing local development with docker-compose.
+
 version: '3'
 services:
-  # This will run the latest published, successfully built commit on master.
-  # Options for running other branches (e.g. stable) are coming soon.
+  # This will run whatever is in your checked-out repository by compiling it then executing it.
   backend:
-    image: jkcclemens/paste-prebuilt
+    build: run
+    command: /run.sh
+    # To build in release mode, add --release to run.sh.
+    # command: /run.sh --release
     restart: unless-stopped
     volumes:
-      - "../config.toml:/paste/config.toml:ro"
-      - "../Rocket.toml:/paste/Rocket.toml:ro"
-      - "../.env:/paste/.env:ro"
-      - "../webserver/web:/paste/web:ro"
-      - "./nginx/certs:/paste/certs:ro"
-      - "libraries:/libraries"
-      - "store:/store"
+      - "../:/paste:cached"
+      - "./run/.cargo/registry:/root/.cargo/registry:cached"
+      - "./run/.cargo/git:/root/.cargo/git:cached"
     depends_on:
       - postgres
       - redis
@@ -30,13 +30,13 @@ services:
       - POSTGRES_PASSWORD=paste
   sidekiq:
     build: sidekiq
+    command: /paste/sidekiq.sh
     restart: unless-stopped
     depends_on:
       - redis
     volumes:
-      - "../:/paste:ro"
+      - "../:/paste"
       - "libraries:/libraries:ro"
-      - "store:/store"
   camo:
     image: inventid/camo
     restart: unless-stopped
@@ -60,4 +60,3 @@ services:
       - "../webserver/web/static:/etc/nginx/web/static:ro"
 volumes:
   libraries:
-  store:

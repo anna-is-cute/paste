@@ -88,7 +88,7 @@ input[type=checkbox] {
   border-color: 1px solid darken($white, 10%);
 
   &:focus, &:active {
-    border-color: darken($white, 15%);
+    border-color: lighten($grey-dark, 20%);
   }
 
   &:disabled {

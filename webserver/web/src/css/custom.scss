@@ -1,5 +1,4 @@
 @import "bulma-tooltip/src/sass/index";
-@import "pretty-checkbox/src/pretty-checkbox";
 
 body {
   display: flex;
@@ -343,14 +342,6 @@ input[type=checkbox] {
   width: 1rem;
   height: 1rem;
 
-  li & {
-    &:first-child {
-      margin-right: .25em;
-    }
-
-    vertical-align: middle;
-  }
-
   &:focus, &:active {
     border-color: lighten($grey-darker, 15%);
   }
@@ -376,5 +367,14 @@ input[type=checkbox] {
     position: relative;
     top: 0.2625em;
     left: 0.125em;
+  }
+
+  li & {
+    &:first-child {
+      margin-top: -.275rem;
+      margin-right: .25rem;
+    }
+
+    vertical-align: middle;
   }
 }

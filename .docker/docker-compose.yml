@@ -11,6 +11,7 @@ services:
       - "../.env:/paste/.env:ro"
       - "../webserver/web:/paste/web:ro"
       - "./nginx/certs:/paste/certs:ro"
+      - "../.git:/paste/.git:ro"
       - "libraries:/libraries"
       - "store:/store"
     depends_on:

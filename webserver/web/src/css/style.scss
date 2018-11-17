@@ -82,3 +82,20 @@ div.codesass.codesass--has-line-numbers::before {
 .diffs .subtitle.hunk code {
   background-color: darken($grey-darker, 5);
 }
+
+input[type=checkbox] {
+  background-color: $white;
+  border-color: 1px solid darken($white, 10%);
+
+  &:focus, &:active {
+    border-color: darken($white, 15%);
+  }
+
+  &:disabled {
+    border-color: $grey;
+  }
+
+  &:checked::after {
+    border-color: $grey-dark;
+  }
+}

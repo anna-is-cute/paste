@@ -90,6 +90,10 @@ fn main() {
         },
       };
       c._path = Some(path);
+      if let Err(e) = std::fs::create_dir_all(&c.store.path) {
+        println!("could not create store at {}: {}", c.store.path.to_string_lossy(), e);
+        return;
+      }
       c.store.path = match c.store.path.canonicalize() {
         Ok(p) => p,
         Err(e) => {

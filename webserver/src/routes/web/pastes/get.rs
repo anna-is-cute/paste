@@ -52,6 +52,7 @@ lazy_static! {
       .link_rel(Some("noopener noreferrer nofollow"))
       .add_tags(std::iter::once("input"))
       .add_tag_attribute_values("input", "checked", vec!["", "checked"].into_iter())
+      .add_tag_attribute_values("input", "disabled", vec!["", "disabled"].into_iter())
       .add_tag_attribute_values("input", "type", std::iter::once("checkbox"));
     b
   };

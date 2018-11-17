@@ -148,16 +148,10 @@
     <div class="box-title">
       <div class="paste-removable-title">
       {% if user and target.id == user.id %}
-        <div class="pretty p-icon p-round p-smooth p-plain is-size-5 requires-js">
-          <input
-            type="checkbox"
-            name="paste-delete"
-            data-paste-id="{{ paste.id }}"/>
-          <div class="state">
-            <i class="icon fas fa-check"></i>
-            <label></label>
-          </div>
-        </div>
+        <input
+          type="checkbox"
+          name="paste-delete"
+          data-paste-id="{{ paste.id }}"/>
       {% endif %}
         <div>
           <h3 class="title is-marginless">

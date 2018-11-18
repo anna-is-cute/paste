@@ -3,6 +3,7 @@
 *A sensible, modern pastebin.*
 
 [![build status](https://travis-ci.org/jkcclemens/paste.svg?branch=master)](https://travis-ci.org/jkcclemens/paste)
+[![jenkins status](https://ci.akpmakes.tech/buildStatus/icon?job=paste/master)](https://ci.akpmakes.tech/job/paste/job/master/)
 [![dependency status](https://deps.rs/repo/github/jkcclemens/paste/status.svg)](https://deps.rs/repo/github/jkcclemens/paste)
 [![patreon](https://img.shields.io/badge/donate-patreon-blue.svg)](https://www.patreon.com/jkcclemens/overview)
 [![paypal](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/jkcclemens)

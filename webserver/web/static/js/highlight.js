@@ -5,6 +5,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 /* global hljs:false */
 
 (function () {
+  function getSuffixFromName(name) {
+    if (name === 'CMakeLists.txt') {
+      return 'CMake';
+    }
+
+    return name.split('.').pop();
+  }
+
   var _loop = function _loop(pre) {
     (function () {
       if (pre.id === '') {
@@ -18,7 +26,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       if (pre.lang) {
         suffix = pre.lang;
       } else {
-        suffix = title.innerText.trim().split('.').pop();
+        suffix = getSuffixFromName(title.innerText.trim());
       }
       var classes = [];
       if (hljs.getLanguage(suffix) === undefined) {

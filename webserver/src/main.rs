@@ -122,7 +122,7 @@ fn main() {
     .attach(fairings::SecurityHeaders)
     .attach(fairings::AntiCsrf)
     .attach(fairings::LastPage::default())
-    .attach(Template::fairing())
+    .attach(Template::custom(|e| e.tera.register_filter("md5", crate::utils::tera::md5)))
     .register(catchers![
       routes::bad_request,
       routes::forbidden,

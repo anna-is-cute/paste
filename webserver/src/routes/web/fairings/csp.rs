@@ -44,8 +44,8 @@ lazy_static! {
     map.insert("style-src".into(), "'self'".into());
     map.insert("font-src".into(), "'self'".into());
     let img_src = match crate::CAMO_URL.as_ref() {
-      Some(ref url) if url.host_str().is_some() => format!("'self' {}", url.host_str().unwrap()),
-      _ => "'self'".into(),
+      Some(ref url) if url.host_str().is_some() => format!("'self' gravatar.com {}", url.host_str().unwrap()),
+      _ => "'self' gravatar.com".into(),
     };
     map.insert("img-src".into(), img_src);
     map.insert("require-sri-for".into(), "script style".into());

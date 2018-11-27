@@ -43,6 +43,8 @@ lazy_static! {
     ext_autolink: true,
     ext_tasklist: true,
     ext_footnotes: true,
+    // allows html and bad links: ammonia + our post-processor cleans the output, not comrak
+    unsafe_: true,
     .. Default::default()
   };
 

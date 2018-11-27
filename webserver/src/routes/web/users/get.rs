@@ -170,6 +170,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
 
 fn user_links(user: Option<&User>, target: &User, pastes: &[Output], page: u32) -> Links {
   let mut links = links!(
+    "target_avatar" => uri!(crate::routes::web::account::avatar::get: target.id()),
     "next_page" => uri!(crate::routes::web::users::get::get_page:
       target.username(),
       PageParams {

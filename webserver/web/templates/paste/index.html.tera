@@ -81,7 +81,13 @@ untitled paste
       </div>
       <div class="left">
         {% if paste.author %}
-        <a class="has-text-grey" href="{{ links.author_page }}">
+        <a class="avatar-name has-text-grey" href="{{ links.author_page }}">
+          <figure class="avatar image is-16x16">
+            <img
+              class="is-less-rounded"
+              src="{{ links.author_avatar }}"
+              alt="{{ paste.author.username }} avatar"/>
+          </figure>
           <span class="keeps-spaces">{{ paste.author.name }}</span>
         </a>
         {% endif %}

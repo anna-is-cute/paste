@@ -378,3 +378,24 @@ input[type=checkbox] {
     vertical-align: middle;
   }
 }
+
+.avatar-name {
+  display: flex;
+  align-items: center;
+
+  .avatar {
+    margin-right: .25rem;
+  }
+
+  .avatar.has-larger-gap {
+    margin-right: 1rem;
+  }
+
+  .navbar & .avatar {
+    margin-right: .5rem;
+  }
+}
+
+.image .is-less-rounded {
+  border-radius: 12.5%;
+}

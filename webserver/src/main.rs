@@ -118,6 +118,7 @@ fn main() {
     .manage(redis_store::init_pool())
     .manage(redis_store::init_sidekiq())
     .manage(config)
+    .manage(reqwest::Client::new())
     .attach(fairings::Csp)
     .attach(fairings::SecurityHeaders)
     .attach(fairings::AntiCsrf)
@@ -185,6 +186,8 @@ fn main() {
       routes::web::account::reset_password::post,
       routes::web::account::reset_password::reset_get,
       routes::web::account::reset_password::reset_post,
+
+      routes::web::account::avatar::get,
 
       routes::web::users::get::get,
       routes::web::users::get::get_page,

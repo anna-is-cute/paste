@@ -413,7 +413,7 @@ dependencies = [
 [[package]]
 name = "diesel"
 version = "1.3.3"
-source = "git+https://github.com/jkcclemens/diesel#1c86a723d120a0a6e70ad4d2584f00e9904c35b8"
+source = "git+https://github.com/jkcclemens/diesel#58aaaaa8baac6ef3cbae402eab59293ee16b6ab4"
 dependencies = [
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "byteorder 1.2.7 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -429,7 +429,7 @@ dependencies = [
 [[package]]
 name = "diesel_derives"
 version = "1.3.0"
-source = "git+https://github.com/jkcclemens/diesel#1c86a723d120a0a6e70ad4d2584f00e9904c35b8"
+source = "git+https://github.com/jkcclemens/diesel#58aaaaa8baac6ef3cbae402eab59293ee16b6ab4"
 dependencies = [
  "proc-macro2 0.4.24 (registry+https://github.com/rust-lang/crates.io-index)",
  "quote 0.6.10 (registry+https://github.com/rust-lang/crates.io-index)",

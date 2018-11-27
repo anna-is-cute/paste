@@ -148,7 +148,7 @@ features = ["serde"]
 
 # markdown rendering
 [dependencies.comrak]
-version = "0.3"
+version = "0.4"
 default-features = false
 
 # accepting multipart input

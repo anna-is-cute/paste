@@ -107,6 +107,26 @@ Manage account settings.
   <hr/>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
+      <label class="label">Avatar</label>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <figure class="image is-128x128">
+          <img
+            src="{{ user_avatar_link }}"
+            alt="{{ user.username }} avatar"/>
+        </figure>
+        <p class="help">
+          Your avatar is determined by your email address using
+          <a class="external" href="https://gravatar.com">Gravatar</a>. Changes can be made at
+          Gravatar.
+        </p>
+      </div>
+    </div>
+  </div>
+  <hr/>
+  <div class="field is-horizontal">
+    <div class="field-label is-normal">
       <label class="label">Email</label>
     </div>
     <div class="field-body">

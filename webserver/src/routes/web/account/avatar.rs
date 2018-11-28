@@ -55,7 +55,7 @@ pub fn get<'r>(id: UserId, client: State<Client>, if_mod: IfMod, conn: DbConn) -
     hash
   });
 
-  let url = format!("https://gravatar.com/avatar/{}?s=128&d=identicon", hash);
+  let url = format!("https://gravatar.com/avatar/{}?s=256&d=identicon", hash);
   let mut req = client.get(&url);
   if let IfMod(Some(s)) = if_mod {
     req = req.header("If-Modified-Since", s);

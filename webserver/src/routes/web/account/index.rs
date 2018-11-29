@@ -2,6 +2,7 @@ use crate::{
   config::Config,
   database::{DbConn, schema::users},
   errors::*,
+  models::user::AvatarProvider,
   routes::web::{context, Rst, OptionalWebUser, Session},
   utils::{email, HashedPassword, Validator},
 };
@@ -105,6 +106,10 @@ pub fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalW
     user.set_username(username.into_owned());
   }
 
+  if update.avatar_provider != user.avatar_provider() {
+    user.set_avatar_provider(update.avatar_provider);
+  }
+
   if !update.password.is_empty() {
     if update.password != update.password_verify {
       sess.add_data("error", "New passwords did not match.");
@@ -134,6 +139,7 @@ pub struct AccountUpdate {
   name: String,
   username: String,
   email: String,
+  avatar_provider: AvatarProvider,
   #[serde(skip)]
   password: String,
   #[serde(skip)]

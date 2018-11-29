@@ -8,8 +8,6 @@ use crate::{
   models::id::UserId,
 };
 
-use crypto::{digest::Digest, md5::Md5};
-
 use diesel::prelude::*;
 
 use reqwest::Client;
@@ -19,12 +17,6 @@ use rocket::{
   response::Response,
   State,
 };
-
-use std::cell::RefCell;
-
-thread_local! {
-  static MD5: RefCell<Md5> = RefCell::new(Md5::new());
-}
 
 #[derive(Responder)]
 pub enum Avatar<'r> {
@@ -46,16 +38,9 @@ pub fn get<'r>(id: UserId, client: State<Client>, if_mod: IfMod, conn: DbConn) -
     None => return Ok(Avatar::Status(Status::NotFound)),
   };
 
-  let hash = MD5.with(|m| {
-    let mut m = m.borrow_mut();
-    m.input_str(user.email().to_lowercase().trim());
-    let hash = m.result_str();
-    m.reset();
+  let hash = user.avatar_provider().hash(user.email());
 
-    hash
-  });
-
-  let url = format!("https://gravatar.com/avatar/{}?s=256&d=identicon", hash);
+  let url = format!("https://{}/avatar/{}?s=256&d=identicon", user.avatar_provider().domain(), hash);
   let mut req = client.get(&url);
   if let IfMod(Some(s)) = if_mod {
     req = req.header("If-Modified-Since", s);

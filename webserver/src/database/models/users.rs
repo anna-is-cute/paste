@@ -1,6 +1,9 @@
 use crate::{
   errors::*,
-  models::id::{ApiKeyId, UserId},
+  models::{
+    id::{ApiKeyId, UserId},
+    user::AvatarProvider,
+  },
 };
 
 use super::api_keys::{ApiKey, NewApiKey};
@@ -29,6 +32,7 @@ pub struct User {
   shared_secret: Option<Vec<u8>>,
   #[serde(skip_serializing)]
   tfa_enabled: bool,
+  avatar_provider: AvatarProvider,
 }
 
 impl User {
@@ -90,6 +94,14 @@ impl User {
 
   pub fn set_tfa_enabled(&mut self, enabled: bool) {
     self.tfa_enabled = enabled;
+  }
+
+  pub fn avatar_provider(&self) -> AvatarProvider {
+    self.avatar_provider
+  }
+
+  pub fn set_avatar_provider(&mut self, avatar_provider: AvatarProvider) {
+    self.avatar_provider = avatar_provider;
   }
 
   pub fn create_email_verification(&self, conn: &DbConn, last_sent: Option<NaiveDateTime>) -> Result<(EmailVerification, Vec<u8>)> {
@@ -162,6 +174,7 @@ pub struct NewUser {
   email_verified: bool,
   shared_secret: Option<Vec<u8>>,
   tfa_enabled: bool,
+  avatar_provider: AvatarProvider,
 }
 
 impl NewUser {
@@ -181,6 +194,7 @@ impl NewUser {
       email_verified: false,
       shared_secret: None,
       tfa_enabled: false,
+      avatar_provider: AvatarProvider::Gravatar,
     }
   }
 }

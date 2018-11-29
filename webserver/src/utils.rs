@@ -6,6 +6,7 @@ pub mod hashed_password;
 pub mod language;
 pub mod multipart;
 pub mod password;
+pub mod tera;
 pub mod totp;
 pub mod validator;
 

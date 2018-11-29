@@ -61,13 +61,21 @@
         </div>
       {% endif %}
       </div>
-      <div class="left">
-        <h1 class="title">
-          {{ target.name }}'s pastes
-        </h1>
-        <h2 class="subtitle">
-          {{ total }} paste{{ total | pluralize }}.
-        </h2>
+      <div class="left avatar-name">
+        <figure class="avatar image has-larger-gap is-64x64">
+          <img
+            class="is-less-rounded"
+            src="{{ links.target_avatar }}"
+            alt="{{ target.username }} avatar"/>
+        </figure>
+        <div>
+          <h1 class="title">
+            {{ target.name }}'s pastes
+          </h1>
+          <h2 class="subtitle">
+            {{ total }} paste{{ total | pluralize }}.
+          </h2>
+        </div>
       </div>
     </div>
   </div>

@@ -120,6 +120,9 @@ rand = "0.6.0-pre.1"
 # creating sha-384 integrity hashes
 sha2 = "0.8"
 
+# requests to gravatar
+reqwest = "0.9"
+
 # web logic
 [dependencies.rocket]
 version = "0.4.0-rc.1"

@@ -162,7 +162,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
 
-  let mut links = super::paste_links(paste.id(), &author_name, user.as_ref());
+  let mut links = super::paste_links(paste.id(), paste.author_id(), &author_name, user.as_ref());
   links.add_value(
     "raw_files",
     output
@@ -257,7 +257,7 @@ pub fn edit(username: String, id: PasteId, config: State<Config>, user: Optional
   ctx["is_owner"] = json!(is_owner);
   ctx["author_name"] = json!(author_name);
   ctx["links"] = json!(
-    super::paste_links(paste.id(), &author_name, Some(&user))
+    super::paste_links(paste.id(), paste.author_id(), &author_name, Some(&user))
       .add(
         "patch",
         uri!(crate::routes::web::pastes::patch::patch: &author_name, paste.id()),

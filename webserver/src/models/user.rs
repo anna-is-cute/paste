@@ -19,14 +19,11 @@ use std::{
   io::Write,
 };
 
-/// Visibility of a [`Paste`].
 #[derive(Debug, Clone, Copy, PartialEq, AsExpression, Serialize, Deserialize)]
 #[sql_type = "SmallInt"]
 #[serde(rename_all = "lowercase")]
 pub enum AvatarProvider {
-  /// Paste is visible to everyone and can be crawled.
   Gravatar,
-  /// Paste is visible to everyone who knows the link and cannot be crawled.
   Libravatar,
 }
 

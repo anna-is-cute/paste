@@ -33,8 +33,7 @@ community!
 
 ## Using a pre-existing paste server
 
-I host [paste.gg](https://paste.gg). I am poor and can't afford a good machine (paste.gg is an AWS
-t2.micro – one core and low RAM), so please don't bombard it!
+I host [paste.gg](https://paste.gg). I am poor and can't afford a good machine (paste.gg is a DigitalOcean droplet – three cores and low-ish RAM), so please don't bombard it!
 
 ## Setting up your own paste server (Docker)
 

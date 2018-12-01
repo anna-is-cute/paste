@@ -122,6 +122,7 @@ fn main() {
     .attach(fairings::SecurityHeaders)
     .attach(fairings::AntiCsrf)
     .attach(fairings::LastPage::default())
+    .attach(fairings::Push)
     .attach(Template::fairing())
     .register(catchers![
       routes::bad_request,

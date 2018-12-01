@@ -31,6 +31,7 @@ impl LastPage {
       || path == "/favicon.ico"
       || path.starts_with("/static/")
       || path.starts_with("/account/reset_password")
+      || path.starts_with("/account/avatar/")
     {
       return;
     }

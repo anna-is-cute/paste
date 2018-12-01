@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::DbConn,
   errors::*,
   models::{
@@ -95,10 +96,10 @@ impl Paste {
     self.expires = expires.map(|x| x.naive_utc());
   }
 
-  pub fn updated_at(&self) -> Result<DateTime<Utc>> {
+  pub fn updated_at(&self, config: &Config) -> Result<DateTime<Utc>> {
     let db_datetime = self.updated_at.map(|x| DateTime::from_utc(x, Utc));
 
-    let repo = self.repository()?;
+    let repo = self.repository(config)?;
 
     let head_id = repo.refname_to_id("HEAD")?;
     let head = repo.find_commit(head_id)?;
@@ -116,7 +117,7 @@ impl Paste {
     Ok(newest)
   }
 
-  pub fn update(&mut self, conn: &DbConn, sidekiq: &SidekiqClient, update: &MetadataUpdate) -> Result<()> {
+  pub fn update(&mut self, config: &Config, conn: &DbConn, sidekiq: &SidekiqClient, update: &MetadataUpdate) -> Result<()> {
     let changed = !update.name.is_ignore()
       || update.visibility.is_some()
       || !update.description.is_ignore()
@@ -150,7 +151,7 @@ impl Paste {
 
         let job = Job::queue("ExpirePaste", timestamp, vec![
           Value::Number(timestamp.into()),
-          Value::String(Store::directory().to_string_lossy().to_string()),
+          Value::String(Store::new(config).directory().to_string_lossy().to_string()),
           Value::String(user),
           Value::String(self.id().to_simple().to_string()),
         ]);
@@ -182,17 +183,18 @@ impl Paste {
     }
   }
 
-  pub fn directory(&self) -> PathBuf {
+  pub fn directory(&self, config: &Config) -> PathBuf {
     let author = self.author_id().map(|x| x.to_simple().to_string()).unwrap_or_else(|| "anonymous".into());
-    Store::directory().join(author).join(self.id().to_simple().to_string())
+
+    Store::new(config).directory().join(author).join(self.id().to_simple().to_string())
   }
 
-  pub fn files_directory(&self) -> PathBuf {
-    self.directory().join("files")
+  pub fn files_directory(&self, config: &Config) -> PathBuf {
+    self.directory(config).join("files")
   }
 
-  pub fn repo_dirty(&self) -> Result<bool> {
-    let repo = Repository::open(self.files_directory())?;
+  pub fn repo_dirty(&self, config: &Config) -> Result<bool> {
+    let repo = Repository::open(self.files_directory(config))?;
     let dirty = repo
       .statuses(None)?
       .iter()
@@ -200,16 +202,16 @@ impl Paste {
     Ok(dirty)
   }
 
-  pub fn commit_if_dirty(&self, username: &str, email: &str, message: &str) -> Result<()> {
-    if self.repo_dirty()? {
-      return self.commit(username, email, message);
+  pub fn commit_if_dirty(&self, config: &Config, username: &str, email: &str, message: &str) -> Result<()> {
+    if self.repo_dirty(config)? {
+      return self.commit(config, username, email, message);
     }
 
     Ok(())
   }
 
-  pub fn commit(&self, username: &str, email: &str, message: &str) -> Result<()> {
-    let repo = self.repository()?;
+  pub fn commit(&self, config: &Config, username: &str, email: &str, message: &str) -> Result<()> {
+    let repo = self.repository(config)?;
     let mut index = repo.index()?;
 
     index.add_all(vec!["."], IndexAddOption::DEFAULT, None)?;
@@ -233,14 +235,14 @@ impl Paste {
     Ok(())
   }
 
-  pub fn repository(&self) -> Result<Repository> {
-    let repo = Repository::open(self.files_directory())?;
+  pub fn repository(&self, config: &Config) -> Result<Repository> {
+    let repo = Repository::open(self.files_directory(config))?;
 
     Ok(repo)
   }
 
-  pub fn num_commits(&self) -> Result<usize> {
-    let repo = self.repository()?;
+  pub fn num_commits(&self, config: &Config) -> Result<usize> {
+    let repo = self.repository(config)?;
     let head = repo.refname_to_id("HEAD")?;
     let head_commit = repo.find_commit(head)?;
 
@@ -255,7 +257,7 @@ impl Paste {
     Ok(count)
   }
 
-  pub fn create_file<S: AsRef<str>>(&self, conn: &DbConn, name: Option<S>, lang: Option<Language>, content: Content) -> Result<DbFile> {
+  pub fn create_file<S: AsRef<str>>(&self, config: &Config, conn: &DbConn, name: Option<S>, lang: Option<Language>, content: Content) -> Result<DbFile> {
     // generate file id
     let id = FileId(Uuid::new_v4());
 
@@ -263,7 +265,7 @@ impl Paste {
     let binary = content.is_binary();
 
     // create file on the system
-    let file_path = self.files_directory().join(id.to_simple().to_string());
+    let file_path = self.files_directory(config).join(id.to_simple().to_string());
     let mut f = File::create(file_path)?;
     f.write_all(&content.into_bytes())?;
 
@@ -279,22 +281,22 @@ impl Paste {
     Ok(db_file)
   }
 
-  pub fn delete_file(&self, conn: &DbConn, id: FileId) -> Result<()> {
+  pub fn delete_file(&self, config: &Config, conn: &DbConn, id: FileId) -> Result<()> {
     diesel::delete(files::table.filter(files::id.eq(id))).execute(&**conn)?;
-    fs::remove_file(self.files_directory().join(id.to_simple().to_string()))?;
+    fs::remove_file(self.files_directory(config).join(id.to_simple().to_string()))?;
 
     if self.id().is_empty(conn)? {
-      self.delete(conn)?;
+      self.delete(config, conn)?;
     }
 
     Ok(())
   }
 
-  pub fn delete(&self, conn: &DbConn) -> Result<()> {
+  pub fn delete(&self, config: &Config, conn: &DbConn) -> Result<()> {
     // database will cascade and delete all files and deletion keys, as well
     diesel::delete(pastes::table.filter(pastes::id.eq(self.id()))).execute(&**conn)?;
     // remove from system
-    fs::remove_dir_all(self.directory())?;
+    fs::remove_dir_all(self.directory(config))?;
 
     Ok(())
   }

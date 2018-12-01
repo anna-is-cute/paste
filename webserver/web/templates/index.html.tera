@@ -4,14 +4,14 @@
 {{ super() }}
 <link
   title="dark"
-  rel="stylesheet alternate"
-  href="/static/css/highlightjs/atom-one-dark.min.css?v={{ resources_version }}"
-  integrity="sha384-nyXucUVWQWGGNq3mSgG/FGxW4Jmsv+0uCbHZ0VpHRsGZt/PlUT31hz9sUek822eI"/>
+  rel="stylesheet"
+  href="/static/css/highlightjs/atom-one-dark.css?v={{ resources_version }}"
+  integrity="sha384-vkxpPwxwAfshAXLThtiwLXxyqE2yBZZwMRkAMrG79f96ukqppq7Tx8wWg5K29flM"/>
 <link
   title="light"
-  rel="stylesheet"
-  href="/static/css/highlightjs/atom-one-light.min.css?v={{ resources_version }}"
-  integrity="sha384-7gDLYK0oyPpfkc6E6VzcNFzEFGw6QTKMoof6r0lb0cWECaHXX+b2GGxhh0iItikh"/>
+  rel="stylesheet alternate"
+  href="/static/css/highlightjs/atom-one-light.css?v={{ resources_version }}"
+  integrity="sha384-0aiASjhj77b5St45szzu0sXr0UP7bgrzRzbOCHNPa3p2GOqcS/4juAoCejY0j1nk"/>
 <link
   rel="stylesheet"
   href="/static/css/codesass/codesass.css?v={{ resources_version }}"
@@ -23,7 +23,7 @@
 <script
   defer
   src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
-  integrity="sha384-JRRwtUx7H7KUP+6uHPOfXcRuX+cvNXZdsqluYW0tiu2BNVwdJCEQwOcCqhbmGysx"></script>
+  integrity="sha384-7jqpJ65MXFqJLDbXOqWaUyzjQx4topeCIXL7kEkbgBOOJIe6+EE/8FsGl5OsVkwX"></script>
 <script
   defer
   src="/static/js/luxon/luxon.min.js?v={{ resources_version }}"
@@ -31,7 +31,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-TNi31Rs9kaKiilKh2fvS7rSH3ulHJEOnfjm5J7fOf1GoQi5i3LGsxqzMYiYulkK8"></script>
+  integrity="sha384-JaA6P/J/KF8veQmpp0jomaNWeHDEFoEOGjqJ31zHTQBtOWzNC5ddubql8sF8npX/"></script>
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {%- endblock head %}
 

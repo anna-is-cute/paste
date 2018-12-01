@@ -133,7 +133,7 @@ fn _get(rel: Relative, username: String, config: State<Config>, user: OptionalWe
 
       let mut has_preview = false;
 
-      let mut output_files = id.output_files(&conn, &paste, false)?;
+      let mut output_files = id.output_files(&*config, &conn, &paste, false)?;
 
       const LEN: usize = 385;
       let mut bytes = [0; LEN];
@@ -145,7 +145,7 @@ fn _get(rel: Relative, username: String, config: State<Config>, user: OptionalWe
         };
         // TODO: maybe store this in database or its own file?
         if !has_preview && file.is_binary() != Some(true) {
-          let path = file.path(&paste);
+          let path = file.path(&*config, &paste);
           let read = File::open(path)?.read(&mut bytes)?;
           let full = read < LEN;
           let end = if read == LEN { read - 1 } else { read };
@@ -192,7 +192,7 @@ fn _get(rel: Relative, username: String, config: State<Config>, user: OptionalWe
         paste.description(),
         paste.visibility(),
         paste.created_at(),
-        paste.updated_at().ok(), // FIXME
+        paste.updated_at(&*config).ok(), // FIXME
         paste.expires(),
         None,
         output_files,

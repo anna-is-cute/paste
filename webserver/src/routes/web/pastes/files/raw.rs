@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::{
     DbConn,
     models::{pastes::Paste as DbPaste, users::User},
@@ -11,7 +12,7 @@ use crate::{
 
 use diesel::prelude::*;
 
-use rocket::http::Status as HttpStatus;
+use rocket::{http::Status as HttpStatus, State};
 
 use std::fs::File;
 
@@ -22,7 +23,7 @@ pub enum As {
 }
 
 #[get("/p/<username>/<paste_id>/files/<file_id>/raw")]
-pub fn get(username: String, paste_id: PasteId, file_id: FileId, user: OptionalWebUser, conn: DbConn) -> Result<As> {
+pub fn get(username: String, paste_id: PasteId, file_id: FileId, config: State<Config>, user: OptionalWebUser, conn: DbConn) -> Result<As> {
   let paste: DbPaste = match paste_id.get(&conn)? {
     Some(p) => p,
     None => return Ok(As::Status(HttpStatus::NotFound)),
@@ -56,7 +57,7 @@ pub fn get(username: String, paste_id: PasteId, file_id: FileId, user: OptionalW
   };
 
   Ok(As::Add(AddHeaders::new(
-    File::open(file.path(&paste))?,
+    File::open(file.path(&*config, &paste))?,
     vec![h],
   )))
 }

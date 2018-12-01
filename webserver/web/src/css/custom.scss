@@ -1,5 +1,4 @@
 @import "bulma-tooltip/src/sass/index";
-@import "pretty-checkbox/src/pretty-checkbox";
 
 body {
   display: flex;
@@ -320,6 +319,10 @@ textarea.codesass__textarea {
 .paste-removable-title {
   display: flex;
   align-items: center;
+
+  input[type=checkbox] {
+    margin-right: 1em;
+  }
 }
 
 .select-all.dropdown {
@@ -328,4 +331,75 @@ textarea.codesass__textarea {
 
 .shared-secret > code {
   margin-right: .5rem;
+}
+
+input[type=checkbox] {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+
+  background-color: $grey-darker;
+  border: 1px solid lighten($grey-darker, 10%);
+  width: 1rem;
+  height: 1rem;
+
+  &:focus, &:active {
+    border-color: lighten($grey-darker, 15%);
+  }
+
+  &:disabled {
+    border-color: $grey;
+  }
+
+  &:checked::after {
+    content: " ";
+
+    border: 2px solid $grey-light;
+    border-right: 0;
+    border-top: 0;
+
+    transform: rotate(-45deg);
+    transform-origin: center;
+
+    display: block;
+    height: .525em;
+    width: 1em;
+
+    position: relative;
+    top: 0.2625em;
+    left: 0.125em;
+  }
+
+  li & {
+    &:first-child {
+      margin-top: -.275rem;
+      margin-right: .25rem;
+    }
+
+    vertical-align: middle;
+  }
+}
+
+.avatar-name {
+  display: flex;
+  align-items: center;
+
+  .avatar {
+    margin-right: .25rem;
+  }
+
+  .avatar.has-larger-gap {
+    margin-right: 1rem;
+  }
+
+  .navbar & .avatar {
+    margin-right: .5rem;
+
+    img {
+      width: auto;
+    }
+  }
+}
+
+.image .is-less-rounded {
+  border-radius: 12.5%;
 }

@@ -7,14 +7,14 @@
 {%- endif %}
 <link
   title="dark"
-  rel="stylesheet alternate"
-  href="/static/css/highlightjs/atom-one-dark.min.css?v={{ resources_version }}"
-  integrity="sha384-nyXucUVWQWGGNq3mSgG/FGxW4Jmsv+0uCbHZ0VpHRsGZt/PlUT31hz9sUek822eI"/>
+  rel="stylesheet"
+  href="/static/css/highlightjs/atom-one-dark.css?v={{ resources_version }}"
+  integrity="sha384-vkxpPwxwAfshAXLThtiwLXxyqE2yBZZwMRkAMrG79f96ukqppq7Tx8wWg5K29flM"/>
 <link
   title="light"
-  rel="stylesheet"
-  href="/static/css/highlightjs/atom-one-light.min.css?v={{ resources_version }}"
-  integrity="sha384-7gDLYK0oyPpfkc6E6VzcNFzEFGw6QTKMoof6r0lb0cWECaHXX+b2GGxhh0iItikh"/>
+  rel="stylesheet alternate"
+  href="/static/css/highlightjs/atom-one-light.css?v={{ resources_version }}"
+  integrity="sha384-0aiASjhj77b5St45szzu0sXr0UP7bgrzRzbOCHNPa3p2GOqcS/4juAoCejY0j1nk"/>
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
@@ -26,7 +26,7 @@
 <script
   defer
   src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
-  integrity="sha384-JRRwtUx7H7KUP+6uHPOfXcRuX+cvNXZdsqluYW0tiu2BNVwdJCEQwOcCqhbmGysx"></script>
+  integrity="sha384-7jqpJ65MXFqJLDbXOqWaUyzjQx4topeCIXL7kEkbgBOOJIe6+EE/8FsGl5OsVkwX"></script>
 <script
   defer
   src="/static/js/highlightjs-line-numbers/highlightjs-line-numbers.js?v={{ resources_version }}"
@@ -34,7 +34,7 @@
 <script
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-eJ6Y8W5G6M3LfKNuE3SrYMoCYOOTR/ty2Xg+sehkCcB3MKynzx7emEKdcvEpArQK"></script>
+  integrity="sha384-3jmUxsSIfbI+4PHDB1prm8jBHB19yGb6mXxcWar5PHFTBDTikFNTYhYgZGmuaj/m"></script>
 <script
   defer
   src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
@@ -81,7 +81,13 @@ untitled paste
       </div>
       <div class="left">
         {% if paste.author %}
-        <a class="has-text-grey" href="{{ links.author_page }}">
+        <a class="avatar-name has-text-grey" href="{{ links.author_page }}">
+          <figure class="avatar image is-16x16">
+            <img
+              class="is-less-rounded"
+              src="{{ links.author_avatar }}"
+              alt="{{ paste.author.username }} avatar"/>
+          </figure>
           <span class="keeps-spaces">{{ paste.author.name }}</span>
         </a>
         {% endif %}

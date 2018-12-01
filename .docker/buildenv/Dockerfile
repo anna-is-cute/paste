@@ -23,7 +23,7 @@ RUN make install
 
 WORKDIR /
 
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2018-10-23
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2018-12-01
 
 RUN echo "source $HOME/.cargo/env" >> $HOME/.bashrc
 RUN echo "export PKG_CONFIG_PATH=$HOME/libsodium-build/lib/pkgconfig" >> $HOME/.bashrc

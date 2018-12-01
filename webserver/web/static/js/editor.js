@@ -264,11 +264,19 @@ var pasteEditors = {};
     var langInput = parent.querySelector('select[name=file_language]');
 
     function updateLanguage() {
+      function getSuffixFromName(name) {
+        if (name === 'CMakeLists.txt') {
+          return 'CMake';
+        }
+
+        return name.split('.').pop();
+      }
+
       var suffix = void 0;
       if (langInput.value !== '') {
         suffix = langInput.value;
       } else if (nameInput.value !== '') {
-        suffix = nameInput.value.split('.').pop();
+        suffix = getSuffixFromName(nameInput.value);
       }
       var lang = hljs.getLanguage(suffix) !== undefined ? suffix : 'plaintext';
       editor.updateLanguage(lang);

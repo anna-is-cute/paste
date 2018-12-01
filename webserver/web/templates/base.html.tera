@@ -6,12 +6,12 @@
   title="dark"
   rel="stylesheet"
   href="/static/css/dark-style.css?v={{ resources_version }}"
-  integrity="sha384-gXWLgvDTETDrdstrpuCSt7pQPAy4FDWGsSBXuDVeoDPxhLKZaRQrDxyZEIhxZcN4"/>
+  integrity="sha384-835HOS4IRd/ORuulZTwK8GI2ZgqGwX6RmT0ZiFnihoSlXYAgy+5ALyYOTEdV6cTR"/>
 <link
   title="light"
   rel="stylesheet alternate"
   href="/static/css/style.css?v={{ resources_version }}"
-  integrity="sha384-NGXTE5ci8WEbOow7wLg1LaySrsu7ErWuRrfLUQ6y7RLvH8xopGhlOTi+qr6I83us"/>
+  integrity="sha384-hCzCd49exs5Aamgegue57RGoXN3PGsothFweDNNO39hggHyU9To8POvOBwbMX9qR"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
   integrity="sha384-HTYvuZHY1AndfrAqn+dIGFE7QognotxeUaFecs+e2FA30FKkHLfMyyLvBufM+eSk"></script>
@@ -73,9 +73,15 @@
       {% endif %}
         <div class="navbar-item has-dropdown is-hoverable">
         {%- if user %}
-          <a
-            class="navbar-link"
-            href="{{ user_page }}">{{ user.name }}</a>
+          <a class="navbar-link avatar-name" href="{{ user_page }}">
+            <figure class="avatar image">
+              <img
+                class="is-less-rounded"
+                src="{{ user_avatar_link }}"
+                alt="{{ user.username }} avatar"/>
+            </figure>
+            {{ user.name }}
+          </a>
         {%- else -%}
           <a class="navbar-link" href="{{ static_links.login }}">Log in</a>
         {%- endif %}

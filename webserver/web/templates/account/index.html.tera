@@ -106,6 +106,58 @@ Manage account settings.
   </div>
   <hr/>
   <div class="field is-horizontal">
+    <div class="field-label">
+      <label class="label">Avatar</label>
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <figure class="image is-128x128">
+          <img
+            src="{{ user_avatar_link }}"
+            alt="{{ user.username }} avatar"/>
+        </figure>
+        <p class="help">
+          Your avatar is determined using an avatar provider linked to your email address. Changes
+          can be made to your avatar at whichever provider you have chosen.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="field is-horizontal">
+    <div class="field-label">
+      <label class="label">Avatar provider</label>
+    </div>
+    <div class="field-body">
+      <div class="field is-narrow">
+        <div class="control">
+          <label class="radio">
+            <input
+              type="radio"
+              {%- if user.avatar_provider == "gravatar" %}
+              checked
+              {%- endif %}
+              name="avatar_provider"
+              value="gravatar"/>
+            Gravatar
+            (<a href="https://gravatar.com/" class="external">link</a>)
+          </label>
+          <label class="radio">
+            <input
+              type="radio"
+              {%- if user.avatar_provider == "libravatar" %}
+              checked
+              {%- endif %}
+              name="avatar_provider"
+              value="libravatar"/>
+            Libravatar
+            (<a href="https://www.libravatar.org/" class="external">link</a>)
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr/>
+  <div class="field is-horizontal">
     <div class="field-label is-normal">
       <label class="label">Email</label>
     </div>

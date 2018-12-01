@@ -90,7 +90,7 @@ unicode_categories = "0.1"
 tera = "0.11"
 
 # html sanitizing
-ammonia = "1"
+ammonia = { git = "https://github.com/notriddle/ammonia" }
 
 # html parsing
 html5ever = "0.22"
@@ -120,14 +120,17 @@ rand = "0.6.0-pre.1"
 # creating sha-384 integrity hashes
 sha2 = "0.8"
 
+# requests to gravatar
+reqwest = "0.9"
+
 # web logic
 [dependencies.rocket]
-version = "0.4.0-rc.1"
+version = "0.4.0-rc.2"
 features = ["tls"]
 
 # web logic with json and uuids
 [dependencies.rocket_contrib]
-version = "0.4.0-rc.1"
+version = "0.4.0-rc.2"
 default-features = false
 features = ["json", "tera_templates"]
 
@@ -148,7 +151,7 @@ features = ["serde"]
 
 # markdown rendering
 [dependencies.comrak]
-version = "0.3"
+version = "0.4"
 default-features = false
 
 # accepting multipart input

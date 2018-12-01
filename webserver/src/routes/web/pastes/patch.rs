@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::{
     DbConn,
     models::{pastes::Paste as DbPaste, users::User},
@@ -77,7 +78,7 @@ fn check_paste(paste: &PasteUpdate, files: &[MultiFile]) -> result::Result<(), S
 }
 
 #[patch("/p/<username>/<paste_id>", format = "application/x-www-form-urlencoded", data = "<update>")]
-pub fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Rst> {
+pub fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Rst> {
   let update = update.into_inner();
   sess.set_form(&update);
 
@@ -159,12 +160,12 @@ pub fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: Paste
     },
   };
 
-  paste.update(&conn, &*sidekiq, &metadata)?;
+  paste.update(&*config, &conn, &*sidekiq, &metadata)?;
 
   let mut db_changed = false;
   // TODO: this needs much refactor love
   // update files and database if necessary
-  let files_directory = paste.files_directory();
+  let files_directory = paste.files_directory(&*config);
 
   let mut db_files = paste_id.files(&conn)?;
   {
@@ -241,18 +242,18 @@ pub fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: Paste
           Some(file.name)
         };
         let content = Content::Text(file.content);
-        paste.create_file(&conn, name, file.language, content)?;
+        paste.create_file(&*config, &conn, name, file.language, content)?;
       },
     }
   }
 
   for file in removed {
-    paste.delete_file(&conn, file)?;
+    paste.delete_file(&*config, &conn, file)?;
   }
 
   // commit if any files were changed
   // TODO: more descriptive commit message
-  paste.commit_if_dirty(user.name(), user.email(), "update paste via web")?;
+  paste.commit_if_dirty(&*config, user.name(), user.email(), "update paste via web")?;
 
   sess.add_data("info", "Paste updated.");
 

@@ -24,7 +24,7 @@ impl Fairing for Push {
 
     response.adjoin_header(Header::new(
       "Link",
-      format!("</static/js/detect-js.js?v={}>; rel=preload; as=style", version),
+      format!("</static/js/detect-js.js?v={}>; rel=preload; as=script", version),
     ));
     response.adjoin_header(Header::new(
       "Link",
@@ -36,7 +36,7 @@ impl Fairing for Push {
     ));
     response.adjoin_header(Header::new(
       "Link",
-      format!("</static/js/style.js?v={}>; rel=preload; as=style", version),
+      format!("</static/js/style.js?v={}>; rel=preload; as=script", version),
     ));
   }
 }

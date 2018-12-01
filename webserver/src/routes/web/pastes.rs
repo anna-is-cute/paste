@@ -16,7 +16,7 @@ pub(crate) fn paste_links(id: PasteId, author_id: Option<UserId>, author_name: &
     "files" => uri!(crate::routes::web::pastes::get::users_username_id: author_name, id),
     "revisions" => uri!(crate::routes::web::pastes::revisions::get: author_name, id),
     "delete" => uri!(crate::routes::web::pastes::delete::delete: author_name, id),
-    "author_page" => uri!(crate::routes::web::users::get::get: author_name, None),
+    "author_page" => uri!(crate::routes::web::users::get::get: author_name),
   );
   if let Some(ref u) = user {
     links.add(

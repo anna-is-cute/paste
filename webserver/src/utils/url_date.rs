@@ -3,7 +3,7 @@ use chrono::{DateTime, Utc};
 use rocket::{
   http::{
     RawStr,
-    uri::{Formatter, UriDisplay},
+    uri::{Formatter, UriDisplay, UriPart},
   },
   request::FromFormValue,
 };
@@ -19,8 +19,10 @@ impl UrlDate {
   }
 }
 
-impl UriDisplay for UrlDate {
-  fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+impl<P> UriDisplay<P> for UrlDate
+  where P: UriPart,
+{
+  fn fmt(&self, f: &mut Formatter<P>) -> fmt::Result {
     f.write_value(self.0.to_rfc3339_opts(chrono::SecondsFormat::AutoSi, true))
   }
 }

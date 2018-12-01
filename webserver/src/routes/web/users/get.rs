@@ -225,7 +225,9 @@ fn _get(rel: Relative, username: String, config: State<Config>, user: OptionalWe
 }
 
 fn user_links(user: Option<&User>, target: &User, pastes: &[Output], first_date: Option<DateTime<Utc>>, last_date: Option<DateTime<Utc>>) -> Links {
-  let mut links = Links::default();
+  let mut links = links!(
+    "target_avatar" => uri!(crate::routes::web::account::avatar::get: target.id()),
+  );
 
   if let Some(first_date) = first_date {
     links.add(

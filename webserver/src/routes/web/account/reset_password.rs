@@ -239,7 +239,7 @@ pub struct ResetRequest {
   email: String,
 }
 
-#[derive(FromForm, UriDisplay)]
+#[derive(FromForm, UriDisplayQuery)]
 pub struct ResetPassword {
   id: ResetId,
   secret: String,
@@ -277,8 +277,10 @@ impl<'v> FromFormValue<'v> for ResetId {
   }
 }
 
-impl rocket::http::uri::UriDisplay for ResetId {
-  fn fmt(&self, f: &mut rocket::http::uri::Formatter) -> std::result::Result<(), std::fmt::Error> {
+impl<P> rocket::http::uri::UriDisplay<P> for ResetId
+  where P: rocket::http::uri::UriPart,
+{
+  fn fmt(&self, f: &mut rocket::http::uri::Formatter<P>) -> std::result::Result<(), std::fmt::Error> {
     use std::fmt::Write;
     f.write_fmt(format_args!("{}", self.to_simple()))
   }

@@ -33,7 +33,7 @@ pub fn get_page(username: String, params: Form<PageParams>, config: State<Config
   _get(params.page, username, config, user, sess, conn)
 }
 
-#[derive(Debug, FromForm, UriDisplay)]
+#[derive(Debug, FromForm, UriDisplayQuery)]
 pub struct PageParams {
   page: u32,
 }

@@ -290,6 +290,22 @@ If paste was a movie, these would be at the end.
           Compares unicode strings without factoring in casing.
         </p>
       </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/seanmonstar/reqwest">reqwest</a>
+        </p>
+        <p>
+          An easy and powerful Rust HTTP Client.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/hyperium/mime">mime</a>
+        </p>
+        <p>
+          Support MIME (Media Types) as strong types in Rust.
+        </p>
+      </div>
     </div>
     <!-- column two -->
     <div class="tile is-vertical is-parent">
@@ -299,6 +315,14 @@ If paste was a movie, these would be at the end.
         </p>
         <p>
           A framework for serialising and deserialising data structures in Rust.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/andreasots/base32">base32</a>
+        </p>
+        <p>
+          A Rust implementation of base32.
         </p>
       </div>
       <div class="tile box is-child">
@@ -380,6 +404,14 @@ If paste was a movie, these would be at the end.
         </p>
         <p>
           OATH algorithms for two-factor authentication.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/RustCrypto/hashes">sha2</a>
+        </p>
+        <p>
+          SHA-2 hash functions for Rust.
         </p>
       </div>
     </div>
@@ -472,6 +504,22 @@ If paste was a movie, these would be at the end.
         </p>
         <p>
           Handles native TLS through one abstract API.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/DaGenix/rust-crypto">rust-crypto</a>
+        </p>
+        <p>
+          A (mostly) pure-Rust implementation of various cryptographic algorithms.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/rust-random/rand">rand</a>
+        </p>
+        <p>
+          A Rust library for random number generation.
         </p>
       </div>
     </div>

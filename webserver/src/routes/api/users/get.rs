@@ -20,26 +20,13 @@ use crate::{
 
 use diesel::{prelude::*, dsl::count};
 
-use rocket::{http::Status as HttpStatus, request::Form, State};
+use rocket::{http::Status as HttpStatus, State};
 
 use std::{fs::File, io::Read};
 
-#[get("/<username>")]
-pub fn get(username: String, user: OptionalUser, conn: DbConn, config: State<Config>) -> RouteResult<Vec<Output>> {
-  _get(1, username, user, conn, config)
-}
-
-#[get("/<username>?<params..>")]
-pub fn get_page(username: String, params: Form<PageParams>, user: OptionalUser, conn: DbConn, config: State<Config>) -> RouteResult<Vec<Output>> {
-  _get(params.page, username, user, conn, config)
-}
-
-#[derive(Debug, FromForm)]
-pub struct PageParams {
-  page: u32,
-}
-
-fn _get(page: u32, username: String, user: OptionalUser, conn: DbConn, config: State<Config>) -> RouteResult<Vec<Output>> {
+#[get("/<username>?<page>")]
+pub fn get(username: String, page: Option<u32>, user: OptionalUser, conn: DbConn, config: State<Config>) -> RouteResult<Vec<Output>> {
+  let page = page.unwrap_or(1);
   // TODO: make PositiveNumber struct or similar (could make Positive<num::Integer> or something)
   if page == 0 {
     return Ok(Status::show_error(

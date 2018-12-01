@@ -190,20 +190,17 @@ fn main() {
       routes::web::account::avatar::get,
 
       routes::web::users::get::get,
-      routes::web::users::get::get_page,
     ])
     .mount("/static", routes!{
       routes::web::static_files::get,
     })
     .mount("/api/v1/pastes", routes![
       routes::api::pastes::get::get_all,
-      routes::api::pastes::get::get_all_query,
 
       routes::api::pastes::post::post_json,
       routes::api::pastes::post::post_multipart,
       routes::api::pastes::delete::delete,
       routes::api::pastes::delete::ids,
-      routes::api::pastes::get::get_query,
       routes::api::pastes::get::get,
       routes::api::pastes::patch::patch,
 
@@ -219,12 +216,10 @@ fn main() {
     ])
     .mount("/api/v0/pastes", routes![
       routes::api::pastes::get::get_all,
-      routes::api::pastes::get::get_all_query,
 
       routes::api::pastes::post::post_json,
       routes::api::pastes::delete::delete,
       routes::api::pastes::delete::ids,
-      routes::api::pastes::get::get_query,
       routes::api::pastes::get::get,
       routes::api::pastes::patch::patch,
 
@@ -240,11 +235,9 @@ fn main() {
     ])
     .mount("/api/v1/users", routes![
       routes::api::users::get::get,
-      routes::api::users::get::get_page,
     ])
     .mount("/api/v0/users", routes![
       routes::api::users::get::get,
-      routes::api::users::get::get_page,
     ])
     .launch();
 }

@@ -2,7 +2,6 @@
   custom_derive,
   decl_macro,
   in_band_lifetimes,
-  macro_at_most_once_rep,
   proc_macro_hygiene,
 )]
 #![recursion_limit = "1024"]

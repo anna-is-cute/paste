@@ -149,7 +149,7 @@ pub fn context(config: &Config, user: Option<&User>, session: &mut Session) -> V
     "static_links": &*STATIC_LINKS,
     "user_page": user
       .as_ref()
-      .map(|x| uri!(crate::routes::web::users::get::get: x.username()).to_string()),
+      .map(|x| uri!(crate::routes::web::users::get::get: x.username(), None).to_string()),
     "user_avatar_link": user
       .as_ref()
       .map(|x| uri!(crate::routes::web::account::avatar::get: x.id()).to_string()),

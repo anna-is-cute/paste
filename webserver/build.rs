@@ -203,6 +203,7 @@ crate mod credits {
       let mut file = OpenOptions::new()
         .create(true)
         .write(true)
+        .truncate(true)
         .open(&path)
         .unwrap();
       file.write_all(final_html.as_bytes()).unwrap();

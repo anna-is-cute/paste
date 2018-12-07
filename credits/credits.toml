@@ -1,0 +1,299 @@
+# The Patrons section. Notice how it is empty.
+
+patrons = []
+
+# The People section. The "team," so to speak.
+
+[[people]]
+name = "Kyle Clemens"
+github = "jkcclemens"
+text = "Lead developer and Rust aficionado who hates frontend."
+
+[[people]]
+name = "Adam Williams"
+github = "lol768"
+text = "The best infosec consultant, tester, and cheerleader money can't buy."
+
+[[people]]
+name = "kashike"
+github = "kashike"
+text = "Feature requester/demander, tester, bug noticer, idea testing ground."
+
+[[people]]
+name = "Jos Ahrens"
+github = "Zarthus"
+text = "Breaker and tester of many things, purveyor of dissenting opinions."
+
+[[people]]
+name = "Austin Peterson"
+github = "AKPWebDesign"
+text = "Resident JavaScript-fu practitioner with a penchant for design."
+
+# The frontend dependency section.
+
+[[frontend]]
+name = "Bulma"
+url = "https://bulma.io/"
+text = "An awesome CSS framework that is the foundation for all of paste's CSS."
+
+[[frontend]]
+name = "Twemoji"
+url = "https://twemoji.twitter.com/"
+text = "Twitter's set of emoji that's free for everyone. We use the clipboard one as our favicon!"
+
+[[frontend]]
+name = "CodeSass"
+url = "https://github.com/lol768/CodeFlask"
+text = "Our very own fork of CodeFlask, designed to work smarter and better."
+
+[[frontend]]
+name = "Bulmaswatch"
+url = "https://jenil.github.io/bulmaswatch/"
+text = "Themes for Bulma. We use a slightly modified version of \"darkly\" for our dark theme."
+
+[[frontend]]
+name = "zxcvbn"
+url = "https://github.com/dropbox/zxcvbn"
+text = "A password strength library that's lightweight and powerful."
+
+[[frontend]]
+name = "highlightjs-line-numbers.js"
+url = "https://github.com/wcoder/highlightjs-line-numbers.js"
+text = "An add-on for highlight.js that adds line numbers. We use a slightly modified version."
+
+[[frontend]]
+name = "FontAwesome"
+url = "https://fontawesome.com/"
+text = "A ubiquitous set of icons that you've probably seen before."
+
+[[frontend]]
+name = "highlight.js"
+url = "https://highlightjs.org/"
+text = "The syntax highlighter responsible for all highlighting on paste. "
+
+[[frontend]]
+name = "bulma-tooltip"
+url = "https://wikiki.github.io/elements/tooltip/"
+text = "An extension to Bulma that adds CSS-only tooltips."
+
+# The backend dependency section.
+
+[[backend]]
+name = "rocket"
+url = "https://rocket.rs/"
+text = "A web framework for Rust. It powers every single request made to paste."
+
+[[backend]]
+name = "base64"
+url = "https://github.com/alicemaz/rust-base64"
+text = "A Rust implementation of base64."
+
+[[backend]]
+name = "dotenv"
+url = "https://github.com/purpliminal/rust-dotenv"
+text = "Loads .env files and makes them environment variables. Useful!"
+
+[[backend]]
+name = "unicode-segmentation"
+url = "https://github.com/unicode-rs/unicode-segmentation"
+text = "Looks at strings in terms of graphemes and words as defined by the Unicode Standard."
+
+[[backend]]
+name = "ipnetwork"
+url = "https://github.com/achanda/ipnetwork"
+text = "Looks at IPv6 and IPv4 CIDRs. This is what determines whether you get rate limited. "
+
+[[backend]]
+name = "percent-encoding"
+url = "https://github.com/servo/rust-url/"
+text = "Encodes URLs with neat percent signs."
+
+[[backend]]
+name = "r2d2_redis"
+url = "https://github.com/sorccu/r2d2-redis"
+text = "Makes redis-rs work with r2d2."
+
+[[backend]]
+name = "unicode_categories"
+url = "https://github.com/swgillespie/unicode-categories"
+text = "Classifies characters into categories according to the Unicode Standard."
+
+[[backend]]
+name = "html5ever"
+url = "https://github.com/servo/html5ever"
+text = "Parses HTML5 according to spec. Doesn't use regex to do it."
+
+[[backend]]
+name = "diesel"
+url = "https://diesel.rs/"
+text = "The world's best ORM. It handles all the database work around here."
+
+[[backend]]
+name = "comrak"
+url = "https://github.com/kivikakk/comrak"
+text = "Parses and processes CommonMark + GFM in order to render your Markdown files."
+
+[[backend]]
+name = "unicase"
+url = "https://github.com/seanmonstar/unicase"
+text = "Compares unicode strings without factoring in casing."
+
+[[backend]]
+name = "reqwest"
+url = "https://github.com/seanmonstar/reqwest"
+text = "An easy and powerful Rust HTTP Client."
+
+[[backend]]
+name = "mime"
+url = "https://github.com/hyperium/mime"
+text = "Support MIME (Media Types) as strong types in Rust."
+
+[[backend]]
+name = "serde"
+url = "https://serde.rs/"
+text = "A framework for serialising and deserialising data structures in Rust."
+
+[[backend]]
+name = "base32"
+url = "https://github.com/andreasots/base32"
+text = "A Rust implementation of base32."
+
+[[backend]]
+name = "failure"
+url = "https://boats.gitlab.io/failure/"
+text = "Easy error handling in Rust."
+
+[[backend]]
+name = "xz2"
+url = "https://github.com/alexcrichton/xz2-rs"
+text = "Rust bindings to liblzma."
+
+[[backend]]
+name = "lazy_static"
+url = "https://github.com/rust-lang-nursery/lazy-static.rs"
+text = "Lazily-evaluated statics in Rust."
+
+[[backend]]
+name = "hex"
+url = "https://github.com/KokaKiwi/rust-hex"
+text = "Encodes and decodes strings of bytes as hexadecimal."
+
+[[backend]]
+name = "r2d2"
+url = "https://github.com/sfackler/r2d2"
+text = "Not the droid you're looking for. It's actually a connection pool!"
+
+[[backend]]
+name = "tera"
+url = "https://github.com/Keats/tera"
+text = "The templating engine that rendered this very page (and all the others)."
+
+[[backend]]
+name = "url"
+url = "https://github.com/servo/rust-url"
+text = "Parses and processes URLs."
+
+[[backend]]
+name = "chrono"
+url = "https://github.com/chronotope/chrono"
+text = "It does... time. Time stuff. Famously known for not being Crono."
+
+[[backend]]
+name = "lettre"
+url = "https://lettre.at/"
+text = "Sends, creates, examines, modifies, and does anything else you could possibly want to do with emails."
+
+[[backend]]
+name = "oath"
+url = "https://github.com/avacariu/rust-oath"
+text = "OATH algorithms for two-factor authentication."
+
+[[backend]]
+name = "sha2"
+url = "https://github.com/RustCrypto/hashes"
+text = "SHA-2 hash functions for Rust."
+
+[[backend]]
+name = "git2"
+url = "https://github.com/alexcrichton/git2-rs"
+text = "Rust bindings to libgit2 that we use for all Git operations."
+
+[[backend]]
+name = "libflate"
+url = "https://github.com/sile/libflate"
+text = "Rust implementation of DEFLATE and friends."
+
+[[backend]]
+name = "sodiumoxide"
+url = "https://github.com/sodiumoxide/sodiumoxide"
+text = "Rust bindings to libsodium, which is used for passwords and whatnot."
+
+[[backend]]
+name = "if_chain"
+url = "https://github.com/lfairy/if_chain"
+text = "Chains ifs together, for when you really need to just chain together some ifs."
+
+[[backend]]
+name = "toml"
+url = "https://github.com/alexcrichton/toml-rs"
+text = "Parses TOML files. Gotta load the configuration somehow!"
+
+[[backend]]
+name = "cookie"
+url = "https://github.com/alexcrichton/cookie-rs"
+text = "Creates and processes delicious cookies for your browser."
+
+[[backend]]
+name = "redis"
+url = "https://github.com/mitsuhiko/redis-rs"
+text = "Talks to redis... in Rust."
+
+[[backend]]
+name = "ammonia"
+url = "https://github.com/notriddle/ammonia"
+text = "Sanitises all the nasty HTML provided by our users (in the form of Markdown)."
+
+[[backend]]
+name = "uuid"
+url = "https://github.com/uuid-rs/uuid"
+text = "Parses and generates UUIDs, which are definitely not used anywhere in paste. Nope."
+
+[[backend]]
+name = "sidekiq"
+url = "https://github.com/spk/rust-sidekiq"
+text = "Talks to sidekiq in Rust."
+
+[[backend]]
+name = "rust-native-tls"
+url = "https://github.com/sfackler/rust-native-tls"
+text = "Handles native TLS through one abstract API."
+
+[[backend]]
+name = "rust-crypto"
+url = "https://github.com/DaGenix/rust-crypto"
+text = "A (mostly) pure-Rust implementation of various cryptographic algorithms."
+
+[[backend]]
+name = "rand"
+url = "https://github.com/rust-random/rand"
+text = "A Rust library for random number generation."
+
+[[backend]]
+name = "hashbrown"
+url = "https://github.com/Amanieu/hashbrown"
+text = "A SwissTable implementation in Rust. Faster HashMaps!"
+
+[[backend]]
+name = "multipart"
+url = "https://github.com/abonander/multipart"
+text = "A multipart file upload library."
+
+[[backend]]
+name = "qrcode"
+url = "https://github.com/kennytm/qrcode-rust"
+text = "Creates QR codes via an easy API. Used for TFA!"
+
+[[backend]]
+name = "serde_json"
+url = "https://github.com/serde-rs/json"
+text = "Serde support for serialising and deserialising JSON."

@@ -1,0 +1,515 @@
+<section class="section">
+  <h2 class="title">People</h2>
+
+  <div class="tile is-ancestor">
+    <div class="tile is-vertical is-parent">
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          Kyle Clemens
+        </p>
+        <p>
+          <a href="https://github.com/jkcclemens" class="is-size-7">@jkcclemens</a>
+        </p>
+        <p>
+          Lead developer and Rust aficionado who hates frontend.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          Adam Williams
+        </p>
+        <p>
+          <a href="https://github.com/lol768" class="is-size-7">@lol768</a>
+        </p>
+        <p>
+          The best infosec consultant, tester, and cheerleader money can't buy.
+        </p>
+      </div>
+    </div>
+    <div class="tile is-vertical is-parent">
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          kashike
+        </p>
+        <p>
+          <a href="https://github.com/kashike" class="is-size-7">@kashike</a>
+        </p>
+        <p>
+          Feature requester/demander, tester, bug noticer, idea testing ground.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          Jos Ahrens
+        </p>
+        <p>
+          <a href="https://github.com/Zarthus" class="is-size-7">@Zarthus</a>
+        </p>
+        <p>
+          Breaker and tester of many things, purveyor of dissenting opinions.
+        </p>
+      </div>
+    </div>
+    <div class="tile is-vertical is-parent">
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          Austin Peterson
+        </p>
+        <p>
+          <a href="https://github.com/AKPWebDesign" class="is-size-7">@AKPWebDesign</a>
+        </p>
+        <p>
+          Resident JavaScript-fu practitioner with a penchant for design.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <h2 class="title">Frontend</h2>
+
+  <div class="tile is-ancestor">
+    <div class="tile is-vertical is-parent">
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://bulma.io/">Bulma</a>
+        </p>
+        <p>
+          An awesome CSS framework that is the foundation for all of paste's CSS.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://wikiki.github.io/elements/tooltip/">bulma-tooltip</a>
+        </p>
+        <p>
+          An extension to Bulma that adds CSS-only tooltips.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://jenil.github.io/bulmaswatch/">Bulmaswatch</a>
+        </p>
+        <p>
+          Themes for Bulma. We use a slightly modified version of "darkly" for our dark theme.
+        </p>
+      </div>
+    </div>
+    <div class="tile is-vertical is-parent">
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/lol768/CodeFlask">CodeSass</a>
+        </p>
+        <p>
+          Our very own fork of CodeFlask, designed to work smarter and better.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://fontawesome.com/">FontAwesome</a>
+        </p>
+        <p>
+          A ubiquitous set of icons that you've probably seen before.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://highlightjs.org/">highlight.js</a>
+        </p>
+        <p>
+          The syntax highlighter responsible for all highlighting on paste. 
+        </p>
+      </div>
+    </div>
+    <div class="tile is-vertical is-parent">
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/wcoder/highlightjs-line-numbers.js">highlightjs-line-numbers.js</a>
+        </p>
+        <p>
+          An add-on for highlight.js that adds line numbers. We use a slightly modified version.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://twemoji.twitter.com/">Twemoji</a>
+        </p>
+        <p>
+          Twitter's set of emoji that's free for everyone. We use the clipboard one as our favicon!
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/dropbox/zxcvbn">zxcvbn</a>
+        </p>
+        <p>
+          A password strength library that's lightweight and powerful.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <h2 class="title">Backend</h2>
+
+  <div class="tile is-ancestor">
+    <div class="tile is-vertical is-parent">
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/notriddle/ammonia">ammonia</a>
+        </p>
+        <p>
+          Sanitises all the nasty HTML provided by our users (in the form of Markdown).
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/andreasots/base32">base32</a>
+        </p>
+        <p>
+          A Rust implementation of base32.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/alicemaz/rust-base64">base64</a>
+        </p>
+        <p>
+          A Rust implementation of base64.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/chronotope/chrono">chrono</a>
+        </p>
+        <p>
+          It does... time. Time stuff. Famously known for not being Crono.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/kivikakk/comrak">comrak</a>
+        </p>
+        <p>
+          Parses and processes CommonMark + GFM in order to render your Markdown files.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/alexcrichton/cookie-rs">cookie</a>
+        </p>
+        <p>
+          Creates and processes delicious cookies for your browser.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://diesel.rs/">diesel</a>
+        </p>
+        <p>
+          The world's best ORM. It handles all the database work around here.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/purpliminal/rust-dotenv">dotenv</a>
+        </p>
+        <p>
+          Loads .env files and makes them environment variables. Useful!
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://boats.gitlab.io/failure/">failure</a>
+        </p>
+        <p>
+          Easy error handling in Rust.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/alexcrichton/git2-rs">git2</a>
+        </p>
+        <p>
+          Rust bindings to libgit2 that we use for all Git operations.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/Amanieu/hashbrown">hashbrown</a>
+        </p>
+        <p>
+          A SwissTable implementation in Rust. Faster HashMaps!
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/KokaKiwi/rust-hex">hex</a>
+        </p>
+        <p>
+          Encodes and decodes strings of bytes as hexadecimal.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/servo/html5ever">html5ever</a>
+        </p>
+        <p>
+          Parses HTML5 according to spec. Doesn't use regex to do it.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/lfairy/if_chain">if_chain</a>
+        </p>
+        <p>
+          Chains ifs together, for when you really need to just chain together some ifs.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/achanda/ipnetwork">ipnetwork</a>
+        </p>
+        <p>
+          Looks at IPv6 and IPv4 CIDRs. This is what determines whether you get rate limited. 
+        </p>
+      </div>
+    </div>
+    <div class="tile is-vertical is-parent">
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/rust-lang-nursery/lazy-static.rs">lazy_static</a>
+        </p>
+        <p>
+          Lazily-evaluated statics in Rust.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://lettre.at/">lettre</a>
+        </p>
+        <p>
+          Sends, creates, examines, modifies, and does anything else you could possibly want to do with emails.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/sile/libflate">libflate</a>
+        </p>
+        <p>
+          Rust implementation of DEFLATE and friends.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/hyperium/mime">mime</a>
+        </p>
+        <p>
+          Support MIME (Media Types) as strong types in Rust.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/abonander/multipart">multipart</a>
+        </p>
+        <p>
+          A multipart file upload library.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/avacariu/rust-oath">oath</a>
+        </p>
+        <p>
+          OATH algorithms for two-factor authentication.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/servo/rust-url/">percent-encoding</a>
+        </p>
+        <p>
+          Encodes URLs with neat percent signs.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/kennytm/qrcode-rust">qrcode</a>
+        </p>
+        <p>
+          Creates QR codes via an easy API. Used for TFA!
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/sfackler/r2d2">r2d2</a>
+        </p>
+        <p>
+          Not the droid you're looking for. It's actually a connection pool!
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/sorccu/r2d2-redis">r2d2_redis</a>
+        </p>
+        <p>
+          Makes redis-rs work with r2d2.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/rust-random/rand">rand</a>
+        </p>
+        <p>
+          A Rust library for random number generation.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/mitsuhiko/redis-rs">redis</a>
+        </p>
+        <p>
+          Talks to redis... in Rust.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/seanmonstar/reqwest">reqwest</a>
+        </p>
+        <p>
+          An easy and powerful Rust HTTP Client.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://rocket.rs/">rocket</a>
+        </p>
+        <p>
+          A web framework for Rust. It powers every single request made to paste.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/DaGenix/rust-crypto">rust-crypto</a>
+        </p>
+        <p>
+          A (mostly) pure-Rust implementation of various cryptographic algorithms.
+        </p>
+      </div>
+    </div>
+    <div class="tile is-vertical is-parent">
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/sfackler/rust-native-tls">rust-native-tls</a>
+        </p>
+        <p>
+          Handles native TLS through one abstract API.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://serde.rs/">serde</a>
+        </p>
+        <p>
+          A framework for serialising and deserialising data structures in Rust.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/serde-rs/json">serde_json</a>
+        </p>
+        <p>
+          Serde support for serialising and deserialising JSON.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/RustCrypto/hashes">sha2</a>
+        </p>
+        <p>
+          SHA-2 hash functions for Rust.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/spk/rust-sidekiq">sidekiq</a>
+        </p>
+        <p>
+          Talks to sidekiq in Rust.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/sodiumoxide/sodiumoxide">sodiumoxide</a>
+        </p>
+        <p>
+          Rust bindings to libsodium, which is used for passwords and whatnot.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/Keats/tera">tera</a>
+        </p>
+        <p>
+          The templating engine that rendered this very page (and all the others).
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/alexcrichton/toml-rs">toml</a>
+        </p>
+        <p>
+          Parses TOML files. Gotta load the configuration somehow!
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/seanmonstar/unicase">unicase</a>
+        </p>
+        <p>
+          Compares unicode strings without factoring in casing.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/unicode-rs/unicode-segmentation">unicode-segmentation</a>
+        </p>
+        <p>
+          Looks at strings in terms of graphemes and words as defined by the Unicode Standard.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/swgillespie/unicode-categories">unicode_categories</a>
+        </p>
+        <p>
+          Classifies characters into categories according to the Unicode Standard.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/servo/rust-url">url</a>
+        </p>
+        <p>
+          Parses and processes URLs.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/uuid-rs/uuid">uuid</a>
+        </p>
+        <p>
+          Parses and generates UUIDs, which are definitely not used anywhere in paste. Nope.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/alexcrichton/xz2-rs">xz2</a>
+        </p>
+        <p>
+          Rust bindings to liblzma.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

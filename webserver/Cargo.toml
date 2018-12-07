@@ -45,7 +45,7 @@ libflate = "0.1"
 xz2 = "0.1"
 
 # secure password hashing
-sodiumoxide = "0.1"
+sodiumoxide = "0.2"
 
 # environment variable loading
 dotenv = "0.13"
@@ -115,7 +115,7 @@ mime = "0.2"
 rust-crypto = "0.2"
 
 # source of randomness
-rand = "0.6.0-pre.1"
+rand = "0.6"
 
 # creating sha-384 integrity hashes
 sha2 = "0.8"

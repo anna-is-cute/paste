@@ -200,7 +200,6 @@ crate mod credits {
         .join("web")
         .join("templates")
         .join("generated_credits.html.tera");
-      eprintln!("{:?}", path);
       let mut file = OpenOptions::new()
         .create(true)
         .write(true)

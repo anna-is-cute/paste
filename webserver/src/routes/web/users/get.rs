@@ -160,14 +160,14 @@ fn user_links(user: Option<&User>, target: &User, pastes: &[Output], page: u32) 
     "target_avatar" => uri!(crate::routes::web::account::avatar::get: target.id()),
     "next_page" => uri!(crate::routes::web::users::get::get:
       target.username(),
-      Some(page + 1),
+      page + 1,
     ),
     "prev_page" => if page <= 2 {
-      uri!(crate::routes::web::users::get::get: target.username(), None)
+      uri!(crate::routes::web::users::get::get: target.username(), _)
     } else {
       uri!(crate::routes::web::users::get::get:
         target.username(),
-        Some(page - 1),
+        page - 1,
       )
     },
   );

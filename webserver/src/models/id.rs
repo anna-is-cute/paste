@@ -19,14 +19,6 @@ macro_rules! uuid_wrapper {
       }
     }
 
-    impl<P> rocket::http::uri::UriDisplay<P> for $name
-      where P: rocket::http::uri::UriPart,
-    {
-      fn fmt(&self, f: &mut rocket::http::uri::Formatter<P>) -> std::result::Result<(), std::fmt::Error> {
-        f.write_value(self.to_simple().to_string())
-      }
-    }
-
     impl $name {
       #[allow(unused)]
       pub fn into_inner(self) -> uuid::Uuid {
@@ -49,6 +41,16 @@ macro_rules! uuid_wrapper {
         uuid::Uuid::deserialize(des).map($name)
       }
     }
+
+    impl<P> rocket::http::uri::UriDisplay<P> for $name
+      where P: rocket::http::uri::UriPart,
+    {
+      fn fmt(&self, f: &mut rocket::http::uri::Formatter<P>) -> std::result::Result<(), std::fmt::Error> {
+        f.write_value(self.to_simple().to_string())
+      }
+    }
+
+    rocket::http::impl_from_uri_param_identity!($name);
 
     impl rocket::request::FromParam<'a> for $name {
       type Error = &'a rocket::http::RawStr;

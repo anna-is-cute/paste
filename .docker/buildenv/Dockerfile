@@ -13,20 +13,10 @@ RUN apt-get install \
   libpq-dev \
   pkg-config
 
-RUN git clone -b stable git://github.com/jedisct1/libsodium.git /libsodium
-
-WORKDIR /libsodium
-
-RUN ./autogen.sh
-RUN ./configure --prefix="$HOME/libsodium-build"
-RUN make install
-
 WORKDIR /
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2018-12-01
 
 RUN echo "source $HOME/.cargo/env" >> $HOME/.bashrc
-RUN echo "export PKG_CONFIG_PATH=$HOME/libsodium-build/lib/pkgconfig" >> $HOME/.bashrc
-RUN echo "export LD_LIBRARY_PATH=$HOME/libsodium-build/lib" >> $HOME/.bashrc
 
 WORKDIR /paste

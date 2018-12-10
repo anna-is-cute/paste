@@ -2,6 +2,9 @@
 
 {% block head -%}
 {{ super() }}
+<meta
+  name="description"
+  content="A sensible, modern pastebin. Share text and source code snippets with no hassle."/>
 <link
   title="dark"
   rel="stylesheet"

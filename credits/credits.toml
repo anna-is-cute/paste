@@ -297,3 +297,8 @@ text = "Creates QR codes via an easy API. Used for TFA!"
 name = "serde_json"
 url = "https://github.com/serde-rs/json"
 text = "Serde support for serialising and deserialising JSON."
+
+[[backend]]
+name = "csv"
+url = "https://github.com/BurntSushi/rust-csv"
+text = "CSV parsing library."

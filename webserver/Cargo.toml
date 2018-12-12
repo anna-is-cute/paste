@@ -137,6 +137,9 @@ sha2 = "0.8"
 # requests to gravatar
 reqwest = "0.9"
 
+# csv parsing
+csv = "1"
+
 # web logic
 [dependencies.rocket]
 version = "0.4"

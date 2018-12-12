@@ -14,7 +14,7 @@ use crate::{
     },
   },
   routes::web::{context, Rst, OptionalWebUser, Session},
-  utils::{post_processing, Language},
+  utils::{csv::csv_to_table, post_processing, Language},
 };
 
 use ammonia::Builder;
@@ -125,24 +125,42 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
   for file in &files {
     if let Some(ref name) = file.name {
       let lower = name.to_lowercase();
+
       let md_ext = file.highlight_language.is_none() && lower.ends_with(".md") || lower.ends_with(".mdown") || lower.ends_with(".markdown");
-      let lang = file.highlight_language == Some(Language::Markdown.hljs());
-      if !lang && !md_ext {
+      let md_lang = file.highlight_language == Some(Language::Markdown.hljs());
+      let is_md = md_ext || md_lang;
+
+      let is_csv = file.highlight_language.is_none() && lower.ends_with(".csv");
+
+      if !is_md && !is_csv {
         rendered.insert(file.id, None);
         continue;
       }
+
+      let content = match file.content {
+        Some(Content::Text(ref s)) => s,
+        _ => {
+          rendered.insert(file.id, None);
+          continue;
+        },
+      };
+
+      let processed = if is_md {
+        let md = markdown_to_html(content, &*OPTIONS);
+        let cleaned = CLEANER.clean(&md).to_string();
+        post_processing::process(&*config, &cleaned)
+      } else {
+        match csv_to_table(content) {
+          Some(h) => h,
+          None => {
+            rendered.insert(file.id, None);
+            continue;
+          },
+        }
+      };
+
+      rendered.insert(file.id, Some(processed));
     }
-    let content = match file.content {
-      Some(Content::Text(ref s)) => s,
-      _ => {
-        rendered.insert(file.id, None);
-        continue;
-      },
-    };
-    let md = markdown_to_html(content, &*OPTIONS);
-    let cleaned = CLEANER.clean(&md).to_string();
-    let processed = post_processing::process(&*config, &cleaned);
-    rendered.insert(file.id, Some(processed));
   }
 
   let output = Output::new(

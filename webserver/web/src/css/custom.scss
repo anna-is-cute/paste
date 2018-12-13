@@ -410,7 +410,7 @@ input[type=checkbox] {
     margin-bottom: 1.5rem; // redo the margin we're undoing below
     margin-top: calc(-1.5rem - 2px); // -2px as well for the box-shadow
     border-top: 2px solid $dark; // make up for the missing box-shadow
-    padding: .5rem 1rem;
+    padding: .5rem 1.25rem;
   }
 
   &.is-info {

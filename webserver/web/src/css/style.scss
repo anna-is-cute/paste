@@ -62,6 +62,12 @@ td.hljs-ln-numbers {
   }
 }
 
+// notices (different box-shadow size)
+.box-title + .file-notice {
+  margin-top: calc(-1.5rem - 1px); // -1px as well for the box-shadow
+  border-top: 1px solid $dark; // make up for the missing box-shadow
+}
+
 // codesass
 $atom-one-light-background: #fafafa;
 

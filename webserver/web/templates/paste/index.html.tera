@@ -219,6 +219,13 @@ untitled paste
     <a class="is-pulled-right button" href="{{ links.raw_files[file.id] }}">Raw</a>
   </div>
   {% endif %}
+  {% if notices[file.id] %}
+  <div class="file-notice is-info is-size-7">
+    <p>
+      {{ notices[file.id] }}
+    </p>
+  </div>
+  {% endif %}
   {% if file.content.format == "text" %}
     {% if rendered[file.id] %}
       <div class="paste-tabs-container" data-id="{{ file.id }}">

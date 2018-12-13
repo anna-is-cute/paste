@@ -120,7 +120,8 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 
   let files: Vec<OutputFile> = id.output_files(&*config, &conn, &paste, true)?;
 
-  let mut rendered: HashMap<FileId, Option<String>> = HashMap::with_capacity(files.len());
+  let mut rendered: HashMap<FileId, String> = HashMap::with_capacity(files.len());
+  let mut notices: HashMap<FileId, String> = HashMap::new();
 
   for file in &files {
     if let Some(ref name) = file.name {
@@ -133,16 +134,12 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
       let is_csv = file.highlight_language.is_none() && lower.ends_with(".csv");
 
       if !is_md && !is_csv {
-        rendered.insert(file.id, None);
         continue;
       }
 
       let content = match file.content {
         Some(Content::Text(ref s)) => s,
-        _ => {
-          rendered.insert(file.id, None);
-          continue;
-        },
+        _ => continue,
       };
 
       let processed = if is_md {
@@ -151,15 +148,15 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         post_processing::process(&*config, &cleaned)
       } else {
         match csv_to_table(content) {
-          Some(h) => h,
-          None => {
-            rendered.insert(file.id, None);
+          Ok(h) => h,
+          Err(e) => {
+            notices.insert(file.id, e.to_string());
             continue;
           },
         }
       };
 
-      rendered.insert(file.id, Some(processed));
+      rendered.insert(file.id, processed);
     }
   }
 
@@ -196,6 +193,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
   ctx["paste"] = json!(output);
   ctx["num_commits"] = json!(paste.num_commits(&*config)?);
   ctx["rendered"] = json!(rendered);
+  ctx["notices"] = json!(notices);
   ctx["user"] = json!(*user);
   ctx["deletion_key"] = json!(sess.data.remove(&format!("deletion_key_{}", paste.id().to_simple())));
   ctx["is_owner"] = json!(is_owner);

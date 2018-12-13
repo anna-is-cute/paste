@@ -403,3 +403,16 @@ input[type=checkbox] {
 .image .is-less-rounded {
   border-radius: 12.5%;
 }
+
+.file-notice {
+  .box-title + & {
+    margin: -1.5rem -1.25rem;
+    margin-bottom: 1.5rem;
+    padding: .5rem 1rem;
+  }
+
+  &.is-info {
+    background-color: $info;
+    color: $white;
+  }
+}

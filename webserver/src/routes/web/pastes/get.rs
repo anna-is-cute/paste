@@ -150,7 +150,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         match csv_to_table(content) {
           Ok(h) => h,
           Err(e) => {
-            notices.insert(file.id, e.to_string());
+            notices.insert(file.id, e);
             continue;
           },
         }

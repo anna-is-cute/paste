@@ -2,7 +2,6 @@
   custom_derive,
   decl_macro,
   in_band_lifetimes,
-  macro_at_most_once_rep,
   proc_macro_hygiene,
 )]
 #![recursion_limit = "1024"]
@@ -11,8 +10,6 @@
 
 #[macro_use]
 extern crate diesel;
-#[macro_use]
-extern crate html5ever;
 #[macro_use]
 extern crate if_chain;
 #[macro_use]
@@ -87,11 +84,22 @@ fn main() {
       let path = match PathBuf::from(config_path).canonicalize() {
         Ok(p) => p,
         Err(e) => {
-          println!("could not canonicalize config path: {}", e);
+          println!("could not canonicalise config path: {}", e);
           return;
         },
       };
       c._path = Some(path);
+      if let Err(e) = std::fs::create_dir_all(&c.store.path) {
+        println!("could not create store at {}: {}", c.store.path.to_string_lossy(), e);
+        return;
+      }
+      c.store.path = match c.store.path.canonicalize() {
+        Ok(p) => p,
+        Err(e) => {
+          println!("could not canonicalise store path: {}", e);
+          return;
+        },
+      };
       c
     },
     Err(e) => {
@@ -109,10 +117,12 @@ fn main() {
     .manage(redis_store::init_pool())
     .manage(redis_store::init_sidekiq())
     .manage(config)
+    .manage(reqwest::Client::new())
     .attach(fairings::Csp)
     .attach(fairings::SecurityHeaders)
     .attach(fairings::AntiCsrf)
     .attach(fairings::LastPage::default())
+    .attach(fairings::Push)
     .attach(Template::fairing())
     .register(catchers![
       routes::bad_request,
@@ -153,6 +163,7 @@ fn main() {
 
       routes::web::account::index::get,
       routes::web::account::index::patch,
+      routes::web::account::index::well_known_password_change,
 
       routes::web::account::keys::get,
       routes::web::account::keys::post,
@@ -177,6 +188,8 @@ fn main() {
       routes::web::account::reset_password::reset_get,
       routes::web::account::reset_password::reset_post,
 
+      routes::web::account::avatar::get,
+
       routes::web::account::adminify::get,
 
       routes::web::admin::index::get,
@@ -185,20 +198,17 @@ fn main() {
       routes::web::admin::users::get,
 
       routes::web::users::get::get,
-      routes::web::users::get::get_page,
     ])
     .mount("/static", routes!{
       routes::web::static_files::get,
     })
     .mount("/api/v1/pastes", routes![
       routes::api::pastes::get::get_all,
-      routes::api::pastes::get::get_all_query,
 
       routes::api::pastes::post::post_json,
       routes::api::pastes::post::post_multipart,
       routes::api::pastes::delete::delete,
       routes::api::pastes::delete::ids,
-      routes::api::pastes::get::get_query,
       routes::api::pastes::get::get,
       routes::api::pastes::patch::patch,
 
@@ -214,12 +224,10 @@ fn main() {
     ])
     .mount("/api/v0/pastes", routes![
       routes::api::pastes::get::get_all,
-      routes::api::pastes::get::get_all_query,
 
       routes::api::pastes::post::post_json,
       routes::api::pastes::delete::delete,
       routes::api::pastes::delete::ids,
-      routes::api::pastes::get::get_query,
       routes::api::pastes::get::get,
       routes::api::pastes::patch::patch,
 
@@ -235,11 +243,9 @@ fn main() {
     ])
     .mount("/api/v1/users", routes![
       routes::api::users::get::get,
-      routes::api::users::get::get_page,
     ])
     .mount("/api/v0/users", routes![
       routes::api::users::get::get,
-      routes::api::users::get::get_page,
     ])
     .launch();
 }

@@ -91,6 +91,7 @@ table! {
         shared_secret -> Nullable<Bytea>,
         tfa_enabled -> Bool,
         admin -> Int2,
+        avatar_provider -> Int2,
     }
 }
 

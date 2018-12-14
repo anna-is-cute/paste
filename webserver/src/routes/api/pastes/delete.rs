@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::{
     DbConn,
     models::{
@@ -15,12 +16,15 @@ use crate::{
   routes::{RouteResult, RequiredUser, DeletionAuth},
 };
 
-use rocket::http::Status as HttpStatus;
+use rocket::{
+  request::State,
+  http::Status as HttpStatus,
+};
 
 use rocket_contrib::json::Json;
 
 #[delete("/<id>", rank = 1)]
-pub fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> {
+pub fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn, config: State<Config>) -> RouteResult<()> {
   let paste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
@@ -30,7 +34,7 @@ pub fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn) -> RouteResult<()> 
   }
   // should be validated beyond this point
 
-  paste.delete(&conn)?;
+  paste.delete(&*config, &conn)?;
 
   // FIXME:
   // Error: Failed to write response: Custom { kind: WriteZero, error: StringError("failed to write
@@ -76,7 +80,7 @@ fn check_deletion_key(paste: &Paste, key: &DeletionKey) -> Option<(HttpStatus, E
 }
 
 #[delete("/ids", format = "application/json", data = "<info>", rank = 2)]
-pub fn ids(info: Json<Vec<PasteId>>, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
+pub fn ids(info: Json<Vec<PasteId>>, user: RequiredUser, conn: DbConn, config: State<Config>) -> RouteResult<()> {
   let ids = info.into_inner();
 
   if ids.len() > 15 {
@@ -99,7 +103,7 @@ pub fn ids(info: Json<Vec<PasteId>>, user: RequiredUser, conn: DbConn) -> RouteR
   }
 
   for paste in &pastes {
-    paste.delete(&conn)?;
+    paste.delete(&*config, &conn)?;
   }
 
   // FIXME:

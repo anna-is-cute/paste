@@ -14,7 +14,7 @@ use crate::{
     },
   },
   routes::web::{context, Rst, OptionalWebUser, Session},
-  utils::{post_processing, Language},
+  utils::{csv::csv_to_table, post_processing, Language},
 };
 
 use ammonia::Builder;
@@ -41,15 +41,21 @@ lazy_static! {
     ext_strikethrough: true,
     ext_table: true,
     ext_autolink: true,
-    // let's see how https://github.com/notriddle/ammonia/issues/100 turns out
-    // ext_tasklist: true,
+    ext_tasklist: true,
     ext_footnotes: true,
+    // allows html and bad links: ammonia + our post-processor cleans the output, not comrak
+    unsafe_: true,
     .. Default::default()
   };
 
   static ref CLEANER: Builder<'static> = {
     let mut b = Builder::default();
-    b.link_rel(Some("noopener noreferrer nofollow"));
+    b
+      .link_rel(Some("noopener noreferrer nofollow"))
+      .add_tags(std::iter::once("input"))
+      .add_tag_attribute_values("input", "checked", vec!["", "checked"].into_iter())
+      .add_tag_attribute_values("input", "disabled", vec!["", "disabled"].into_iter())
+      .add_tag_attribute_values("input", "type", std::iter::once("checkbox"));
     b
   };
 }
@@ -112,31 +118,46 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
     return Ok(Rst::Status(status));
   }
 
-  let files: Vec<OutputFile> = id.output_files(&conn, &paste, true)?;
+  let files: Vec<OutputFile> = id.output_files(&*config, &conn, &paste, true)?;
 
-  let mut rendered: HashMap<FileId, Option<String>> = HashMap::with_capacity(files.len());
+  let mut rendered: HashMap<FileId, String> = HashMap::with_capacity(files.len());
+  let mut notices: HashMap<FileId, String> = HashMap::new();
 
   for file in &files {
     if let Some(ref name) = file.name {
       let lower = name.to_lowercase();
+
       let md_ext = file.highlight_language.is_none() && lower.ends_with(".md") || lower.ends_with(".mdown") || lower.ends_with(".markdown");
-      let lang = file.highlight_language == Some(Language::Markdown.hljs());
-      if !lang && !md_ext {
-        rendered.insert(file.id, None);
+      let md_lang = file.highlight_language == Some(Language::Markdown.hljs());
+      let is_md = md_ext || md_lang;
+
+      let is_csv = file.highlight_language.is_none() && lower.ends_with(".csv");
+
+      if !is_md && !is_csv {
         continue;
       }
+
+      let content = match file.content {
+        Some(Content::Text(ref s)) => s,
+        _ => continue,
+      };
+
+      let processed = if is_md {
+        let md = markdown_to_html(content, &*OPTIONS);
+        let cleaned = CLEANER.clean(&md).to_string();
+        post_processing::process(&*config, &cleaned)
+      } else {
+        match csv_to_table(content) {
+          Ok(h) => h,
+          Err(e) => {
+            notices.insert(file.id, e);
+            continue;
+          },
+        }
+      };
+
+      rendered.insert(file.id, processed);
     }
-    let content = match file.content {
-      Some(Content::Text(ref s)) => s,
-      _ => {
-        rendered.insert(file.id, None);
-        continue;
-      },
-    };
-    let md = markdown_to_html(content, &*OPTIONS);
-    let cleaned = CLEANER.clean(&md).to_string();
-    let processed = post_processing::process(&*config, &cleaned);
-    rendered.insert(file.id, Some(processed));
   }
 
   let output = Output::new(
@@ -146,7 +167,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
     paste.description(),
     paste.visibility(),
     paste.created_at(),
-    paste.updated_at().ok(), // FIXME
+    paste.updated_at(&*config).ok(), // FIXME
     paste.expires(),
     None,
     files,
@@ -156,7 +177,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
 
-  let mut links = super::paste_links(paste.id(), &author_name, user.as_ref());
+  let mut links = super::paste_links(paste.id(), paste.author_id(), &author_name, user.as_ref());
   links.add_value(
     "raw_files",
     output
@@ -170,8 +191,9 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 
   let mut ctx = context(&*config, user.as_ref(), &mut sess);
   ctx["paste"] = json!(output);
-  ctx["num_commits"] = json!(paste.num_commits()?);
+  ctx["num_commits"] = json!(paste.num_commits(&*config)?);
   ctx["rendered"] = json!(rendered);
+  ctx["notices"] = json!(notices);
   ctx["user"] = json!(*user);
   ctx["deletion_key"] = json!(sess.data.remove(&format!("deletion_key_{}", paste.id().to_simple())));
   ctx["is_owner"] = json!(is_owner);
@@ -225,7 +247,7 @@ pub fn edit(username: String, id: PasteId, config: State<Config>, user: Optional
 
   // should be authed beyond this point
 
-  let files: Vec<OutputFile> = id.output_files(&conn, &paste, true)?;
+  let files: Vec<OutputFile> = id.output_files(&*config, &conn, &paste, true)?;
 
   let output = Output::new(
     id,
@@ -234,7 +256,7 @@ pub fn edit(username: String, id: PasteId, config: State<Config>, user: Optional
     paste.description(),
     paste.visibility(),
     paste.created_at(),
-    paste.updated_at().ok(), // FIXME
+    paste.updated_at(&*config).ok(), // FIXME
     paste.expires(),
     None,
     files,
@@ -247,11 +269,11 @@ pub fn edit(username: String, id: PasteId, config: State<Config>, user: Optional
   let mut ctx = context(&*config, Some(&user), &mut sess);
   ctx["paste"] = json!(output);
   ctx["languages"] = json!(Language::context());
-  ctx["num_commits"] = json!(paste.num_commits()?);
+  ctx["num_commits"] = json!(paste.num_commits(&*config)?);
   ctx["is_owner"] = json!(is_owner);
   ctx["author_name"] = json!(author_name);
   ctx["links"] = json!(
-    super::paste_links(paste.id(), &author_name, Some(&user))
+    super::paste_links(paste.id(), paste.author_id(), &author_name, Some(&user))
       .add(
         "patch",
         uri!(crate::routes::web::pastes::patch::patch: &author_name, paste.id()),

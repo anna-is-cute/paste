@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::{
     DbConn,
     models::{files::File as DbFile, pastes::Paste as DbPaste},
@@ -57,11 +58,11 @@ impl PasteId {
       .optional()?)
   }
 
-  pub fn output_files(&self, conn: &DbConn, paste: &DbPaste, with_content: bool) -> Result<Vec<OutputFile>> {
+  pub fn output_files(&self, config: &Config, conn: &DbConn, paste: &DbPaste, with_content: bool) -> Result<Vec<OutputFile>> {
     let files = self.files(conn)?;
     let mut outputs: Vec<OutputFile> = files
       .into_iter()
-      .map(|f| f.as_output_file(with_content, paste))
+      .map(|f| f.as_output_file(&*config, with_content, paste))
       .collect::<Result<_>>()?;
 
     let readme = UniCase::new("readme");
@@ -90,12 +91,12 @@ impl PasteId {
     Ok(outputs)
   }
 
-  pub fn output_file(&self, conn: &DbConn, paste: &DbPaste, id: FileId, with_content: bool) -> Result<Option<OutputFile>> {
+  pub fn output_file(&self, config: &Config, conn: &DbConn, paste: &DbPaste, id: FileId, with_content: bool) -> Result<Option<OutputFile>> {
     let file = match self.file(conn, id)? {
       Some(f) => f,
       None => return Ok(None),
     };
-    let output = file.as_output_file(with_content, paste)?;
+    let output = file.as_output_file(&*config, with_content, paste)?;
 
     Ok(Some(output))
   }

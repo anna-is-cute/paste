@@ -1,0 +1,26 @@
+      {% if is_team -%}
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          {{ name }}
+        </p>
+        <p>
+          <a href="https://github.com/{{ github }}" class="is-size-7">@{{ github }}</a>
+        </p>
+        <p>
+          {{ text }}
+        </p>
+      </div>
+      {%- else -%}
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+        {%- if url%}
+          <a href="{{ url }}">{{ name }}</a>
+        {%- else -%}
+          {{ name }}
+        {%- endif%}
+        </p>
+        <p>
+          {{ text }}
+        </p>
+      </div>
+      {%- endif -%}

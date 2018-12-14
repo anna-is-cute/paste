@@ -1,4 +1,6 @@
 $dimensions: 16 24 32 48 64 96 128 256;
+$family-sans-serif: sans-serif;
+$family-monospace: monospace;
 
 @import "bulma/bulma";
 @import "custom";
@@ -62,6 +64,12 @@ td.hljs-ln-numbers {
   }
 }
 
+// notices (different box-shadow size)
+.box-title + .file-notice {
+  margin-top: calc(-1.5rem - 1px); // -1px as well for the box-shadow
+  border-top: 1px solid $dark; // make up for the missing box-shadow
+}
+
 // codesass
 $atom-one-light-background: #fafafa;
 
@@ -81,4 +89,21 @@ div.codesass.codesass--has-line-numbers::before {
 
 .diffs .subtitle.hunk code {
   background-color: darken($grey-darker, 5);
+}
+
+input[type=checkbox] {
+  background-color: $white;
+  border-color: 1px solid darken($white, 10%);
+
+  &:focus, &:active {
+    border-color: lighten($grey-dark, 20%);
+  }
+
+  &:disabled {
+    border-color: $grey;
+  }
+
+  &:checked::after {
+    border-color: $grey-dark;
+  }
 }

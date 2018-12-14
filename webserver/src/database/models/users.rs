@@ -2,7 +2,7 @@ use crate::{
   errors::*,
   models::{
     id::{ApiKeyId, UserId},
-    user::Admin,
+    user::{Admin, AvatarProvider},
   },
 };
 
@@ -33,6 +33,7 @@ pub struct User {
   #[serde(skip_serializing)]
   tfa_enabled: bool,
   admin: Admin,
+  avatar_provider: AvatarProvider,
 }
 
 impl User {
@@ -112,6 +113,14 @@ impl User {
     self.admin == Admin::Super
   }
 
+  pub fn avatar_provider(&self) -> AvatarProvider {
+    self.avatar_provider
+  }
+
+  pub fn set_avatar_provider(&mut self, avatar_provider: AvatarProvider) {
+    self.avatar_provider = avatar_provider;
+  }
+
   pub fn create_email_verification(&self, conn: &DbConn, last_sent: Option<NaiveDateTime>) -> Result<(EmailVerification, Vec<u8>)> {
     let (nv, secret) = NewEmailVerification::new(
       self.email(),
@@ -182,6 +191,7 @@ pub struct NewUser {
   email_verified: bool,
   shared_secret: Option<Vec<u8>>,
   tfa_enabled: bool,
+  avatar_provider: AvatarProvider,
 }
 
 impl NewUser {
@@ -201,6 +211,7 @@ impl NewUser {
       email_verified: false,
       shared_secret: None,
       tfa_enabled: false,
+      avatar_provider: AvatarProvider::Gravatar,
     }
   }
 }

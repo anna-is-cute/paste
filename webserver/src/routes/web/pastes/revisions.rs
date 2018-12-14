@@ -46,9 +46,9 @@ pub fn get(username: String, id: PasteId, config: State<Config>, user: OptionalW
     return Ok(Rst::Status(status));
   }
 
-  let files: Vec<OutputFile> = id.output_files(&conn, &paste, false)?;
+  let files: Vec<OutputFile> = id.output_files(&*config, &conn, &paste, false)?;
 
-  let repo = Repository::open(paste.files_directory())?;
+  let repo = Repository::open(paste.files_directory(&*config))?;
   let head = repo.refname_to_id("HEAD")?;
   let head_commit = repo.find_commit(head)?;
 
@@ -142,7 +142,7 @@ pub fn get(username: String, id: PasteId, config: State<Config>, user: OptionalW
     paste.description(),
     paste.visibility(),
     paste.created_at(),
-    paste.updated_at().ok(), // FIXME
+    paste.updated_at(&*config).ok(), // FIXME
     paste.expires(),
     None,
     files,
@@ -155,7 +155,7 @@ pub fn get(username: String, id: PasteId, config: State<Config>, user: OptionalW
   ctx["num_commits"] = json!(count);
   ctx["author_name"] = json!(author_name);
   ctx["revisions"] = json!(all_revisions);
-  ctx["links"] = json!(super::paste_links(paste.id(), &author_name, user.as_ref()));
+  ctx["links"] = json!(super::paste_links(paste.id(), paste.author_id(), &author_name, user.as_ref()));
 
   Ok(Rst::Template(Template::render("paste/revisions", ctx)))
 }

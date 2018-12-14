@@ -1,13 +1,19 @@
 version: '3'
 services:
+  # This will run the latest published, successfully built commit on master.
+  # Options for running other branches (e.g. stable) are coming soon.
   backend:
-    build: run
-    command: /run.sh --release
+    image: jkcclemens/paste-prebuilt
     restart: unless-stopped
     volumes:
-      - "../:/paste:cached"
-      - "./run/.cargo/registry:/root/.cargo/registry:cached"
-      - "./run/.cargo/git:/root/.cargo/git:cached"
+      - "../config.toml:/paste/config.toml:ro"
+      - "../Rocket.toml:/paste/Rocket.toml:ro"
+      - "../.env:/paste/.env:ro"
+      - "../webserver/web:/paste/web:ro"
+      - "./nginx/certs:/paste/certs:ro"
+      - "../.git:/paste/.git:ro"
+      - "libraries:/libraries"
+      - "store:/store"
     depends_on:
       - postgres
       - redis
@@ -29,7 +35,9 @@ services:
     depends_on:
       - redis
     volumes:
-      - "../:/paste"
+      - "../:/paste:ro"
+      - "libraries:/libraries:ro"
+      - "store:/store"
   camo:
     image: inventid/camo
     restart: unless-stopped
@@ -51,3 +59,6 @@ services:
       - "./nginx/certs:/etc/nginx/certs:ro"
       - "./nginx/extra_modules:/etc/nginx/extra_modules:ro"
       - "../webserver/web/static:/etc/nginx/web/static:ro"
+volumes:
+  libraries:
+  store:

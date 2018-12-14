@@ -3,6 +3,7 @@ use crate::{
     errors::BackendError,
     pastes::*,
   },
+  config::Config,
   database::DbConn,
   models::{
     paste::{
@@ -24,7 +25,7 @@ use sidekiq::Client as SidekiqClient;
 type JsonResult<'a> = std::result::Result<Json<Paste>, JsonError<'a>>;
 type MultipartResult = std::result::Result<MultipartUpload, String>;
 
-fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
+fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> RouteResult<Output> {
   // check that file names are not the empty string
   if info.files.iter().filter_map(|x| x.name.as_ref()).any(|x| x.is_empty()) {
     return Ok(Status::show_error(
@@ -51,7 +52,7 @@ fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqCl
     files,
   };
 
-  let CreateSuccess { paste, files, deletion_key } = match pp.create(&conn, &*sidekiq) {
+  let CreateSuccess { paste, files, deletion_key } = match pp.create(&*config, &conn, &*sidekiq) {
     Ok(s) => s,
     Err(e) => {
       let msg = e.into_message()?;
@@ -60,8 +61,8 @@ fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqCl
   };
 
   match *user {
-    Some(ref u) => paste.commit(u.name(), u.email(), "create paste")?,
-    None => paste.commit("Anonymous", "none", "create paste")?,
+    Some(ref u) => paste.commit(&*config, u.name(), u.email(), "create paste")?,
+    None => paste.commit(&*config, "Anonymous", "none", "create paste")?,
   }
 
   // TODO: eventually replace this all with a GET /p/<id>?full=true backend call
@@ -84,7 +85,7 @@ fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqCl
     paste.description(),
     paste.visibility(),
     paste.created_at(),
-    paste.updated_at().ok(), // FIXME
+    paste.updated_at(&*config).ok(), // FIXME
     paste.expires(),
     deletion_key.map(|x| x.key()),
     files,
@@ -94,18 +95,18 @@ fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqCl
 }
 
 #[post("/", format = "multipart/form-data", data = "<info>")]
-pub fn post_multipart(info: MultipartResult, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
+pub fn post_multipart(info: MultipartResult, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> RouteResult<Output> {
   let info = match info {
     Ok(x) => x.into_inner(),
     Err(e) => {
       return Ok(Status::show_error(HttpStatus::BadRequest, ErrorKind::BadMultipart(Some(e))));
     },
   };
-  _post(info, user, conn, sidekiq)
+  _post(info, user, conn, sidekiq, config)
 }
 
 #[post("/", format = "application/json", data = "<info>")]
-pub fn post_json<'a>(info: JsonResult<'a>, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<Output> {
+pub fn post_json<'a>(info: JsonResult<'a>, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> RouteResult<Output> {
   // TODO: can this be a request guard?
   let info = match info {
     Ok(x) => x.into_inner(),
@@ -118,5 +119,5 @@ pub fn post_json<'a>(info: JsonResult<'a>, user: OptionalUser, conn: DbConn, sid
     },
   };
 
-  _post(info, user, conn, sidekiq)
+  _post(info, user, conn, sidekiq, config)
 }

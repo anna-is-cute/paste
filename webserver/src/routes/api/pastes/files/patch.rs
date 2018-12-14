@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::{
     DbConn,
     schema::files,
@@ -13,7 +14,7 @@ use crate::{
 
 use diesel::prelude::*;
 
-use rocket::http::Status as HttpStatus;
+use rocket::{http::Status as HttpStatus, State};
 
 use rocket_contrib::json::{Json, JsonError};
 
@@ -22,7 +23,7 @@ use std::{fs::OpenOptions, io::Write};
 type UpdateResult<'a> = ::std::result::Result<Json<Vec<PasteFileUpdate>>, JsonError<'a>>;
 
 #[patch("/<paste_id>/files", format = "application/json", data = "<info>")]
-pub fn patch(paste_id: PasteId, info: UpdateResult<'a>, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
+pub fn patch(paste_id: PasteId, info: UpdateResult<'a>, config: State<Config>, user: RequiredUser, conn: DbConn) -> RouteResult<()> {
   // TODO: can this be a request guard?
   let mut info = match info {
     Ok(x) => x.into_inner(),
@@ -54,7 +55,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult<'a>, user: RequiredUser, conn
   let mut db_changed = false;
   // TODO: this needs much refactor love
   // update files and database if necessary
-  let files_directory = paste.files_directory();
+  let files_directory = paste.files_directory(&*config);
 
   let mut db_files = paste_id.files(&conn)?;
   {
@@ -94,7 +95,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult<'a>, user: RequiredUser, conn
           },
           // deleting file
           Update::Remove => {
-            paste.delete_file(&conn, db_file.id())?;
+            paste.delete_file(&*config, &conn, db_file.id())?;
             // do not update file in database
             db_changed = false;
             continue;
@@ -124,14 +125,14 @@ pub fn patch(paste_id: PasteId, info: UpdateResult<'a>, user: RequiredUser, conn
       // adding file
       None => {
         let content = file.content.unwrap_set();
-        paste.create_file(&conn, file.name, file.highlight_language.set(), content)?;
+        paste.create_file(&*config, &conn, file.name, file.highlight_language.set(), content)?;
       },
     }
   }
 
   // commit if any files were changed
   // TODO: more descriptive commit message
-  paste.commit_if_dirty(user.name(), user.email(), "update paste")?;
+  paste.commit_if_dirty(&*config, user.name(), user.email(), "update paste")?;
 
   Ok(Status::show_success(HttpStatus::NoContent, ()))
 }

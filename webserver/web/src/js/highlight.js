@@ -1,6 +1,14 @@
 /* global hljs:false */
 
 (function() {
+  function getSuffixFromName(name) {
+    if (name === 'CMakeLists.txt') {
+      return 'CMake';
+    }
+
+    return name.split('.').pop();
+  }
+
   for (const pre of document.getElementsByTagName('pre')) {
     (function() {
       if (pre.id === '') {
@@ -14,7 +22,7 @@
       if (pre.lang) {
         suffix = pre.lang;
       } else {
-        suffix = title.innerText.trim().split('.').pop();
+        suffix = getSuffixFromName(title.innerText.trim());
       }
       const classes = [];
       if (hljs.getLanguage(suffix) === undefined) {

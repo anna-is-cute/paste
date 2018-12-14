@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::DbConn,
   models::{
     id::PasteId,
@@ -17,7 +18,7 @@ use sidekiq::Client as SidekiqClient;
 type UpdateResult<'a> = ::std::result::Result<Json<MetadataUpdate>, JsonError<'a>>;
 
 #[patch("/<paste_id>", format = "application/json", data = "<info>")]
-pub fn patch(paste_id: PasteId, info: UpdateResult<'a>, user: RequiredUser, conn: DbConn, sidekiq: State<SidekiqClient>) -> RouteResult<()> {
+pub fn patch(paste_id: PasteId, info: UpdateResult<'a>, user: RequiredUser, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> RouteResult<()> {
   // TODO: can this be a request guard?
   let info = match info {
     Ok(x) => x.into_inner(),
@@ -40,7 +41,7 @@ pub fn patch(paste_id: PasteId, info: UpdateResult<'a>, user: RequiredUser, conn
   }
 
   // update paste and database if necessary
-  paste.update(&conn, &*sidekiq, &info)?;
+  paste.update(&*config, &conn, &*sidekiq, &info)?;
 
   // return status (204?)
   Ok(Status::show_success(HttpStatus::NoContent, ()))

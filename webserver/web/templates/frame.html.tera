@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>{% block title %}{% endblock title %} · {{ config.general.site_name }}</title>
   <script
-    src="/static/js/modernizr/modernizr-custom.js?v={{ resources_version }}"
-    integrity="sha384-nmxvr0DOHzo6J5xr1kkRbsKZKEzGpWt+uEYGuBe3s4laMM5hvBHT52PKYqSHiIk4"></script>
+    src="/static/js/detect-js.js?v={{ resources_version }}"
+    integrity="sha384-zOywKDlqULRqmkg/kyDUYQynO4tN4Z0REM9du6o0zLEpiIfYN3jLea0QYHyeRuvx"></script>
   {%- endblock head -%}
 </head>
 <body>

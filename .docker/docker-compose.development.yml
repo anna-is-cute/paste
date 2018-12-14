@@ -1,0 +1,62 @@
+# Use this file for doing local development with docker-compose.
+
+version: '3'
+services:
+  # This will run whatever is in your checked-out repository by compiling it then executing it.
+  backend:
+    build: run
+    command: /run.sh
+    # To build in release mode, add --release to run.sh.
+    # command: /run.sh --release
+    restart: unless-stopped
+    volumes:
+      - "../:/paste:cached"
+      - "./run/.cargo/registry:/root/.cargo/registry:cached"
+      - "./run/.cargo/git:/root/.cargo/git:cached"
+    depends_on:
+      - postgres
+      - redis
+      - sidekiq
+    environment:
+      - ROCKET_ENV=prod
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+  postgres:
+    image: postgres:alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=paste
+      - POSTGRES_PASSWORD=paste
+  sidekiq:
+    build: sidekiq
+    command: /paste/sidekiq.sh
+    restart: unless-stopped
+    depends_on:
+      - redis
+    volumes:
+      - "../:/paste"
+      - "libraries:/libraries:ro"
+  camo:
+    image: inventid/camo
+    restart: unless-stopped
+    environment:
+      - CAMO_KEY=${CAMO_KEY}
+      - CAMO_HOSTNAME=paste
+  nginx:
+    build: nginx
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - camo
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "./nginx/sites:/etc/nginx/sites:ro"
+      - "./nginx/certs:/etc/nginx/certs:ro"
+      - "./nginx/extra_modules:/etc/nginx/extra_modules:ro"
+      - "../webserver/web/static:/etc/nginx/web/static:ro"
+volumes:
+  libraries:

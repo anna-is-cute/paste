@@ -15,7 +15,7 @@ use crate::{
 
 use diesel::{dsl::count, prelude::*};
 
-use rocket::{State, http::Status as HttpStatus, request::Form};
+use rocket::{State, http::Status as HttpStatus};
 
 use rocket_contrib::templates::Template;
 
@@ -23,22 +23,9 @@ use serde_json::json;
 
 use std::{fs::File, io::Read};
 
-#[get("/u/<username>")]
-pub fn get(username: String, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
-  _get(1, username, config, user, sess, conn)
-}
-
-#[get("/u/<username>?<params..>")]
-pub fn get_page(username: String, params: Form<PageParams>, config: State<Config>, user: OptionalWebUser, sess: Session, conn: DbConn) -> Result<Rst> {
-  _get(params.page, username, config, user, sess, conn)
-}
-
-#[derive(Debug, FromForm, UriDisplay)]
-pub struct PageParams {
-  page: u32,
-}
-
-fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+#[get("/u/<username>?<page>")]
+pub fn get(username: String, page: Option<u32>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+  let page = page.unwrap_or(1);
   // TODO: make PositiveNumber struct or similar (could make Positive<num::Integer> or something)
   if page == 0 {
     return Ok(Rst::Status(HttpStatus::NotFound));
@@ -90,7 +77,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
 
       let mut has_preview = false;
 
-      let mut output_files = id.output_files(&conn, &paste, false)?;
+      let mut output_files = id.output_files(&*config, &conn, &paste, false)?;
 
       const LEN: usize = 385;
       let mut bytes = [0; LEN];
@@ -102,7 +89,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
         };
         // TODO: maybe store this in database or its own file?
         if !has_preview && file.is_binary() != Some(true) {
-          let path = file.path(&paste);
+          let path = file.path(&*config, &paste);
           let read = File::open(path)?.read(&mut bytes)?;
           let full = read < LEN;
           let end = if read == LEN { read - 1 } else { read };
@@ -149,7 +136,7 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
         paste.description(),
         paste.visibility(),
         paste.created_at(),
-        paste.updated_at().ok(), // FIXME
+        paste.updated_at(&*config).ok(), // FIXME
         paste.expires(),
         None,
         output_files,
@@ -170,20 +157,17 @@ fn _get(page: u32, username: String, config: State<Config>, user: OptionalWebUse
 
 fn user_links(user: Option<&User>, target: &User, pastes: &[Output], page: u32) -> Links {
   let mut links = links!(
-    "next_page" => uri!(crate::routes::web::users::get::get_page:
+    "target_avatar" => uri!(crate::routes::web::account::avatar::get: target.id()),
+    "next_page" => uri!(crate::routes::web::users::get::get:
       target.username(),
-      PageParams {
-        page: page + 1,
-      },
+      page + 1,
     ),
     "prev_page" => if page <= 2 {
-      uri!(crate::routes::web::users::get::get: target.username())
+      uri!(crate::routes::web::users::get::get: target.username(), _)
     } else {
-      uri!(crate::routes::web::users::get::get_page:
+      uri!(crate::routes::web::users::get::get:
         target.username(),
-        PageParams {
-          page: page - 1,
-        },
+        page - 1,
       )
     },
   );

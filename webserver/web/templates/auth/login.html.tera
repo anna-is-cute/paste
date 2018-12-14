@@ -33,6 +33,7 @@ Log in to your account.
         autocorrect="off"
         autocapitalize="off"
         {% if form.username %}value="{{ form.username }}"{% endif %}
+        autofocus
         required/>
       <span class="icon is-small is-left">
         <i class="fas fa-user"></i>

@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::DbConn,
   models::id::PasteId,
   models::paste::PasteFile,
@@ -7,14 +8,14 @@ use crate::{
   routes::{RouteResult, RequiredUser},
 };
 
-use rocket::http::Status as HttpStatus;
+use rocket::{http::Status as HttpStatus, State};
 
 use rocket_contrib::json::{Json, JsonError};
 
 type UpdateResult<'a> = ::std::result::Result<Json<PasteFile>, JsonError<'a>>;
 
 #[post("/<paste_id>/files", format = "application/json", data = "<file>")]
-pub fn post(paste_id: PasteId, file: UpdateResult<'a>, user: RequiredUser, conn: DbConn) -> RouteResult<OutputFile> {
+pub fn post(paste_id: PasteId, file: UpdateResult<'a>, user: RequiredUser, conn: DbConn, config: State<Config>) -> RouteResult<OutputFile> {
   // TODO: can this be a request guard?
   let file = match file {
     Ok(x) => x.into_inner(),
@@ -36,6 +37,7 @@ pub fn post(paste_id: PasteId, file: UpdateResult<'a>, user: RequiredUser, conn:
   }
 
   let created = paste.create_file(
+    &*config,
     &conn,
     file.name.map(|x| x.to_string()),
     file.highlight_language,
@@ -44,7 +46,7 @@ pub fn post(paste_id: PasteId, file: UpdateResult<'a>, user: RequiredUser, conn:
 
   // commit
   // TODO: more descriptive commit message
-  paste.commit(user.name(), user.email(), "update paste")?;
+  paste.commit(&*config, user.name(), user.email(), "update paste")?;
 
   let output = OutputFile::new(created.id(), Some(created.name().to_string()), created.highlight_language(), None);
 

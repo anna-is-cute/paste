@@ -8,6 +8,3 @@
 [submodule "web/src/css/bulma-tooltip"]
 	path = webserver/web/src/css/bulma-tooltip
 	url = https://github.com/Wikiki/bulma-tooltip
-[submodule "webserver/web/src/css/pretty-checkbox"]
-	path = webserver/web/src/css/pretty-checkbox
-	url = https://github.com/lokesh-coder/pretty-checkbox

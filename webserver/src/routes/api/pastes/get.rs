@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::{
     DbConn,
     models::{
@@ -20,7 +21,7 @@ use crate::{
 
 use diesel::prelude::*;
 
-use rocket::{http::Status as HttpStatus, request::Form};
+use rocket::{http::Status as HttpStatus, request::Form, State};
 
 use std::cmp::min;
 
@@ -37,16 +38,7 @@ pub struct AllQuery {
 }
 
 #[get("/?<query..>")]
-pub fn get_all_query(query: Form<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>> {
-  _get_all(Some(query.into_inner()), conn)
-}
-
-#[get("/")]
-pub fn get_all(conn: DbConn) -> RouteResult<Vec<AllPaste>> {
-  _get_all(None, conn)
-}
-
-fn _get_all(query: Option<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>> {
+pub fn get_all(query: Option<Form<AllQuery>>, conn: DbConn, config: State<Config>) -> RouteResult<Vec<AllPaste>> {
   let limit = min(100, query.and_then(|x| x.limit).unwrap_or(5));
 
   let pastes: Vec<DbPaste> = pastes::table
@@ -65,7 +57,7 @@ fn _get_all(query: Option<AllQuery>, conn: DbConn) -> RouteResult<Vec<AllPaste>>
         visibility: x.visibility(),
         expires: x.expires(),
         created_at: Some(x.created_at()),
-        updated_at: x.updated_at().ok(),
+        updated_at: x.updated_at(&*config).ok(),
       },
     })
     .collect();
@@ -78,19 +70,8 @@ pub struct Full {
   full: Option<bool>,
 }
 
-// routes separated because of https://github.com/SergioBenitez/Rocket/issues/376
-
-#[get("/<id>")]
-pub fn get(id: PasteId, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
-  _get(id, None, user, conn)
-}
-
 #[get("/<id>?<query..>")]
-pub fn get_query(id: PasteId, query: Form<Full>, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
-  _get(id, Some(query.into_inner()), user, conn)
-}
-
-fn _get(id: PasteId, query: Option<Full>, user: OptionalUser, conn: DbConn) -> RouteResult<Output> {
+pub fn get(id: PasteId, query: Option<Form<Full>>, user: OptionalUser, conn: DbConn, config: State<Config>) -> RouteResult<Output> {
   let paste = match id.get(&conn)? {
     Some(paste) => paste,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
@@ -99,10 +80,10 @@ fn _get(id: PasteId, query: Option<Full>, user: OptionalUser, conn: DbConn) -> R
   if let Some((status, kind)) = paste.check_access(user.as_ref().map(|x| x.id())) {
     return Ok(Status::show_error(status, kind));
   }
-  let query = query.unwrap_or_default();
+  let query = query.map(|x| x.into_inner()).unwrap_or_default();
 
   let full = query.full == Some(true);
-  let files: Vec<OutputFile> = id.output_files(&conn, &paste, full)?;
+  let files: Vec<OutputFile> = id.output_files(&*config, &conn, &paste, full)?;
 
   let author = match paste.author_id() {
     Some(author) => {
@@ -119,7 +100,7 @@ fn _get(id: PasteId, query: Option<Full>, user: OptionalUser, conn: DbConn) -> R
     paste.description(),
     paste.visibility(),
     paste.created_at(),
-    paste.updated_at().ok(), // FIXME
+    paste.updated_at(&*config).ok(), // FIXME
     paste.expires(),
     None,
     files,

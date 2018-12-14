@@ -15,6 +15,7 @@ pub struct Config {
   pub general: General,
   #[serde(default)]
   pub admin: Admin,
+  pub store: Store,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -29,6 +30,11 @@ pub struct General {
 pub struct Admin {
   #[serde(default)]
   pub key: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Store {
+  pub path: PathBuf,
 }
 
 pub fn load_config(s: &str) -> Result<Config> {

@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::DbConn,
   errors::*,
   models::{
@@ -10,6 +11,7 @@ use crate::{
 
 use rocket::{
   http::Status as HttpStatus,
+  request::State,
   response::{
     NamedFile,
     status::Custom,
@@ -19,7 +21,7 @@ use rocket::{
 use rocket_contrib::json::Json;
 
 #[get("/<paste_id>/files/<file_id>/raw")]
-pub fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn) -> Result<FileOrError> {
+pub fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn, config: State<Config>,) -> Result<FileOrError> {
   let paste = match paste_id.get(&conn)? {
     Some(paste) => paste,
     None => return Ok(FileOrError::Error(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste))),
@@ -29,7 +31,7 @@ pub fn get(paste_id: PasteId, file_id: FileId, user: OptionalUser, conn: DbConn)
     return Ok(FileOrError::Error(Status::show_error(status, kind)));
   }
 
-  let path = paste.files_directory().join(file_id.to_simple().to_string());
+  let path = paste.files_directory(&*config).join(file_id.to_simple().to_string());
 
   // TODO: specials headers?
   Ok(FileOrError::File(NamedFile::open(path)?))

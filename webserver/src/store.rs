@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   errors::*,
   models::id::{PasteId, UserId},
 };
@@ -7,22 +8,28 @@ use git2::Repository;
 
 use uuid::Uuid;
 
-use std::{fs, path::PathBuf};
+use std::{fs, path::Path};
 
-pub struct Store;
+pub struct Store<'c> {
+  config: &'c Config,
+}
 
-impl Store {
-  pub fn directory() -> PathBuf {
-    PathBuf::from("store")
+impl Store<'c> {
+  pub fn new(config: &'c Config) -> Self {
+    Store { config }
   }
 
-  pub fn new_paste(author: Option<UserId>) -> Result<PasteId> {
+  pub fn directory(&self) -> &'c Path {
+    self.config.store.path.as_path()
+  }
+
+  pub fn new_paste(&self, author: Option<UserId>) -> Result<PasteId> {
     let id = PasteId(Uuid::new_v4());
 
     let user_path = author.map(|x| x.to_simple().to_string()).unwrap_or_else(|| "anonymous".into());
 
     // get the path to the paste
-    let paste_path = Store::directory().join(user_path).join(id.to_simple().to_string());
+    let paste_path = self.config.store.path.join(user_path).join(id.to_simple().to_string());
 
     // get the files path for the paste
     let files_path = paste_path.join("files");

@@ -33,7 +33,7 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> R
 }
 
 #[delete("/account", format = "application/x-www-form-urlencoded", data = "<delete>")]
-pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> Result<Redirect> {
   let delete = delete.into_inner();
 
   if !sess.check_token(&delete.anti_csrf_token) {
@@ -53,7 +53,7 @@ pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Sess
 
   user.delete(&conn)?;
 
-  sidekiq.push(Job::DeleteAllPastes(user.id()).into())?;
+  sidekiq.push(Job::DeleteAllPastes(&*config, user.id()).into())?;
 
   sess.add_data("info", "Account deleted.");
   Ok(Redirect::to(uri!(crate::routes::web::index::get)))

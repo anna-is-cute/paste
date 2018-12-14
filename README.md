@@ -2,7 +2,8 @@
 
 *A sensible, modern pastebin.*
 
-[![build status](https://travis-ci.org/jkcclemens/paste.svg?branch=master)](https://travis-ci.org/jkcclemens/paste)
+[![build status](https://travis-ci.org/jkcclemens/paste.svg?branch=master "travis-ci status")](https://travis-ci.org/jkcclemens/paste)
+[![jenkins status](https://ci.akpmakes.tech/buildStatus/icon?job=paste/master "jenkins + docker status")](https://ci.akpmakes.tech/job/paste/job/master/)
 [![dependency status](https://deps.rs/repo/github/jkcclemens/paste/status.svg)](https://deps.rs/repo/github/jkcclemens/paste)
 [![patreon](https://img.shields.io/badge/donate-patreon-blue.svg)](https://www.patreon.com/jkcclemens/overview)
 [![paypal](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/jkcclemens)
@@ -32,8 +33,7 @@ community!
 
 ## Using a pre-existing paste server
 
-I host [paste.gg](https://paste.gg). I am poor and can't afford a good machine (paste.gg is an AWS
-t2.micro – one core and low RAM), so please don't bombard it!
+I host [paste.gg](https://paste.gg). I am poor and can't afford a good machine (paste.gg is a DigitalOcean droplet – three cores and low-ish RAM), so please don't bombard it!
 
 ## Setting up your own paste server (Docker)
 

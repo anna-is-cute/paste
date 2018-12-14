@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::{
     DbConn,
     models::{
@@ -94,10 +95,10 @@ impl PastePayload<'u> {
     Ok(())
   }
 
-  pub fn create(self, conn: &DbConn, sidekiq: &SidekiqClient) -> Result<CreateSuccess, CreateError> {
+  pub fn create(self, config: &Config, conn: &DbConn, sidekiq: &SidekiqClient) -> Result<CreateSuccess, CreateError> {
     self.check()?;
 
-    let id = Store::new_paste(self.author.map(|x| x.id()))
+    let id = Store::new(config).new_paste(self.author.map(|x| x.id()))
       .map_err(CreateError::Internal)?;
 
     let np = NewPaste::new(
@@ -129,7 +130,7 @@ impl PastePayload<'u> {
 
     let mut files = Vec::with_capacity(self.files.len());
     for file in self.files {
-      let f = paste.create_file(conn, file.name, file.highlight_language, file.content)
+      let f = paste.create_file(&*config, conn, file.name, file.highlight_language, file.content)
         .map_err(CreateError::Internal)?;
       files.push(f);
     }
@@ -144,7 +145,7 @@ impl PastePayload<'u> {
 
       let job = Job::queue("ExpirePaste", timestamp, vec![
         Value::Number(timestamp.into()),
-        Value::String(Store::directory().to_string_lossy().to_string()),
+        Value::String(Store::new(config).directory().to_string_lossy().to_string()),
         Value::String(user),
         Value::String(id.to_simple().to_string()),
       ]);

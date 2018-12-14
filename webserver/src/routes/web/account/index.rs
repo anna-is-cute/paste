@@ -2,6 +2,7 @@ use crate::{
   config::Config,
   database::{DbConn, schema::users},
   errors::*,
+  models::user::AvatarProvider,
   routes::web::{context, Rst, OptionalWebUser, Session},
   utils::{email, HashedPassword, Validator},
 };
@@ -22,6 +23,11 @@ use serde_json::json;
 use sidekiq::Client as SidekiqClient;
 
 use unicode_segmentation::UnicodeSegmentation;
+
+#[get("/.well-known/change-password")]
+pub fn well_known_password_change() -> Redirect {
+  Redirect::to(uri!(get))
+}
 
 #[get("/account")]
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
@@ -105,6 +111,10 @@ pub fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalW
     user.set_username(username.into_owned());
   }
 
+  if update.avatar_provider != user.avatar_provider() {
+    user.set_avatar_provider(update.avatar_provider);
+  }
+
   if !update.password.is_empty() {
     if update.password != update.password_verify {
       sess.add_data("error", "New passwords did not match.");
@@ -134,6 +144,7 @@ pub struct AccountUpdate {
   name: String,
   username: String,
   email: String,
+  avatar_provider: AvatarProvider,
   #[serde(skip)]
   password: String,
   #[serde(skip)]

@@ -24,6 +24,11 @@ use sidekiq::Client as SidekiqClient;
 
 use unicode_segmentation::UnicodeSegmentation;
 
+#[get("/.well-known/change-password")]
+pub fn well_known_password_change() -> Redirect {
+  Redirect::to(uri!(get))
+}
+
 #[get("/account")]
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
   let user = match *user {

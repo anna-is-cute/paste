@@ -32,6 +32,10 @@ $dimensions: 16 24 32 48 64 96 128 256;
 $body-size: 16px;
 $size-6: 1rem;
 
+// set fonts to user's chosen fonts
+$family-sans-serif: sans-serif;
+$family-monospace: monospace;
+
 @import "bulma/sass/utilities/derived-variables";
 
 @import "bulma/bulma";
@@ -131,43 +135,4 @@ div.codesass.codesass--has-line-numbers::before {
 
 .message.is-warning .message-body pre {
   color: #000;
-}
-
-// fonts
-
-/* lato-regular - latin_latin-ext */
-@font-face {
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Lato Regular'), local('Lato-Regular'),
-       url('/static/fonts/lato/lato-v14-latin_latin-ext-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-       url('/static/fonts/lato/lato-v14-latin_latin-ext-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-}
-/* lato-italic - latin_latin-ext */
-@font-face {
-  font-family: 'Lato';
-  font-style: italic;
-  font-weight: 400;
-  src: local('Lato Italic'), local('Lato-Italic'),
-       url('/static/fonts/lato/lato-v14-latin_latin-ext-italic.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-       url('/static/fonts/lato/lato-v14-latin_latin-ext-italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-}
-/* lato-700 - latin_latin-ext */
-@font-face {
-  font-family: 'Lato';
-  font-style: normal;
-  font-weight: 700;
-  src: local('Lato Bold'), local('Lato-Bold'),
-       url('/static/fonts/lato/lato-v14-latin_latin-ext-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-       url('/static/fonts/lato/lato-v14-latin_latin-ext-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-}
-/* lato-700italic - latin_latin-ext */
-@font-face {
-  font-family: 'Lato';
-  font-style: italic;
-  font-weight: 700;
-  src: local('Lato Bold Italic'), local('Lato-BoldItalic'),
-       url('/static/fonts/lato/lato-v14-latin_latin-ext-700italic.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-       url('/static/fonts/lato/lato-v14-latin_latin-ext-700italic.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }

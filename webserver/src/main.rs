@@ -163,6 +163,7 @@ fn main() {
 
       routes::web::account::index::get,
       routes::web::account::index::patch,
+      routes::web::account::index::well_known_password_change,
 
       routes::web::account::keys::get,
       routes::web::account::keys::post,

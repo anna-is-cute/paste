@@ -7,6 +7,14 @@ build = "build.rs"
 
 edition = "2018"
 
+[package.metadata.credits]
+ignore = [
+  # see rocket
+  "rocket_contrib",
+  # see serde
+  "serde_derive",
+]
+
 exclude = [
   # pls
   # "web/",
@@ -22,6 +30,12 @@ maintenance = { status = "actively-developed" }
 [build-dependencies]
 # getting current commit
 git2 = "0.7"
+# credits generation
+serde = "1"
+serde_derive = "1"
+serde_json = "1"
+toml = "0.4"
+tera = "0.11"
 
 [dependencies]
 # json serialization and deserialization
@@ -45,7 +59,7 @@ libflate = "0.1"
 xz2 = "0.1"
 
 # secure password hashing
-sodiumoxide = "0.1"
+sodiumoxide = "0.2"
 
 # environment variable loading
 dotenv = "0.13"
@@ -115,7 +129,7 @@ mime = "0.2"
 rust-crypto = "0.2"
 
 # source of randomness
-rand = "0.6.0-pre.1"
+rand = "0.6"
 
 # creating sha-384 integrity hashes
 sha2 = "0.8"
@@ -123,14 +137,17 @@ sha2 = "0.8"
 # requests to gravatar
 reqwest = "0.9"
 
+# csv parsing
+csv = "1"
+
 # web logic
 [dependencies.rocket]
-version = "0.4.0-rc.2"
+version = "0.4"
 features = ["tls"]
 
 # web logic with json and uuids
 [dependencies.rocket_contrib]
-version = "0.4.0-rc.2"
+version = "0.4"
 default-features = false
 features = ["json", "tera_templates"]
 

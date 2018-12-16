@@ -1,5 +1,4 @@
 #![feature(
-  custom_derive,
   decl_macro,
   in_band_lifetimes,
   proc_macro_hygiene,

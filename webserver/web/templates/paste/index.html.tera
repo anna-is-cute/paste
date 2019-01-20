@@ -47,10 +47,13 @@
 
 {% block title -%}
   {%- if paste.name -%}
-{{ paste.name }}
+    {{ paste.name }}
+  {%- elif paste.files | length > 0 -%}
+    {{ paste.files[0].name }}
   {%- else -%}
-untitled paste
+    untitled paste
   {%- endif -%}
+  {%- if paste.author %} by {{ paste.author.username }}{%- endif -%}
 {%- endblock title %}
 
 {% block header %}

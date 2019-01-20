@@ -46,6 +46,9 @@
 {%- endblock head %}
 
 {% block title -%}
+  {%- if paste.author and paste.author.name -%}
+{{ paste.author.name }} authored
+  {%- endif -%}
   {%- if paste.name -%}
 {{ paste.name }}
   {%- else -%}

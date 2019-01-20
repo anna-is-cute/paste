@@ -5,6 +5,11 @@ site_domain = "paste.gg"
 # If not set, the About link in the navbar will not be displayed
 # about_file = "about.html"
 
+[store]
+# The path on the filesystem where pastes will be stored.
+# For production docker, this should be set to "/store"
+path = "./store"
+
 # Sender information for emails sent from the server
 [email.sender]
 name = ""

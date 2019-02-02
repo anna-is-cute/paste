@@ -9,6 +9,8 @@
 [![paypal](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/jkcclemens)
 [![discord](https://img.shields.io/badge/contact-discord-7289DA.svg)](https://discord.gg/EnqSwJK)
 
+<img src="light_screenshot.png" width="430" alt="Light theme screenshot"> <img src="dark_screenshot.png" width="430" alt="Dark theme screenshot">
+
 ## Idea
 
 Pretty much every pastebin sucks. When Gist removed anonymous pastes, I realised that the pastebins

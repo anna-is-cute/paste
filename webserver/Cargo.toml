@@ -29,12 +29,12 @@ maintenance = { status = "actively-developed" }
 
 [build-dependencies]
 # getting current commit
-git2 = "0.7"
+git2 = "0.8"
 # credits generation
 serde = "1"
 serde_derive = "1"
 serde_json = "1"
-toml = "0.4"
+toml = "0.5"
 tera = "0.11"
 
 [dependencies]
@@ -44,7 +44,7 @@ serde_derive = "1"
 serde_json = "1"
 
 # creating paste histories
-git2 = "0.7"
+git2 = "0.8"
 
 # handling binary uploads in json
 base64 = "0.10"
@@ -74,7 +74,7 @@ if_chain = "0.1"
 unicode-segmentation = "1"
 
 # configuration files
-toml = "0.4"
+toml = "0.5"
 
 # rate limiting
 ipnetwork = "0.13"
@@ -159,7 +159,7 @@ features = ["v4", "serde"]
 # database orm
 [dependencies.diesel]
 version = "1"
-features = ["unstable", "postgres", "uuid", "r2d2", "chrono", "network-address"]
+features = ["unstable", "postgres", "uuidv07", "r2d2", "chrono", "network-address"]
 
 # timestamp handling
 [dependencies.chrono]
@@ -168,14 +168,14 @@ features = ["serde"]
 
 # markdown rendering
 [dependencies.comrak]
-version = "0.4"
+version = "0.5"
 default-features = false
 
 # accepting multipart input
 [dependencies.multipart]
-version = "0.15"
+version = "0.16"
 default-features = false
-features = ["server", "use_arc_str"]
+features = ["server"]
 
 # faster hashmaps
 [dependencies.hashbrown]

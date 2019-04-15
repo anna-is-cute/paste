@@ -6,7 +6,3 @@ members = [
   "workers/email",
   "workers/expire_paste",
 ]
-
-[patch.crates-io]
-diesel =  { git = "https://github.com/jkcclemens/diesel" }
-diesel_derives =  { git = "https://github.com/jkcclemens/diesel" }

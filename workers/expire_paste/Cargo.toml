@@ -16,4 +16,4 @@ uuid = "0.7"
 
 [dependencies.diesel]
 version = "1"
-features = ["unstable", "postgres", "uuid", "chrono"]
+features = ["unstable", "postgres", "uuidv07", "chrono"]

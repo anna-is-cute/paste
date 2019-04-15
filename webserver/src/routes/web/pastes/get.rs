@@ -35,6 +35,14 @@ use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
+use syntect::{
+  html::{
+    ClassedHTMLGenerator,
+    ClassStyle,
+  },
+  parsing::SyntaxSet,
+};
+
 lazy_static! {
   static ref OPTIONS: ComrakOptions = ComrakOptions {
     github_pre_lang: true,
@@ -43,6 +51,7 @@ lazy_static! {
     ext_autolink: true,
     ext_tasklist: true,
     ext_footnotes: true,
+    ext_highlight: Some("hl-".into()),
     // allows html and bad links: ammonia + our post-processor cleans the output, not comrak
     unsafe_: true,
     .. Default::default()
@@ -53,9 +62,21 @@ lazy_static! {
     b
       .link_rel(Some("noopener noreferrer nofollow"))
       .add_tags(std::iter::once("input"))
-      .add_tag_attribute_values("input", "checked", vec!["", "checked"].into_iter())
-      .add_tag_attribute_values("input", "disabled", vec!["", "disabled"].into_iter())
-      .add_tag_attribute_values("input", "type", std::iter::once("checkbox"));
+      .add_tag_attribute_values("input", "checked", vec!["", "checked"])
+      .add_tag_attribute_values("input", "disabled", vec!["", "disabled"])
+      .add_tag_attribute_values("input", "type", std::iter::once("checkbox"))
+      .add_allowed_classes("span", vec![
+        "hl-inherited-class", "hl-name", "hl-string", "hl-id", "hl-deleted", "hl-link", "hl-quote",
+        "hl-regexp", "hl-inline", "hl-deprecated", "hl-constant", "hl-parameter", "hl-escape",
+        "hl-unimplemented", "hl-function", "hl-interpolation", "hl-markup", "hl-changed",
+        "hl-comment", "hl-definition", "hl-punctuation", "hl-entity", "hl-broken", "hl-character",
+        "hl-inserted", "hl-attribute-name", "hl-type", "hl-variable", "hl-require", "hl-storage",
+        "hl-embedded", "hl-none", "hl-illegal", "hl-markdown", "hl-section", "hl-special-method",
+        "hl-bold", "hl-separator", "hl-symbol", "hl-source", "hl-class", "hl-other", "hl-tag",
+        "hl-operator", "hl-selector", "hl-end", "hl-color", "hl-italic", "hl-unit", "hl-text",
+        "hl-list", "hl-support", "hl-invalid", "hl-raw", "hl-meta", "hl-numeric", "hl-keyword",
+        "hl-any-method",
+      ]);
     b
   };
 }
@@ -118,12 +139,13 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
     return Ok(Rst::Status(status));
   }
 
-  let files: Vec<OutputFile> = id.output_files(&*config, &conn, &paste, true)?;
+  let mut files: Vec<OutputFile> = id.output_files(&*config, &conn, &paste, true)?;
 
+  let mut lines: HashMap<FileId, usize> = HashMap::with_capacity(files.len());
   let mut rendered: HashMap<FileId, String> = HashMap::with_capacity(files.len());
   let mut notices: HashMap<FileId, String> = HashMap::new();
 
-  for file in &files {
+  for file in &mut files {
     if let Some(ref name) = file.name {
       let lower = name.to_lowercase();
 
@@ -133,30 +155,50 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 
       let is_csv = file.highlight_language.is_none() && lower.ends_with(".csv");
 
-      if !is_md && !is_csv {
-        continue;
-      }
-
       let content = match file.content {
         Some(Content::Text(ref s)) => s,
         _ => continue,
       };
 
+      lazy_static! {
+        static ref SYNTAX_SET: SyntaxSet = SyntaxSet::load_defaults_newlines();
+      }
+
       let processed = if is_md {
         let md = markdown_to_html(content, &*OPTIONS);
+        println!("md: {}", md);
         let cleaned = CLEANER.clean(&md).to_string();
-        post_processing::process(&*config, &cleaned)
-      } else {
+        println!("cleaned: {}", cleaned);
+        Some(post_processing::process(&*config, &cleaned))
+      } else if is_csv {
         match csv_to_table(content) {
-          Ok(h) => h,
+          Ok(h) => Some(h),
           Err(e) => {
             notices.insert(file.id, e);
-            continue;
+            None
           },
         }
+      } else {
+        None
       };
 
-      rendered.insert(file.id, processed);
+      lines.insert(file.id, content.matches('\n').count());
+
+      let syntax = file.highlight_language
+        .and_then(|lang| SYNTAX_SET.find_syntax_by_token(lang))
+        .or_else(|| lower.split('.').last()
+          .and_then(|ext| SYNTAX_SET.find_syntax_by_extension(ext)))
+        .unwrap_or_else(|| SYNTAX_SET.find_syntax_plain_text());
+      let mut html_generator = ClassedHTMLGenerator::with_style(&syntax, &SYNTAX_SET, ClassStyle::SpacedPrefix("hl-"));
+      for line in syntect::util::LinesWithEndings::from(&content) {
+        html_generator.parse_html_for_line(&line);
+      }
+      let highlighted = html_generator.finalize();
+      file.content = Some(Content::Text(highlighted));
+
+      if let Some(processed) = processed {
+        rendered.insert(file.id, processed);
+      }
     }
   }
 
@@ -193,6 +235,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
   ctx["paste"] = json!(output);
   ctx["num_commits"] = json!(paste.num_commits(&*config)?);
   ctx["rendered"] = json!(rendered);
+  ctx["lines"] = json!(lines);
   ctx["notices"] = json!(notices);
   ctx["user"] = json!(*user);
   ctx["deletion_key"] = json!(sess.data.remove(&format!("deletion_key_{}", paste.id().to_simple())));

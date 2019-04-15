@@ -18,7 +18,7 @@ services:
       - redis
       - sidekiq
     environment:
-      - ROCKET_ENV=prod
+      - ROCKET_ENV=dev
   redis:
     image: redis:alpine
     restart: unless-stopped

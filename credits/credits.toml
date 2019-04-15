@@ -302,3 +302,8 @@ text = "Serde support for serialising and deserialising JSON."
 name = "csv"
 url = "https://github.com/BurntSushi/rust-csv"
 text = "CSV parsing library."
+
+[[backend]]
+name = "syntect"
+url = "https://github.com/trishume/syntect"
+text = "Highlights pastes on the backend."

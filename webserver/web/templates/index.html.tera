@@ -8,8 +8,8 @@
 <link
   title="dark"
   rel="stylesheet"
-  href="/static/css/highlightjs/atom-one-dark.css?v={{ resources_version }}"
-  integrity="sha384-vkxpPwxwAfshAXLThtiwLXxyqE2yBZZwMRkAMrG79f96ukqppq7Tx8wWg5K29flM"/>
+  href="/static/css/highlight/atom-one-dark.css.css?v={{ resources_version }}"
+  integrity="sha384-8p/MWce3rPC6OCk06+hx29KENHIR68gGlRR/d8urJpqINX3/YHjNSOVMAIlqYNuz"/>
 <link
   title="light"
   rel="stylesheet alternate"

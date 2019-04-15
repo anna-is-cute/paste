@@ -6,3 +6,6 @@ members = [
   "workers/email",
   "workers/expire_paste",
 ]
+
+[patch.crates-io]
+syntect = { git = "https://github.com/jkcclemens/syntect", branch = "prefixes" }

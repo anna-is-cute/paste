@@ -8,13 +8,8 @@
 <link
   title="dark"
   rel="stylesheet"
-  href="/static/css/highlightjs/atom-one-dark.css?v={{ resources_version }}"
-  integrity="sha384-vkxpPwxwAfshAXLThtiwLXxyqE2yBZZwMRkAMrG79f96ukqppq7Tx8wWg5K29flM"/>
-<link
-  title="light"
-  rel="stylesheet alternate"
-  href="/static/css/highlightjs/atom-one-light.css?v={{ resources_version }}"
-  integrity="sha384-0aiASjhj77b5St45szzu0sXr0UP7bgrzRzbOCHNPa3p2GOqcS/4juAoCejY0j1nk"/>
+  href="/static/css/highlight/atom-one-dark.css?v={{ resources_version }}"
+  integrity="sha384-8p/MWce3rPC6OCk06+hx29KENHIR68gGlRR/d8urJpqINX3/YHjNSOVMAIlqYNuz"/>
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
@@ -23,18 +18,6 @@
   defer
   src="/static/js/modal.js?v={{ resources_version }}"
   integrity="sha384-J7lVKR2PCcVXiC6KeUdovo/b24Cdk7MWAGS9f1gLIng5bEogApeNytgaPG4iiw90"></script>
-<script
-  defer
-  src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
-  integrity="sha384-7jqpJ65MXFqJLDbXOqWaUyzjQx4topeCIXL7kEkbgBOOJIe6+EE/8FsGl5OsVkwX"></script>
-<script
-  defer
-  src="/static/js/highlightjs-line-numbers/highlightjs-line-numbers.js?v={{ resources_version }}"
-  integrity="sha384-y1kZrFh7lK07Ft7JsTzkd9PEc2pTATUT9v3hUxVJphya9boH85y4XWv7b0pCaDol"></script>
-<script
-  defer
-  src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-oq8uNsPmAzO5v3kmZE42OlOO//0wL42shb07Isdn9Ot4sfPsyp50v/FeQZjz0HV6"></script>
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
@@ -232,7 +215,7 @@
           {{ rendered[file.id] | safe }}
         </div>
         <div class="paste-source-content is-not-displayed">
-          <pre class="file-source" id="{{ file.id }}" data-ln-prefix="{{ file.name | slugify }}"><code>{{ file.content.value }}</code></pre>
+          <pre class="file-source" id="{{ file.id }}" data-ln-prefix="{{ file.name | slugify }}"><code>{{ file.content.value | safe }}</code></pre>
         </div>
       </div>
     {% else %}
@@ -240,7 +223,7 @@
         class="file-source"
         {% if file.highlight_language %}lang="{{ file.highlight_language }}"{% endif %}
         id="{{ file.id }}"
-        data-ln-prefix="{{ file.name | slugify }}"><code>{{ file.content.value }}</code></pre>
+        data-ln-prefix="{{ file.name | slugify }}"><code>{{ file.content.value | safe }}</code></pre>
     {% endif %}
   {% else %}
     Binary content

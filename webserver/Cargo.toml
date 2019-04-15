@@ -168,7 +168,9 @@ features = ["serde"]
 
 # markdown rendering
 [dependencies.comrak]
-version = "0.5"
+# version = "0.5"
+git = "https://github.com/jkcclemens/comrak"
+branch = "forked_syntect_highlighting"
 default-features = false
 
 # accepting multipart input
@@ -187,3 +189,9 @@ features = ["nightly", "serde"]
 git = "https://github.com/kennytm/qrcode-rust"
 default-features = false
 features = ["svg"]
+
+# highlighting pastes
+[dependencies.syntect]
+version = "3"
+default-features = false
+features = ["assets", "dump-load", "html"]

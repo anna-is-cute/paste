@@ -5,6 +5,11 @@ site_domain = "paste.gg"
 # If not set, the About link in the navbar will not be displayed
 # about_file = "about.html"
 
+# paste can use Akismet to help stop spam. Just set an API key here and paste will do the rest.
+# Leave this blank or comment it out if not using Akismet.
+[spam.akismet]
+api_key = ""
+
 [store]
 # The path on the filesystem where pastes will be stored.
 # For production docker, this should be set to "/store"

@@ -5,8 +5,14 @@ use crate::{
   errors::*,
   models::paste::{Visibility, Content},
   routes::web::{OptionalWebUser, Session},
-  utils::{FormDate, Language},
+  utils::{
+    FormDate,
+    Language,
+    akismet::*,
+  },
 };
+
+use reqwest::Client;
 
 use rocket::{
   request::Form,
@@ -33,7 +39,7 @@ fn handle_js(input: &str) -> Result<Vec<MultiFile>> {
 }
 
 #[post("/pastes", format = "application/x-www-form-urlencoded", data = "<paste>")]
-pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> Result<Redirect> {
+pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, client: State<Client>, submitter: SubmitterInfo, config: State<Config>) -> Result<Redirect> {
   let paste = paste.into_inner();
   sess.set_form(&paste);
 
@@ -93,6 +99,14 @@ pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, 
     author: user.as_ref(),
     files,
   };
+
+  if !config.spam.akismet.api_key.is_empty() {
+    let akismet = AkismetClient::new(&*config, &*client);
+    if akismet.check_paste_spam(&submitter, &pp)?.into_iter().any(|x| x) {
+      sess.add_data("error", "One or more of your files was detected as spam and rejected.");
+      return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
+    }
+  }
 
   let CreateSuccess { paste, deletion_key, .. } = match pp.create(&*config, &conn, &*sidekiq) {
     Ok(s) => s,

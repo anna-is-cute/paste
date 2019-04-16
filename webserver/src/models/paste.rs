@@ -213,6 +213,13 @@ impl Content {
     }
   }
 
+  pub fn as_bytes(&self) -> &[u8] {
+    match *self {
+      Content::Text(ref s) => s.as_bytes(),
+      Content::Base64(ref b) | Content::Gzip(ref b) | Content::Xz(ref b) => b,
+    }
+  }
+
   pub fn is_binary(&self) -> bool {
     // TODO: allow this to be specified in the paste?
     match *self {

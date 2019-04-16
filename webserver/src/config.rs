@@ -13,7 +13,21 @@ pub struct Config {
   #[serde(skip_deserializing)]
   pub _path: Option<PathBuf>,
   pub general: General,
+  #[serde(default)]
+  pub spam: Spam,
   pub store: Store,
+}
+
+#[derive(Debug, Serialize, Deserialize, Default)]
+pub struct Spam {
+  #[serde(default)]
+  pub akismet: Akismet,
+}
+
+#[derive(Debug, Serialize, Deserialize, Default)]
+pub struct Akismet {
+  #[serde(default)]
+  pub api_key: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

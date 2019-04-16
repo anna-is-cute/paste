@@ -27,7 +27,7 @@
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
-  integrity="sha384-id1pIa4SyrIqP9YwuZfUcInJ3iXgOyLrRFgMDZrAJ+ik9SWkGdpI4qSn2uhQKd+1"></script>
+  integrity="sha384-UdGEPQCWRR8OLR0nu5qHP8ljYh5je0mjzp6DqVafFrDX7QOhN1+QIiS5kR5TOUPe"></script>
 <script
   defer
   src="/static/js/user.js?v={{ resources_version }}"

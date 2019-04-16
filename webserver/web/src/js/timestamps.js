@@ -11,7 +11,7 @@
     var difference = date - now;
     difference /= 1000;
 
-    const seconds = difference % 60;
+    var seconds = difference % 60;
     difference /= 60;
 
     const minutes = difference % 60;

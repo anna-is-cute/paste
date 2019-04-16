@@ -30,15 +30,11 @@
 <script
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-3jmUxsSIfbI+4PHDB1prm8jBHB19yGb6mXxcWar5PHFTBDTikFNTYhYgZGmuaj/m"></script>
-<script
-  defer
-  src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
-  integrity="sha384-5zARgXuvMiKGWrda+raHXOlTw717huPS47iQABU10DXHGQJ+7PE/PPghBZSmzaNU"></script>
+  integrity="sha384-oq8uNsPmAzO5v3kmZE42OlOO//0wL42shb07Isdn9Ot4sfPsyp50v/FeQZjz0HV6"></script>
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
-  integrity="sha384-nvZWXhPMbi0ixdPLjUPfx2htsDNlNiypOV+5mX4XOwbZ2aDQjY7yw5Jd2HSf9cUr"></script>
+  integrity="sha384-id1pIa4SyrIqP9YwuZfUcInJ3iXgOyLrRFgMDZrAJ+ik9SWkGdpI4qSn2uhQKd+1"></script>
 {%- endblock head %}
 
 {% block title -%}

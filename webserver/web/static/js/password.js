@@ -1,7 +1,6 @@
-'use strict';
+"use strict";
 
 /* global zxcvbn:false */
-
 (function () {
   function checkMatch(pw, verify) {
     if (pw.value === verify.value && pw.value.length !== 0) {
@@ -13,9 +12,11 @@
 
   (function () {
     var verify = document.getElementById('password_verify');
+
     if (verify === null) {
       return;
     }
+
     verify.addEventListener('input', function (e) {
       return checkMatch(document.getElementById('password'), e.target);
     });
@@ -31,40 +32,38 @@
 
   (function () {
     var reveals = document.getElementsByName('password_reveal');
-
-    var _loop = function _loop(reveal) {
-      reveal.addEventListener('click', function () {
-        var pwField = reveal.parentElement.previousElementSibling.firstElementChild;
-        pwField.type = pwField.type === 'password' ? 'text' : 'password';
-
-        var icon = reveal.querySelector('i.fas');
-        if (pwField.type === 'password') {
-          icon.classList.remove('fa-eye-slash');
-          icon.classList.add('fa-eye');
-        } else {
-          icon.classList.remove('fa-eye');
-          icon.classList.add('fa-eye-slash');
-        }
-      });
-    };
-
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
 
     try {
-      for (var _iterator = reveals[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var _loop = function _loop() {
         var reveal = _step.value;
+        reveal.addEventListener('click', function () {
+          var pwField = reveal.parentElement.previousElementSibling.firstElementChild;
+          pwField.type = pwField.type === 'password' ? 'text' : 'password';
+          var icon = reveal.querySelector('i.fas');
 
-        _loop(reveal);
+          if (pwField.type === 'password') {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+          } else {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+          }
+        });
+      };
+
+      for (var _iterator = reveals[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        _loop();
       }
     } catch (err) {
       _didIteratorError = true;
       _iteratorError = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
+        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+          _iterator["return"]();
         }
       } finally {
         if (_didIteratorError) {
@@ -76,23 +75,26 @@
 
   function passwordStrength(pw) {
     checkMatch(pw, document.getElementById('password_verify'));
-
     var values = [];
     {
       var name = document.getElementById('name');
+
       if (name) {
         values.push(name.value);
       }
+
       var username = document.getElementById('username');
+
       if (username) {
         values.push(username.value);
       }
+
       var email = document.getElementById('email');
+
       if (email) {
         values.push(email.value);
       }
     }
-
     var password = pw.value;
     var strength = document.getElementById('strength');
     var progress = document.getElementById('strength_progress');
@@ -112,27 +114,29 @@
     }
 
     var z = zxcvbn(password, values);
-
-    var message = 'Time to crack your password: ' + z.crack_times_display.offline_slow_hashing_1e4_per_second;
+    var message = "Time to crack your password: ".concat(z.crack_times_display.offline_slow_hashing_1e4_per_second);
     message += ' <small><span class="has-text-grey-light tooltip is-tooltip-multiline is-dotted-underlined" data-tooltip="This is the time it would take an attacker to successfully guess your password. Increase your password complexity until you\'re comfortable with the amount of time.">What is this?</i></small>';
     strength.innerHTML = message;
+    warning.innerHTML = "<br/>".concat(z.feedback.warning);
+    var color;
 
-    warning.innerHTML = '<br/>' + z.feedback.warning;
-
-    var color = void 0;
     switch (z.score) {
       case 0:
         color = 'is-danger';
         break;
+
       case 1:
         color = 'is-danger';
         break;
+
       case 2:
         color = 'is-warning';
         break;
+
       case 3:
         color = 'is-warning';
         break;
+
       case 4:
         color = 'is-success';
         break;
@@ -146,6 +150,7 @@
 
   (function () {
     var pass = document.getElementById('password');
+
     if (pass !== null) {
       pass.addEventListener('input', function (e) {
         return passwordStrength(e.target);

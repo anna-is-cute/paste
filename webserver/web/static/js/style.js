@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 (function () {
   function setActiveStyleSheet(title) {
@@ -12,6 +12,7 @@
 
         if (a.getAttribute('rel').indexOf('style') !== -1 && a.getAttribute('title')) {
           a.disabled = true;
+
           if (a.getAttribute('title') === title) {
             a.disabled = false;
           }
@@ -22,8 +23,8 @@
       _iteratorError = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
+        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+          _iterator["return"]();
         }
       } finally {
         if (_didIteratorError) {
@@ -53,8 +54,8 @@
       _iteratorError2 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-          _iterator2.return();
+        if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+          _iterator2["return"]();
         }
       } finally {
         if (_didIteratorError2) {
@@ -84,8 +85,8 @@
       _iteratorError3 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion3 && _iterator3.return) {
-          _iterator3.return();
+        if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+          _iterator3["return"]();
         }
       } finally {
         if (_didIteratorError3) {
@@ -98,12 +99,14 @@
   }
 
   function swapTheme() {
-    var next = void 0;
+    var next;
+
     if (getActiveStyleSheet() === 'dark') {
       next = 'light';
     } else {
       next = 'dark';
     }
+
     setActiveStyleSheet(next);
   }
 
@@ -115,15 +118,12 @@
 
   window.addEventListener('load', function () {
     loadSheet();
-
     document.getElementById('swap_theme').addEventListener('click', swapTheme);
   });
-
   window.addEventListener('unload', function () {
     var title = getActiveStyleSheet();
     this.localStorage.setItem('style', title);
   });
-
   loadSheet();
 })();
 //# sourceMappingURL=style.js.map

@@ -34,7 +34,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-JaA6P/J/KF8veQmpp0jomaNWeHDEFoEOGjqJ31zHTQBtOWzNC5ddubql8sF8npX/"></script>
+  integrity="sha384-rn/87IZ8eiRZUiOH0dQKdStq3RW9aHrAQuUwSi/1qlZMbF014a/WcXO9lh6+sGUH"></script>
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {%- endblock head %}
 

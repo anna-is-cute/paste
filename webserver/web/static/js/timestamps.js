@@ -1,7 +1,5 @@
 "use strict";
 
-function _readOnlyError(name) { throw new Error("\"" + name + "\" is read-only"); }
-
 (function () {
   function updateTime(elem) {
     var ts = elem.dataset.timestamp;
@@ -50,7 +48,7 @@ function _readOnlyError(name) { throw new Error("\"" + name + "\" is read-only")
       period = 'minutes';
     } else {
       if (seconds > -1) {
-        seconds = (_readOnlyError("seconds"), -1);
+        seconds = -1;
       }
 
       val = seconds;

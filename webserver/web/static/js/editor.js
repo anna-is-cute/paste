@@ -1,49 +1,49 @@
-'use strict';
+"use strict";
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
 /* global hljs:false, CodeSass:false, luxon:false */
-
 var pasteNum = 0;
 var pasteEditors = {};
 
 (function () {
   var DateTime = luxon.DateTime;
-
   /**
    * Formats a UTC offset into "+04:30" format from a decimal like 4.5.
    *
    * @param {Number} i Decimal representing UTC offset
    * @returns {String} Formatted String
    */
+
   function prettyOffset(i) {
     // check if the offset is negative for formatting later. all the math will be done as if it were
     // positive
     var isNeg = i < 0;
+    var input = Math.abs(i); // get the hour component by stripping off the fraction
 
-    var input = Math.abs(i);
+    var hour = Math.floor(input); // subtract the hour component to get the fraction
 
-    // get the hour component by stripping off the fraction
-    var hour = Math.floor(input);
-
-    // subtract the hour component to get the fraction
     var frac = input - hour;
+    var mins = 60 * frac; // pad with leading zeroes
 
-    var mins = 60 * frac;
-
-    // pad with leading zeroes
     var hs = hour.toString().padStart(2, '0');
     var ms = mins.toString().padStart(2, '0');
-
     var pre = isNeg ? '-' : '+';
-    return '' + pre + hs + ':' + ms;
+    return "".concat(pre).concat(hs, ":").concat(ms);
   }
-
   /**
    * @param {boolean} makeDate Whether to turn the ISO String into a Date
    * @returns {null | DateTime | String} The absolute expiry date set by the user, if set, otherwise
    * null. Returns an ISO string if makeDate is false, a DateTime if true.
    */
+
+
   function getAbsoluteExpiry(makeDate) {
     var date = document.getElementById('absolute-date');
     var time = document.getElementById('absolute-time');
@@ -62,11 +62,8 @@ var pasteEditors = {};
     }
 
     var tzNum = Number(tzValue);
-
     var prettyTz = tzNum === 0 ? 'Z' : prettyOffset(tzNum);
-
-    var dateString = dateValue + 'T' + timeValue + ':00.000' + prettyTz;
-
+    var dateString = "".concat(dateValue, "T").concat(timeValue, ":00.000").concat(prettyTz);
     var finalDate = DateTime.fromISO(dateString);
 
     if (makeDate) {
@@ -112,12 +109,14 @@ var pasteEditors = {};
 
     return date.toString();
   }
-
   /**
    * @returns { null | String } date
    */
+
+
   function getExpiry() {
     var expires = document.getElementById('expires');
+
     if (expires === null) {
       return null;
     }
@@ -125,8 +124,10 @@ var pasteEditors = {};
     switch (expires.value) {
       case 'relative':
         return getRelativeExpiry(false);
+
       case 'absolute':
         return getAbsoluteExpiry(false);
+
       default:
         return null;
     }
@@ -134,12 +135,14 @@ var pasteEditors = {};
 
   function setTimezone(tz) {
     var tzSelect = document.getElementById('absolute-timezone');
+
     if (tzSelect === null) {
       return;
     }
 
     var offset = tz === undefined ? DateTime.local().offset / 60 : tz;
-    [].concat(_toConsumableArray(tzSelect.children)).forEach(function (e) {
+
+    _toConsumableArray(tzSelect.children).forEach(function (e) {
       if (Number(e.value) === offset) {
         e.setAttribute('selected', '');
       } else {
@@ -147,49 +150,68 @@ var pasteEditors = {};
       }
     });
   }
-
   /**
    * Create the upload array for handling multiple files.
    *
    * @returns {[{name: string, language: string, content: string}]} Array of upload files.
    */
+
+
   function createUpload() {
     function getLanguage(parent) {
       var lang = parent.querySelector('select[name=file_language]').value;
+
       if (lang === '') {
         return null;
       }
+
       return lang;
     }
 
     var files = [];
+
+    for (var _i = 0, _Object$values = Object.values(pasteEditors); _i < _Object$values.length; _i++) {
+      var editor = _Object$values[_i];
+      var parent = editor.editorRoot.parentElement.parentElement.parentElement;
+      var file = {
+        'name': parent.querySelector('input[name=file_name]').value,
+        'language': getLanguage(parent),
+        'content': editor.getCode()
+      };
+      var id = editor.editorRoot.parentElement.parentElement.parentElement.querySelector('input[name=id]');
+
+      if (id !== null) {
+        file.id = id.value;
+      }
+
+      files.push(file);
+    }
+
+    return files;
+  }
+
+  function codeFlaskSucksHighlight(editor) {
+    hljs.highlightBlock(editor.elCode); // remove the extra classes hljs adds without asking
+
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
 
     try {
-      for (var _iterator = Object.values(pasteEditors)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var editor = _step.value;
+      for (var _iterator = editor.elCode.classList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var clazz = _step.value;
 
-        var parent = editor.editorRoot.parentElement.parentElement.parentElement;
-        var file = {
-          'name': parent.querySelector('input[name=file_name]').value,
-          'language': getLanguage(parent),
-          'content': editor.getCode()
-        };
-        var id = editor.editorRoot.parentElement.parentElement.parentElement.querySelector('input[name=id]');
-        if (id !== null) {
-          file.id = id.value;
+        if (clazz !== 'hljs' && clazz !== 'codeflask__code' && !clazz.startsWith('language-')) {
+          editor.elCode.classList.remove(clazz);
         }
-        files.push(file);
       }
     } catch (err) {
       _didIteratorError = true;
       _iteratorError = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
+        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+          _iterator["return"]();
         }
       } finally {
         if (_didIteratorError) {
@@ -197,69 +219,31 @@ var pasteEditors = {};
         }
       }
     }
-
-    return files;
   }
-
-  function codeFlaskSucksHighlight(editor) {
-    hljs.highlightBlock(editor.elCode);
-    // remove the extra classes hljs adds without asking
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
-
-    try {
-      for (var _iterator2 = editor.elCode.classList[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var clazz = _step2.value;
-
-        if (clazz !== 'hljs' && clazz !== 'codeflask__code' && !clazz.startsWith('language-')) {
-          editor.elCode.classList.remove(clazz);
-        }
-      }
-    } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-          _iterator2.return();
-        }
-      } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
-        }
-      }
-    }
-  }
-
   /**
    * Create an editor.
    *
    * @param {HTMLElement} parent The file container.
    * @param {HTMLElement} el The element to convert into an editor.
    */
+
+
   function setUpEditor(parent, el) {
     var div = document.createElement('div');
-
     div.style.height = '400px';
-
     var editor = new CodeSass(div, {
       defaultTheme: false,
       lineNumbers: true,
       language: 'plaintext'
     });
-
     var hidden = document.createElement('input');
     hidden.type = 'hidden';
     hidden.name = 'file_content';
     hidden.id = 'hidden_content';
     editor.editorRoot.insertAdjacentElement('afterend', hidden);
-
     editor.elCode.style.background = 'none';
     editor.elCode.style.padding = '0';
-
     editor.setHighlightCallback(codeFlaskSucksHighlight);
-
     var nameInput = parent.querySelector('input[name=file_name]');
     var langInput = parent.querySelector('select[name=file_language]');
 
@@ -272,12 +256,14 @@ var pasteEditors = {};
         return name.split('.').pop();
       }
 
-      var suffix = void 0;
+      var suffix;
+
       if (langInput.value !== '') {
         suffix = langInput.value;
       } else if (nameInput.value !== '') {
         suffix = getSuffixFromName(nameInput.value);
       }
+
       var lang = hljs.getLanguage(suffix) !== undefined ? suffix : 'plaintext';
       editor.updateLanguage(lang);
       editor.updateCode(editor.code);
@@ -285,7 +271,6 @@ var pasteEditors = {};
 
     nameInput.addEventListener('input', updateLanguage);
     langInput.addEventListener('change', updateLanguage);
-
     updateLanguage();
     editor.updateCode(el.value);
     editor.createLineNumbers(); // TODO: fix this in codesass
@@ -294,91 +279,81 @@ var pasteEditors = {};
     parent.querySelector('button[name=delete_button]').addEventListener('click', function () {
       return removeFile(toDelete);
     });
-
     pasteEditors[pasteNum] = editor;
-
     el.insertAdjacentElement('beforebegin', div);
     el.remove();
   }
 
   function addFile() {
     // get the base file for cloning (should be invisible if JS is running)
-    var base = document.getElementById('base_file');
+    var base = document.getElementById('base_file'); // deep clone the base
 
-    // deep clone the base
-    var clone = base.cloneNode(true);
+    var clone = base.cloneNode(true); // show the editor by removing the requires-no-js class that was on the base
 
-    // show the editor by removing the requires-no-js class that was on the base
     clone.classList.remove('requires-no-js');
-
     pasteNum += 1;
-    clone.id = 'file' + pasteNum;
+    clone.id = "file".concat(pasteNum); // set up an editor for each textarea in the base (should only be one)
 
-    // set up an editor for each textarea in the base (should only be one)
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
 
     try {
-      for (var _iterator3 = clone.getElementsByTagName('textarea')[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-        var ta = _step3.value;
-
+      for (var _iterator2 = clone.getElementsByTagName('textarea')[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var ta = _step2.value;
         setUpEditor(clone, ta);
-      }
+      } // add the editor to the dom
 
-      // add the editor to the dom
     } catch (err) {
-      _didIteratorError3 = true;
-      _iteratorError3 = err;
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion3 && _iterator3.return) {
-          _iterator3.return();
+        if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+          _iterator2["return"]();
         }
       } finally {
-        if (_didIteratorError3) {
-          throw _iteratorError3;
+        if (_didIteratorError2) {
+          throw _iteratorError2;
         }
       }
     }
 
     document.getElementById('end_of_files').insertAdjacentElement('beforebegin', clone);
-
     updateButtons();
   }
-
   /**
    * Remove a file. Will never remove the last file.
    *
    * @param {Number} num The number of the file to remove.
    */
+
+
   function removeFile(num) {
     if (Object.keys(pasteEditors).length === 1) {
       return;
     }
 
-    var file = document.getElementById('file' + num);
+    var file = document.getElementById("file".concat(num));
 
     if (file === null) {
       return;
     }
 
     delete pasteEditors[num];
-
     file.remove();
-
     updateButtons();
   }
 
   function updateButtons() {
     var enabled = Object.keys(pasteEditors).length > 1;
-    var _iteratorNormalCompletion4 = true;
-    var _didIteratorError4 = false;
-    var _iteratorError4 = undefined;
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
 
     try {
-      for (var _iterator4 = document.getElementsByName('delete_button')[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-        var button = _step4.value;
+      for (var _iterator3 = document.getElementsByName('delete_button')[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        var button = _step3.value;
 
         if (enabled) {
           button.disabled = false;
@@ -387,44 +362,43 @@ var pasteEditors = {};
         }
       }
     } catch (err) {
-      _didIteratorError4 = true;
-      _iteratorError4 = err;
+      _didIteratorError3 = true;
+      _iteratorError3 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion4 && _iterator4.return) {
-          _iterator4.return();
+        if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+          _iterator3["return"]();
         }
       } finally {
-        if (_didIteratorError4) {
-          throw _iteratorError4;
+        if (_didIteratorError3) {
+          throw _iteratorError3;
         }
       }
     }
   }
 
   function createEditors() {
-    var _iteratorNormalCompletion5 = true;
-    var _didIteratorError5 = false;
-    var _iteratorError5 = undefined;
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
 
     try {
-      for (var _iterator5 = document.querySelectorAll('textarea.editor')[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-        var editor = _step5.value;
-
+      for (var _iterator4 = document.querySelectorAll('textarea.editor')[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+        var editor = _step4.value;
         pasteNum += 1;
         setUpEditor(editor.parentElement.parentElement.parentElement, editor);
       }
     } catch (err) {
-      _didIteratorError5 = true;
-      _iteratorError5 = err;
+      _didIteratorError4 = true;
+      _iteratorError4 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion5 && _iterator5.return) {
-          _iterator5.return();
+        if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
+          _iterator4["return"]();
         }
       } finally {
-        if (_didIteratorError5) {
-          throw _iteratorError5;
+        if (_didIteratorError4) {
+          throw _iteratorError4;
         }
       }
     }
@@ -433,35 +407,30 @@ var pasteEditors = {};
   }
 
   document.getElementById('add_file').addEventListener('click', addFile);
-
   document.getElementById('paste_upload').addEventListener('submit', function (e) {
     var input = document.createElement('input');
     input.type = 'hidden';
     input.value = JSON.stringify(createUpload());
     input.name = 'upload_json';
-
     e.target.appendChild(input);
-
     var expiry = getExpiry();
+
     if (expiry !== null) {
       var expiresInput = document.createElement('input');
       expiresInput.type = 'hidden';
       expiresInput.value = expiry;
       expiresInput.name = 'expires';
-
       e.target.appendChild(expiresInput);
     }
-  });
+  }); // create any initial editors
 
-  // create any initial editors
-  createEditors();
+  createEditors(); // add an initial file if necessary
 
-  // add an initial file if necessary
   if (Object.keys(pasteEditors).length === 0) {
     addFile();
-  }
+  } // set the default timezone
 
-  // set the default timezone
+
   setTimezone();
 
   (function () {
@@ -471,18 +440,22 @@ var pasteEditors = {};
           e.setAttribute('required', '');
           return;
         }
+
         e.removeAttribute('required');
       });
     }
 
     var expires = document.getElementById('expires');
+
     if (expires === null) {
       return;
     }
+
     expires.addEventListener('change', function (e) {
       var expiry = e.target.value;
       var abs = document.getElementById('absolute-expiry');
       var rel = document.getElementById('relative-expiry');
+
       if (expiry === 'relative') {
         abs.classList.add('is-hidden');
         rel.classList.remove('is-hidden');
@@ -505,22 +478,20 @@ var pasteEditors = {};
   (function () {
     var abs = document.getElementById('absolute-expiry');
     var expirationDate = abs.dataset.expirationDate;
+
     if (expirationDate === undefined) {
       return;
     }
 
     var date = DateTime.fromISO(expirationDate);
-
     var year = date.year;
     var month = date.month.toString().padStart(2, '0');
     var day = date.day.toString().padStart(2, '0');
-    document.getElementById('absolute-date').value = year + '-' + month + '-' + day;
-
+    document.getElementById('absolute-date').value = "".concat(year, "-").concat(month, "-").concat(day);
     var hour = date.hour.toString().padStart(2, '0');
     var minute = date.minute.toString().padStart(2, '0');
-    document.getElementById('absolute-time').value = hour + ':' + minute;
-
-    document.getElementById('absolute-timezone').value = '' + date.offset / 60;
+    document.getElementById('absolute-time').value = "".concat(hour, ":").concat(minute);
+    document.getElementById('absolute-timezone').value = "".concat(date.offset / 60);
   })();
 })();
 //# sourceMappingURL=editor.js.map

@@ -14,15 +14,15 @@
   integrity="sha384-covd4g4K/xpuwlnsQzuzRJly+aFbUbcicz53wdtDBfOU7rJejul70tVkf5VR13b3"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
-  integrity="sha384-HTYvuZHY1AndfrAqn+dIGFE7QognotxeUaFecs+e2FA30FKkHLfMyyLvBufM+eSk"></script>
+  integrity="sha384-4hjUUq8IEhnS5lkLKw19gCR2tpRT7NOujG9pSq1lCc2vh3t+T/WXKhdcWXquhkmM"></script>
 <script
   defer
   src="/static/js/navbar.js?v={{ resources_version }}"
-  integrity="sha384-Lo/tAxQVxUqzV/F1Zz9jmad5085ugI5TUTcZZSPlraIB6Aq0Kdeh7nWXdskGxIAE"></script>
+  integrity="sha384-OsNHhrFcStlvb1ftG+CsyQVuRliPz3UoK2zgo4aKw1z8qKR460OLsn9X3EHysa7y"></script>
 <script
   defer
   src="/static/js/notifications.js?v={{ resources_version }}"
-  integrity="sha384-at8m89v1aeryT/Wwgi4wPHeFlkzND+DAkWMR+p5tcYE6VJuMtSbKsbjQPlSrAYfr"></script>
+  integrity="sha384-cdSx71dFCbjIxo5H6bYWutR+T97fdcTMaUWPCcozlV9ZadxQkRmjoaYbZcJ76xHY"></script>
 <link
   rel="stylesheet"
   href="/static/css/fontawesome/solid.css?v={{ resources_version }}"

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 (function () {
   var _iteratorNormalCompletion = true;
@@ -8,7 +8,6 @@
   try {
     for (var _iterator = document.querySelectorAll('.message > .message-header > .delete')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var button = _step.value;
-
       button.addEventListener('click', function (e) {
         return e.currentTarget.parentElement.parentElement.remove();
       });
@@ -18,8 +17,8 @@
     _iteratorError = err;
   } finally {
     try {
-      if (!_iteratorNormalCompletion && _iterator.return) {
-        _iterator.return();
+      if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+        _iterator["return"]();
       }
     } finally {
       if (_didIteratorError) {
@@ -45,8 +44,8 @@
     _iteratorError2 = err;
   } finally {
     try {
-      if (!_iteratorNormalCompletion2 && _iterator2.return) {
-        _iterator2.return();
+      if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+        _iterator2["return"]();
       }
     } finally {
       if (_didIteratorError2) {

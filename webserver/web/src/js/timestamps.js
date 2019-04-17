@@ -62,9 +62,9 @@
     val = rtf.format(Math.trunc(val), period);
 
     const title = new Intl.DateTimeFormat(undefined, {
-      day: 'numeric',
-      month: 'long',
       year: 'numeric',
+      month: 'long',
+      day: 'numeric',
       hour: 'numeric',
       minute: 'numeric',
     }).format(date);

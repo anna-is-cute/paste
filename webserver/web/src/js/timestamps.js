@@ -17,49 +17,49 @@
     const minutes = difference % 60;
     difference /= 60;
 
-    const hours = difference % 60;
-    difference /= 60;
-
-    const days = difference % 24;
+    const hours = difference % 24;
     difference /= 24;
 
-    const weeks = difference % 7;
+    const days = difference % 7;
     difference /= 7;
 
-    const months = difference % 4;
+    const weeks = difference % 4;
     difference /= 4;
 
-    const years = difference % 12;
+    const months = difference % 12;
+    difference /= 12;
+
+    const years = difference;
 
     const rtf = new Intl.RelativeTimeFormat();
     var val, period;
-    if (years <= -1) {
+    if (Math.abs(years) >= 1) {
       val = years;
       period = 'years';
-    } else if (months <= -1) {
+    } else if (Math.abs(months) >= 1) {
       val = months;
       period = 'months';
-    } else if (weeks <= -1) {
+    } else if (Math.abs(weeks) >= 1) {
       val = weeks;
       period = 'weeks';
-    } else if (days <= -1) {
+    } else if (Math.abs(days) >= 1) {
       val = days;
       period = 'days';
-    } else if (hours <= -1) {
+    } else if (Math.abs(hours) >= 1) {
       val = hours;
       period = 'hours';
-    } else if (minutes <= -1) {
+    } else if (Math.abs(minutes) >= 1) {
       val = minutes;
       period = 'minutes';
     } else {
-      if (seconds > -1) {
-        seconds = -1;
+      if (Math.abs(seconds) < 1) {
+        seconds = difference < 0 ? -1 : 1;
       }
       val = seconds;
       period = 'seconds';
     }
 
-    val = rtf.format(Math.floor(val), period);
+    val = rtf.format(Math.trunc(val), period);
 
     const title = new Intl.DateTimeFormat(undefined, {
       day: 'numeric',

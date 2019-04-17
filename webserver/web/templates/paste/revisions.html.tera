@@ -34,7 +34,7 @@
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
-  integrity="sha384-UdGEPQCWRR8OLR0nu5qHP8ljYh5je0mjzp6DqVafFrDX7QOhN1+QIiS5kR5TOUPe"></script>
+  integrity="sha384-XTQ0m0V0uqK6N6SM03TFsxYCi8eGhLZ8jC4bAke3VndViNFtx7BhsxM0Jxv4gwhF"></script>
 {%- endblock head %}
 
 {% block title -%}

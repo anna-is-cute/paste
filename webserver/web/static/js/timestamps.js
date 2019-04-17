@@ -12,27 +12,19 @@
     var now = new Date();
     var difference = date - now;
     difference /= 1000;
-    console.log("difference: ".concat(difference));
     var seconds = difference % 60;
-    console.log("seconds: ".concat(seconds));
     difference /= 60;
     var minutes = difference % 60;
-    console.log("minutes: ".concat(minutes));
     difference /= 60;
     var hours = difference % 24;
-    console.log("hours: ".concat(hours));
     difference /= 24;
     var days = difference % 7;
-    console.log("days: ".concat(days));
     difference /= 7;
     var weeks = difference % 4;
-    console.log("weeks: ".concat(weeks));
     difference /= 4;
     var months = difference % 12;
-    console.log("months: ".concat(months));
     difference /= 12;
     var years = difference;
-    console.log("years: ".concat(years));
     var rtf = new Intl.RelativeTimeFormat();
     var val, period;
 
@@ -65,9 +57,9 @@
 
     val = rtf.format(Math.trunc(val), period);
     var title = new Intl.DateTimeFormat(undefined, {
-      day: 'numeric',
-      month: 'long',
       year: 'numeric',
+      month: 'long',
+      day: 'numeric',
       hour: 'numeric',
       minute: 'numeric'
     }).format(date);

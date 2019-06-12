@@ -208,20 +208,18 @@ Create a new paste.
 
   {% include "paste/base_file" %}
 
-  <div class="requires-no-js">
-    <div class="field">
-      <div class="control is-expanded">
-        <label class="label">
-          What is {{ antispam.no_js[0] }} + {{ antispam.no_js[1] }}?
-          <small><span class="has-text-grey-light tooltip is-tooltip-multiline is-dotted-underlined" data-tooltip="Since you're not using JavaScript, paste requires you to answer this simple math question to foil simple bots. paste has an API if you're trying to do legitimate things!">Why?</i></small>
-        </label>
-        <input
-          name="no-js-check"
-          class="input"
-          type="text"
-          {%- if form.name %}value="{{ form.name }}"{% endif %}
-          placeholder="Answer"/>
-      </div>
+  <div class="requires-no-js field">
+    <div class="control is-expanded">
+      <label class="label">
+        What is {{ antispam.no_js[0] }} + {{ antispam.no_js[1] }}?
+        <small><span class="has-text-grey-light tooltip is-tooltip-multiline is-dotted-underlined" data-tooltip="Since you're not using JavaScript, paste requires you to answer this simple math question to foil simple bots. paste has an API if you're trying to do legitimate things!">Why?</i></small>
+      </label>
+      <input
+        name="no-js-check"
+        class="input"
+        type="text"
+        {%- if form.name %}value="{{ form.name }}"{% endif %}
+        placeholder="Answer"/>
     </div>
   </div>
 

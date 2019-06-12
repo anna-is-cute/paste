@@ -52,7 +52,7 @@ Create a new paste.
 
 {% block main %}
 <form id="paste_upload" action="{{ links.upload }}" method="post">
-  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+  <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="columns">
     <div class="column">
       <div class="field">

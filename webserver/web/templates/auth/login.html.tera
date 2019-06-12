@@ -21,7 +21,7 @@ Log in to your account.
 
 {% block main %}
 <form method="post" action="{{ links.login_action }}">
-  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+  <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="field">
     <label class="label">Username</label>
     <div class="control has-icons-left">

@@ -94,7 +94,7 @@ Edit untitled paste
 {% block main %}
 <form id="paste_upload" method="post" action="{{ links.patch }}">
   <input type="hidden" name="_method" value="patch"/>
-  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+  <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div>
     <div class="columns">
       <div class="column">

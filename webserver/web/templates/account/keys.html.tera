@@ -44,7 +44,7 @@ Manage API keys.
     <td>
       <form action="{{ links.delete_key_links[key.key] }}" method="post">
         <input type="hidden" name="_method" value="delete"/>
-        <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+        <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
         <button class="button is-small is-danger">
           <i class="fas fa-trash-alt"></i>
         </button>
@@ -58,7 +58,7 @@ Manage API keys.
 {% endif %}
 <hr/>
 <form action="{{ links.add_key }}" method="post">
-  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+  <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="field has-addons">
     <div class="control">
       <input class="input" type="text" name="name" placeholder="Key name" required/>

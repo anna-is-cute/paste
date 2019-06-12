@@ -5,7 +5,7 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-4ogG321QAvN+xaPrQFWiqiHsC9mgYdqZhG3shsKM5nHgJZkcO/8QzdIEFFDO+QKX"></script>
+  integrity="sha384-BqtWYguIPWYURSpxEUBZYa+XHBMW9xa1CyH8yETv+bQ6eFUgDdLRSQGiohsGkmgY"></script>
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {%- endblock head %}
 

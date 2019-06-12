@@ -1,0 +1,254 @@
+pre.hl-file-source {
+  background-color: rgb(40, 44, 52);
+}
+
+pre > code span.hl-comment {
+  color: #6272a4;
+}
+
+pre > code span.hl-string {
+  color: #f1fa8c;
+}
+
+pre > code span.hl-constant.hl-numeric {
+  color: #bd93f9;
+}
+
+pre > code span.hl-constant.hl-language {
+  color: #bd93f9;
+}
+
+pre > code span.hl-constant.hl-character, pre > code span.hl-constant.hl-other {
+  color: #bd93f9;
+}
+
+pre > code span.hl-variable.hl-other.hl-readwrite.hl-instance {
+  color: #ffb86c;
+}
+
+pre > code span.hl-constant.hl-character.hl-escaped, pre > code span.hl-constant.hl-character.hl-escape {
+  color: #ff79c6;
+}
+
+pre > code span.hl-keyword {
+  color: #ff79c6;
+}
+
+pre > code span.hl-storage {
+  color: #ff79c6;
+}
+
+pre > code span.hl-storage.hl-type {
+  color: #8be9fd;
+  font-style: italic;
+}
+
+pre > code span.hl-storage.hl-type.hl-namespace {
+  color: #8be9fd;
+  font-style: italic;
+}
+
+pre > code span.hl-storage.hl-type.hl-class {
+  color: #ff79c6;
+  font-style: italic;
+}
+
+pre > code span.hl-entity.hl-name.hl-class {
+  color: #8be9fd;
+  text-decoration: underline;
+}
+
+pre > code span.hl-meta.hl-path {
+  color: #66d9ef;
+  text-decoration: underline;
+}
+
+pre > code span.hl-entity.hl-other.hl-inherited-class {
+  color: #8be9fd;
+}
+
+pre > code span.hl-entity.hl-name.hl-function {
+  color: #50fa7b;
+}
+
+pre > code span.hl-variable.hl-parameter {
+  color: #ffb86c;
+  font-style: italic;
+}
+
+pre > code span.hl-entity.hl-name.hl-tag {
+  color: #ff79c6;
+}
+
+pre > code span.hl-entity.hl-other.hl-attribute-name {
+  color: #50fa7b;
+}
+
+pre > code span.hl-support.hl-function {
+  color: #8be9fd;
+}
+
+pre > code span.hl-support.hl-constant {
+  color: #6be5fd;
+}
+
+pre > code span.hl-support.hl-type, pre > code span.hl-support.hl-class {
+  color: #66d9ef;
+  font-style: italic;
+}
+
+pre > code span.hl-support.hl-other.hl-namespace {
+  color: #66d9ef;
+  font-style: italic;
+}
+
+pre > code span.hl-invalid {
+  color: #f8f8f0;
+  background-color: #ff79c6
+}
+
+pre > code span.hl-invalid.hl-deprecated {
+  color: #f8f8f0;
+  background-color: #bd93f9
+}
+
+pre > code span.hl-meta.hl-diff, pre > code span.hl-meta.hl-diff.hl-header {
+  color: #6272a4;
+}
+
+pre > code span.hl-markup.hl-deleted {
+  color: #ff79c6;
+}
+
+pre > code span.hl-markup.hl-inserted {
+  color: #50fa7b;
+}
+
+pre > code span.hl-markup.hl-changed {
+  color: #e6db74;
+}
+
+pre > code span.hl-entity.hl-name.hl-filename {
+  color: #e6db74;
+}
+
+pre > code span.hl-message.hl-error {
+  color: #f83333;
+}
+
+pre > code span.hl-markup.hl-strike {
+  color: #ffb86c;
+  font-style: italic;
+}
+
+pre > code span.hl-markup.hl-bold {
+  color: #ffb86c;
+  font-weight: bold;
+}
+
+pre > code span.hl-markup.hl-italic {
+  color: #ffb86c;
+  font-style: italic;
+}
+
+pre > code span.hl-markup.hl-heading {
+  color: #8be9fd;
+}
+
+pre > code span.hl-punctuation.hl-definition.hl-list_item.hl-markdown {
+  color: #ff79c6;
+}
+
+pre > code span.hl-markup.hl-quote {
+  color: #6272a4;
+  font-style: italic;
+}
+
+pre > code span.hl-punctuation.hl-definition.hl-blockquote.hl-markdown {
+  color: #6272a4;
+  background-color: #6272a4;
+  font-style: italic;
+}
+
+pre > code span.hl-meta.hl-separator {
+  color: #6272a4;
+}
+
+pre > code span.hl-markup.hl-underline {
+  color: #bd93f9;
+  text-decoration: underline;
+}
+
+pre > code span.hl-markup.hl-raw.hl-block {
+  color: #cfcfc2;
+}
+
+pre > code span.hl-punctuation.hl-definition.hl-fenced.hl-markdown, pre > code span.hl-variable.hl-language.hl-fenced.hl-markdown {
+  color: #6272a4;
+  font-style: italic;
+}
+
+pre > code span.hl-variable.hl-language.hl-fenced.hl-markdown {
+  color: #6272a4;
+  font-style: italic;
+}
+
+pre > code span.hl-punctuation.hl-accessor {
+  color: #ff79c6;
+}
+
+pre > code span.hl-meta.hl-function.hl-return-type {
+  color: #ff79c6;
+}
+
+pre > code span.hl-punctuation.hl-section.hl-block.hl-begin {
+  color: #ffffff;
+}
+
+pre > code span.hl-punctuation.hl-section.hl-block.hl-end {
+  color: #ffffff;
+}
+
+pre > code span.hl-punctuation.hl-section.hl-embedded.hl-begin {
+  color: #ff79c6;
+}
+
+pre > code span.hl-punctuation.hl-section.hl-embedded.hl-end {
+  color: #ff79c6;
+}
+
+pre > code span.hl-punctuation.hl-separator.hl-namespace {
+  color: #ff79c6;
+}
+
+pre > code span.hl-variable.hl-function {
+  color: #50fa7b;
+}
+
+pre > code span.hl-variable.hl-other {
+  color: #ffffff;
+}
+
+pre > code span.hl-variable.hl-language {
+  color: #bd93f9;
+}
+
+pre > code span.hl-entity.hl-name.hl-module.hl-ruby {
+  color: #8be9fd;
+}
+
+pre > code span.hl-entity.hl-name.hl-constant.hl-ruby {
+  color: #bd93f9;
+}
+
+pre > code span.hl-support.hl-function.hl-builtin.hl-ruby {
+  color: #ffffff;
+}
+
+pre > code span.hl-storage.hl-type.hl-namespace.hl-cs {
+  color: #ff79c6;
+}
+
+pre > code span.hl-entity.hl-name.hl-namespace.hl-cs {
+  color: #8be9fd;
+}

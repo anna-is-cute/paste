@@ -5,11 +5,21 @@
 {%- if paste.visibility != "public" -%}
 <meta name="robots" content="noindex, nofollow"/>
 {%- endif %}
-<link
+{# <link
   title="dark"
   rel="stylesheet"
   href="/static/css/highlight/atom-one-dark.css?v={{ resources_version }}"
-  integrity="sha384-8p/MWce3rPC6OCk06+hx29KENHIR68gGlRR/d8urJpqINX3/YHjNSOVMAIlqYNuz"/>
+  integrity="sha384-8p/MWce3rPC6OCk06+hx29KENHIR68gGlRR/d8urJpqINX3/YHjNSOVMAIlqYNuz"/> #}
+{# <link
+  title="dark"
+  rel="stylesheet"
+  href="/static/css/highlight/dracula.css?v={{ resources_version }}"
+  integrity="sha384-jGN05Q3F0klPYJGNSwhsaJCGLzOxhocz797K713IV9+LomPnGhYI2bVzF3QwxWXm"/> #}
+<link
+  title="dark"
+  rel="stylesheet"
+  href="/static/css/highlight/base16-ocean.dark.css?v={{ resources_version }}"
+  integrity="sha384-FbaTCd8mccikTu2+G2EDSy1LTziOrqhXlJ0/1efd5TXlxciSwRIRVGvGiB094gQ8"/>
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"

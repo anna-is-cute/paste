@@ -326,18 +326,18 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
-          <a href="https://github.com/avacariu/rust-oath">oath</a>
+          <a href="https://github.com/sfackler/rust-native-tls">native-tls</a>
         </p>
         <p>
-          OATH algorithms for two-factor authentication.
+          Handles native TLS through one abstract API.
         </p>
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
-          <a href="https://github.com/servo/rust-url/">percent-encoding</a>
+          <a href="https://github.com/avacariu/rust-oath">oath</a>
         </p>
         <p>
-          Encodes URLs with neat percent signs.
+          OATH algorithms for two-factor authentication.
         </p>
       </div>
       <div class="tile box is-child">
@@ -404,14 +404,6 @@
         </p>
         <p>
           A (mostly) pure-Rust implementation of various cryptographic algorithms.
-        </p>
-      </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
-          <a href="https://github.com/sfackler/rust-native-tls">rust-native-tls</a>
-        </p>
-        <p>
-          Handles native TLS through one abstract API.
         </p>
       </div>
       <div class="tile box is-child">

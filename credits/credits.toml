@@ -104,11 +104,6 @@ url = "https://github.com/achanda/ipnetwork"
 text = "Looks at IPv6 and IPv4 CIDRs. This is what determines whether you get rate limited. "
 
 [[backend]]
-name = "percent-encoding"
-url = "https://github.com/servo/rust-url/"
-text = "Encodes URLs with neat percent signs."
-
-[[backend]]
 name = "r2d2_redis"
 url = "https://github.com/sorccu/r2d2-redis"
 text = "Makes redis-rs work with r2d2."
@@ -264,7 +259,7 @@ url = "https://github.com/spk/rust-sidekiq"
 text = "Talks to sidekiq in Rust."
 
 [[backend]]
-name = "rust-native-tls"
+name = "native-tls"
 url = "https://github.com/sfackler/rust-native-tls"
 text = "Handles native TLS through one abstract API."
 

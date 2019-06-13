@@ -42,6 +42,7 @@ deploy:
       cd .. &&
       cp .gitignore .dockerignore &&
       chmod +x run.sh &&
-      echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      docker build -t jkcclemens/paste-prebuilt . &&
+      echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin &&
+      docker pull jkcclemens/paste-prebuilt &&
+      docker build --cache-from jkcclemens/paste-prebuilt -t jkcclemens/paste-prebuilt . &&
       docker push jkcclemens/paste-prebuilt

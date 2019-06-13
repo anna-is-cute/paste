@@ -105,7 +105,7 @@ unicode_categories = "0.1"
 tera = "0.11"
 
 # html sanitizing
-ammonia = { git = "https://github.com/notriddle/ammonia" }
+ammonia = "2"
 
 # html parsing
 html5ever = "0.23"

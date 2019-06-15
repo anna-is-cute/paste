@@ -33,16 +33,13 @@ deploy:
   before_script:
     - apk add --no-cache perl-utils
   script:
-    - |
-      cp .docker/paste/* ./ &&
-      mkdir exec &&
-      cp target/release/webserver target/release/*.so exec/ &&
-      cd exec &&
-      find . -name '*.so' -print0 | xargs -0 shasum -a 256 >> shasums
-      cd .. &&
-      cp .gitignore .dockerignore &&
-      chmod +x run.sh &&
-      echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin &&
-      docker pull jkcclemens/paste-prebuilt &&
-      docker build --cache-from jkcclemens/paste-prebuilt -t jkcclemens/paste-prebuilt . &&
-      docker push jkcclemens/paste-prebuilt
+    - cp .docker/paste/* ./
+    - mkdir exec
+    - cp target/release/webserver target/release/*.so exec/
+    - cd exec && find . -name '*.so' -print0 | xargs -0 shasum -a 256 >> shasums
+    - cp .gitignore .dockerignore
+    - chmod +x run.sh
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker pull jkcclemens/paste-prebuilt
+    - docker build --cache-from jkcclemens/paste-prebuilt -t jkcclemens/paste-prebuilt .
+    - docker push jkcclemens/paste-prebuilt

@@ -43,7 +43,7 @@ deploy:
     - chmod +x run.sh
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     - docker pull jkcclemens/paste-prebuilt:latest
-    - docker pull jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG" || return 0
+    - docker pull jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG" || true
     - docker build --cache-from jkcclemens/paste-prebuilt:latest --cache-from jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG" -t jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG" .
     - docker push jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG"
     - '[ "$CI_COMMIT_REF_SLUG" = "master" ] && docker tag jkcclemens/paste-prebuilt:master jkcclemens/paste-prebuilt:latest && docker push jkcclemens/paste-prebuilt:latest'

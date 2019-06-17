@@ -418,3 +418,99 @@ input[type=checkbox] {
     color: $white;
   }
 }
+
+// pre[data-ln-prefix] {
+//   display: flex;
+//   flex-direction: column;
+//   counter-reset: ln;
+
+//   $offset: 3ch;
+
+//   code {
+//     counter-increment: ln;
+//     margin-left: 1em;
+//     min-height: $body-line-height + 0em;
+
+//     &::before {
+//       content: counter(ln);
+//       position: absolute;
+//       // left: $offset;
+//       // text-align: right;
+//       // width: $offset;
+//       left: 0;
+//       text-align: right;
+//       width: 3ch;
+//       background-color: #191b20;
+//       color: gray;
+//       border-right: 1px solid gray;
+//       padding-right: 1ch;
+//       height: 3em;
+//     }
+
+//     &:last-child::before {
+//       border-bottom-left-radius: 8px;
+//     }
+
+//     &:first-child::before {
+//       height: 4.5em;
+//       margin-top: -1.5em;
+//       padding-top: 1.5em;
+//     }
+//   }
+// }
+
+// div.source-container {
+//   display: flex;
+
+//   div.line-numbers {
+//     z-index: 10000000;
+//   }
+// }
+
+pre[data-ln-prefix] {
+  padding-left: 0;
+  overflow-y: hidden;
+
+  table {
+    margin: -1.5em 0;
+
+    tr:first-child td {
+      padding-top: 1.5em;
+    }
+    tr:last-child td {
+      padding-bottom: 1.25em;
+    }
+  }
+}
+
+pre[data-ln-prefix] table tr {
+  &:first-child td.line-number {
+    margin-top: -1.5em;
+  }
+
+  &:last-child td.line-number {
+    margin-bottom: -1.25em;
+    border-bottom-left-radius: 8px;
+  }
+
+  td.line-number {
+    background-color: $grey-dark;
+    padding-left: 1.25em;
+    padding-right: 1ch;
+    text-align: right;
+    border-right: 1px solid $grey;
+    color: $grey-light;
+
+    a {
+      color: inherit;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  td.code {
+    padding-left: 1em;
+  }
+}

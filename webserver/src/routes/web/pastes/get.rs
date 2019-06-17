@@ -141,7 +141,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 
   let mut files: Vec<OutputFile> = id.output_files(&*config, &conn, &paste, true)?;
 
-  let mut lines: HashMap<FileId, usize> = HashMap::with_capacity(files.len());
+  let mut lines: HashMap<FileId, Vec<String>> = HashMap::with_capacity(files.len());
   let mut rendered: HashMap<FileId, String> = HashMap::with_capacity(files.len());
   let mut notices: HashMap<FileId, String> = HashMap::new();
 
@@ -182,19 +182,20 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         None
       };
 
-      lines.insert(file.id, content.matches('\n').count());
-
       let syntax = file.highlight_language
         .and_then(|lang| SYNTAX_SET.find_syntax_by_token(lang))
         .or_else(|| lower.split('.').last()
           .and_then(|ext| SYNTAX_SET.find_syntax_by_extension(ext)))
         .unwrap_or_else(|| SYNTAX_SET.find_syntax_plain_text());
-      let mut html_generator = ClassedHTMLGenerator::with_style(&syntax, &SYNTAX_SET, ClassStyle::SpacedPrefix("hl-"));
-      for line in syntect::util::LinesWithEndings::from(&content) {
-        html_generator.parse_html_for_line(&line);
-      }
-      let highlighted = html_generator.finalize();
-      file.content = Some(Content::Text(highlighted));
+      let highlighted = syntect::util::LinesWithEndings::from(&content)
+        .map(|line| {
+          let mut html_generator = ClassedHTMLGenerator::with_style(&syntax, &SYNTAX_SET, ClassStyle::SpacedPrefix("hl-"));
+          html_generator.parse_html_for_line(&line);
+          html_generator.finalize()
+        })
+        .collect();
+      // file.content = Some(Content::Text(highlighted));
+      lines.insert(file.id, highlighted);
 
       if let Some(processed) = processed {
         rendered.insert(file.id, processed);

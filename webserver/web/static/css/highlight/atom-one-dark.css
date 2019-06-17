@@ -2,184 +2,184 @@ pre.file-source {
   background-color: rgb(40, 44, 52);
 }
 
-pre > code span.hl-text, pre > code span.hl-source {
+pre code span.hl-text, pre code span.hl-source {
   color: #abb2bf;
 }
 
-pre > code span.hl-variable.hl-parameter.hl-function {
+pre code span.hl-variable.hl-parameter.hl-function {
   color: #adb7c9;
 }
 
-pre > code span.hl-comment, pre > code span.hl-punctuation.hl-definition.hl-comment {
+pre code span.hl-comment, pre code span.hl-punctuation.hl-definition.hl-comment {
   color: #5f697a;
   font-style: italic;
 }
 
-pre > code span.hl-none {
+pre code span.hl-none {
   color: #adb7c9;
 }
 
-pre > code span.hl-keyword.hl-operator {
+pre code span.hl-keyword.hl-operator {
   color: #adb7c9;
 }
 
-pre > code span.hl-keyword {
+pre code span.hl-keyword {
   color: #cd74e8;
 }
 
-pre > code span.hl-variable {
+pre code span.hl-variable {
   color: #eb6772;
 }
 
-pre > code span.hl-entity.hl-name.hl-function, pre > code span.hl-meta.hl-require, pre > code span.hl-support.hl-function.hl-any-method {
+pre code span.hl-entity.hl-name.hl-function, pre code span.hl-meta.hl-require, pre code span.hl-support.hl-function.hl-any-method {
   color: #5cb3fa;
 }
 
-pre > code span.hl-support.hl-class, pre > code span.hl-entity.hl-name.hl-class, pre > code span.hl-entity.hl-name.hl-type.hl-class {
+pre code span.hl-support.hl-class, pre code span.hl-entity.hl-name.hl-class, pre code span.hl-entity.hl-name.hl-type.hl-class {
   color: #f0c678;
 }
 
-pre > code span.hl-meta.hl-class {
+pre code span.hl-meta.hl-class {
   color: #adb7c9;
 }
 
-pre > code span.hl-keyword.hl-other.hl-special-method {
+pre code span.hl-keyword.hl-other.hl-special-method {
   color: #5cb3fa;
 }
 
-pre > code span.hl-storage {
+pre code span.hl-storage {
   color: #cd74e8;
 }
 
-pre > code span.hl-support.hl-function {
+pre code span.hl-support.hl-function {
   color: #5ebfcc;
 }
 
-pre > code span.hl-string, pre > code span.hl-constant.hl-other.hl-symbol, pre > code span.hl-entity.hl-other.hl-inherited-class {
+pre code span.hl-string, pre code span.hl-constant.hl-other.hl-symbol, pre code span.hl-entity.hl-other.hl-inherited-class {
   color: #9acc76;
 }
 
-pre > code span.hl-constant.hl-numeric {
+pre code span.hl-constant.hl-numeric {
   color: #db9d63;
 }
 
-pre > code span.hl-none {
+pre code span.hl-none {
   color: #db9d63;
 }
 
-pre > code span.hl-none {
+pre code span.hl-none {
   color: #db9d63;
 }
 
-pre > code span.hl-constant {
+pre code span.hl-constant {
   color: #db9d63;
 }
 
-pre > code span.hl-entity.hl-name.hl-tag {
+pre code span.hl-entity.hl-name.hl-tag {
   color: #eb6772;
 }
 
-pre > code span.hl-entity.hl-other.hl-attribute-name {
+pre code span.hl-entity.hl-other.hl-attribute-name {
   color: #db9d63;
 }
 
-pre > code span.hl-entity.hl-other.hl-attribute-name.hl-id, pre > code span.hl-punctuation.hl-definition.hl-entity {
+pre code span.hl-entity.hl-other.hl-attribute-name.hl-id, pre code span.hl-punctuation.hl-definition.hl-entity {
   color: #db9d63;
 }
 
-pre > code span.hl-meta.hl-selector {
+pre code span.hl-meta.hl-selector {
   color: #cd74e8;
 }
 
-pre > code span.hl-none {
+pre code span.hl-none {
   color: #db9d63;
 }
 
-pre > code span.hl-entity.hl-name.hl-section {
+pre code span.hl-entity.hl-name.hl-section {
   color: #5cb3fa;
 }
 
-pre > code span.hl-keyword.hl-other.hl-unit {
+pre code span.hl-keyword.hl-other.hl-unit {
   color: #db9d63;
 }
 
-pre > code span.hl-markup.hl-bold, pre > code span.hl-punctuation.hl-definition.hl-bold {
+pre code span.hl-markup.hl-bold, pre code span.hl-punctuation.hl-definition.hl-bold {
   color: #f0c678;
 }
 
-pre > code span.hl-markup.hl-italic, pre > code span.hl-punctuation.hl-definition.hl-italic {
+pre code span.hl-markup.hl-italic, pre code span.hl-punctuation.hl-definition.hl-italic {
   color: #cd74e8;
 }
 
-pre > code span.hl-markup.hl-raw.hl-inline {
+pre code span.hl-markup.hl-raw.hl-inline {
   color: #9acc76;
 }
 
-pre > code span.hl-string.hl-other.hl-link, pre > code span.hl-punctuation.hl-definition.hl-string.hl-end.hl-markdown {
+pre code span.hl-string.hl-other.hl-link, pre code span.hl-punctuation.hl-definition.hl-string.hl-end.hl-markdown {
   color: #eb6772;
 }
 
-pre > code span.hl-meta.hl-link {
+pre code span.hl-meta.hl-link {
   color: #db9d63;
 }
 
-pre > code span.hl-markup.hl-list {
+pre code span.hl-markup.hl-list {
   color: #eb6772;
 }
 
-pre > code span.hl-markup.hl-quote {
+pre code span.hl-markup.hl-quote {
   color: #db9d63;
 }
 
-pre > code span.hl-meta.hl-separator {
+pre code span.hl-meta.hl-separator {
   color: #adb7c9;
   background-color: #515151
 }
 
-pre > code span.hl-markup.hl-inserted {
+pre code span.hl-markup.hl-inserted {
   color: #9acc76;
 }
 
-pre > code span.hl-markup.hl-deleted {
+pre code span.hl-markup.hl-deleted {
   color: #eb6772;
 }
 
-pre > code span.hl-markup.hl-changed {
+pre code span.hl-markup.hl-changed {
   color: #cd74e8;
 }
 
-pre > code span.hl-constant.hl-other.hl-color {
+pre code span.hl-constant.hl-other.hl-color {
   color: #5ebfcc;
 }
 
-pre > code span.hl-string.hl-regexp {
+pre code span.hl-string.hl-regexp {
   color: #5ebfcc;
 }
 
-pre > code span.hl-constant.hl-character.hl-escape {
+pre code span.hl-constant.hl-character.hl-escape {
   color: #5ebfcc;
 }
 
-pre > code span.hl-punctuation.hl-section.hl-embedded, pre > code span.hl-variable.hl-interpolation {
+pre code span.hl-punctuation.hl-section.hl-embedded, pre code span.hl-variable.hl-interpolation {
   color: #c94e42;
 }
 
-pre > code span.hl-invalid.hl-illegal {
+pre code span.hl-invalid.hl-illegal {
   color: #ffffff;
   background-color: #e05252
 }
 
-pre > code span.hl-invalid.hl-broken {
+pre code span.hl-invalid.hl-broken {
   color: #2d2d2d;
   background-color: #f99157
 }
 
-pre > code span.hl-invalid.hl-deprecated {
+pre code span.hl-invalid.hl-deprecated {
   color: #2c323d;
   background-color: #d27b53
 }
 
-pre > code span.hl-invalid.hl-unimplemented {
+pre code span.hl-invalid.hl-unimplemented {
   color: #2c323d;
   background-color: #747369
 }

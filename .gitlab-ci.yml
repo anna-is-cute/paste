@@ -46,4 +46,4 @@ deploy:
     - docker pull jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG" || true
     - docker build --cache-from jkcclemens/paste-prebuilt:latest --cache-from jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG" -t jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG" .
     - docker push jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG"
-    - '[ "$CI_COMMIT_REF_SLUG" = "master" ] && docker tag jkcclemens/paste-prebuilt:master jkcclemens/paste-prebuilt:latest && docker push jkcclemens/paste-prebuilt:latest'
+    - if [ "$CI_COMMIT_REF_SLUG" = "master" ]; then docker tag jkcclemens/paste-prebuilt:master jkcclemens/paste-prebuilt:latest && docker push jkcclemens/paste-prebuilt:latest; fi'

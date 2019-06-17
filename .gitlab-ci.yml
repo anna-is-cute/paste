@@ -36,7 +36,9 @@ deploy:
     - cp .docker/paste/* ./
     - mkdir exec
     - cp target/release/webserver target/release/*.so exec/
-    - cd exec && find . -name '*.so' -print0 | xargs -0 shasum -a 256 >> shasums
+    - cd exec
+    - find . -name '*.so' -print0 | xargs -0 shasum -a 256 >> shasums
+    - cd ..
     - cp .gitignore .dockerignore
     - chmod +x run.sh
     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin

@@ -52,7 +52,7 @@ Create a new paste.
 
 {% block main %}
 <form id="paste_upload" action="{{ links.upload }}" method="post">
-  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+  <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="columns">
     <div class="column">
       <div class="field">
@@ -208,7 +208,25 @@ Create a new paste.
 
   {% include "paste/base_file" %}
 
+  <div class="requires-no-js field">
+    <div class="control is-expanded">
+      <label class="label">
+        What is {{ antispam.no_js[0] }} + {{ antispam.no_js[1] }}?
+        <small><span class="has-text-grey-light tooltip is-tooltip-multiline is-dotted-underlined" data-tooltip="Since you're not using JavaScript, paste requires you to answer this simple math question to foil simple bots. paste has an API if you're trying to do legitimate things!">Why?</span></small>
+      </label>
+      <input
+        name="no-js-check"
+        class="input"
+        type="text"
+        {%- if form.name %}value="{{ form.name }}"{% endif %}
+        placeholder="Answer"/>
+    </div>
+  </div>
+
   <div id="end_of_files"></div>
+
+  <input type="hidden" name="js-check" id="js-check" value=""/>
+  <script integrity="{{ antispam.integrity_hash | safe }}">{{ antispam.script | safe }}</script>
 
   <div class="control {{ honeypot.class }}">
     <label class="label">Email</label>

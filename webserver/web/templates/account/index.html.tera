@@ -9,7 +9,7 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-4ogG321QAvN+xaPrQFWiqiHsC9mgYdqZhG3shsKM5nHgJZkcO/8QzdIEFFDO+QKX"></script>
+  integrity="sha384-BqtWYguIPWYURSpxEUBZYa+XHBMW9xa1CyH8yETv+bQ6eFUgDdLRSQGiohsGkmgY"></script>
 {%- endblock head %}
 
 {% block title -%}Account{%- endblock title %}
@@ -47,7 +47,7 @@ Manage account settings.
       Click the button below to resend a verification email.
     </p>
     <form action="{{ links.send_verification }}" method="post">
-      <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+      <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
       <button type="submit" class="button is-link">Send verification email</button>
     </form>
   </div>
@@ -56,7 +56,7 @@ Manage account settings.
 
 <form action="{{ links.patch_account }}" method="post">
   <input type="hidden" name="_method" value="patch"/>
-  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+  <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
       <label class="label">Display name</label>

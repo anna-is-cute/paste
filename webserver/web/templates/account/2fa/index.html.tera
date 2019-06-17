@@ -68,7 +68,7 @@ Manage two-factor authentication.
       <a class="button is-primary" href="{{ links.disable }}">Turn off 2FA</a>
     </div>
     <form method="post" action="{{ links.new_backup_codes }}">
-      <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+      <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
       <div class="control">
         <button class="button" type="submit">Generate new backup codes</button>
       </div>

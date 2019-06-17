@@ -274,6 +274,8 @@
           Chains ifs together, for when you really need to just chain together some ifs.
         </p>
       </div>
+    </div>
+    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/achanda/ipnetwork">ipnetwork</a>
@@ -282,8 +284,6 @@
           Looks at IPv6 and IPv4 CIDRs. This is what determines whether you get rate limited. 
         </p>
       </div>
-    </div>
-    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/rust-lang-nursery/lazy-static.rs">lazy_static</a>
@@ -326,18 +326,18 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
-          <a href="https://github.com/avacariu/rust-oath">oath</a>
+          <a href="https://github.com/sfackler/rust-native-tls">native-tls</a>
         </p>
         <p>
-          OATH algorithms for two-factor authentication.
+          Handles native TLS through one abstract API.
         </p>
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
-          <a href="https://github.com/servo/rust-url/">percent-encoding</a>
+          <a href="https://github.com/avacariu/rust-oath">oath</a>
         </p>
         <p>
-          Encodes URLs with neat percent signs.
+          OATH algorithms for two-factor authentication.
         </p>
       </div>
       <div class="tile box is-child">
@@ -396,6 +396,8 @@
           A web framework for Rust. It powers every single request made to paste.
         </p>
       </div>
+    </div>
+    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/DaGenix/rust-crypto">rust-crypto</a>
@@ -404,16 +406,6 @@
           A (mostly) pure-Rust implementation of various cryptographic algorithms.
         </p>
       </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
-          <a href="https://github.com/sfackler/rust-native-tls">rust-native-tls</a>
-        </p>
-        <p>
-          Handles native TLS through one abstract API.
-        </p>
-      </div>
-    </div>
-    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://serde.rs/">serde</a>

@@ -1,0 +1,45 @@
+image: docker:stable
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+
+services:
+  - docker:dind
+
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  before_script:
+    - apk add --no-cache binutils
+  script:
+    - docker run -v "$(pwd)":/paste jkcclemens/paste /root/.cargo/bin/cargo build --all --release
+  after_script:
+    - strip target/release/*.so target/release/webserver
+  cache:
+    key: '2019-05-10'
+    paths:
+      - target
+  artifacts:
+    paths:
+      - target/release/*.so
+      - target/release/webserver
+
+deploy:
+  stage: deploy
+  before_script:
+    - apk add --no-cache perl-utils
+  script:
+    - cp .docker/paste/* ./
+    - mkdir exec
+    - cp target/release/webserver target/release/*.so exec/
+    - cd exec && find . -name '*.so' -print0 | xargs -0 shasum -a 256 >> shasums
+    - cp .gitignore .dockerignore
+    - chmod +x run.sh
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker pull jkcclemens/paste-prebuilt
+    - docker build --cache-from jkcclemens/paste-prebuilt -t jkcclemens/paste-prebuilt .
+    - docker push jkcclemens/paste-prebuilt

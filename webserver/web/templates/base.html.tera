@@ -91,7 +91,7 @@
             <hr class="navbar-divider"/>
             <a class="navbar-item" href="{{ static_links.settings }}">Settings</a>
             <form action="{{ static_links.logout }}" method="post">
-              <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+              <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
               <button type="submit" class="navbar-item button-link">Log out</button>
             </form>
           {%- else -%}

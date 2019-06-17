@@ -119,7 +119,6 @@ fn main() {
     .manage(reqwest::Client::new())
     .attach(fairings::Csp)
     .attach(fairings::SecurityHeaders)
-    .attach(fairings::AntiCsrf)
     .attach(fairings::LastPage::default())
     .attach(fairings::Push)
     .attach(Template::fairing())

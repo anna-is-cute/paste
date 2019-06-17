@@ -43,7 +43,7 @@ Turn on two-factor authentication.
   </p>
 
   <form method="post" action="{{ links.new_secret }}">
-    <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+    <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
     <button type="submit" class="button">Regenerate secret</button>
   </form>
 
@@ -56,7 +56,7 @@ Turn on two-factor authentication.
   </p>
 
   <form class="form" method="post" action="{{ links.validate }}">
-    <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+    <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
     <div class="field">
       <div class="control has-icons-left">
         <input

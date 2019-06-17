@@ -236,7 +236,7 @@
       {% set_global line_no = 0 %}
       <pre
         class="file-source"
-        {%- if file.highlight_language %}lang="{{ file.highlight_language }}"{% endif %}
+        {%- if file.highlight_language %} lang="{{ file.highlight_language }}"{% endif %}
         id="{{ file.id }}"
         data-ln-prefix="{{ file.name | slugify }}"><table>
         {% for line in lines[file.id] -%}

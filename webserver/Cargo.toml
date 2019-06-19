@@ -13,6 +13,7 @@ ignore = [
   "rocket_contrib",
   # see serde
   "serde_derive",
+  "rouge",
 ]
 
 exclude = [
@@ -141,6 +142,9 @@ reqwest = "0.9"
 # csv parsing
 csv = "1"
 
+# ruby interop highlighting
+rouge = { git = "https://gitlab.com/jkcclemens/paste_rouge" }
+
 # web logic
 [dependencies.rocket]
 version = "0.4"
@@ -190,9 +194,3 @@ features = ["nightly", "serde"]
 git = "https://github.com/kennytm/qrcode-rust"
 default-features = false
 features = ["svg"]
-
-# highlighting pastes
-[dependencies.syntect]
-version = "3"
-default-features = false
-features = ["assets", "dump-load", "html"]

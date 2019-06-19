@@ -14,7 +14,11 @@ use crate::{
     },
   },
   routes::web::{context, Rst, OptionalWebUser, Session},
-  utils::{csv::csv_to_table, post_processing, Language},
+  utils::{
+    csv::csv_to_table,
+    post_processing,
+    Language,
+  },
 };
 
 use ammonia::Builder;
@@ -33,15 +37,9 @@ use rocket::{
 
 use rocket_contrib::templates::Template;
 
-use serde_json::json;
+use rouge::Rouge;
 
-use syntect::{
-  html::{
-    ClassedHTMLGenerator,
-    ClassStyle,
-  },
-  parsing::SyntaxSet,
-};
+use serde_json::json;
 
 lazy_static! {
   static ref OPTIONS: ComrakOptions = ComrakOptions {
@@ -117,7 +115,7 @@ pub fn username_id(username: String, id: PasteId) -> Redirect {
 }
 
 #[get("/p/<username>/<id>")]
-pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, rouge: State<Rouge>) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -160,10 +158,6 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         _ => continue,
       };
 
-      lazy_static! {
-        static ref SYNTAX_SET: SyntaxSet = SyntaxSet::load_defaults_newlines();
-      }
-
       let processed = if is_md {
         let md = markdown_to_html(content, &*OPTIONS);
         println!("md: {}", md);
@@ -182,20 +176,23 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         None
       };
 
-      let syntax = file.highlight_language
-        .and_then(|lang| SYNTAX_SET.find_syntax_by_token(lang))
-        .or_else(|| lower.split('.').last()
-          .and_then(|ext| SYNTAX_SET.find_syntax_by_extension(ext)))
-        .unwrap_or_else(|| SYNTAX_SET.find_syntax_plain_text());
-      let highlighted = syntect::util::LinesWithEndings::from(&content)
-        .map(|line| {
-          let mut html_generator = ClassedHTMLGenerator::with_style(&syntax, &SYNTAX_SET, ClassStyle::SpacedPrefix("hl-"));
-          html_generator.parse_html_for_line(&line);
-          html_generator.finalize()
-        })
-        .collect();
-      // file.content = Some(Content::Text(highlighted));
+      let highlighted = rouge.highlight_file(name, &content);
       lines.insert(file.id, highlighted);
+
+      // let syntax = file.highlight_language
+      //   .and_then(|lang| SYNTAX_SET.find_syntax_by_token(lang))
+      //   .or_else(|| lower.split('.').last()
+      //     .and_then(|ext| SYNTAX_SET.find_syntax_by_extension(ext)))
+      //   .unwrap_or_else(|| SYNTAX_SET.find_syntax_plain_text());
+      // let highlighted = syntect::util::LinesWithEndings::from(&content)
+      //   .map(|line| {
+      //     let mut html_generator = ClassedHTMLGenerator::with_style(&syntax, &SYNTAX_SET, ClassStyle::SpacedPrefix("hl-"));
+      //     html_generator.parse_html_for_line(&line);
+      //     html_generator.finalize()
+      //   })
+      //   .collect();
+      // // file.content = Some(Content::Text(highlighted));
+      // lines.insert(file.id, highlighted);
 
       if let Some(processed) = processed {
         rendered.insert(file.id, processed);

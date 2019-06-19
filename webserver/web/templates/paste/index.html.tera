@@ -230,15 +230,14 @@
       </div>
     {% else %}
     <div class="source-container">
-      {# <div class="line-numbers">
-        {% for i in range(end=lines[file.id] | length) %}<div>{{ i + 1 }}</div>{% endfor %}
-      </div> #}
-      {% set_global line_no = 0 %}
       <pre
         class="file-source"
         {%- if file.highlight_language %} lang="{{ file.highlight_language }}"{% endif %}
         id="{{ file.id }}"
-        data-ln-prefix="{{ file.name | slugify }}"><table>
+        data-ln-prefix="{{ file.name | slugify }}">
+        {% if lines is containing(file.id) %}
+        {% set_global line_no = 0 %}
+        <table>
         {% for line in lines[file.id] -%}
           {%- set_global line_no = line_no + 1 -%}
           <tr>
@@ -246,7 +245,11 @@
             <td class="code"><code>{{ line | safe }}</code></td>
           </tr>
         {% endfor -%}
-        </table></pre>
+        </table>
+        {% else %}
+        {{ file.content.value }}
+        {% endif %}
+      </pre>
     </div>
     {% endif %}
   {% else %}

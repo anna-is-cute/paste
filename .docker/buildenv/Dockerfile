@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM ubuntu:19.10
 
 RUN apt-get update
 RUN apt-get install \
@@ -9,9 +9,16 @@ RUN apt-get install \
   build-essential \
   cmake \
   autoconf automake libtool \
-  libssl1.0-dev libssh-dev libz-dev clang \
+  libssl-dev libssh-dev libz-dev clang \
   libpq-dev \
-  pkg-config
+  pkg-config \
+  ruby libgmp-dev
+RUN apt-get autoremove --assume-yes
+RUN apt-get clean autoclean
+RUN rm -rf /var/lib/{apt,dpkg,cache,log}/
+
+RUN ln -s /usr/lib/x86_64-linux-gnu/libruby-2.5.so{.2.5,}
+RUN gem install rouge
 
 WORKDIR /
 

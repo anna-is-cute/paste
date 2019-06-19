@@ -95,8 +95,7 @@ redis = "0.10"
 r2d2_redis = "0.9"
 
 # scheduling jobs
-# sidekiq = "0.8"
-sidekiq = { git = "https://github.com/jkcclemens/rust-sidekiq" }
+sidekiq = "0.8"
 
 # username validation
 unicode_categories = "0.1"

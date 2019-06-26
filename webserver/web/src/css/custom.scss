@@ -419,98 +419,52 @@ input[type=checkbox] {
   }
 }
 
-// pre[data-ln-prefix] {
-//   display: flex;
-//   flex-direction: column;
-//   counter-reset: ln;
+pre.numbered {
+  // reset line number counter
+  counter-reset: ln;
 
-//   $offset: 3ch;
+  // display the line numbers in a css grid
+  display: grid;
+  // make the line number column automatic and the code take up the rest of the space
+  grid-template-columns: auto 1fr;
 
-//   code {
-//     counter-increment: ln;
-//     margin-left: 1em;
-//     min-height: $body-line-height + 0em;
-
-//     &::before {
-//       content: counter(ln);
-//       position: absolute;
-//       // left: $offset;
-//       // text-align: right;
-//       // width: $offset;
-//       left: 0;
-//       text-align: right;
-//       width: 3ch;
-//       background-color: #191b20;
-//       color: gray;
-//       border-right: 1px solid gray;
-//       padding-right: 1ch;
-//       height: 3em;
-//     }
-
-//     &:last-child::before {
-//       border-bottom-left-radius: 8px;
-//     }
-
-//     &:first-child::before {
-//       height: 4.5em;
-//       margin-top: -1.5em;
-//       padding-top: 1.5em;
-//     }
-//   }
-// }
-
-// div.source-container {
-//   display: flex;
-
-//   div.line-numbers {
-//     z-index: 10000000;
-//   }
-// }
-
-pre[data-ln-prefix] {
   padding-left: 0;
-  overflow-y: hidden;
+  padding-bottom: 0;
 
-  table {
-    margin: -1.5em 0;
-
-    tr:first-child td {
-      padding-top: 1.5em;
-    }
-    tr:last-child td {
-      padding-bottom: 1.25em;
-    }
-  }
-}
-
-pre[data-ln-prefix] table tr {
-  &:first-child td.line-number {
-    margin-top: -1.5em;
+  a.ln:hover {
+    // if the line number is a link, underline on hover
+    text-decoration: underline;
   }
 
-  &:last-child td.line-number {
-    margin-bottom: -1.25em;
-    border-bottom-left-radius: 8px;
-  }
-
-  td.line-number {
-    background-color: $grey-dark;
-    padding-left: 1.25em;
+  .ln {
+    margin-right: 1ch;
     padding-right: 1ch;
     text-align: right;
-    border-right: 1px solid $grey;
-    color: $grey-light;
 
-    a {
-      color: inherit;
+    padding-left: 1.25em;
 
-      &:hover {
-        text-decoration: underline;
-      }
+    // show automatic line numbers
+    &::before {
+      counter-increment: ln;
+      content: counter(ln);
+    }
+
+    // handle making the background span the whole area
+
+    &:first-of-type {
+      margin-top: -1.5em;
+      padding-top: 1.5em;
+    }
+
+    &:last-of-type {
+      padding-bottom: 1.5em;
+      border-bottom-left-radius: 8px;
     }
   }
 
-  td.code {
-    padding-left: 1em;
+  code {
+    // wrap lines
+    white-space: pre-wrap;
+    min-height: $body-line-height + 0em;
   }
 }

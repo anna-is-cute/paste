@@ -107,3 +107,9 @@ input[type=checkbox] {
     border-color: $grey-dark;
   }
 }
+
+pre.numbered .ln {
+  border-right: 1px solid $grey-lighter;
+  background-color: darken($white-ter, 2%);
+  color: $grey-light;
+}

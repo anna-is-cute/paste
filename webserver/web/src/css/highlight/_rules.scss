@@ -1,0 +1,69 @@
+pre.file-source {
+  // background: $background;
+  color: $text;
+
+  .hll { background-color: $selection; }
+  .c { color: $comment; }
+  .err { background: $error; color: #fff; }
+  .k { color: $keyword; }
+  .l { color: $literal; }
+  .n { color: $name; }
+  .o { color: $operator; }
+  .p { color: $punctuation; }
+  .cm { color: $comment-multiline; }
+  .cp { color: $comment-preproc; }
+  .c1 { color: $comment-single; }
+  .cs { color: $comment-special; }
+  .gd { color: $deleted; }
+  .ge { font-style: italic; }
+  .gh { color: $heading; font-weight: bold; }
+  .gi { color: $inserted; }
+  .gp { color: $prompt; font-weight: bold; }
+  .gs { font-weight: bold; }
+  .gu { color: $subheading; font-weight: bold; }
+  .kc { color: $keyword-constant; }
+  .kd { color: $keyword-declaration; }
+  .kn { color: $keyword-namespace; }
+  .kp { color: $keyword-pseudo; }
+  .kr { color: $keyword-reserved; }
+  .kt { color: $keyword-type; }
+  .ld { color: $literal-date; }
+  .m { color: $literal-number; }
+  .s { color: $literal-string; }
+  .na { color: $name-attribute; }
+  .nb { color: $name-builtin; }
+  .nc { color: $name-class; }
+  .no { color: $name-constant; }
+  .nd { color: $name-decorator; }
+  .ni { color: $name-entity; }
+  .ne { color: $name-exception; }
+  .nf { color: $name-function; }
+  .nl { color: $name-label; }
+  .nn { color: $name-namespace; }
+  .nx { color: $name-other; }
+  .py { color: $name-property; }
+  .nt { color: $name-tag; }
+  .nv { color: $name-variable; }
+  .ow { color: $operator-word; }
+  .w { color: $whitespace; }
+  .mf { color: $literal-number-float; }
+  .mh { color: $literal-number-hex; }
+  .mi { color: $literal-number-integer; }
+  .mo { color: $literal-number-oct; }
+  .sb { color: $literal-string-backtick; }
+  .sc { color: $literal-string-char; }
+  .sd { color: $literal-string-doc; }
+  .s2 { color: $literal-string-double; }
+  .se { color: $literal-string-escape; }
+  .sh { color: $literal-string-heredoc; }
+  .si { color: $literal-string-interpol; }
+  .sx { color: $literal-string-other; }
+  .sr { color: $literal-string-regex; }
+  .s1 { color: $literal-string-single; }
+  .ss { color: $literal-string-symbol; }
+  .bp { color: $name-builtin-pseudo; }
+  .vc { color: $name-variable-class; }
+  .vg { color: $name-variable-global; }
+  .vi { color: $name-variable-instance; }
+  .il { color: $literal-number-integer-long; }
+}

@@ -142,8 +142,8 @@ reqwest = "0.9"
 # csv parsing
 csv = "1"
 
-# ruby interop highlighting
-rouge = { git = "https://gitlab.com/jkcclemens/paste_rouge" }
+# highlighting
+rouge = { git = "https://gitlab.com/jkcclemens/paste_rouge", branch = "gross_subprocess" }
 
 # web logic
 [dependencies.rocket]

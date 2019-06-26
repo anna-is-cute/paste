@@ -37,7 +37,7 @@ use rocket::{
 
 use rocket_contrib::templates::Template;
 
-use rouge::Rouge;
+use rouge::{Rouge, HighlightKind};
 
 use serde_json::json;
 
@@ -49,7 +49,7 @@ lazy_static! {
     ext_autolink: true,
     ext_tasklist: true,
     ext_footnotes: true,
-    ext_highlight: Some("hl-".into()),
+    ext_highlight: true,
     // allows html and bad links: ammonia + our post-processor cleans the output, not comrak
     unsafe_: true,
     .. Default::default()
@@ -115,7 +115,7 @@ pub fn username_id(username: String, id: PasteId) -> Redirect {
 }
 
 #[get("/p/<username>/<id>")]
-pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, rouge: State<Rouge>) -> Result<Rst> {
+pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -160,9 +160,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 
       let processed = if is_md {
         let md = markdown_to_html(content, &*OPTIONS);
-        println!("md: {}", md);
         let cleaned = CLEANER.clean(&md).to_string();
-        println!("cleaned: {}", cleaned);
         Some(post_processing::process(&*config, &cleaned))
       } else if is_csv {
         match csv_to_table(content) {
@@ -176,23 +174,8 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         None
       };
 
-      let highlighted = rouge.highlight_file(name, &content);
+      let highlighted = Rouge::highlight(HighlightKind::File, &name, &content)?;
       lines.insert(file.id, highlighted);
-
-      // let syntax = file.highlight_language
-      //   .and_then(|lang| SYNTAX_SET.find_syntax_by_token(lang))
-      //   .or_else(|| lower.split('.').last()
-      //     .and_then(|ext| SYNTAX_SET.find_syntax_by_extension(ext)))
-      //   .unwrap_or_else(|| SYNTAX_SET.find_syntax_plain_text());
-      // let highlighted = syntect::util::LinesWithEndings::from(&content)
-      //   .map(|line| {
-      //     let mut html_generator = ClassedHTMLGenerator::with_style(&syntax, &SYNTAX_SET, ClassStyle::SpacedPrefix("hl-"));
-      //     html_generator.parse_html_for_line(&line);
-      //     html_generator.finalize()
-      //   })
-      //   .collect();
-      // // file.content = Some(Content::Text(highlighted));
-      // lines.insert(file.id, highlighted);
 
       if let Some(processed) = processed {
         rendered.insert(file.id, processed);

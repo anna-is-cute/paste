@@ -111,21 +111,12 @@ fn main() {
   lazy_static::initialize(&CAMO_KEY);
   lazy_static::initialize(&CAMO_URL);
 
-  let rouge = match rouge::Rouge::new() {
-    Some(r) => r,
-    None => {
-      eprintln!("Could not create Rouge instance. Make sure ruby is installed.");
-      return;
-    },
-  };
-
   rocket::ignite()
     .manage(database::init_pool())
     .manage(redis_store::init_pool())
     .manage(redis_store::init_sidekiq())
     .manage(config)
     .manage(reqwest::Client::new())
-    .manage(rouge)
     .attach(fairings::Csp)
     .attach(fairings::SecurityHeaders)
     .attach(fairings::LastPage::default())

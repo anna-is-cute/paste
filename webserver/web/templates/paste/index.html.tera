@@ -8,18 +8,13 @@
 <link
   title="dark"
   rel="stylesheet"
-  href="/static/css/highlight/atom-one-dark.css?v={{ resources_version }}"
-  integrity="sha384-7AkVLzEW9+X6wq2R2CqKI81py5k+c/gacD8n/BVhED9K0qJOcrVl2RowfZNm094c"/>
-{# <link
-  title="dark"
-  rel="stylesheet"
-  href="/static/css/highlight/dracula.css?v={{ resources_version }}"
-  integrity="sha384-jGN05Q3F0klPYJGNSwhsaJCGLzOxhocz797K713IV9+LomPnGhYI2bVzF3QwxWXm"/> #}
-{# <link
-  title="dark"
-  rel="stylesheet"
-  href="/static/css/highlight/base16-ocean.dark.css?v={{ resources_version }}"
-  integrity="sha384-Zj4CAwsP5VTxfvbBY1UvDxBMhF6fer63qWmugVS9yPxEYESxfGhWV57JaXF6P+1W"/> #}
+  href="/static/css/highlight/tomorrow-night.css?v={{ resources_version }}"
+  integrity="sha384-TWS9U1QJHJXMg0I5q4uMAdVeAigJ88rjzP2SY+mnTI4PVCHKyk8Grb9Qb9n7KUOd"/>
+<link
+  title="light"
+  rel="stylesheet alternate"
+  href="/static/css/highlight/tomorrow.css?v={{ resources_version }}"
+  integrity="sha384-3zMlneOcOZSmCGz90+hAEpf1okRF79/MDfonE5pdG/FJ7eiv34aDjslGhpPeHZvE"/>
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
@@ -225,30 +220,35 @@
           {{ rendered[file.id] | safe }}
         </div>
         <div class="paste-source-content is-not-displayed">
-          <pre class="file-source" id="{{ file.id }}" data-ln-prefix="{{ file.name | slugify }}"><code>{{ file.content.value | safe }}</code></pre>
+          <pre class="numbered file-source" id="{{ file.id }}">
+            {%- if lines is containing(file.id) -%}
+            {%- set_global line_no = 0 -%}
+            {%- for line in lines[file.id] -%}
+              {%- set_global line_no = line_no + 1 -%}
+              <a id="{{ file.id }}-l{{ line_no }}" href="#{{ file.id }}-l{{ line_no }}" class="ln"></a><code>{{ line | safe }}</code>
+            {%- endfor -%}
+            {%- else -%}
+            {{ file.content.value }}
+            {%- endif -%}
+          </pre>
         </div>
       </div>
     {% else %}
     <div class="source-container">
       <pre
-        class="file-source"
+        class="numbered file-source"
         {%- if file.highlight_language %} lang="{{ file.highlight_language }}"{% endif %}
         id="{{ file.id }}"
         data-ln-prefix="{{ file.name | slugify }}">
-        {% if lines is containing(file.id) %}
-        {% set_global line_no = 0 %}
-        <table>
-        {% for line in lines[file.id] -%}
+        {%- if lines is containing(file.id) -%}
+        {%- set_global line_no = 0 -%}
+        {%- for line in lines[file.id] -%}
           {%- set_global line_no = line_no + 1 -%}
-          <tr>
-            <td class="line-number"><a id="{{ file.id }}-l{{ line_no }}" href="#{{ file.id}}-l{{ line_no }}">{{ line_no }}</a></td>
-            <td class="code"><code>{{ line | safe }}</code></td>
-          </tr>
-        {% endfor -%}
-        </table>
-        {% else %}
+          <a id="{{ file.id }}-l{{ line_no }}" href="#{{ file.id }}-l{{ line_no }}" class="ln"></a><code>{{ line | safe }}</code>
+        {%- endfor -%}
+        {%- else -%}
         {{ file.content.value }}
-        {% endif %}
+        {%- endif -%}
       </pre>
     </div>
     {% endif %}

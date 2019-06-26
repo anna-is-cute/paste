@@ -1,0 +1,210 @@
+pre.file-source table td { padding: 5px; }
+pre.file-source table pre { margin: 0; }
+pre.file-source .c, pre.file-source .ch, pre.file-source .cd, pre.file-source .cpf {
+  color: #75715e;
+  font-style: italic;
+}
+pre.file-source .cm {
+  color: #75715e;
+  font-style: italic;
+}
+pre.file-source .c1 {
+  color: #75715e;
+  font-style: italic;
+}
+pre.file-source .cp {
+  color: #75715e;
+  font-weight: bold;
+}
+pre.file-source .cs {
+  color: #75715e;
+  font-weight: bold;
+  font-style: italic;
+}
+pre.file-source .err {
+  color: #960050;
+  background-color: #1e0010;
+}
+pre.file-source .gi {
+  color: #ffffff;
+  background-color: #324932;
+}
+pre.file-source .gd {
+  color: #ffffff;
+  background-color: #493131;
+}
+pre.file-source .ge {
+  color: #000000;
+  font-style: italic;
+}
+pre.file-source .gr {
+  color: #aa0000;
+}
+pre.file-source .gt {
+  color: #aa0000;
+}
+pre.file-source .gh {
+  color: #999999;
+}
+pre.file-source .go {
+  color: #888888;
+}
+pre.file-source .gp {
+  color: #555555;
+}
+pre.file-source .gs {
+  font-weight: bold;
+}
+pre.file-source .gu {
+  color: #aaaaaa;
+}
+pre.file-source .k, pre.file-source .kv {
+  color: #66d9ef;
+  font-weight: bold;
+}
+pre.file-source .kc {
+  color: #66d9ef;
+  font-weight: bold;
+}
+pre.file-source .kd {
+  color: #66d9ef;
+  font-weight: bold;
+}
+pre.file-source .kp {
+  color: #66d9ef;
+  font-weight: bold;
+}
+pre.file-source .kr {
+  color: #66d9ef;
+  font-weight: bold;
+}
+pre.file-source .kt {
+  color: #66d9ef;
+  font-weight: bold;
+}
+pre.file-source .kn {
+  color: #f92672;
+  font-weight: bold;
+}
+pre.file-source .ow {
+  color: #f92672;
+  font-weight: bold;
+}
+pre.file-source .o {
+  color: #f92672;
+  font-weight: bold;
+}
+pre.file-source .mf {
+  color: #ae81ff;
+}
+pre.file-source .mh {
+  color: #ae81ff;
+}
+pre.file-source .il {
+  color: #ae81ff;
+}
+pre.file-source .mi {
+  color: #ae81ff;
+}
+pre.file-source .mo {
+  color: #ae81ff;
+}
+pre.file-source .m, pre.file-source .mb, pre.file-source .mx {
+  color: #ae81ff;
+}
+pre.file-source .se {
+  color: #ae81ff;
+}
+pre.file-source .sb {
+  color: #e6db74;
+}
+pre.file-source .sc {
+  color: #e6db74;
+}
+pre.file-source .sd {
+  color: #e6db74;
+}
+pre.file-source .s2 {
+  color: #e6db74;
+}
+pre.file-source .sh {
+  color: #e6db74;
+}
+pre.file-source .si {
+  color: #e6db74;
+}
+pre.file-source .sx {
+  color: #e6db74;
+}
+pre.file-source .sr {
+  color: #e6db74;
+}
+pre.file-source .s1 {
+  color: #e6db74;
+}
+pre.file-source .ss {
+  color: #e6db74;
+}
+pre.file-source .s, pre.file-source .sa, pre.file-source .dl {
+  color: #e6db74;
+}
+pre.file-source .na {
+  color: #a6e22e;
+}
+pre.file-source .nc {
+  color: #a6e22e;
+  font-weight: bold;
+}
+pre.file-source .nd {
+  color: #a6e22e;
+  font-weight: bold;
+}
+pre.file-source .ne {
+  color: #a6e22e;
+  font-weight: bold;
+}
+pre.file-source .nf, pre.file-source .fm {
+  color: #a6e22e;
+  font-weight: bold;
+}
+pre.file-source .no {
+  color: #66d9ef;
+}
+pre.file-source .bp {
+  color: #f8f8f2;
+}
+pre.file-source .nb {
+  color: #f8f8f2;
+}
+pre.file-source .ni {
+  color: #f8f8f2;
+}
+pre.file-source .nn {
+  color: #f8f8f2;
+}
+pre.file-source .vc {
+  color: #f8f8f2;
+}
+pre.file-source .vg {
+  color: #f8f8f2;
+}
+pre.file-source .vi {
+  color: #f8f8f2;
+}
+pre.file-source .nv, pre.file-source .vm {
+  color: #f8f8f2;
+}
+pre.file-source .w {
+  color: #f8f8f2;
+}
+pre.file-source .nl {
+  color: #f8f8f2;
+  font-weight: bold;
+}
+pre.file-source .nt {
+  color: #f92672;
+}
+pre.file-source {
+  color: #f8f8f2;
+  background-color: #49483e;
+}

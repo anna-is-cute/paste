@@ -1,0 +1,209 @@
+pre.file-source table td { padding: 5px; }
+pre.file-source table pre { margin: 0; }
+pre.file-source .cm {
+  color: #999988;
+  font-style: italic;
+}
+pre.file-source .cp {
+  color: #999999;
+  font-weight: bold;
+}
+pre.file-source .c1 {
+  color: #999988;
+  font-style: italic;
+}
+pre.file-source .cs {
+  color: #999999;
+  font-weight: bold;
+  font-style: italic;
+}
+pre.file-source .c, pre.file-source .ch, pre.file-source .cd, pre.file-source .cpf {
+  color: #999988;
+  font-style: italic;
+}
+pre.file-source .err {
+  color: #a61717;
+  background-color: #e3d2d2;
+}
+pre.file-source .gd {
+  color: #000000;
+  background-color: #ffdddd;
+}
+pre.file-source .ge {
+  color: #000000;
+  font-style: italic;
+}
+pre.file-source .gr {
+  color: #aa0000;
+}
+pre.file-source .gh {
+  color: #999999;
+}
+pre.file-source .gi {
+  color: #000000;
+  background-color: #ddffdd;
+}
+pre.file-source .go {
+  color: #888888;
+}
+pre.file-source .gp {
+  color: #555555;
+}
+pre.file-source .gs {
+  font-weight: bold;
+}
+pre.file-source .gu {
+  color: #aaaaaa;
+}
+pre.file-source .gt {
+  color: #aa0000;
+}
+pre.file-source .kc {
+  color: #000000;
+  font-weight: bold;
+}
+pre.file-source .kd {
+  color: #000000;
+  font-weight: bold;
+}
+pre.file-source .kn {
+  color: #000000;
+  font-weight: bold;
+}
+pre.file-source .kp {
+  color: #000000;
+  font-weight: bold;
+}
+pre.file-source .kr {
+  color: #000000;
+  font-weight: bold;
+}
+pre.file-source .kt {
+  color: #445588;
+  font-weight: bold;
+}
+pre.file-source .k, pre.file-source .kv {
+  color: #000000;
+  font-weight: bold;
+}
+pre.file-source .mf {
+  color: #009999;
+}
+pre.file-source .mh {
+  color: #009999;
+}
+pre.file-source .il {
+  color: #009999;
+}
+pre.file-source .mi {
+  color: #009999;
+}
+pre.file-source .mo {
+  color: #009999;
+}
+pre.file-source .m, pre.file-source .mb, pre.file-source .mx {
+  color: #009999;
+}
+pre.file-source .sb {
+  color: #d14;
+}
+pre.file-source .sc {
+  color: #d14;
+}
+pre.file-source .sd {
+  color: #d14;
+}
+pre.file-source .s2 {
+  color: #d14;
+}
+pre.file-source .se {
+  color: #d14;
+}
+pre.file-source .sh {
+  color: #d14;
+}
+pre.file-source .si {
+  color: #d14;
+}
+pre.file-source .sx {
+  color: #d14;
+}
+pre.file-source .sr {
+  color: #009926;
+}
+pre.file-source .s1 {
+  color: #d14;
+}
+pre.file-source .ss {
+  color: #990073;
+}
+pre.file-source .s, pre.file-source .sa, pre.file-source .dl {
+  color: #d14;
+}
+pre.file-source .na {
+  color: #008080;
+}
+pre.file-source .bp {
+  color: #999999;
+}
+pre.file-source .nb {
+  color: #0086B3;
+}
+pre.file-source .nc {
+  color: #445588;
+  font-weight: bold;
+}
+pre.file-source .no {
+  color: #008080;
+}
+pre.file-source .nd {
+  color: #3c5d5d;
+  font-weight: bold;
+}
+pre.file-source .ni {
+  color: #800080;
+}
+pre.file-source .ne {
+  color: #990000;
+  font-weight: bold;
+}
+pre.file-source .nf, pre.file-source .fm {
+  color: #990000;
+  font-weight: bold;
+}
+pre.file-source .nl {
+  color: #990000;
+  font-weight: bold;
+}
+pre.file-source .nn {
+  color: #555555;
+}
+pre.file-source .nt {
+  color: #000080;
+}
+pre.file-source .vc {
+  color: #008080;
+}
+pre.file-source .vg {
+  color: #008080;
+}
+pre.file-source .vi {
+  color: #008080;
+}
+pre.file-source .nv, pre.file-source .vm {
+  color: #008080;
+}
+pre.file-source .ow {
+  color: #000000;
+  font-weight: bold;
+}
+pre.file-source .o {
+  color: #000000;
+  font-weight: bold;
+}
+pre.file-source .w {
+  color: #bbbbbb;
+}
+pre.file-source {
+  background-color: #f8f8f8;
+}

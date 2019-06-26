@@ -136,3 +136,9 @@ div.codesass.codesass--has-line-numbers::before {
 .message.is-warning .message-body pre {
   color: #000;
 }
+
+pre.numbered .ln {
+  border-right: 1px solid $grey;
+  background-color: $grey-dark;
+  color: $grey-light;
+}

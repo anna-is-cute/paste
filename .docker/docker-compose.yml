@@ -59,6 +59,9 @@ services:
       - "./nginx/certs:/etc/nginx/certs:ro"
       - "./nginx/extra_modules:/etc/nginx/extra_modules:ro"
       - "../webserver/web/static:/etc/nginx/web/static:ro"
+  highlight:
+    build: highlight
+    restart: unless-stopped
 volumes:
   libraries:
   store:

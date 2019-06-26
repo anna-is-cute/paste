@@ -16,6 +16,7 @@ use crate::{
   routes::web::{context, Rst, OptionalWebUser, Session},
   utils::{
     csv::csv_to_table,
+    highlight::{HighlightKind, highlight},
     post_processing,
     Language,
   },
@@ -29,6 +30,8 @@ use diesel::prelude::*;
 
 use hashbrown::HashMap;
 
+use reqwest::Client;
+
 use rocket::{
   http::Status as HttpStatus,
   response::Redirect,
@@ -36,8 +39,6 @@ use rocket::{
 };
 
 use rocket_contrib::templates::Template;
-
-use rouge::{Rouge, HighlightKind};
 
 use serde_json::json;
 
@@ -110,7 +111,7 @@ pub fn username_id(username: String, id: PasteId) -> Redirect {
 }
 
 #[get("/p/<username>/<id>")]
-pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, client: State<Client>) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -169,7 +170,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         None
       };
 
-      let highlighted = Rouge::highlight_lines(HighlightKind::File, &name, &content)?;
+      let highlighted = highlight(&*client, File, &name, &content)?;
       lines.insert(file.id, highlighted);
 
       if let Some(processed) = processed {

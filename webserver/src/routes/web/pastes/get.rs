@@ -64,16 +64,11 @@ lazy_static! {
       .add_tag_attribute_values("input", "disabled", vec!["", "disabled"])
       .add_tag_attribute_values("input", "type", std::iter::once("checkbox"))
       .add_allowed_classes("span", vec![
-        "hl-inherited-class", "hl-name", "hl-string", "hl-id", "hl-deleted", "hl-link", "hl-quote",
-        "hl-regexp", "hl-inline", "hl-deprecated", "hl-constant", "hl-parameter", "hl-escape",
-        "hl-unimplemented", "hl-function", "hl-interpolation", "hl-markup", "hl-changed",
-        "hl-comment", "hl-definition", "hl-punctuation", "hl-entity", "hl-broken", "hl-character",
-        "hl-inserted", "hl-attribute-name", "hl-type", "hl-variable", "hl-require", "hl-storage",
-        "hl-embedded", "hl-none", "hl-illegal", "hl-markdown", "hl-section", "hl-special-method",
-        "hl-bold", "hl-separator", "hl-symbol", "hl-source", "hl-class", "hl-other", "hl-tag",
-        "hl-operator", "hl-selector", "hl-end", "hl-color", "hl-italic", "hl-unit", "hl-text",
-        "hl-list", "hl-support", "hl-invalid", "hl-raw", "hl-meta", "hl-numeric", "hl-keyword",
-        "hl-any-method",
+        "hll", "c", "err", "k", "l", "n", "o", "p", "cm", "cp", "c1", "cs", "gd", "ge", "gh", "gi",
+        "gp", "gs", "gu", "kc", "kd", "kn", "kp", "kr", "kt", "ld", "m", "s", "na", "nb", "nc",
+        "no", "nd", "ni", "ne", "nf", "nl", "nn", "nx", "py", "nt", "nv", "ow", "w", "mf", "mh",
+        "mi", "mo", "sb", "sc", "sd", "s2", "se", "sh", "si", "sx", "sr", "s1", "ss", "bp", "vc",
+        "vg", "vi", "il",
       ]);
     b
   };
@@ -174,7 +169,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         None
       };
 
-      let highlighted = Rouge::highlight(HighlightKind::File, &name, &content)?;
+      let highlighted = Rouge::highlight_lines(HighlightKind::File, &name, &content)?;
       lines.insert(file.id, highlighted);
 
       if let Some(processed) = processed {

@@ -14,6 +14,7 @@ ignore = [
   # see serde
   "serde_derive",
   "rouge",
+  "spanner",
 ]
 
 exclude = [
@@ -144,6 +145,9 @@ csv = "1"
 
 # highlighting
 rouge = { git = "https://gitlab.com/jkcclemens/paste_rouge", branch = "gross_subprocess" }
+
+# splitting highlights into lines
+spanner = { git = "https://gitlab.com/jkcclemens/spanner" }
 
 # web logic
 [dependencies.rocket]

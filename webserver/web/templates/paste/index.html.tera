@@ -9,12 +9,12 @@
   title="dark"
   rel="stylesheet"
   href="/static/css/highlight/tomorrow-night.css?v={{ resources_version }}"
-  integrity="sha384-TWS9U1QJHJXMg0I5q4uMAdVeAigJ88rjzP2SY+mnTI4PVCHKyk8Grb9Qb9n7KUOd"/>
+  integrity="sha384-/8tI8HgbxFyvWC/ie2AtdGKpK4oxDZ3e5Y54TqgmH9apyw5l7XFN8lqI2Qo2bC+f"/>
 <link
   title="light"
   rel="stylesheet alternate"
   href="/static/css/highlight/tomorrow.css?v={{ resources_version }}"
-  integrity="sha384-3zMlneOcOZSmCGz90+hAEpf1okRF79/MDfonE5pdG/FJ7eiv34aDjslGhpPeHZvE"/>
+  integrity="sha384-CjMS/azhoi4hiN5ZaI9dOIE/2MZmLjwiFghnRSac/9I3tWrhTLqxF0NpyK7+MOhd"/>
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"

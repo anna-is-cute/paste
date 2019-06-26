@@ -170,7 +170,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         None
       };
 
-      let highlighted = highlight(&*client, File, &name, &content)?;
+      let highlighted = highlight(&*client, HighlightKind::File, &name, &content)?;
       lines.insert(file.id, highlighted);
 
       if let Some(processed) = processed {

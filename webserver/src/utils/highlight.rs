@@ -41,7 +41,7 @@ fn split_lines_inclusive(s: &str) -> Vec<&str> {
 
     let mut last = 0;
     for (index, matched) in s.match_indices('\n') {
-      if last != index {
+      if last <= index {
         result.push(&s[last..index + 1]);
       }
       last = index + matched.len();

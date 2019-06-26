@@ -44,7 +44,7 @@ class Server
 
     hl = Highlight.new(kind, name)
 
-    ['200', {'Content-Type' => 'text/html'}, [hl.highlight(code)]]
+    ['200', {'Content-Type' => 'text/plain'}, [hl.highlight(code)]]
   end
 end
 

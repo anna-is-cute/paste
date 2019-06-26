@@ -1,4 +1,4 @@
-FROM jkcclemens/paste:beta
+FROM jkcclemens/paste
 
 RUN $HOME/.cargo/bin/cargo install diesel_cli --no-default-features --features postgres
 

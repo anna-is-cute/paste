@@ -3,7 +3,6 @@ pub mod csv;
 pub mod email;
 pub mod form_date;
 pub mod hashed_password;
-pub mod highlight;
 pub mod language;
 pub mod multipart;
 pub mod password;

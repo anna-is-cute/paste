@@ -16,7 +16,6 @@ use crate::{
   routes::web::{context, Rst, OptionalWebUser, Session},
   utils::{
     csv::csv_to_table,
-    highlight::{HighlightKind, highlight},
     post_processing,
     Language,
   },
@@ -30,8 +29,6 @@ use diesel::prelude::*;
 
 use hashbrown::HashMap;
 
-use reqwest::Client;
-
 use rocket::{
   http::Status as HttpStatus,
   response::Redirect,
@@ -39,6 +36,8 @@ use rocket::{
 };
 
 use rocket_contrib::templates::Template;
+
+use rouge::{HighlightKind, Rouge};
 
 use serde_json::json;
 
@@ -50,7 +49,7 @@ lazy_static! {
     ext_autolink: true,
     ext_tasklist: true,
     ext_footnotes: true,
-    ext_highlight: true,
+    ext_highlight: Some(crate::HIGHLIGHT_URL.clone()),
     // allows html and bad links: ammonia + our post-processor cleans the output, not comrak
     unsafe_: true,
     .. Default::default()
@@ -111,7 +110,7 @@ pub fn username_id(username: String, id: PasteId) -> Redirect {
 }
 
 #[get("/p/<username>/<id>")]
-pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, client: State<Client>) -> Result<Rst> {
+pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, rouge: State<Rouge>) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -170,7 +169,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         None
       };
 
-      let highlighted = highlight(&*client, HighlightKind::File, &name, &content)?;
+      let highlighted = rouge.highlight_lines(HighlightKind::File, &name, &content)?;
       lines.insert(file.id, highlighted);
 
       if let Some(processed) = processed {

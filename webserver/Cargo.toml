@@ -143,10 +143,7 @@ reqwest = "0.9"
 csv = "1"
 
 # highlighting
-rouge = { git = "https://gitlab.com/jkcclemens/paste_rouge", branch = "gross_subprocess" }
-
-# splitting highlights into lines
-spanner = { git = "https://gitlab.com/jkcclemens/spanner" }
+rouge = { git = "https://gitlab.com/jkcclemens/paste_rouge", branch = "server" }
 
 # web logic
 [dependencies.rocket]

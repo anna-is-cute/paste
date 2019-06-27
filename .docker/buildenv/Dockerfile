@@ -1,7 +1,6 @@
 FROM ubuntu:19.10
 
-RUN apt-get update
-RUN apt-get install \
+RUN apt-get update && apt-get install \
   --no-install-recommends \
   --assume-yes \
   curl ca-certificates \
@@ -11,14 +10,10 @@ RUN apt-get install \
   autoconf automake libtool \
   libssl-dev libssh-dev libz-dev clang \
   libpq-dev \
-  pkg-config \
-  ruby libgmp-dev
+  pkg-config
 RUN apt-get autoremove --assume-yes
 RUN apt-get clean autoclean
 RUN rm -rf /var/lib/{apt,dpkg,cache,log}/
-
-RUN ln -s /usr/lib/x86_64-linux-gnu/libruby-2.5.so{.2.5,}
-RUN gem install rouge
 
 WORKDIR /
 

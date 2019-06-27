@@ -60,6 +60,10 @@ lazy_static! {
     let key = env::var("CAMO_KEY").expect("missing CAMO_KEY environment variable");
     key.into_bytes()
   };
+
+  pub static ref HIGHLIGHT_URL: url::Url = url::Url::parse(&env::var("HIGHLIGHT_URL")
+    .unwrap_or_else(|_| "http://highlight:8080/highlight/".to_string()))
+    .expect("HIGHLIGHT_URL could not be parsed as a URL");
 }
 
 fn main() {
@@ -110,6 +114,9 @@ fn main() {
   lazy_static::initialize(&EMAIL_TERA);
   lazy_static::initialize(&CAMO_KEY);
   lazy_static::initialize(&CAMO_URL);
+  lazy_static::initialize(&HIGHLIGHT_URL);
+
+  let rouge = rouge::Rouge::new(HIGHLIGHT_URL.clone());
 
   rocket::ignite()
     .manage(database::init_pool())
@@ -117,6 +124,7 @@ fn main() {
     .manage(redis_store::init_sidekiq())
     .manage(config)
     .manage(reqwest::Client::new())
+    .manage(rouge)
     .attach(fairings::Csp)
     .attach(fairings::SecurityHeaders)
     .attach(fairings::LastPage::default())

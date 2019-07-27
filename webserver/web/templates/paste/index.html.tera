@@ -15,6 +15,16 @@
   rel="stylesheet alternate"
   href="/static/css/highlight/tomorrow.css?v={{ resources_version }}"
   integrity="sha384-CjMS/azhoi4hiN5ZaI9dOIE/2MZmLjwiFghnRSac/9I3tWrhTLqxF0NpyK7+MOhd"/>
+{# <link
+  title="dark"
+  rel="stylesheet"
+  href="/static/css/highlight/atom-one-dark.css?v={{ resources_version }}"
+  integrity="sha384-wGBQdJwldxl4b4c5/zQS2EYKxhH4p8Sx0X1LW5arGXbZvwAZTr9a+KBzL+s/5cG1"/>
+<link
+  title="light"
+  rel="stylesheet alternate"
+  href="/static/css/highlight/atom-one-light.css?v={{ resources_version }}"
+  integrity="sha384-oz1pQC2PVhM6XAx5hW+sTTjvpy9FMobY87V0wQPUExSqNGRAmNKLpbVTvhat4utD"/> #}
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"

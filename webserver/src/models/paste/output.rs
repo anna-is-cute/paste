@@ -70,7 +70,7 @@ impl OutputFile {
     OutputFile {
       id,
       name: name.map(Into::into),
-      highlight_language: language.map(|x| x.hljs()),
+      highlight_language: language.map(|x| x.rouge()),
       content,
     }
   }

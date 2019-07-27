@@ -143,7 +143,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
       let lower = name.to_lowercase();
 
       let md_ext = file.highlight_language.is_none() && lower.ends_with(".md") || lower.ends_with(".mdown") || lower.ends_with(".markdown");
-      let md_lang = file.highlight_language == Some(Language::Markdown.hljs());
+      let md_lang = file.highlight_language == Some(Language::Markdown.rouge());
       let is_md = md_ext || md_lang;
 
       let is_csv = file.highlight_language.is_none() && lower.ends_with(".csv");

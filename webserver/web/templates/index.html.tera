@@ -43,11 +43,11 @@ New
 {%- endblock title %}
 
 {% block header_title -%}
-New paste
+{{ tr(_langs=langs, _msg="new-paste") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Create a new paste.
+{{ tr(_langs=langs, _msg="new-paste-desc") }}
 {%- endblock header_subtitle %}
 
 {% block main %}
@@ -57,40 +57,43 @@ Create a new paste.
     <div class="column">
       <div class="field">
         <div class="control is-expanded">
-          <label class="label">Paste name</label>
+          <label class="label">{{ tr(_langs=langs, _msg="paste-name") }}</label>
           <input
             name="name"
             class="input"
             type="text"
             {%- if form.name %}value="{{ form.name }}"{% endif %}
-            placeholder="Paste name"/>
+            placeholder="{{ tr(_langs=langs, _msg="paste-name", _attr="placeholder") }}"/>
         </div>
       </div>
       <div class="field">
         <div class="control is-expanded">
-          <label class="label">Description</label>
+          <label class="label">{{ tr(_langs=langs, _msg="paste-description") }}</label>
           <input
             name="description"
             class="input"
             type="text"
             {%- if form.description %}value="{{ form.description }}"{% endif %}
-            placeholder="Paste description"/>
+            placeholder="{{ tr(_langs=langs, _msg="paste-description", _attr="placeholder") }}"/>
         </div>
       </div>
     </div>
     <div class="column is-narrow">
       <div class="field">
         <div class="control has-icons-left">
-          <label class="label">Visibility</label>
+          <label class="label">{{ tr(_langs=langs, _msg="paste-visibility") }}</label>
           <div class="select is-fullwidth">
             <select name="visibility">
               <option
-                {%- if form.visibility and form.visibility == "public" %}selected{% endif %}>public</option>
+                value="public"
+                {%- if form.visibility and form.visibility == "public" %}selected{% endif %}>{{ tr(_langs=langs, _msg="paste-visibility", _attr="public") }}</option>
               <option
-                {%- if not form.visibility or form.visibility == "unlisted" %} selected{% endif %}>unlisted</option>
+                value="unlisted"
+                {%- if not form.visibility or form.visibility == "unlisted" %} selected{% endif %}>{{ tr(_langs=langs, _msg="paste-visibility", _attr="unlisted") }}</option>
             {%- if user %}
               <option
-                {%- if form.visibility and form.visibility == "private" %}selected{% endif %}>private</option>
+                value="private"
+                {%- if form.visibility and form.visibility == "private" %}selected{% endif %}>{{ tr(_langs=langs, _msg="paste-visibility", _attr="private") }}</option>
             {%- endif %}
             </select>
             <span class="icon is-small is-left">
@@ -101,7 +104,7 @@ Create a new paste.
       </div>
       <div class="field">
         <div class="label-icon">
-          <label class="label">Expires</label>
+          <label class="label">{{ tr(_langs=langs, _msg="paste-expires") }}</label>
           <a href="https://github.com/jkcclemens/paste/wiki/Expiring-pastes" target="_blank">
             <span class="icon is-small is-right">
               <i class="fas fa-question-circle"></i>
@@ -111,9 +114,9 @@ Create a new paste.
         <div class="control has-icons-left requires-js">
           <div class="select is-fullwidth">
             <select id="expires">
-              <option selected>no</option>
-              <option>relative</option>
-              <option>absolute</option>
+              <option value="no" selected>{{ tr(_langs=langs, _msg="paste-expires", _attr="no") }}</option>
+              <option value="relative">{{ tr(_langs=langs, _msg="paste-expires", _attr="relative") }}</option>
+              <option value="absolute">{{ tr(_langs=langs, _msg="paste-expires", _attr="absolute") }}</option>
             </select>
             <span class="icon is-small is-left">
               <i class="fas fa-stopwatch"></i>
@@ -127,15 +130,15 @@ Create a new paste.
   <div id="absolute-expiry" class="requires-js is-hidden">
     <div class="field is-grouped">
       <div class="control">
-        <label class="label">Expiry date</label>
+        <label class="label">{{ tr(_langs=langs, _msg="paste-absolute-expiry", _attr="date") }}</label>
         <input id="absolute-date" class="input" type="date"/>
       </div>
       <div class="control">
-        <label class="label">Expiry time</label>
+        <label class="label">{{ tr(_langs=langs, _msg="paste-absolute-expiry", _attr="time") }}</label>
         <input id="absolute-time" class="input" type="time"/>
       </div>
       <div class="control">
-        <label class="label">Expiry timezone</label>
+        <label class="label">{{ tr(_langs=langs, _msg="paste-absolute-expiry", _attr="timezone") }}</label>
         <div class="select">
           <select id="absolute-timezone">
             <option value="-12">UTC-12</option>
@@ -188,19 +191,19 @@ Create a new paste.
   <div id="relative-expiry" class="requires-js is-hidden">
     <div class="field is-grouped">
       <div class="control">
-        <label class="label">Years</label>
+        <label class="label">{{ tr(_langs=langs, _msg="paste-relative-expiry", _attr="years") }}</label>
         <input id="relative-years" class="input" type="number" min="0" value="0"/>
       </div>
       <div class="control">
-        <label class="label">Days</label>
+        <label class="label">{{ tr(_langs=langs, _msg="paste-relative-expiry", _attr="days") }}</label>
         <input id="relative-days" class="input" type="number" min="0" max="364" value="0"/>
       </div>
       <div class="control">
-        <label class="label">Hours</label>
+        <label class="label">{{ tr(_langs=langs, _msg="paste-relative-expiry", _attr="hours") }}</label>
         <input id="relative-hours" class="input" type="number" min="0" max="23" value="0"/>
       </div>
       <div class="control">
-        <label class="label">Minutes</label>
+        <label class="label">{{ tr(_langs=langs, _msg="paste-relative-expiry", _attr="minutes") }}</label>
         <input id="relative-minutes" class="input" type="number" min="0" max="59" value="0"/>
       </div>
     </div>
@@ -211,8 +214,8 @@ Create a new paste.
   <div class="requires-no-js field">
     <div class="control is-expanded">
       <label class="label">
-        What is {{ antispam.no_js[0] }} + {{ antispam.no_js[1] }}?
-        <small><span class="has-text-grey-light tooltip is-tooltip-multiline is-dotted-underlined" data-tooltip="Since you're not using JavaScript, paste requires you to answer this simple math question to foil simple bots. paste has an API if you're trying to do legitimate things!">Why?</span></small>
+        {{ tr(_langs=langs, _msg="paste-antispam-math", a=antispam.no_js[0], b=antispam.no_js[1]) }}
+        <small><span class="has-text-grey-light tooltip is-tooltip-multiline is-dotted-underlined" data-tooltip="{{ tr(_langs=langs, _msg="paste-antispam-math", _attr="description") }}">{{ tr(_langs=langs, _msg="paste-antispam-math", _attr="why") }}</span></small>
       </label>
       <input
         name="no-js-check"
@@ -229,24 +232,24 @@ Create a new paste.
   <script integrity="{{ antispam.integrity_hash | safe }}">{{ antispam.script | safe }}</script>
 
   <div class="control {{ honeypot.class }}">
-    <label class="label">Email</label>
+    <label class="label">{{ tr(_langs=langs, _msg="paste-antispam-honeypot") }}</label>
     <input tabindex="-1" aria-hidden="true" name="email" class="input" type="text" autocomplete="off"/>
   </div>
 
   <div class="paste-submit-buttons">
     <div class="field is-grouped">
       <div class="control">
-        <button id="add_file" class="button requires-js" type="button">Add file</button>
+        <button id="add_file" class="button requires-js" type="button">{{ tr(_langs=langs, _msg="paste-add-file") }}</button>
       </div>
     </div>
 
     <div class="field is-grouped">
       <div class="control">
-        <button class="button" name="anonymous" type="submit">Submit anonymously</button>
+        <button class="button" name="anonymous" type="submit">{{ tr(_langs=langs, _msg="paste-submit-anonymous") }}</button>
       </div>
     {%- if user %}
       <div class="control">
-        <button class="button is-link" type="submit">Submit</button>
+        <button class="button is-link" type="submit">{{ tr(_langs=langs, _msg="paste-submit") }}</button>
       </div>
     {%- endif %}
     </div>

@@ -1,7 +1,7 @@
 use crate::{
   config::Config,
   routes::web::{context, AddCsp, AntiSpam, Honeypot, OptionalWebUser, Session},
-  utils::Language,
+  utils::{AcceptLanguage, Language},
 };
 
 use rocket::State;
@@ -11,9 +11,9 @@ use rocket_contrib::templates::Template;
 use serde_json::json;
 
 #[get("/")]
-pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, antispam: AntiSpam) -> AddCsp<Template> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, antispam: AntiSpam, langs: AcceptLanguage) -> AddCsp<Template> {
   let honeypot = Honeypot::new();
-  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
   ctx["languages"] = json!(Language::context());
   ctx["honeypot"] = json!(honeypot);
   ctx["antispam"] = json!(antispam);

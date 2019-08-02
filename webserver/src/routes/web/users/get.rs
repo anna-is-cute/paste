@@ -11,6 +11,7 @@ use crate::{
     output::{Output, OutputAuthor},
   },
   routes::web::{context, Rst, Links, OptionalWebUser, Session},
+  utils::AcceptLanguage,
 };
 
 use diesel::{dsl::count, prelude::*};
@@ -24,7 +25,7 @@ use serde_json::json;
 use std::{fs::File, io::Read};
 
 #[get("/u/<username>?<page>")]
-pub fn get(username: String, page: Option<u32>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn get(username: String, page: Option<u32>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
   let page = page.unwrap_or(1);
   // TODO: make PositiveNumber struct or similar (could make Positive<num::Integer> or something)
   if page == 0 {
@@ -146,7 +147,7 @@ pub fn get(username: String, page: Option<u32>, config: State<Config>, user: Opt
     outputs
   };
 
-  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
   ctx["pastes"] = json!(outputs);
   ctx["target"] = json!(target);
   ctx["page"] = json!(page);

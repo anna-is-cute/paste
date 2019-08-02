@@ -5,6 +5,7 @@ use crate::{
     models::users::User,
     schema::users as users_db,
   },
+  utils::AcceptLanguage,
 };
 
 use cookie::{Cookie, SameSite};
@@ -242,9 +243,10 @@ lazy_static! {
   };
 }
 
-pub fn context(config: &Config, user: Option<&User>, session: &mut Session) -> Value {
+pub fn context(config: &Config, user: Option<&User>, session: &mut Session, langs: AcceptLanguage) -> Value {
   json!({
     "config": &config,
+    "langs": langs.into_strings(),
     "error": session.data.remove("error"),
     "info": session.data.remove("info"),
     "form": session.take_form(),

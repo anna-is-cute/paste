@@ -13,6 +13,9 @@ ignore = [
   "rocket_contrib",
   # see serde
   "serde_derive",
+  # both handled by a "fluent" credit
+  "fluent-bundle",
+  "fluent-syntax",
 ]
 
 exclude = [
@@ -139,6 +142,15 @@ reqwest = "0.9"
 
 # csv parsing
 csv = "1"
+
+# language ids for localisation
+unic-langid = "0.4"
+
+# localisation
+fluent-bundle = "0.7"
+
+# localisation
+fluent-syntax = "0.9"
 
 # web logic
 [dependencies.rocket]

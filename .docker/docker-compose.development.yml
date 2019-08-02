@@ -10,15 +10,15 @@ services:
     # command: /run.sh --release
     restart: unless-stopped
     volumes:
-      - "../:/paste:cached"
-      - "./run/.cargo/registry:/root/.cargo/registry:cached"
-      - "./run/.cargo/git:/root/.cargo/git:cached"
+      - "../:/paste:z"
+      - "./run/.cargo/registry:/root/.cargo/registry:Z"
+      - "./run/.cargo/git:/root/.cargo/git:Z"
     depends_on:
       - postgres
       - redis
       - sidekiq
     environment:
-      - ROCKET_ENV=prod
+      - ROCKET_ENV=dev
   redis:
     image: redis:alpine
     restart: unless-stopped
@@ -35,7 +35,7 @@ services:
     depends_on:
       - redis
     volumes:
-      - "../:/paste"
+      - "../:/paste:z"
       - "libraries:/libraries:ro"
   camo:
     image: inventid/camo
@@ -53,10 +53,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - "./nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
-      - "./nginx/sites:/etc/nginx/sites:ro"
-      - "./nginx/certs:/etc/nginx/certs:ro"
-      - "./nginx/extra_modules:/etc/nginx/extra_modules:ro"
-      - "../webserver/web/static:/etc/nginx/web/static:ro"
+      - "./nginx/nginx.conf:/etc/nginx/nginx.conf:ro,Z"
+      - "./nginx/sites:/etc/nginx/sites:ro,Z"
+      - "./nginx/certs:/etc/nginx/certs:ro,z"
+      - "./nginx/extra_modules:/etc/nginx/extra_modules:ro,Z"
+      - "../webserver/web/static:/etc/nginx/web/static:ro,Z"
 volumes:
   libraries:

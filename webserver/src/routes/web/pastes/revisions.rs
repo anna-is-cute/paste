@@ -11,6 +11,7 @@ use crate::{
     paste::output::{Output, OutputAuthor, OutputFile},
   },
   routes::web::{context, Rst, OptionalWebUser, Session},
+  websocket::WebSocket,
 };
 
 use diesel::prelude::*;
@@ -21,10 +22,12 @@ use rocket::{State, http::Status as HttpStatus};
 
 use rocket_contrib::templates::Template;
 
+use rouge::{HighlightKind, Rouge};
+
 use serde_json::json;
 
 #[get("/p/<username>/<id>/revisions")]
-pub fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut ws: WebSocket) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -45,6 +48,8 @@ pub fn get(username: String, id: PasteId, config: State<Config>, user: OptionalW
   if let Some((status, _)) = paste.check_access(user.as_ref().map(|x| x.id())) {
     return Ok(Rst::Status(status));
   }
+
+  let mut rouge = Rouge::new(&mut *ws);
 
   let files: Vec<OutputFile> = id.output_files(&*config, &conn, &paste, false)?;
 
@@ -123,6 +128,8 @@ pub fn get(username: String, id: PasteId, config: State<Config>, user: OptionalW
       hunk.diff += line_str;
       true
     })?;
+
+    hunk.diff = rouge.highlight_lines(HighlightKind::Snippet, "diff", &hunk.diff)?.join("");
 
     revision.hunks.push(hunk);
     revisions.push(revision);

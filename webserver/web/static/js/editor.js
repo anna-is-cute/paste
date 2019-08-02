@@ -8,18 +8,44 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
-/* global hljs:false, CodeSass:false, luxon:false */
+/* global CodeSass:false, luxon:false */
 var pasteNum = 0;
 var pasteEditors = {};
 
 (function () {
   var DateTime = luxon.DateTime;
+  var ws;
+  connectWebSocket();
+
+  function connectWebSocket() {
+    ws = new WebSocket("wss://".concat(document.location.host, "/highlight/"));
+    ws.addEventListener('close', connectWebSocket);
+    ws.addEventListener('error', connectWebSocket);
+    ws.addEventListener('message', function (msg) {
+      // find the first newline and split the data on it
+      var split = msg.data.indexOf('\n'); // the left side will be the paste number
+
+      var id = Number(msg.data.substring(0, split)); // the right side will be the highlighted content
+
+      var hl = msg.data.substring(split + 1); // get the code element of the given editor
+
+      var code = pasteEditors[id].elCode; // add the lang attribute to the <pre> if necessary
+
+      if (!code.parentElement.hasAttribute('lang')) {
+        code.parentElement.setAttribute('lang', '');
+      } // update the inner html of the <code> element
+
+
+      code.innerHTML = hl;
+    });
+  }
   /**
    * Formats a UTC offset into "+04:30" format from a decimal like 4.5.
    *
    * @param {Number} i Decimal representing UTC offset
    * @returns {String} Formatted String
    */
+
 
   function prettyOffset(i) {
     // check if the offset is negative for formatting later. all the math will be done as if it were
@@ -191,33 +217,11 @@ var pasteEditors = {};
   }
 
   function codeFlaskSucksHighlight(editor) {
-    hljs.highlightBlock(editor.elCode); // remove the extra classes hljs adds without asking
-
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-
-    try {
-      for (var _iterator = editor.elCode.classList[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var clazz = _step.value;
-
-        if (clazz !== 'hljs' && clazz !== 'codeflask__code' && !clazz.startsWith('language-')) {
-          editor.elCode.classList.remove(clazz);
-        }
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-          _iterator["return"]();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
+    // only use the websocket if it's connected
+    if (ws.readyState === ws.OPEN) {
+      // send a request over the websocket to highlight the code
+      // FIXME: send the file name or the lang name correctly, not just rust
+      ws.send("".concat(editor.pasteNum, "\nrust\nsnippet\n").concat(editor.elCode.innerText)); // when the response comes in, the editor will be updated. nothing else needs to be done here.
     }
   }
   /**
@@ -236,6 +240,7 @@ var pasteEditors = {};
       lineNumbers: true,
       language: 'plaintext'
     });
+    editor.pasteNum = pasteNum;
     var hidden = document.createElement('input');
     hidden.type = 'hidden';
     hidden.name = 'file_content';
@@ -262,11 +267,10 @@ var pasteEditors = {};
         suffix = langInput.value;
       } else if (nameInput.value !== '') {
         suffix = getSuffixFromName(nameInput.value);
-      }
+      } // const lang = hljs.getLanguage(suffix) !== undefined ? suffix : 'plaintext';
+      // editor.updateLanguage(lang);
+      // editor.updateCode(editor.code);
 
-      var lang = hljs.getLanguage(suffix) !== undefined ? suffix : 'plaintext';
-      editor.updateLanguage(lang);
-      editor.updateCode(editor.code);
     }
 
     nameInput.addEventListener('input', updateLanguage);
@@ -294,27 +298,27 @@ var pasteEditors = {};
     pasteNum += 1;
     clone.id = "file".concat(pasteNum); // set up an editor for each textarea in the base (should only be one)
 
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
 
     try {
-      for (var _iterator2 = clone.getElementsByTagName('textarea')[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-        var ta = _step2.value;
+      for (var _iterator = clone.getElementsByTagName('textarea')[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var ta = _step.value;
         setUpEditor(clone, ta);
       } // add the editor to the dom
 
     } catch (err) {
-      _didIteratorError2 = true;
-      _iteratorError2 = err;
+      _didIteratorError = true;
+      _iteratorError = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-          _iterator2["return"]();
+        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+          _iterator["return"]();
         }
       } finally {
-        if (_didIteratorError2) {
-          throw _iteratorError2;
+        if (_didIteratorError) {
+          throw _iteratorError;
         }
       }
     }
@@ -347,19 +351,46 @@ var pasteEditors = {};
 
   function updateButtons() {
     var enabled = Object.keys(pasteEditors).length > 1;
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
 
     try {
-      for (var _iterator3 = document.getElementsByName('delete_button')[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-        var button = _step3.value;
+      for (var _iterator2 = document.getElementsByName('delete_button')[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var button = _step2.value;
 
         if (enabled) {
           button.disabled = false;
         } else {
           button.disabled = true;
         }
+      }
+    } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+          _iterator2["return"]();
+        }
+      } finally {
+        if (_didIteratorError2) {
+          throw _iteratorError2;
+        }
+      }
+    }
+  }
+
+  function createEditors() {
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+      for (var _iterator3 = document.querySelectorAll('textarea.editor')[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        var editor = _step3.value;
+        pasteNum += 1;
+        setUpEditor(editor.parentElement.parentElement.parentElement, editor);
       }
     } catch (err) {
       _didIteratorError3 = true;
@@ -372,33 +403,6 @@ var pasteEditors = {};
       } finally {
         if (_didIteratorError3) {
           throw _iteratorError3;
-        }
-      }
-    }
-  }
-
-  function createEditors() {
-    var _iteratorNormalCompletion4 = true;
-    var _didIteratorError4 = false;
-    var _iteratorError4 = undefined;
-
-    try {
-      for (var _iterator4 = document.querySelectorAll('textarea.editor')[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-        var editor = _step4.value;
-        pasteNum += 1;
-        setUpEditor(editor.parentElement.parentElement.parentElement, editor);
-      }
-    } catch (err) {
-      _didIteratorError4 = true;
-      _iteratorError4 = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
-          _iterator4["return"]();
-        }
-      } finally {
-        if (_didIteratorError4) {
-          throw _iteratorError4;
         }
       }
     }

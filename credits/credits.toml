@@ -302,3 +302,8 @@ text = "CSV parsing library."
 name = "syntect"
 url = "https://github.com/trishume/syntect"
 text = "Highlights pastes on the backend."
+
+[[backend]]
+name = "websocket"
+url = "https://github.com/websockets-rs/rust-websocket"
+text = "Websocket support used for highlighting."

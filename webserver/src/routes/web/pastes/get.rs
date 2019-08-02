@@ -19,6 +19,7 @@ use crate::{
     post_processing,
     Language,
   },
+  websocket::WebSocket,
 };
 
 use ammonia::Builder;
@@ -110,7 +111,7 @@ pub fn username_id(username: String, id: PasteId) -> Redirect {
 }
 
 #[get("/p/<username>/<id>")]
-pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, rouge: State<Rouge>) -> Result<Rst> {
+pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut ws: WebSocket) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -169,6 +170,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         None
       };
 
+      let mut rouge = Rouge::new(&mut *ws);
       let highlighted = match file.highlight_language.and_then(Language::from_str) {
         Some(lang) => rouge.highlight_lines(HighlightKind::Snippet, lang.rouge(), &content),
         None => rouge.highlight_lines(HighlightKind::File, &name, &content),

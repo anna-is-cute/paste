@@ -2,17 +2,22 @@
 
 require 'rack'
 require 'rouge'
+require 'faye/websocket'
+
+Faye::WebSocket.load_adapter('thin')
 
 class Highlight
   @html = nil
   @lexer = nil
 
   def initialize(kind, name)
-    if kind == 'file' then
+    if kind == 'file'
       lexers = Rouge::Guesser.guess([Rouge::Guessers::Filename.new(name)], Rouge::Lexer.all)
       @lexer = lexers[0] || Rouge::Lexers::PlainText
-    elsif kind == 'snippet' then
+    elsif kind == 'snippet'
       @lexer = Rouge::Lexer.find(name) || Rouge::Lexers::PlainText
+    else
+      raise ArgumentError, 'kind must be "file" or "snippet"'
     end
 
     @html = Rouge::Formatters::HTML.new
@@ -24,28 +29,32 @@ class Highlight
 end
 
 class Server
+  KEEPALIVE_TIME = 15
+
   def call(env)
-    req = Rack::Request.new(env)
+    if Faye::WebSocket.websocket?(env)
+      ws = Faye::WebSocket.new(env, nil, {ping: KEEPALIVE_TIME})
 
-    if !req.post?
-      return ['400', {}, []]
-    end
+      ws.on :message do |event|
+        id, lang, type, source = event.data.split("\n", 4)
+        begin
+          hl = Highlight.new(type, lang)
+        rescue ArgumentError
+          # send nothing
+        else
+          ws.send("#{id}\n#{hl.highlight(source)}")
+        end
+      end
 
-    if req.path == '/highlight/snippet'
-      kind = 'snippet'
-    elsif req.path == '/highlight/file'
-      kind = 'file'
+      ws.on :close do |event|
+        ws = nil
+      end
+
+      return ws.rack_response
     else
-      return ['404', {}, []]
+      ['400', {}, []]
     end
-
-    name = req.params['name']
-    code = req.body.read
-
-    hl = Highlight.new(kind, name)
-
-    ['200', {'Content-Type' => 'text/plain'}, [hl.highlight(code)]]
   end
 end
 
-Rack::Handler::WEBrick.run Server.new
+Rack::Handler::Thin.run Server.new

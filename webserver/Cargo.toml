@@ -143,7 +143,7 @@ reqwest = "0.9"
 csv = "1"
 
 # highlighting
-rouge = { git = "https://gitlab.com/jkcclemens/paste_rouge", branch = "server" }
+rouge = { git = "https://gitlab.com/jkcclemens/paste_rouge", branch = "websockets" }
 
 # web logic
 [dependencies.rocket]
@@ -194,3 +194,9 @@ features = ["nightly", "serde"]
 git = "https://github.com/kennytm/qrcode-rust"
 default-features = false
 features = ["svg"]
+
+# connecting to the highlighter
+[dependencies.websocket]
+version = "0.23"
+default-features = false
+features = ["sync", "sync-ssl"]

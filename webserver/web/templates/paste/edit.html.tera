@@ -34,7 +34,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-rn/87IZ8eiRZUiOH0dQKdStq3RW9aHrAQuUwSi/1qlZMbF014a/WcXO9lh6+sGUH"></script>
+  integrity="sha384-Pv4dOlv1BMDcXBqgGQQq1g5xyk3QjPmGXAVzqh9a6Ipu8JDnbgKSAc/Q5akMhlQT"></script>
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"

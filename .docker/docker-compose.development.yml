@@ -17,6 +17,7 @@ services:
       - postgres
       - redis
       - sidekiq
+      - highlight
     environment:
       - ROCKET_ENV=dev
   redis:

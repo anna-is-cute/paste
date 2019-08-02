@@ -28,6 +28,7 @@ mod routes;
 mod sidekiq;
 mod store;
 mod utils;
+mod websocket;
 
 use crate::routes::web::fairings;
 
@@ -116,15 +117,16 @@ fn main() {
   lazy_static::initialize(&CAMO_URL);
   lazy_static::initialize(&HIGHLIGHT_URL);
 
-  let rouge = rouge::Rouge::new(HIGHLIGHT_URL.clone());
+  // let rouge = rouge::Rouge::new(HIGHLIGHT_URL.clone());
 
   rocket::ignite()
     .manage(database::init_pool())
     .manage(redis_store::init_pool())
     .manage(redis_store::init_sidekiq())
+    .manage(websocket::init_pool())
     .manage(config)
     .manage(reqwest::Client::new())
-    .manage(rouge)
+    // .manage(rouge)
     .attach(fairings::Csp)
     .attach(fairings::SecurityHeaders)
     .attach(fairings::LastPage::default())

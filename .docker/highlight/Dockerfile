@@ -1,6 +1,10 @@
 FROM ruby:alpine
 
-RUN gem install rouge rack
+RUN apk add --no-cache openssl-dev build-base
+
+RUN gem install rouge rack thin faye-websocket
+
+RUN apk del openssl-dev build-base
 
 ADD highlight.rb /highlight.rb
 

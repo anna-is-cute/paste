@@ -8,13 +8,13 @@
 <link
   title="dark"
   rel="stylesheet"
-  href="/static/css/highlight/atom-one-dark.css.css?v={{ resources_version }}"
-  integrity="sha384-8p/MWce3rPC6OCk06+hx29KENHIR68gGlRR/d8urJpqINX3/YHjNSOVMAIlqYNuz"/>
+  href="/static/css/highlight/tomorrow-night.css?v={{ resources_version }}"
+  integrity="sha384-/8tI8HgbxFyvWC/ie2AtdGKpK4oxDZ3e5Y54TqgmH9apyw5l7XFN8lqI2Qo2bC+f"/>
 <link
   title="light"
   rel="stylesheet alternate"
-  href="/static/css/highlightjs/atom-one-light.css?v={{ resources_version }}"
-  integrity="sha384-0aiASjhj77b5St45szzu0sXr0UP7bgrzRzbOCHNPa3p2GOqcS/4juAoCejY0j1nk"/>
+  href="/static/css/highlight/tomorrow.css?v={{ resources_version }}"
+  integrity="sha384-CjMS/azhoi4hiN5ZaI9dOIE/2MZmLjwiFghnRSac/9I3tWrhTLqxF0NpyK7+MOhd"/>
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
@@ -137,7 +137,7 @@ untitled paste
       <p class="subtitle hunk">
         <code>{{ hunk.header }}</code>
       </p>
-      <pre class="language-diff"><code>{{ hunk.diff }}</code></pre>
+      <pre class="diff file-source"><code>{{ hunk.diff | safe }}</code></pre>
       {% endfor %}
     </div>
   </div>

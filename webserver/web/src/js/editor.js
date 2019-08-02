@@ -1,10 +1,36 @@
-/* global hljs:false, CodeSass:false, luxon:false */
+/* global CodeSass:false, luxon:false */
 
 let pasteNum = 0;
 const pasteEditors = {};
 
 (function() {
   const DateTime = luxon.DateTime;
+
+  let ws;
+  connectWebSocket();
+
+  function connectWebSocket() {
+    ws = new WebSocket(`wss://${document.location.host}/highlight/`);
+    ws.addEventListener('close', connectWebSocket);
+    ws.addEventListener('error', connectWebSocket);
+    ws.addEventListener('message', msg => {
+      // find the first newline and split the data on it
+      let split = msg.data.indexOf('\n');
+      // the left side will be the paste number
+      let id = Number(msg.data.substring(0, split));
+      // the right side will be the highlighted content
+      let hl = msg.data.substring(split + 1);
+
+      // get the code element of the given editor
+      const code = pasteEditors[id].elCode;
+      // add the lang attribute to the <pre> if necessary
+      if (!code.parentElement.hasAttribute('lang')) {
+        code.parentElement.setAttribute('lang', '');
+      }
+      // update the inner html of the <code> element
+      code.innerHTML = hl;
+    });
+  }
 
   /**
    * Formats a UTC offset into "+04:30" format from a decimal like 4.5.
@@ -176,12 +202,13 @@ const pasteEditors = {};
   }
 
   function codeFlaskSucksHighlight(editor) {
-    hljs.highlightBlock(editor.elCode);
-    // remove the extra classes hljs adds without asking
-    for (const clazz of editor.elCode.classList) {
-      if (clazz !== 'hljs' && clazz !== 'codeflask__code' && !clazz.startsWith('language-')) {
-        editor.elCode.classList.remove(clazz);
-      }
+    // only use the websocket if it's connected
+    if (ws.readyState === ws.OPEN) {
+      // send a request over the websocket to highlight the code
+      // FIXME: send the file name or the lang name correctly, not just rust
+      ws.send(`${editor.pasteNum}\nrust\nsnippet\n${editor.elCode.innerText}`);
+
+      // when the response comes in, the editor will be updated. nothing else needs to be done here.
     }
   }
 
@@ -201,6 +228,7 @@ const pasteEditors = {};
       lineNumbers: true,
       language: 'plaintext',
     });
+    editor.pasteNum = pasteNum;
 
     const hidden = document.createElement('input');
     hidden.type = 'hidden';
@@ -231,9 +259,9 @@ const pasteEditors = {};
       } else if (nameInput.value !== '') {
         suffix = getSuffixFromName(nameInput.value);
       }
-      const lang = hljs.getLanguage(suffix) !== undefined ? suffix : 'plaintext';
-      editor.updateLanguage(lang);
-      editor.updateCode(editor.code);
+      // const lang = hljs.getLanguage(suffix) !== undefined ? suffix : 'plaintext';
+      // editor.updateLanguage(lang);
+      // editor.updateCode(editor.code);
     }
 
     nameInput.addEventListener('input', updateLanguage);

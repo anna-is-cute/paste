@@ -94,7 +94,7 @@
 
     function h(n, e) {
         return n.replace(/\{(\d+)\}/g, function(n, t) {
-            return e[t] ? e[t] : n;
+            return t in e && e[t] !== undefined ? e[t] : n;
         });
     }
     var f = "hljs-ln",

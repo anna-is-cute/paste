@@ -297,3 +297,13 @@ text = "Serde support for serialising and deserialising JSON."
 name = "csv"
 url = "https://github.com/BurntSushi/rust-csv"
 text = "CSV parsing library."
+
+[[backend]]
+name = "unic-langid"
+url = "https://github.com/zbraniecki/unic-locale"
+text = "Unicode language identifiers used for localisation."
+
+[[backend]]
+name = "fluent"
+url = "https://github.com/projectfluent/fluent-rs"
+text = "A localisation system for natural-sounding translations."

@@ -22,6 +22,7 @@ mod backend;
 mod config;
 mod database;
 mod errors;
+mod i18n;
 mod models;
 mod redis_store;
 mod routes;
@@ -111,6 +112,16 @@ fn main() {
   lazy_static::initialize(&CAMO_KEY);
   lazy_static::initialize(&CAMO_URL);
 
+  // Waiting on https://github.com/SergioBenitez/Rocket/issues/1064
+  // let bundles = match self::i18n::bundles() {
+  //   Ok(b) => b,
+  //   Err(e) => {
+  //     // FIXME: use display instead of debug
+  //     eprintln!("could not load localisation bundles: {:?}", e);
+  //     return;
+  //   },
+  // };
+
   rocket::ignite()
     .manage(database::init_pool())
     .manage(redis_store::init_pool())
@@ -121,7 +132,10 @@ fn main() {
     .attach(fairings::SecurityHeaders)
     .attach(fairings::LastPage::default())
     .attach(fairings::Push)
-    .attach(Template::fairing())
+    .attach(Template::custom(move |engines| {
+      let bundles = self::i18n::bundles().unwrap(); // FIXME: once this can take an FnOnce...
+      engines.tera.register_function("tr", self::i18n::tera_function(bundles));
+    }))
     .register(catchers![
       routes::bad_request,
       routes::forbidden,

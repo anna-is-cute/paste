@@ -24,10 +24,10 @@ impl<'a, 'r> FromRequest<'a, 'r> for AcceptLanguage {
   fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
     let langs = request.headers()
       .get("accept-language")
-      .flat_map(|x| x.split(","))
+      .flat_map(|x| x.split(','))
       // only accept 10 possible languages
       .take(10)
-      .map(|x| x.split(";").next().unwrap().trim())
+      .map(|x| x.split(';').next().unwrap().trim())
       .flat_map(parse_language_identifier)
       .collect();
     Outcome::Success(AcceptLanguage(langs))

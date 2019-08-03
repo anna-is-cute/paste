@@ -214,8 +214,8 @@ New
   <div class="requires-no-js field">
     <div class="control is-expanded">
       <label class="label">
-        {{ tr(_langs=langs, _msg="paste-antispam-math", a=antispam.no_js[0], b=antispam.no_js[1]) }}
-        <small><span class="has-text-grey-light tooltip is-tooltip-multiline is-dotted-underlined" data-tooltip="{{ tr(_langs=langs, _msg="paste-antispam-math", _attr="description") }}">{{ tr(_langs=langs, _msg="paste-antispam-math", _attr="why") }}</span></small>
+        {{ tr(_langs=langs, _msg="antispam-math", a=antispam.no_js[0], b=antispam.no_js[1]) }}
+        <small><span class="has-text-grey-light tooltip is-tooltip-multiline is-dotted-underlined" data-tooltip="{{ tr(_langs=langs, _msg="antispam-math", _attr="description") }}">{{ tr(_langs=langs, _msg="antispam-math", _attr="why") }}</span></small>
       </label>
       <input
         name="no-js-check"
@@ -232,7 +232,7 @@ New
   <script integrity="{{ antispam.integrity_hash | safe }}">{{ antispam.script | safe }}</script>
 
   <div class="control {{ honeypot.class }}">
-    <label class="label">{{ tr(_langs=langs, _msg="paste-antispam-honeypot") }}</label>
+    <label class="label">{{ tr(_langs=langs, _msg="antispam-honeypot", _attr="email") }}</label>
     <input tabindex="-1" aria-hidden="true" name="email" class="input" type="text" autocomplete="off"/>
   </div>
 

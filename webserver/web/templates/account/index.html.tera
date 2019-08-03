@@ -12,24 +12,24 @@
   integrity="sha384-BqtWYguIPWYURSpxEUBZYa+XHBMW9xa1CyH8yETv+bQ6eFUgDdLRSQGiohsGkmgY"></script>
 {%- endblock head %}
 
-{% block title -%}Account{%- endblock title %}
+{% block title -%}{{ tr(_langs=langs, _msg="account") }}{%- endblock title %}
 
 {% block header_title -%}
-Account
+{{ tr(_langs=langs, _msg="account") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Manage account settings.
+{{ tr(_langs=langs, _msg="account", _attr="description") }}
 {%- endblock header_subtitle %}
 
 {% block header_foot %}
 <nav class="tabs is-boxed">
   <div class="container">
     <ul>
-      <li class="is-active"><a href="{{ links.settings }}">Settings</a></li>
-      <li><a href="{{ links.keys }}">API keys</a></li>
-      <li><a href="{{ links.tfa }}">2FA</a></li>
-      <li><a href="{{ links.delete_account }}">Delete</a></li>
+      <li class="is-active"><a href="{{ links.settings }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="settings") }}</a></li>
+      <li><a href="{{ links.keys }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="api-keys") }}</a></li>
+      <li><a href="{{ links.tfa }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="two-factor") }}</a></li>
+      <li><a href="{{ links.delete_account }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="delete") }}</a></li>
     </ul>
   </div>
 </nav>
@@ -39,16 +39,16 @@ Manage account settings.
 {% if not user.email_verified %}
 <div class="message is-warning">
   <p class="message-header">
-    Your email is not verified!
+    {{ tr(_langs=langs, _msg="email-not-verified") }}
     <button class="delete" aria-label="delete"></button>
   </p>
   <div class="message-body">
     <p>
-      Click the button below to resend a verification email.
+      {{ tr(_langs=langs, _msg="email-not-verified", _attr="body") }}
     </p>
     <form action="{{ links.send_verification }}" method="post">
       <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
-      <button type="submit" class="button is-link">Send verification email</button>
+      <button type="submit" class="button is-link">{{ tr(_langs=langs, _msg="email-not-verified", _attr="button") }}</button>
     </form>
   </div>
 </div>
@@ -59,7 +59,7 @@ Manage account settings.
   <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">Display name</label>
+      <label class="label">{{ tr(_langs=langs, _msg="account-display-name") }}</label>
     </div>
     <div class="field-body">
       <div class="field">
@@ -80,7 +80,7 @@ Manage account settings.
   </div>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">Username</label>
+      <label class="label">{{ tr(_langs=langs, _msg="account-username") }}</label>
     </div>
     <div class="field-body">
       <div class="field">
@@ -99,7 +99,7 @@ Manage account settings.
           </span>
         </div>
         <p class="help">
-          Changing your username will invalidate all links with your username in them.
+          {{ tr(_langs=langs, _msg="account-username", _attr="help") }}
         </p>
       </div>
     </div>
@@ -107,25 +107,24 @@ Manage account settings.
   <hr/>
   <div class="field is-horizontal">
     <div class="field-label">
-      <label class="label">Avatar</label>
+      <label class="label">{{ tr(_langs=langs, _msg="account-avatar") }}</label>
     </div>
     <div class="field-body">
       <div class="field">
         <figure class="image is-128x128">
           <img
             src="{{ user_avatar_link }}"
-            alt="{{ user.username }} avatar"/>
+            alt="{{ tr(_langs=langs, _msg="avatar-alt", username=user.username) }}"/>
         </figure>
         <p class="help">
-          Your avatar is determined using an avatar provider linked to your email address. Changes
-          can be made to your avatar at whichever provider you have chosen.
+          {{ tr(_langs=langs, _msg="account-avatar", _attr="help") }}
         </p>
       </div>
     </div>
   </div>
   <div class="field is-horizontal">
     <div class="field-label">
-      <label class="label">Avatar provider</label>
+      <label class="label">{{ tr(_langs=langs, _msg="account-avatar-provider") }}</label>
     </div>
     <div class="field-body">
       <div class="field is-narrow">
@@ -139,7 +138,7 @@ Manage account settings.
               name="avatar_provider"
               value="gravatar"/>
             Gravatar
-            (<a href="https://gravatar.com/" class="external">link</a>)
+            (<a href="https://gravatar.com/" class="external">{{ tr(_langs=langs, _msg="account-avatar-provider", _attr="link") }}</a>)
           </label>
           <label class="radio">
             <input
@@ -150,7 +149,7 @@ Manage account settings.
               name="avatar_provider"
               value="libravatar"/>
             Libravatar
-            (<a href="https://www.libravatar.org/" class="external">link</a>)
+            (<a href="https://www.libravatar.org/" class="external">{{ tr(_langs=langs, _msg="account-avatar-provider", _attr="link") }}</a>)
           </label>
         </div>
       </div>
@@ -159,7 +158,7 @@ Manage account settings.
   <hr/>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">Email</label>
+      <label class="label">{{ tr(_langs=langs, _msg="account-email") }}</label>
     </div>
     <div class="field-body">
       <div class="field">
@@ -181,7 +180,7 @@ Manage account settings.
   <hr/>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">Change password</label>
+      <label class="label">{{ tr(_langs=langs, _msg="account-change-password") }}</label>
     </div>
     <div class="field-body">
       <div class="field">
@@ -207,7 +206,7 @@ Manage account settings.
           </div>
         </div>
         <p class="help">
-          Leave this blank to keep your password the same.
+          {{ tr(_langs=langs, _msg="account-change-password", _attr="help") }}
           <progress id="strength_progress" class="password progress is-marginless is-danger is-not-displayed" value="100" max="100"></progress>
           <span id="strength"></span>
           <span id="strength_warning" class="has-text-warning"></span>
@@ -217,7 +216,7 @@ Manage account settings.
   </div>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">Change password (again)</label>
+      <label class="label">{{ tr(_langs=langs, _msg="account-change-password-again") }}</label>
     </div>
     <div class="field-body">
       <div class="field has-addons">
@@ -245,7 +244,7 @@ Manage account settings.
   <hr/>
   <div class="field is-horizontal">
     <div class="field-label is-normal">
-      <label class="label">Current password</label>
+      <label class="label">{{ tr(_langs=langs, _msg="account-current-password") }}</label>
     </div>
     <div class="field-body">
       <div class="field">
@@ -269,22 +268,20 @@ Manage account settings.
           </div>
         </div>
         <p class="help">
-          Required to change any information.
+          {{ tr(_langs=langs, _msg="account-current-password", _attr="help") }}
         </p>
       </div>
     </div>
   </div>
   <div class="field is-horizontal">
-    <div class="field-label is-normal">
-      {# <label class="label">Password</label> #}
-    </div>
+    <div class="field-label is-normal"></div>
     <div class="field-body">
       <div class="field">
         <div class="control">
           <input
             class="button is-link"
             type="submit"
-            value="Change"/>
+            value="{{ tr(_langs=langs, _msg="account-submit") }}"/>
         </div>
       </div>
     </div>

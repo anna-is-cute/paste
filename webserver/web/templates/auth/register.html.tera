@@ -14,22 +14,22 @@
 {%- endblock head %}
 
 {% block title -%}
-Register
+{{ tr(_langs=langs, _msg="register") }}
 {%- endblock title %}
 
 {% block header_title -%}
-Register
+{{ tr(_langs=langs, _msg="register") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Create a new account.
+{{ tr(_langs=langs, _msg="register", _attr="description") }}
 {%- endblock header_subtitle %}
 
 {% block main %}
 <form method="post" action="{{ links.register_action }}">
   <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="field">
-    <label class="label">Display name</label>
+    <label class="label">{{ tr(_langs=langs, _msg="register-display-name") }}</label>
     <div class="control has-icons-left">
       <input
         required
@@ -39,7 +39,7 @@ Create a new account.
         class="input"
         type="text"
         {% if form.name %}value="{{ form.name }}"{% endif %}
-        placeholder="Jim Bob Jones"/>
+        placeholder="{{ tr(_langs=langs, _msg="register-display-name", _attr="placeholder") }}"/>
       <span class="icon is-small is-left">
         <i class="fas fa-id-card"></i>
       </span>
@@ -47,7 +47,7 @@ Create a new account.
   </div>
 
   <div class="field">
-    <label class="label">Username</label>
+    <label class="label">{{ tr(_langs=langs, _msg="register-username") }}</label>
     <div class="control has-icons-left">
       <input
         required
@@ -58,7 +58,7 @@ Create a new account.
         autocorrect="off"
         autocapitalize="off"
         {% if form.username %}value="{{ form.username }}"{% endif %}
-        placeholder="jimbo33"/>
+        placeholder="{{ tr(_langs=langs, _msg="register-username", _attr="placeholder") }}"/>
       <span class="icon is-small is-left">
         <i class="fas fa-user"></i>
       </span>
@@ -67,13 +67,13 @@ Create a new account.
 
   <div class="field {{ honeypot.class }}">
     <div class="control">
-      <label class="label">Title</label>
+      <label class="label">{{ tr(_langs=langs, _msg="antispam-honeypot", _attr="title") }}</label>
       <input tabindex="-1" aria-hidden="true" name="title" class="input" type="text" autocomplete="off"/>
     </div>
   </div>
 
   <div class="field">
-    <label class="label">Email</label>
+    <label class="label">{{ tr(_langs=langs, _msg="register-email") }}</label>
     <div class="control has-icons-left">
       <input
         required
@@ -82,7 +82,7 @@ Create a new account.
         class="input"
         type="email"
         {% if form.email %}value="{{ form.email }}"{% endif %}
-        placeholder="your@email.com"/>
+        placeholder="{{ tr(_langs=langs, _msg="register-email", _attr="placeholder") }}"/>
       <span class="icon is-small is-left">
         <i class="fas fa-envelope"></i>
       </span>
@@ -90,7 +90,7 @@ Create a new account.
   </div>
 
   <div class="field">
-    <label class="label">Password</label>
+    <label class="label">{{ tr(_langs=langs, _msg="register-password") }}</label>
     <div class="field has-addons">
       <div class="control is-expanded has-icons-left">
         <input
@@ -100,7 +100,7 @@ Create a new account.
           class="input"
           type="password"
           minlength="10"
-          placeholder="Something really secure, please <3"/>
+          placeholder="{{ tr(_langs=langs, _msg="register-password", _attr="placeholder") }}"/>
         <span class="icon is-small is-left">
           <i class="fas fa-asterisk"></i>
         </span>
@@ -121,7 +121,7 @@ Create a new account.
   </div>
 
   <div class="field">
-    <label class="label">Password (again)</label>
+    <label class="label">{{ tr(_langs=langs, _msg="register-password-again") }}</label>
     <div class="field has-addons">
       <div class="control is-expanded has-icons-left">
         <input
@@ -131,7 +131,7 @@ Create a new account.
           class="input"
           type="password"
           minlength="10"
-          placeholder="What you typed above"
+          placeholder="{{ tr(_langs=langs, _msg="register-password-again", _attr="placeholder") }}"
           required/>
         <span class="icon is-small is-left">
           <i class="fas fa-asterisk"></i>
@@ -149,7 +149,7 @@ Create a new account.
 
   <div class="field">
     <div class="control">
-      <button type="submit" class="button is-link">Submit</button>
+      <button type="submit" class="button is-link">{{ tr(_langs=langs, _msg="register-submit") }}</button>
     </div>
   </div>
 </form>

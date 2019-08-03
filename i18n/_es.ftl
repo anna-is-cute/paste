@@ -42,25 +42,6 @@ paste-expires = Expira
   .relative = relativo
   .absolute = absoluto
 
-paste-absolute-expiry =
-  .date = Expiry date
-  .time = Expiry time
-  .timezone = Expiry timezone
-
-paste-relative-expiry =
-  .years = Years
-  .days = Days
-  .hours = Hours
-  .minutes = Minutes
-
-# $a (number) first number to add
-# $b (number) second number to add
-paste-antispam-math = What is {$a} + {$b}?
-  .why = Why?
-  .description = Since you're not using JavaScript, paste requires you to answer this simple math question to foil simple bots. paste has an API if you're trying to do legitimate things!
-
-paste-antispam-honeypot = Email
-
 ## Paste UI
 
 paste-add-file = Añadir archivo
@@ -75,4 +56,7 @@ file-hello-world = Hello world!
 
 ## General inputs
 
-input-what-is-this = What is this?
+disp-num-files = {$files} {$files ->
+  [one] archivo
+ *[other] archivos
+}

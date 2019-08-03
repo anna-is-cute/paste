@@ -104,11 +104,11 @@ disp-file-binary-content = Binary content
 ## Revisions
 
 revisions-page-title =
-  .named = Revisions for ${name}
+  .named = Revisions for {$name}
   .unnamed = Revisions for {disp-untitled}
 
 revisions-title =
-  .named = Revisions for <span class="keeps-spaces">${name}</span>
+  .named = Revisions for <span class="keeps-spaces">{$name}</span>
   .unnamed = Revisions for <em>{disp-untitled}</em>
 
 revisions-subtitle = View the changes made to this paste.

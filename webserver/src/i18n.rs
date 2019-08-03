@@ -79,11 +79,15 @@ pub fn tera_function(bundles: Vec<FluentBundle<FluentResource>>) -> GlobalFn {
     let bundle = langs.iter()
       .flat_map(|l| bundles.iter().find(|b| b.locales.contains(l)))
       .next()
-      .or_else(|| bundles.iter().find(|b| b.locales.contains(&unic_langid::langid!("en"))))
+      .or_else(|| Some(&default_bundle))
       .ok_or_else(|| TeraError::from("missing translations"))?;
 
+    let mut fell_back = false;
     let message = bundle.get_message(&msg)
-      .or_else(|| default_bundle.get_message(&msg))
+      .or_else(|| {
+        fell_back = true;
+        default_bundle.get_message(&msg)
+      })
       .ok_or_else(|| TeraError::from(format!("missing message {} in translation {}", msg, bundle.locales[0])))?;
     let pattern = match attr {
       Some(attr) => message.attributes.get(attr.as_str())
@@ -105,6 +109,7 @@ pub fn tera_function(bundles: Vec<FluentBundle<FluentResource>>) -> GlobalFn {
       })
       .collect::<Result<_, _>>()?;
     let mut errors = Vec::new();
+    let bundle = if fell_back { default_bundle } else { bundle };
     let output = bundle.format_pattern(
       &pattern,
       Some(&args),

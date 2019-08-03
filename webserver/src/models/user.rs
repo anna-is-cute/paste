@@ -28,19 +28,19 @@ pub enum AvatarProvider {
 }
 
 impl AvatarProvider {
-  pub fn domain(&self) -> &str {
-    match *self {
+  pub fn domain(self) -> &'static str {
+    match self {
       AvatarProvider::Gravatar => "gravatar.com",
       AvatarProvider::Libravatar => "seccdn.libravatar.org",
     }
   }
 
-  pub fn hash(&self, s: &str) -> String {
+  pub fn hash(self, s: &str) -> String {
     thread_local! {
       static MD5: RefCell<Md5> = RefCell::new(Md5::new());
     }
 
-    match *self {
+    match self {
       AvatarProvider::Gravatar => MD5.with(|m| {
         let mut m = m.borrow_mut();
         m.input_str(s);

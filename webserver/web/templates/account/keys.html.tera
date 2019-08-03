@@ -4,24 +4,24 @@
 {{ super() }}
 {%- endblock head %}
 
-{% block title -%}API keys{%- endblock title %}
+{% block title -%}{{ tr(_langs=langs, _msg="api-keys") }}{%- endblock title %}
 
 {% block header_title -%}
-API keys
+{{ tr(_langs=langs, _msg="api-keys") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Manage API keys.
+{{ tr(_langs=langs, _msg="api-keys", _attr="description") }}
 {%- endblock header_subtitle %}
 
 {% block header_foot %}
 <nav class="tabs is-boxed">
   <div class="container">
     <ul>
-      <li><a href="{{ links.settings }}">Settings</a></li>
-      <li class="is-active"><a href="{{ links.keys }}">API keys</a></li>
-      <li><a href="{{ links.tfa }}">2FA</a></li>
-      <li><a href="{{ links.delete_account }}">Delete</a></li>
+      <li><a href="{{ links.settings }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="settings") }}</a></li>
+      <li class="is-active"><a href="{{ links.keys }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="api-keys") }}</a></li>
+      <li><a href="{{ links.tfa }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="two-factor") }}</a></li>
+      <li><a href="{{ links.delete_account }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="delete") }}</a></li>
     </ul>
   </div>
 </nav>
@@ -32,8 +32,8 @@ Manage API keys.
 <table class="table is-striped is-middle">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Key</th>
+      <th>{{ tr(_langs=langs, _msg="api-keys-table-header", _attr="name") }}</th>
+      <th>{{ tr(_langs=langs, _msg="api-keys-table-header", _attr="key") }}</th>
       <th></th>
     </tr>
   </thead>
@@ -54,17 +54,17 @@ Manage API keys.
 {% endfor %}
 </table>
 {% else %}
-<em>You have no keys!</em>
+<em>{{ tr(_langs=langs, _msg="api-keys-no-keys") }}</em>
 {% endif %}
 <hr/>
 <form action="{{ links.add_key }}" method="post">
   <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="field has-addons">
     <div class="control">
-      <input class="input" type="text" name="name" placeholder="Key name" required/>
+      <input class="input" type="text" name="name" placeholder="{{ tr(_langs=langs, _msg="api-key-add", _attr="name-placeholder") }}" required/>
     </div>
     <div class="control">
-      <input class="button is-link" type="submit" value="Add"/>
+      <input class="button is-link" type="submit" value="{{ tr(_langs=langs, _msg="api-key-add", _attr="submit") }}"/>
     </div>
   </div>
 </form>

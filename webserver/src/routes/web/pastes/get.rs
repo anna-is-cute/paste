@@ -17,6 +17,7 @@ use crate::{
   utils::{
     csv::csv_to_table,
     post_processing,
+    AcceptLanguage,
     Language,
   },
   websocket::WebSocket,
@@ -111,7 +112,7 @@ pub fn username_id(username: String, id: PasteId) -> Redirect {
 }
 
 #[get("/p/<username>/<id>")]
-pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut ws: WebSocket) -> Result<Rst> {
+pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut ws: WebSocket, langs: AcceptLanguage) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -212,7 +213,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
       )),
   );
 
-  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
   ctx["paste"] = json!(output);
   ctx["num_commits"] = json!(paste.num_commits(&*config)?);
   ctx["rendered"] = json!(rendered);
@@ -228,7 +229,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 }
 
 #[get("/p/<username>/<id>/edit")]
-pub fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
   let user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
@@ -290,7 +291,7 @@ pub fn edit(username: String, id: PasteId, config: State<Config>, user: Optional
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
 
-  let mut ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess, langs);
   ctx["paste"] = json!(output);
   ctx["languages"] = json!(Language::context());
   ctx["num_commits"] = json!(paste.num_commits(&*config)?);

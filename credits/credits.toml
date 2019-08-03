@@ -307,3 +307,13 @@ text = "Highlights pastes on the backend."
 name = "websocket"
 url = "https://github.com/websockets-rs/rust-websocket"
 text = "Websocket support used for highlighting."
+
+[[backend]]
+name = "unic-langid"
+url = "https://github.com/zbraniecki/unic-locale"
+text = "Unicode language identifiers used for localisation."
+
+[[backend]]
+name = "fluent"
+url = "https://github.com/projectfluent/fluent-rs"
+text = "A localisation system for natural-sounding translations."

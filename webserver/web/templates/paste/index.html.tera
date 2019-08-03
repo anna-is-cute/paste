@@ -45,7 +45,7 @@
   {%- elif paste.files | length > 0 -%}
     {{ paste.files[0].name }}
   {%- else -%}
-    untitled paste
+    {{ tr(_langs=langs, _msg="disp-untitled") }}
   {%- endif -%}
   {%- if paste.author %} by {{ paste.author.username }}{%- endif -%}
 {%- endblock title %}
@@ -83,7 +83,7 @@
             <img
               class="is-less-rounded"
               src="{{ links.author_avatar }}"
-              alt="{{ paste.author.username }} avatar"/>
+              alt="{{ tr(_langs=langs, _msg="avatar-alt", username=paste.author.username) }}"/>
           </figure>
           <span class="keeps-spaces">{{ paste.author.name }}</span>
         </a>
@@ -92,7 +92,7 @@
         {% if paste.name %}
           <span class="keeps-spaces">{{ paste.name }}</span>
         {% else %}
-          <em>untitled paste</em>
+          <em>{{ tr(_langs=langs, _msg="disp-untitled") }}</em>
         {% endif %}
         </h1>
         {% if paste.description %}
@@ -107,20 +107,20 @@
     <div class="paste container">
       {% set file_count = paste.files | length %}
       <div class="right paste info">
-        <span>{{ paste.visibility }}</span>
-        <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
+        <span>{{ tr(_langs=langs, _msg="paste-visibility", _attr=paste.visibility) }}</span>
+        <span>{{ tr(_langs=langs, _msg="disp-num-files", files=paste.files | length) }}</span>
         <span class="timestamp" data-timestamp="{{ paste.created_at }}">{{ paste.created_at | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         {% if paste.expires %}
         <span>
-          expires
+          {{ tr(_langs=langs, _msg="disp-expires") }}
           <span class="timestamp" data-timestamp="{{ paste.expires }}">{{ paste.expires | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         </span>
         {% endif %}
       </div>
       <div class="left tabs">
         <ul>
-          <li class="is-active"><a href="{{ links.files  }}">files</a></li>
-          <li><a href="{{ links.revisions }}">revisions <span class="right tag">{{ num_commits }}</span></a></li>
+          <li class="is-active"><a href="{{ links.files  }}">{{ tr(_langs=langs, _msg="disp-tab-files") }}</a></li>
+          <li><a href="{{ links.revisions }}">{{ tr(_langs=langs, _msg="disp-tab-revisions") }} <span class="right tag">{{ num_commits }}</span></a></li>
         </ul>
       </div>
     </div>
@@ -137,15 +137,14 @@
     <div class="modal-background closes-modal" data-modal-id="deletion_modal"></div>
     <div class="modal-card">
       <header class="modal-card-head">
-        <p class="modal-card-title">Delete paste</p>
+        <p class="modal-card-title">{{ tr(_langs=langs, _msg="disp-delete-title") }}</p>
         <button class="delete closes-modal" data-modal-id="deletion_modal" aria-label="close" type="button"></button>
       </header>
       <section class="modal-card-body">
       {% if not paste.author %}
         <div class="content">
           <p>
-            To delete an anonymous paste, you need to use its deletion key. Enter it below and click
-            "Delete" to delete this paste.
+            {{ tr(_langs=langs, _msg="disp-delete-description") }}
           </p>
         </div>
         <input
@@ -157,18 +156,18 @@
           autocorrect="off"
           autocapitalize="off"
           class="input"
-          placeholder="Deletion key"/>
+          placeholder="{{ tr(_langs=langs, _msg="disp-delete-key-placeholder") }}"/>
       {% endif %}
       {% if is_owner %}
         <div class="content">
           <p>
-            Please confirm you would like to delete this paste.
+            {{ tr(_langs=langs, _msg="disp-delete-confirm") }}
           </p>
         </div>
       {% endif %}
       </section>
       <footer class="modal-card-foot">
-        <button class="button is-danger" type="submit">Delete</button>
+        <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="disp-delete-button") }}</button>
       </footer>
     </div>
   </form>
@@ -177,17 +176,15 @@
 {% if deletion_key %}
 <div class="message is-info">
   <p class="message-header">
-    Deletion key
+    {{ tr(_langs=langs, _msg="disp-dkey-title") }}
     <button class="delete" aria-label="delete"></button>
   </p>
   <div class="message-body">
     <p>
-      In order to delete this paste, you will need to use the key below. This message will only
-      appear once.
+      {{ tr(_langs=langs, _msg="disp-dkey-msg-1") }}
     </p>
     <p>
-      Note that this key is saved on <em>this browser only</em> for 30 days. If you clear the cache,
-      the key will be lost.
+      {{ tr(_langs=langs, _msg="disp-dkey-msg-2") | safe }}
     </p>
     <p>
       <code id="deletion_key" data-paste-id="{{ paste.id }}">{{ deletion_key }}</code>
@@ -207,13 +204,13 @@
       {% if file.content.format == "text" and rendered[file.id] %}
       <div class="paste-tabs tabs" id="{{ file.id }}-tab-links">
         <ul>
-          <li class="paste-rendered-tab is-active"><a>Rendered</a></li>
-          <li class="paste-source-tab"><a>Source</a></li>
+          <li class="paste-rendered-tab is-active"><a>{{ tr(_langs=langs, _msg="disp-file-tab-rendered") }}</a></li>
+          <li class="paste-source-tab"><a>{{ tr(_langs=langs, _msg="disp-file-tab-source") }}</a></li>
         </ul>
       </div>
       {% endif %}
     </div>
-    <a class="is-pulled-right button" href="{{ links.raw_files[file.id] }}">Raw</a>
+    <a class="is-pulled-right button" href="{{ links.raw_files[file.id] }}">{{ tr(_langs=langs, _msg="disp-file-raw") }}</a>
   </div>
   {% endif %}
   {% if notices[file.id] %}
@@ -263,7 +260,7 @@
     </div>
     {% endif %}
   {% else %}
-    Binary content
+    {{ tr(_langs=langs, _msg="disp-file-binary-content") }}
   {% endif %}
 </div>
 {% endfor %}

@@ -11,6 +11,7 @@ use crate::{
     paste::output::{Output, OutputAuthor, OutputFile},
   },
   routes::web::{context, Rst, OptionalWebUser, Session},
+  utils::AcceptLanguage,
   websocket::WebSocket,
 };
 
@@ -27,7 +28,7 @@ use rouge::{HighlightKind, Rouge};
 use serde_json::json;
 
 #[get("/p/<username>/<id>/revisions")]
-pub fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut ws: WebSocket) -> Result<Rst> {
+pub fn get(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut ws: WebSocket, langs: AcceptLanguage) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -157,7 +158,7 @@ pub fn get(username: String, id: PasteId, config: State<Config>, user: OptionalW
 
   let author_name = output.author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
 
-  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
   ctx["paste"] = json!(output);
   ctx["num_commits"] = json!(count);
   ctx["author_name"] = json!(author_name);

@@ -43,9 +43,9 @@
 
 {% block title -%}
   {% if paste.name %}
-Edit {{ paste.name }}
+    {{ tr(_langs=langs, _msg="edit-page-title", _attr="named", name=paste.name) }}
   {% else %}
-Edit untitled paste
+    {{ tr(_langs=langs, _msg="edit-page-title", _attr="unnamed") }}
   {% endif %}
 {%- endblock title %}
 
@@ -54,28 +54,26 @@ Edit untitled paste
   <div class="paste hero-body">
     <div class="container">
       <h1 class="title">
-        Edit
       {% if paste.name %}
-        <span class="keeps-spaces">{{ paste.name }}</span>
+        {{ tr(_langs=langs, _msg="edit-title", _attr="named", name=paste.name) | safe }}
       {% else %}
-        <em>untitled paste</em>
+        {{ tr(_langs=langs, _msg="edit-title", _attr="unnamed") | safe }}
       {% endif %}
       </h1>
       <h2 class="subtitle">
-        Change this paste<span class="requires-js"> and its files</span>.
+        {{ tr(_langs=langs, _msg="edit-subtitle") | safe }}
       </h2>
     </div>
   </div>
   <div class="hero-foot">
     <div class="paste container">
-      {% set file_count = paste.files | length %}
       <div class="right paste info">
-        <span>{{ paste.visibility }}</span>
-        <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
+        <span>{{ tr(_langs=langs, _msg="paste-visibility", _attr=paste.visibility) }}</span>
+        <span>{{ tr(_langs=langs, _msg="disp-num-files", files=paste.files | length) }}</span>
         <span class="timestamp" data-timestamp="{{ paste.created_at }}">{{ paste.created_at | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         {% if paste.expires %}
         <span>
-          expires
+          {{ tr(_langs=langs, _msg="disp-expires") }}
           <span class="timestamp" data-timestamp="{{ paste.expires }}">{{ paste.expires | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         </span>
         {% endif %}

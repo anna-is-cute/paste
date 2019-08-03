@@ -8,7 +8,7 @@ use crate::{
   errors::*,
   models::id::UserId,
   routes::web::{context, AddCsp, Honeypot, Rst, OptionalWebUser, Session},
-  utils::{email, PasswordContext, HashedPassword, Validator},
+  utils::{email, AcceptLanguage, PasswordContext, HashedPassword, Validator},
 };
 
 use chrono::Utc;
@@ -30,13 +30,13 @@ use sidekiq::Client as SidekiqClient;
 use uuid::Uuid;
 
 #[get("/register")]
-pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Rst> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> AddCsp<Rst> {
   if user.is_some() {
     return AddCsp::none(Rst::Redirect(Redirect::to(uri!(crate::routes::web::index::get))));
   }
 
   let honeypot = Honeypot::new();
-  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
   ctx["honeypot"] = json!(honeypot);
   ctx["links"] = json!(links!(
     "register_action" => uri!(crate::routes::web::auth::register::post),

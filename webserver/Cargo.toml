@@ -13,8 +13,11 @@ ignore = [
   "rocket_contrib",
   # see serde
   "serde_derive",
+  # my own crate
   "rouge",
-  "spanner",
+  # both handled by a "fluent" credit
+  "fluent-bundle",
+  "fluent-syntax",
 ]
 
 exclude = [
@@ -144,6 +147,15 @@ csv = "1"
 
 # highlighting
 rouge = { git = "https://gitlab.com/jkcclemens/paste_rouge", branch = "websockets" }
+
+# language ids for localisation
+unic-langid = "0.4"
+
+# localisation
+fluent-bundle = "0.7"
+
+# localisation
+fluent-syntax = "0.9"
 
 # web logic
 [dependencies.rocket]

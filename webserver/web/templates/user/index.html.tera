@@ -39,7 +39,7 @@
 {%- endblock head %}
 
 {% block title -%}
-{{ target.name }}'s pastes
+{{ tr(_langs=langs, _msg="user-title", name=target.name) }}
 {%- endblock title %}
 
 {% block header %}
@@ -51,7 +51,7 @@
         <div class="field is-grouped">
           <div class="control">
             <button id="delete-button" class="button is-danger is-hidden requires-js opens-modal" data-modal-id="deletion_modal">
-              Delete selected
+              {{ tr(_langs=langs, _msg="user-delete-selected") }}
             </button>
           </div>
         </div>
@@ -62,14 +62,14 @@
           <img
             class="is-less-rounded"
             src="{{ links.target_avatar }}"
-            alt="{{ target.username }} avatar"/>
+            alt="{{ tr(_langs=langs, _msg="avatar-alt", username=target.username) }}"/>
         </figure>
         <div>
           <h1 class="title">
-            {{ target.name }}'s pastes
+            {{ tr(_langs=langs, _msg="user-title", name=target.name) }}
           </h1>
           <h2 class="subtitle">
-            {{ total }} paste{{ total | pluralize }}.
+            {{ tr(_langs=langs, _msg="user-num-pastes", pastes=total) }}
           </h2>
         </div>
       </div>
@@ -87,18 +87,18 @@
     <div class="modal-background closes-modal" data-modal-id="deletion_modal"></div>
     <div class="modal-card">
       <header class="modal-card-head">
-        <p class="modal-card-title">Delete pastes</p>
+        <p class="modal-card-title">{{ tr(_langs=langs, _msg="user-delete") }}</p>
         <button class="delete closes-modal" data-modal-id="deletion_modal" aria-label="close" type="button"></button>
       </header>
       <section class="modal-card-body">
         <div class="content">
           <p>
-            Please confirm you would like to delete the selected pastes.
+            {{ tr(_langs=langs, _msg="user-delete", _attr="body") }}
           </p>
         </div>
       </section>
       <footer class="modal-card-foot">
-        <button class="button is-danger" type="submit">Delete all</button>
+        <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="user-delete", _attr="button") }}</button>
       </footer>
     </div>
   </form>
@@ -108,7 +108,7 @@
 <div class="select-all dropdown is-hoverable requires-js">
   <div class="dropdown-trigger">
     <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-      <span>Select</span>
+      <span>{{ tr(_langs=langs, _msg="user-select") }}</span>
       <span class="icon is-small">
         <i class="fas fa-angle-down" aria-hidden="true"></i>
       </span>
@@ -116,8 +116,8 @@
   </div>
   <div class="dropdown-menu" id="dropdown-menu" role="menu">
     <div class="dropdown-content">
-      <a id="select-all" class="dropdown-item">All</a>
-      <a id="select-none" class="dropdown-item">None</a>
+      <a id="select-all" class="dropdown-item">{{ tr(_langs=langs, _msg="user-select", _attr="all") }}</a>
+      <a id="select-none" class="dropdown-item">{{ tr(_langs=langs, _msg="user-select", _attr="none") }}</a>
     </div>
   </div>
 </div>
@@ -130,14 +130,14 @@
 {% if last_page > 1 %}
 <nav class="pagination is-centered" role="navigation" aria-label="pagination">
   {% if page == 1 %}
-    <a class="pagination-previous" disabled>Previous</a>
+    <a class="pagination-previous" disabled>{{ tr(_langs=langs, _msg="pagination", _attr="previous") }}</a>
   {% else %}
-    <a href="{{ links.prev_page }}" class="pagination-previous">Previous</a>
+    <a href="{{ links.prev_page }}" class="pagination-previous">{{ tr(_langs=langs, _msg="pagination", _attr="previous") }}</a>
   {% endif %}
   {% if page == last_page %}
-    <a class="pagination-next" disabled>Next</a>
+    <a class="pagination-next" disabled>{{ tr(_langs=langs, _msg="pagination", _attr="next") }}</a>
   {% else %}
-    <a href="{{ links.next_page }}" class="pagination-next">Next</a>
+    <a href="{{ links.next_page }}" class="pagination-next">{{ tr(_langs=langs, _msg="pagination", _attr="next") }}</a>
   {% endif %}
 </nav>
 
@@ -145,7 +145,7 @@
 {% endif %}
 
 {% if pastes | length == 0 %}
-  <em>It looks like {{ target.name }} has no pastes!</em>
+  <em>{{ tr(_langs=langs, _msg="user-no-pastes", name=target.name) }}</em>
 {% endif %}
 {% for paste in pastes %}
   <div class="box">
@@ -163,7 +163,7 @@
           {% if paste.name %}
               <span class="keeps-spaces">{{ paste.name }}</span>
           {% else %}
-              <em>untitled paste</em>
+              <em>{{ tr(_langs=langs, _msg="disp-untitled") }}</em>
           {% endif %}
             </a>
           </h3>
@@ -176,12 +176,12 @@
       </div>
       {% set file_count = paste.files | length %}
       <div class="paste info">
-        <span>{{ paste.visibility }}</span>
-        <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
+        <span>{{ tr(_langs=langs, _msg="paste-visibility", _attr=paste.visibility) }}</span>
+        <span>{{ tr(_langs=langs, _msg="disp-num-files", files=paste.files | length) }}</span>
         <span class="timestamp" data-timestamp="{{ paste.created_at }}">{{ paste.created_at | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         {% if paste.expires %}
         <span>
-          expires
+          {{ tr(_langs=langs, _msg="disp-expires") }}
           <span class="timestamp" data-timestamp="{{ paste.expires }}">{{ paste.expires | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         </span>
         {% endif %}
@@ -206,14 +206,14 @@
   {% set last_page = total / 15 %}
   {% set last_page = last_page | round(method="ceil") %}
   {% if page == 1 %}
-    <a class="pagination-previous" disabled>Previous</a>
+    <a class="pagination-previous" disabled>{{ tr(_langs=langs, _msg="pagination", _attr="previous") }}</a>
   {% else %}
-    <a href="{{ links.prev_page }}" class="pagination-previous">Previous</a>
+    <a href="{{ links.prev_page }}" class="pagination-previous">{{ tr(_langs=langs, _msg="pagination", _attr="previous") }}</a>
   {% endif %}
   {% if page == last_page %}
-    <a class="pagination-next" disabled>Next</a>
+    <a class="pagination-next" disabled>{{ tr(_langs=langs, _msg="pagination", _attr="next") }}</a>
   {% else %}
-    <a href="{{ links.next_page }}" class="pagination-next">Next</a>
+    <a href="{{ links.next_page }}" class="pagination-next">{{ tr(_langs=langs, _msg="pagination", _attr="next") }}</a>
   {% endif %}
 </nav>
 {% endif %}

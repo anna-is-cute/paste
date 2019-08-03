@@ -4,6 +4,7 @@ use crate::{
   errors::*,
   models::id::ApiKeyId,
   routes::web::{context, Links, Rst, OptionalWebUser, Session},
+  utils::AcceptLanguage,
 };
 
 use rocket::{
@@ -16,7 +17,7 @@ use rocket_contrib::templates::Template;
 use serde_json::json;
 
 #[get("/account/keys")]
-pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
@@ -24,7 +25,7 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn
 
   let keys = user.keys(&conn)?;
 
-  let mut ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess, langs);
   ctx["keys"] = json!(&keys);
   ctx["links"] = json!(
     links!(super::account_links(),

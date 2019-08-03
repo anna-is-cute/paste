@@ -26,6 +26,9 @@ pub fn bundles() -> Result<Vec<FluentBundle<FluentResource>>, I18nError> {
   let mut bundles = Vec::new();
   for entry in Path::new("./i18n/").read_dir().map_err(I18nError::Io)? {
     let entry = entry.map_err(I18nError::Io)?.path();
+    if entry.extension() != Some(std::ffi::OsStr::new("ftl")) {
+      continue;
+    }
     let lang_id = match entry.file_stem().and_then(OsStr::to_str) {
       Some(s) => s,
       None => continue,

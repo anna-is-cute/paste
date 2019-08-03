@@ -160,10 +160,6 @@ file-name-placeholder = File name with extension
 file-language-auto = auto
 file-hello-world = Hello world!
 
-## General inputs
-
-input-what-is-this = What is this?
-
 ## About
 
 about-title = About

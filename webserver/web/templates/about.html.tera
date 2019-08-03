@@ -5,20 +5,22 @@
 {%- endblock head %}
 
 {% block title -%}
-About
+{{ tr(_langs=langs, _msg="about-title") }}
 {%- endblock title %}
 
 {% block header_title -%}
-About
+{{ tr(_langs=langs, _msg="about-title") }}
 {%- endblock header_title %}
 
 {% block main %}
 <div class="content">
   {{ about | safe }}
   <p>
-    {{ config.general.site_name }} runs on
-    <a class="external" href="https://github.com/jkcclemens/paste">paste</a>, an open-source project
-    dedicated to making a sensible, modern pastebin that anyone can host.
+    {{ tr(_langs=langs, _msg="about-blurb", _attr="before", siteName=config.general.site_name) }}
+    <a class="external" href="https://github.com/jkcclemens/paste">
+      {{ tr(_langs=langs, _msg="about-blurb", _attr="paste", siteName=config.general.site_name) }}
+    </a>
+    {{ tr(_langs=langs, _msg="about-blurb", _attr="after", siteName=config.general.site_name) }}
   </p>
 </div>
 {% endblock main %}

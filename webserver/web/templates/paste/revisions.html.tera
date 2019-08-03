@@ -38,11 +38,10 @@
 {%- endblock head %}
 
 {% block title -%}
-  Revisions for
   {% if paste.name %}
-{{ paste.name }}
+    {{ tr(_langs=langs, _msg="revisions-page-title", _attr="named", name=paste.name) }}
   {% else %}
-untitled paste
+    {{ tr(_langs=langs, _msg="revisions-page-title", _attr="unnamed") }}
   {% endif %}
 {%- endblock title %}
 
@@ -74,15 +73,14 @@ untitled paste
       </div>
       <div class="left">
         <h1 class="title">
-          Revisions for
         {% if paste.name %}
-          <span class="keeps-spaces">{{ paste.name }}</span>
+          {{ tr(_langs=langs, _msg="revisions-title", _attr="named", name=paste.name) | safe }}
         {% else %}
-          <em>untitled paste</em>
+          {{ tr(_langs=langs, _msg="revisions-title", _attr="unnamed") | safe }}
         {% endif %}
         </h1>
         <h2 class="subtitle">
-          View the changes made to this paste.
+          {{ tr(_langs=langs, _msg="revisions-subtitle") }}
         </h2>
       </div>
     </div>
@@ -91,20 +89,20 @@ untitled paste
     <div class="paste container">
       {% set file_count = paste.files | length %}
       <div class="right paste info">
-        <span>{{ paste.visibility }}</span>
-        <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
+        <span>{{ tr(_langs=langs, _msg="paste-visibility", _attr=paste.visibility) }}</span>
+        <span>{{ tr(_langs=langs, _msg="disp-num-files", files=paste.files | length) }}</span>
         <span class="timestamp" data-timestamp="{{ paste.created_at }}">{{ paste.created_at | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         {% if paste.expires %}
         <span>
-          expires
+          {{ tr(_langs=langs, _msg="disp-expires") }}
           <span class="timestamp" data-timestamp="{{ paste.expires }}">{{ paste.expires | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         </span>
         {% endif %}
       </div>
       <div class="left tabs">
         <ul>
-          <li><a href="{{ links.files }}">files</a></li>
-          <li class="is-active"><a href="{{ links.revisions }}">revisions <span class="right tag">{{ num_commits }}</span></a></li>
+          <li><a href="{{ links.files }}">{{ tr(_langs=langs, _msg="disp-tab-files") }}</a></li>
+          <li class="is-active"><a href="{{ links.revisions }}">{{ tr(_langs=langs, _msg="disp-tab-revisions") }} <span class="right tag">{{ num_commits }}</span></a></li>
         </ul>
       </div>
     </div>
@@ -127,7 +125,7 @@ untitled paste
         {% if revision.file_name %}
           <span class="keeps-spaces">{{ revision.file_name }}</span>
         {% else %}
-          <em>unknown file</em>
+          <em>{{ tr(_langs=langs, _msg="revisions-unknown-file") }}</em>
         {% endif %}
         </h2>
       </div>

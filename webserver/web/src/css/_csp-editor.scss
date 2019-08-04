@@ -1,0 +1,47 @@
+$line-height: 1.2;
+
+div.editor {
+  display: grid;
+  grid-template-areas: "editor";
+
+  height: 400px;
+  font-family: monospace;
+  font-size: 1em;
+  line-height: $line-height;
+
+  textarea {
+    grid-area: editor;
+    z-index: 1;
+    font-size: inherit;
+
+    padding: .625em;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: transparent;
+    caret-color: $body-color;
+    line-height: $line-height;
+    border: 2px solid $grey-dark;
+  }
+
+  .highlight {
+    grid-area: editor;
+    overflow-y: hidden;
+
+    &:not(:last-child) {
+      margin-bottom: 0;
+    }
+
+    pre {
+      font-size: inherit;
+      min-height: 100%;
+      width: 100%;
+      line-height: $line-height;
+      padding: .625em;
+      margin: 0;
+      border: none;
+      overflow-y: hidden;
+      border: 2px solid transparent;
+    }
+  }
+}

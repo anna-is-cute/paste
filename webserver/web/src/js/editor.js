@@ -1,4 +1,4 @@
-/* global CodeSass:false, luxon:false */
+/* global Editor:false, luxon:false */
 
 let pasteNum = 0;
 const pasteEditors = {};
@@ -15,14 +15,17 @@ const pasteEditors = {};
     ws.addEventListener('error', connectWebSocket);
     ws.addEventListener('message', msg => {
       // find the first newline and split the data on it
-      let split = msg.data.indexOf('\n');
+      const split = msg.data.indexOf('\n');
       // the left side will be the paste number
-      let id = Number(msg.data.substring(0, split));
+      const id = Number(msg.data.substring(0, split));
       // the right side will be the highlighted content
-      let hl = msg.data.substring(split + 1);
+      const hl = msg.data.substring(split + 1);
 
       // get the code element of the given editor
-      const code = pasteEditors[id].elCode;
+      const code = document.getElementById(`highlight-${id}`);
+      if (code === null) {
+        return;
+      }
       // add the lang attribute to the <pre> if necessary
       if (!code.parentElement.hasAttribute('lang')) {
         code.parentElement.setAttribute('lang', '');
@@ -201,15 +204,42 @@ const pasteEditors = {};
     return files;
   }
 
-  function codeFlaskSucksHighlight(editor) {
+  function highlight(pasteNum, input) {
     // only use the websocket if it's connected
-    if (ws.readyState === ws.OPEN) {
-      // send a request over the websocket to highlight the code
-      // FIXME: send the file name or the lang name correctly, not just rust
-      ws.send(`${editor.pasteNum}\nrust\nsnippet\n${editor.elCode.innerText}`);
-
-      // when the response comes in, the editor will be updated. nothing else needs to be done here.
+    if (ws.readyState !== ws.OPEN) {
+      return document.createElement('pre');
     }
+
+    // get the file for this editor
+    const file = pasteEditors[pasteNum].wrapper.parentElement.parentElement.parentElement;
+    // check to see if an override has been set
+    const override = file.querySelector('select[name=file_language]').value;
+    let name, type;
+    if (override === '') {
+      // if no override, use the file name for highlighting
+      name = file.querySelector('input[name=file_name]').value;
+      type = 'file';
+    } else {
+      // otherwise use the language name
+      name = override;
+      type = 'snippet';
+    }
+    // send a request for highlighting
+    // note that the websocket's message event handler will handle updating the highlighting
+    ws.send(`${pasteNum}\n${name}\n${type}\n${input}`);
+
+    // return a new pre > code if none exists, otherwise use the existing one
+    const code = document.getElementById(`highlight-${pasteNum}`);
+
+    if (code === null) {
+      const newPre = document.createElement('pre');
+      const newCode = document.createElement('code');
+      newCode.id = `highlight-${pasteNum}`;
+      newPre.appendChild(newCode);
+      return newPre;
+    }
+
+    return code.parentElement;
   }
 
   /**
@@ -219,14 +249,11 @@ const pasteEditors = {};
    * @param {HTMLElement} el The element to convert into an editor.
    */
   function setUpEditor(parent, el) {
-    const div = document.createElement('div');
+    el.style.height = '400px';
 
-    div.style.height = '400px';
-
-    const editor = new CodeSass(div, {
-      defaultTheme: false,
-      lineNumbers: true,
-      language: 'plaintext',
+    // can't use arrow function because of `this`
+    const editor = new Editor(el, async function(input) {
+      return highlight(this.pasteNum, input);
     });
     editor.pasteNum = pasteNum;
 
@@ -234,12 +261,7 @@ const pasteEditors = {};
     hidden.type = 'hidden';
     hidden.name = 'file_content';
     hidden.id = 'hidden_content';
-    editor.editorRoot.insertAdjacentElement('afterend', hidden);
-
-    editor.elCode.style.background = 'none';
-    editor.elCode.style.padding = '0';
-
-    editor.setHighlightCallback(codeFlaskSucksHighlight);
+    el.insertAdjacentElement('afterend', hidden);
 
     const nameInput = parent.querySelector('input[name=file_name]');
     const langInput = parent.querySelector('select[name=file_language]');
@@ -267,9 +289,9 @@ const pasteEditors = {};
     nameInput.addEventListener('input', updateLanguage);
     langInput.addEventListener('change', updateLanguage);
 
-    updateLanguage();
-    editor.updateCode(el.value);
-    editor.createLineNumbers(); // TODO: fix this in codesass
+    // updateLanguage();
+    // editor.updateCode(el.value);
+    // editor.createLineNumbers(); // TODO: fix this in codesass
 
     const toDelete = pasteNum;
     parent
@@ -277,9 +299,6 @@ const pasteEditors = {};
       .addEventListener('click', () => removeFile(toDelete));
 
     pasteEditors[pasteNum] = editor;
-
-    el.insertAdjacentElement('beforebegin', div);
-    el.remove();
   }
 
   function addFile() {

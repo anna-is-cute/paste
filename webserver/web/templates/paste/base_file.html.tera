@@ -39,7 +39,7 @@
     </div>
   </div>
   <div class="field">
-    <div class="control">
+    <div class="control editor">
       <textarea
         name="file_content"
         class="paste textarea"

@@ -15,14 +15,10 @@
   rel="stylesheet alternate"
   href="/static/css/highlight/tomorrow.css?v={{ resources_version }}"
   integrity="sha384-CjMS/azhoi4hiN5ZaI9dOIE/2MZmLjwiFghnRSac/9I3tWrhTLqxF0NpyK7+MOhd"/>
-<link
-  rel="stylesheet"
-  href="/static/css/codesass/codesass.css?v={{ resources_version }}"
-  integrity="sha384-FOcIUg2BqXAbmlN86eN/XSf5s48Y7k/GdRr3VnoJNsL4syKJENoKIT2p/5Msske7"/>
 <script
   defer
-  src="/static/js/codesass/codesass.min.js?v={{ resources_version }}"
-  integrity="sha384-AhWyKXvM40kv26c9mfLasCAIVv6mavyDq5aDivWMGOS/CSI1EP/mL34BGs2xLHix"></script>
+  src="/static/js/csp_editor/bundle.js?v={{ resources_version }}"
+  integrity="sha384-Nba8x9cAGK1iEi8HhKH/P7Wq+eYnUW3fRRDuXnwgkTbqa1XSJSA+vK7Qd7rWgO/Q"></script>
 <script
   defer
   src="/static/js/luxon/luxon.min.js?v={{ resources_version }}"
@@ -30,7 +26,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-Pv4dOlv1BMDcXBqgGQQq1g5xyk3QjPmGXAVzqh9a6Ipu8JDnbgKSAc/Q5akMhlQT"></script>
+  integrity="sha384-dTwY6ny0NZ45t58tKOrToMSTg/yD8nH26e2VNrQp6bcNPdGcbFOt//EMWgZl4gQO"></script>
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {%- endblock head %}
 

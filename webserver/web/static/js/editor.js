@@ -1,5 +1,9 @@
 "use strict";
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -8,7 +12,7 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
-/* global CodeSass:false, luxon:false */
+/* global Editor:false, luxon:false */
 var pasteNum = 0;
 var pasteEditors = {};
 
@@ -29,7 +33,12 @@ var pasteEditors = {};
 
       var hl = msg.data.substring(split + 1); // get the code element of the given editor
 
-      var code = pasteEditors[id].elCode; // add the lang attribute to the <pre> if necessary
+      var code = document.getElementById("highlight-".concat(id));
+
+      if (code === null) {
+        return;
+      } // add the lang attribute to the <pre> if necessary
+
 
       if (!code.parentElement.hasAttribute('lang')) {
         code.parentElement.setAttribute('lang', '');
@@ -216,13 +225,43 @@ var pasteEditors = {};
     return files;
   }
 
-  function codeFlaskSucksHighlight(editor) {
+  function highlight(pasteNum, input) {
     // only use the websocket if it's connected
-    if (ws.readyState === ws.OPEN) {
-      // send a request over the websocket to highlight the code
-      // FIXME: send the file name or the lang name correctly, not just rust
-      ws.send("".concat(editor.pasteNum, "\nrust\nsnippet\n").concat(editor.elCode.innerText)); // when the response comes in, the editor will be updated. nothing else needs to be done here.
+    if (ws.readyState !== ws.OPEN) {
+      return document.createElement('pre');
+    } // get the file for this editor
+
+
+    var file = pasteEditors[pasteNum].wrapper.parentElement.parentElement.parentElement; // check to see if an override has been set
+
+    var override = file.querySelector('select[name=file_language]').value;
+    var name, type;
+
+    if (override === '') {
+      // if no override, use the file name for highlighting
+      name = file.querySelector('input[name=file_name]').value;
+      type = 'file';
+    } else {
+      // otherwise use the language name
+      name = override;
+      type = 'snippet';
+    } // send a request for highlighting
+    // note that the websocket's message event handler will handle updating the highlighting
+
+
+    ws.send("".concat(pasteNum, "\n").concat(name, "\n").concat(type, "\n").concat(input)); // return a new pre > code if none exists, otherwise use the existing one
+
+    var code = document.getElementById("highlight-".concat(pasteNum));
+
+    if (code === null) {
+      var newPre = document.createElement('pre');
+      var newCode = document.createElement('code');
+      newCode.id = "highlight-".concat(pasteNum);
+      newPre.appendChild(newCode);
+      return newPre;
     }
+
+    return code.parentElement;
   }
   /**
    * Create an editor.
@@ -233,22 +272,38 @@ var pasteEditors = {};
 
 
   function setUpEditor(parent, el) {
-    var div = document.createElement('div');
-    div.style.height = '400px';
-    var editor = new CodeSass(div, {
-      defaultTheme: false,
-      lineNumbers: true,
-      language: 'plaintext'
-    });
+    el.style.height = '400px'; // can't use arrow function because of `this`
+
+    var editor = new Editor(el,
+    /*#__PURE__*/
+    function () {
+      var _ref = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee(input) {
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                return _context.abrupt("return", highlight(this.pasteNum, input));
+
+              case 1:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    }());
     editor.pasteNum = pasteNum;
     var hidden = document.createElement('input');
     hidden.type = 'hidden';
     hidden.name = 'file_content';
     hidden.id = 'hidden_content';
-    editor.editorRoot.insertAdjacentElement('afterend', hidden);
-    editor.elCode.style.background = 'none';
-    editor.elCode.style.padding = '0';
-    editor.setHighlightCallback(codeFlaskSucksHighlight);
+    el.insertAdjacentElement('afterend', hidden);
     var nameInput = parent.querySelector('input[name=file_name]');
     var langInput = parent.querySelector('select[name=file_language]');
 
@@ -274,18 +329,15 @@ var pasteEditors = {};
     }
 
     nameInput.addEventListener('input', updateLanguage);
-    langInput.addEventListener('change', updateLanguage);
-    updateLanguage();
-    editor.updateCode(el.value);
-    editor.createLineNumbers(); // TODO: fix this in codesass
+    langInput.addEventListener('change', updateLanguage); // updateLanguage();
+    // editor.updateCode(el.value);
+    // editor.createLineNumbers(); // TODO: fix this in codesass
 
     var toDelete = pasteNum;
     parent.querySelector('button[name=delete_button]').addEventListener('click', function () {
       return removeFile(toDelete);
     });
     pasteEditors[pasteNum] = editor;
-    el.insertAdjacentElement('beforebegin', div);
-    el.remove();
   }
 
   function addFile() {
@@ -313,8 +365,8 @@ var pasteEditors = {};
       _iteratorError = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-          _iterator["return"]();
+        if (!_iteratorNormalCompletion && _iterator.return != null) {
+          _iterator.return();
         }
       } finally {
         if (_didIteratorError) {
@@ -370,8 +422,8 @@ var pasteEditors = {};
       _iteratorError2 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-          _iterator2["return"]();
+        if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
+          _iterator2.return();
         }
       } finally {
         if (_didIteratorError2) {
@@ -397,8 +449,8 @@ var pasteEditors = {};
       _iteratorError3 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
-          _iterator3["return"]();
+        if (!_iteratorNormalCompletion3 && _iterator3.return != null) {
+          _iterator3.return();
         }
       } finally {
         if (_didIteratorError3) {

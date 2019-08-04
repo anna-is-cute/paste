@@ -120,16 +120,6 @@ fn main() {
 
   // let rouge = rouge::Rouge::new(HIGHLIGHT_URL.clone());
 
-  // Waiting on https://github.com/SergioBenitez/Rocket/issues/1064
-  // let bundles = match self::i18n::bundles() {
-  //   Ok(b) => b,
-  //   Err(e) => {
-  //     // FIXME: use display instead of debug
-  //     eprintln!("could not load localisation bundles: {:?}", e);
-  //     return;
-  //   },
-  // };
-
   rocket::ignite()
     .manage(database::init_pool())
     .manage(redis_store::init_pool())
@@ -143,8 +133,9 @@ fn main() {
     .attach(fairings::LastPage::default())
     .attach(fairings::Push)
     .attach(Template::custom(move |engines| {
-      let bundles = self::i18n::bundles().unwrap(); // FIXME: once this can take an FnOnce...
-      engines.tera.register_function("tr", self::i18n::tera_function(bundles));
+      // FIXME: propagate error when possible
+      let localisation = self::i18n::Localisation::new().unwrap();
+      engines.tera.register_function("tr", self::i18n::tera_function(localisation));
     }))
     .register(catchers![
       routes::bad_request,

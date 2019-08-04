@@ -4,24 +4,24 @@
 {{ super() }}
 {%- endblock head %}
 
-{% block title -%}Enable 2FA{%- endblock title %}
+{% block title -%}{{ tr(_langs=langs, _msg="tfa-enable") }}{%- endblock title %}
 
 {% block header_title -%}
-Enable 2FA
+{{ tr(_langs=langs, _msg="tfa-enable") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Turn on two-factor authentication.
+{{ tr(_langs=langs, _msg="tfa-enable", _attr="description") }}
 {%- endblock header_subtitle %}
 
 {% block header_foot %}
 <nav class="tabs is-boxed">
   <div class="container">
     <ul>
-      <li><a href="{{ links.settings }}">Settings</a></li>
-      <li><a href="{{ links.keys }}">API keys</a></li>
-      <li class="is-active"><a href="{{ links.tfa }}">2FA</a></li>
-      <li><a href="{{ links.delete_account }}">Delete</a></li>
+      <li><a href="{{ links.settings }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="settings") }}</a></li>
+      <li><a href="{{ links.keys }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="api-keys") }}</a></li>
+      <li class="is-active"><a href="{{ links.tfa }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="two-factor") }}</a></li>
+      <li><a href="{{ links.delete_account }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="delete") }}</a></li>
     </ul>
   </div>
 </nav>
@@ -30,8 +30,8 @@ Turn on two-factor authentication.
 {% block main %}
 <div class="content">
   <p>
-    Scan the QR code below using your authenticator app. If you can't scan the code, you can enter
-    the shared secret manually, <strong>without spaces</strong>:
+    {{ tr(_langs=langs, _msg="tfa-enable-scan-qr") | safe }}
+
   </p>
 
   <p class="shared-secret">
@@ -39,12 +39,12 @@ Turn on two-factor authentication.
   </p>
 
   <p>
-    If you want to generate a new shared secret, click the button below.
+    {{ tr(_langs=langs, _msg="tfa-enable-new-secret") }}
   </p>
 
   <form method="post" action="{{ links.new_secret }}">
     <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
-    <button type="submit" class="button">Regenerate secret</button>
+    <button type="submit" class="button">{{ tr(_langs=langs, _msg="tfa-enable-new-secret", _attr="button") }}</button>
   </form>
 
   <figure class="image is-256x256">
@@ -52,7 +52,7 @@ Turn on two-factor authentication.
   </figure>
 
   <p>
-    After setting up the authenticator app, enter the code it has generated below.
+    {{ tr(_langs=langs, _msg="tfa-enable-enter-code") }}
   </p>
 
   <form class="form" method="post" action="{{ links.validate }}">
@@ -66,7 +66,7 @@ Turn on two-factor authentication.
           type="text"
           minlength="6"
           maxlength="6"
-          placeholder="2FA code"/>
+          placeholder="{{ tr(_langs=langs, _msg="tfa-enable-enter-code", _attr="placeholder") }}"/>
         <span class="icon is-small is-left">
           <i class="fas fa-lock"></i>
         </span>
@@ -74,7 +74,7 @@ Turn on two-factor authentication.
     </div>
     <div class="field">
       <div class="control has-icons-left">
-        <button type="submit" class="button is-primary">Enable</button>
+        <button type="submit" class="button is-primary">{{ tr(_langs=langs, _msg="tfa-enable-enter-code", _attr="button") }}</button>
       </div>
     </div>
   </form>

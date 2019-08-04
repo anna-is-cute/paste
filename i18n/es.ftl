@@ -48,15 +48,17 @@ paste-add-file = Añadir archivo
 paste-submit-anonymous = Enviar anónimamente
 paste-submit = Enviar
 
-## File attributes
+## Paste display
 
-file-name-placeholder = Nombre de archivo con extensión
-file-language-auto = auto
-file-hello-world = Hello world!
-
-## General inputs
-
+disp-untitled = pegado sin título
+# $files (number) number of files the paste has
 disp-num-files = {$files} {$files ->
   [one] archivo
  *[other] archivos
 }
+
+## File attributes
+
+file-name-placeholder = Nombre de archivo con extensión
+file-language-auto = auto
+file-hello-world = Hola mundo!

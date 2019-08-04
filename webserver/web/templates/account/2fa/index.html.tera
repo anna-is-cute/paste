@@ -4,24 +4,24 @@
 {{ super() }}
 {%- endblock head %}
 
-{% block title -%}2FA{%- endblock title %}
+{% block title -%}{{ tr(_langs=langs, _msg="tfa") }}{%- endblock title %}
 
 {% block header_title -%}
-2FA
+{{ tr(_langs=langs, _msg="tfa") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Manage two-factor authentication.
+{{ tr(_langs=langs, _msg="tfa", _attr="description") }}
 {%- endblock header_subtitle %}
 
 {% block header_foot %}
 <nav class="tabs is-boxed">
   <div class="container">
     <ul>
-      <li><a href="{{ links.settings }}">Settings</a></li>
-      <li><a href="{{ links.keys }}">API keys</a></li>
-      <li class="is-active"><a href="{{ links.tfa }}">2FA</a></li>
-      <li><a href="{{ links.delete_account }}">Delete</a></li>
+      <li><a href="{{ links.settings }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="settings") }}</a></li>
+      <li><a href="{{ links.keys }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="api-keys") }}</a></li>
+      <li class="is-active"><a href="{{ links.tfa }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="two-factor") }}</a></li>
+      <li><a href="{{ links.delete_account }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="delete") }}</a></li>
     </ul>
   </div>
 </nav>
@@ -32,17 +32,15 @@ Manage two-factor authentication.
   {% if backups %}
   <article class="message is-warning">
     <div class="message-header">
-      <span>Backup codes</span>
+      <span>{{ tr(_langs=langs, _msg="tfa-backup") }}</span>
       <button class="delete" aria-label="delete"></button>
     </div>
     <div class="message-body">
       <p>
-        If you ever lose access to your 2FA device, you can use these codes instead of a generated
-        code to access your account. Each code can only be used once. They will only be displayed
-        once, so don't lose them!
+        {{ tr(_langs=langs, _msg="tfa-backup", _attr="body-1") }}
       </p>
       <p>
-        You can generate new codes at any time while logged in. Use the button below to do so.
+        {{ tr(_langs=langs, _msg="tfa-backup", _attr="body-2") }}
       </p>
       <pre>{{ backups }}</pre>
     </div>
@@ -54,45 +52,42 @@ Manage two-factor authentication.
     <span class="icon is-large has-text-success">
       <i class="fas fa-lock"></i>
     </span>
-    2FA is enabled.
+    {{ tr(_langs=langs, _msg="tfa-enabled") }}
     {% else %}
     <span class="icon is-large has-text-danger">
       <i class="fas fa-lock-open"></i>
     </span>
-    2FA is not enabled.
+    {{ tr(_langs=langs, _msg="tfa-disabled") }}
     {% endif %}
   </h1>
   <div class="{% if tfa_enabled %}field is-grouped{% else %}field{% endif %}">
     {% if tfa_enabled %}
     <div class="control">
-      <a class="button is-primary" href="{{ links.disable }}">Turn off 2FA</a>
+      <a class="button is-primary" href="{{ links.disable }}">{{ tr(_langs=langs, _msg="tfa-turn-off") }}</a>
     </div>
     <form method="post" action="{{ links.new_backup_codes }}">
       <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
       <div class="control">
-        <button class="button" type="submit">Generate new backup codes</button>
+        <button class="button" type="submit">{{ tr(_langs=langs, _msg="tfa-new-backup") }}</button>
       </div>
     </form>
     {% else %}
-    <a class="button is-primary" href="{{ links.enable }}">Turn on 2FA</a>
+    <a class="button is-primary" href="{{ links.enable }}">{{ tr(_langs=langs, _msg="tfa-turn-on") }}</a>
     {% endif %}
   </div>
 
   <p>
-    Two-factor authentication (a form of <a class="external" target="_blank" href="https://en.wikipedia.org/wiki/Multi-factor_authentication">multi-factor authentication</a>)
-    increases the security of your account by requiring you to specify a one-time password generated
-    by another device on login.
+    {{ tr(_langs=langs, _msg="tfa-explanation", _attr="part-1") | safe }}
   </p>
   <p>
-    This feature requires a smart device or smart card and an app to generate the codes. For Android
-    and iOS devices, see the table below.
+    {{ tr(_langs=langs, _msg="tfa-explanation", _attr="part-2") }}
   </p>
   <table class="table is-striped">
     <thead>
       <tr>
-        <th>Android (Play Store)</th>
-        <th>iOS (App Store)</th>
-        <th>Android (F-Droid)</th>
+        <th>{{ tr(_langs=langs, _msg="tfa-devices", _attr="play-store") }}</th>
+        <th>{{ tr(_langs=langs, _msg="tfa-devices", _attr="ios") }}</th>
+        <th>{{ tr(_langs=langs, _msg="tfa-devices", _attr="fdroid") }}</th>
       </tr>
     </thead>
     <tbody>

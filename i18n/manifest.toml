@@ -1,0 +1,22 @@
+# bundle file stem - this block corresponds to xx.ftl
+# [xx]
+# the language codes this bundle can serve in descending specificity
+# serves = ["xx-YY", "xx-ZZ", "xx"]
+# (optional) the fallback languages to check
+# if a message isn't found in this bundle, it will be looked for in these fallbacks before failing
+# fallbacks = ["yy", "zz"]
+
+# all bundles except en should fall back on en as a last resort
+
+# English
+[en]
+serves = [
+  "en-GB",
+  "en-US",
+  "en",
+]
+
+# Spanish
+[es]
+serves = ["es"]
+fallbacks = ["en"]

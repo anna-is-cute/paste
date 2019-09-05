@@ -15,7 +15,7 @@ RUN apt-get install \
 
 WORKDIR /
 
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2019-05-10
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2019-09-01
 
 RUN echo "source $HOME/.cargo/env" >> $HOME/.bashrc
 

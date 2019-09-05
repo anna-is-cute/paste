@@ -113,7 +113,7 @@ ammonia = "2"
 html5ever = "0.24"
 
 # url parsing
-url = "1"
+url = "2"
 
 # comparing strings without case
 unicase = "2"

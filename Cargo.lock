@@ -1059,7 +1059,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "lettre"
 version = "0.9.2"
-source = "git+https://github.com/lettre/lettre#089b811bbcb9d9f5e9afe3380264ebd7ad2140bc"
+source = "git+https://github.com/lettre/lettre#8336528f095c9c5d475ed531a4680758716aaa18"
 dependencies = [
  "base64 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "bufstream 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1076,7 +1076,7 @@ dependencies = [
 [[package]]
 name = "lettre_email"
 version = "0.9.2"
-source = "git+https://github.com/lettre/lettre#089b811bbcb9d9f5e9afe3380264ebd7ad2140bc"
+source = "git+https://github.com/lettre/lettre#8336528f095c9c5d475ed531a4680758716aaa18"
 dependencies = [
  "base64 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "email 0.0.20 (registry+https://github.com/rust-lang/crates.io-index)",

@@ -132,7 +132,7 @@ mime = "0.2"
 rust-crypto = "0.2"
 
 # source of randomness
-rand = "0.6"
+rand = "0.7"
 
 # creating sha-384 integrity hashes
 sha2 = "0.8"

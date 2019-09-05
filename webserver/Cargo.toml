@@ -32,7 +32,7 @@ maintenance = { status = "actively-developed" }
 
 [build-dependencies]
 # getting current commit
-git2 = "0.9"
+git2 = "0.10"
 # credits generation
 serde = "1"
 serde_derive = "1"
@@ -47,7 +47,7 @@ serde_derive = "1"
 serde_json = "1"
 
 # creating paste histories
-git2 = "0.9"
+git2 = "0.10"
 
 # handling binary uploads in json
 base64 = "0.10"

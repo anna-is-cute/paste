@@ -130,7 +130,7 @@ pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Sessio
 }
 
 #[post("/account/2fa/validate", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, redis: Redis) -> Result<Redirect> {
+pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut redis: Redis) -> Result<Redirect> {
   let form = form.into_inner();
 
   if !sess.check_token(&form.anti_csrf_token) {

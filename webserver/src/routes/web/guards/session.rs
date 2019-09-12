@@ -90,7 +90,7 @@ impl FromRequest<'a, 'r> for Session<'a, 'r> {
       None => return Outcome::Success(Session::new(SessionId(Uuid::new_v4()), req)),
     };
 
-    let redis: Redis = match req.guard() {
+    let mut redis: Redis = match req.guard() {
       Outcome::Success(s) => s,
       Outcome::Failure((status, _)) => return Outcome::Failure((status, "could not get redis connection".into())),
       Outcome::Forward(()) => return Outcome::Forward(()),
@@ -124,7 +124,7 @@ impl Drop for Session<'a, 'r> {
         },
       };
 
-      let redis: Redis = match req.guard() {
+      let mut redis: Redis = match req.guard() {
         Outcome::Success(s) => s,
         Outcome::Failure(_) | Outcome::Forward(_) => {
           println!("could not get redis connection");

@@ -64,7 +64,7 @@ pub struct RegistrationData {
 }
 
 #[post("/login", format = "application/x-www-form-urlencoded", data = "<data>")]
-pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, redis: Redis, addr: SocketAddr) -> Result<Redirect> {
+pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut redis: Redis, addr: SocketAddr) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 

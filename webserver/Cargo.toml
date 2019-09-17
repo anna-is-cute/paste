@@ -83,7 +83,7 @@ toml = "0.5"
 ipnetwork = "0.13"
 
 # anti-csrf tokens
-hex = "0.3"
+hex = "0.4"
 
 # custom cookies
 cookie = "0.11"

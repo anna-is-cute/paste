@@ -36,6 +36,8 @@ use rocket_contrib::templates::Template;
 
 use tera::Tera;
 
+use trust_dns_resolver::Resolver;
+
 use std::{env, path::PathBuf};
 
 pub static SERVER_VERSION: Option<&'static str> = include!(concat!(env!("OUT_DIR"), "/version"));
@@ -61,6 +63,9 @@ lazy_static! {
     let key = env::var("CAMO_KEY").expect("missing CAMO_KEY environment variable");
     key.into_bytes()
   };
+
+  pub static ref RESOLV: Resolver = Resolver::from_system_conf()
+    .expect("could not create dns resolver");
 }
 
 fn main() {
@@ -111,6 +116,7 @@ fn main() {
   lazy_static::initialize(&EMAIL_TERA);
   lazy_static::initialize(&CAMO_KEY);
   lazy_static::initialize(&CAMO_URL);
+  lazy_static::initialize(&RESOLV);
 
   rocket::ignite()
     .manage(database::init_pool())

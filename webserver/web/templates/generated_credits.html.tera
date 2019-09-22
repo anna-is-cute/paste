@@ -472,6 +472,14 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
+          <a href="https://github.com/bluejekyll/trust-dns">trust-dns-resolver</a>
+        </p>
+        <p>
+          Utilizes the trust client library to perform DNS resolution. Used for libravatar.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
           <a href="https://github.com/zbraniecki/unic-locale">unic-langid</a>
         </p>
         <p>

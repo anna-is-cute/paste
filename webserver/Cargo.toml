@@ -152,6 +152,9 @@ fluent-bundle = "0.7"
 # localisation
 fluent-syntax = "0.9"
 
+# dns resolver for libravatar
+trust-dns-resolver = "0.12"
+
 # web logic
 [dependencies.rocket]
 version = "0.4"

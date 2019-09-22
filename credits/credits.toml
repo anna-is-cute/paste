@@ -307,3 +307,8 @@ text = "Unicode language identifiers used for localisation."
 name = "fluent"
 url = "https://github.com/projectfluent/fluent-rs"
 text = "A localisation system for natural-sounding translations."
+
+[[backend]]
+name = "trust-dns-resolver"
+url = "https://github.com/bluejekyll/trust-dns"
+text = "Utilizes the trust client library to perform DNS resolution. Used for libravatar."

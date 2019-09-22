@@ -40,7 +40,7 @@ pub fn get<'r>(id: UserId, client: State<Client>, if_mod: IfMod, conn: DbConn) -
 
   let hash = user.avatar_provider().hash(user.email());
 
-  let url = format!("https://{}/avatar/{}?s=256&d=identicon", user.avatar_provider().domain(), hash);
+  let url = format!("https://{}/avatar/{}?s=256&d=identicon", user.avatar_provider().domain(user.email()), hash);
   let mut req = client.get(&url);
   if let IfMod(Some(s)) = if_mod {
     req = req.header("If-Modified-Since", s);

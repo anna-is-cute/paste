@@ -15,6 +15,7 @@ use rocket::{http::RawStr, request::FromFormValue};
 use sodiumoxide::crypto::hash::sha256;
 
 use std::{
+  borrow::Cow,
   cell::RefCell,
   io::Write,
 };
@@ -28,10 +29,35 @@ pub enum AvatarProvider {
 }
 
 impl AvatarProvider {
-  pub fn domain(self) -> &'static str {
+  const LIBRAVATAR: &'static str = "seccdn.libravatar.org";
+
+  pub fn domain(self, email: &str) -> Cow<'static, str> {
     match self {
-      AvatarProvider::Gravatar => "gravatar.com",
-      AvatarProvider::Libravatar => "seccdn.libravatar.org",
+      AvatarProvider::Gravatar => Cow::Borrowed("gravatar.com"),
+      AvatarProvider::Libravatar => {
+        // get the email domain
+        let domain = match email.split('@').last() {
+          Some(d) => d,
+          None => return Cow::Borrowed(AvatarProvider::LIBRAVATAR),
+        };
+        // query the secure avatars service
+        let srv = match crate::RESOLV.lookup_srv(&format!("_avatars-sec._tcp.{}", domain)) {
+          Ok(s) => s,
+          Err(_) => return Cow::Borrowed(AvatarProvider::LIBRAVATAR),
+        };
+        // filter for FQDNs
+        let mut records: Vec<_> = srv.iter()
+          .filter(|rec| rec.target().is_fqdn())
+          .collect();
+        // sort by weight
+        records.sort_by_key(|rec| !rec.weight());
+        // get the highest weight and get its target
+        records.get(0)
+          .map(|rec| format!("{}:{}", rec.target().to_ascii(), rec.port()))
+          .map(Cow::Owned)
+          // otherwise, use default
+          .unwrap_or_else(|| Cow::Borrowed(AvatarProvider::LIBRAVATAR))
+      },
     }
   }
 

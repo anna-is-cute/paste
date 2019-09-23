@@ -1,6 +1,7 @@
 #![feature(
   decl_macro,
   in_band_lifetimes,
+  ip,
   proc_macro_hygiene,
 )]
 #![recursion_limit = "1024"]

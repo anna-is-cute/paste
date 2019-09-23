@@ -41,7 +41,7 @@ impl AvatarProvider {
           None => return AvatarProvider::LIBRAVATAR,
         };
         // query the secure avatars service
-        let srv = match crate::RESOLV.lookup_srv(&format!("_avatars-sec._tcp.{}", domain)) {
+        let srv = match crate::RESOLV.lookup_srv(&format!("_avatars-sec._tcp.{}.", domain)) {
           Ok(s) => s,
           Err(_) => return AvatarProvider::LIBRAVATAR,
         };
@@ -49,13 +49,19 @@ impl AvatarProvider {
         let mut records: Vec<_> = srv.iter()
           .filter(|rec| rec.target().is_fqdn() && !rec.target().is_localhost())
           .collect();
-        // sort by weight
-        records.sort_by_key(|rec| !rec.weight());
-        // get the highest weight and get its target
-        records.get(0)
+        // sort by priority
+        records.sort_by_key(|rec| rec.priority());
+        // find the highest priority that we can resolve and is a global ip
+        // note that this doesn't follow the SRV spec, but I don't really care
+        records.iter()
+          .filter(|rec| {
+            let ip = crate::RESOLV.lookup_ip(&rec.target().to_ascii()).ok()?;
+            ip.iter().all(|ip| ip.is_global())
+          })
           .map(|rec| (Cow::Owned(rec.target().to_ascii()), rec.port()))
+          .first()
           // otherwise, use default
-          .unwrap_or_else(|| AvatarProvider::LIBRAVATAR)
+          .unwrap_or(AvatarProvider::LIBRAVATAR)
       },
     }
   }

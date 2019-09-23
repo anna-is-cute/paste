@@ -10,13 +10,17 @@ use crate::{
 
 use diesel::prelude::*;
 
-use reqwest::Client;
+use reqwest::{Client, StatusCode};
 
 use rocket::{
-  http::{Header, Status},
-  response::Response,
+  Outcome,
   State,
+  http::{Header, Status},
+  request::{self, FromRequest, Request},
+  response::Response,
 };
+
+use url::Url;
 
 #[derive(Responder)]
 pub enum Avatar<'r> {
@@ -38,17 +42,23 @@ pub fn get<'r>(id: UserId, client: State<Client>, if_mod: IfMod, conn: DbConn) -
     None => return Ok(Avatar::Status(Status::NotFound)),
   };
 
-  let domain = user.avatar_provider().domain(user.email());
+  let (domain, port) = user.avatar_provider().domain(user.email());
   let hash = user.avatar_provider().hash(user.email());
 
-  let url = format!("https://{}/avatar/{}?s=256&d=identicon", domain, hash);
-  let mut req = client.get(&url);
+  let mut url = Url::parse("https://example.com/avatar/")?.join(&hash)?;
+  url.set_host(Some(&domain))?;
+  url.set_port(Some(port)).expect("cannot fail to set port");
+  url.query_pairs_mut()
+    .append_pair("s", "256")
+    .append_pair("d", "identicon");
+
+  let mut req = client.get(url.as_str());
   if let IfMod(Some(s)) = if_mod {
     req = req.header("If-Modified-Since", s);
   }
   let resp = req.send()?;
 
-  if resp.status() == reqwest::StatusCode::NOT_MODIFIED {
+  if resp.status() == StatusCode::NOT_MODIFIED {
     return Ok(Avatar::NotModified(()));
   }
 
@@ -72,13 +82,13 @@ pub fn get<'r>(id: UserId, client: State<Client>, if_mod: IfMod, conn: DbConn) -
 
 pub struct IfMod(Option<String>);
 
-impl rocket::request::FromRequest<'a, 'r> for IfMod {
+impl FromRequest<'a, 'r> for IfMod {
   type Error = ();
 
-  fn from_request(req: &'a rocket::Request<'r>) -> rocket::request::Outcome<Self, Self::Error> {
+  fn from_request(req: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
     match req.headers().get_one("If-Modified-Since") {
-      Some(ref m) => rocket::Outcome::Success(IfMod(Some(m.to_string()))),
-      None => rocket::Outcome::Success(IfMod(None)),
+      Some(ref m) => Outcome::Success(IfMod(Some(m.to_string()))),
+      None => Outcome::Success(IfMod(None)),
     }
   }
 }

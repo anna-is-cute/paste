@@ -29,34 +29,33 @@ pub enum AvatarProvider {
 }
 
 impl AvatarProvider {
-  const LIBRAVATAR: &'static str = "seccdn.libravatar.org";
+  const LIBRAVATAR: (Cow<'static, str>, u16) = (Cow::Borrowed("seccdn.libravatar.org"), 443);
 
-  pub fn domain(self, email: &str) -> Cow<'static, str> {
+  pub fn domain(self, email: &str) -> (Cow<'static, str>, u16) {
     match self {
-      AvatarProvider::Gravatar => Cow::Borrowed("gravatar.com"),
+      AvatarProvider::Gravatar => (Cow::Borrowed("gravatar.com"), 443),
       AvatarProvider::Libravatar => {
         // get the email domain
         let domain = match email.split('@').last() {
           Some(d) => d,
-          None => return Cow::Borrowed(AvatarProvider::LIBRAVATAR),
+          None => return AvatarProvider::LIBRAVATAR,
         };
         // query the secure avatars service
         let srv = match crate::RESOLV.lookup_srv(&format!("_avatars-sec._tcp.{}", domain)) {
           Ok(s) => s,
-          Err(_) => return Cow::Borrowed(AvatarProvider::LIBRAVATAR),
+          Err(_) => return AvatarProvider::LIBRAVATAR,
         };
         // filter for FQDNs
         let mut records: Vec<_> = srv.iter()
-          .filter(|rec| rec.target().is_fqdn())
+          .filter(|rec| rec.target().is_fqdn() && !rec.target().is_localhost())
           .collect();
         // sort by weight
         records.sort_by_key(|rec| !rec.weight());
         // get the highest weight and get its target
         records.get(0)
-          .map(|rec| format!("{}:{}", rec.target().to_ascii(), rec.port()))
-          .map(Cow::Owned)
+          .map(|rec| (Cow::Owned(rec.target().to_ascii()), rec.port()))
           // otherwise, use default
-          .unwrap_or_else(|| Cow::Borrowed(AvatarProvider::LIBRAVATAR))
+          .unwrap_or_else(|| AvatarProvider::LIBRAVATAR)
       },
     }
   }

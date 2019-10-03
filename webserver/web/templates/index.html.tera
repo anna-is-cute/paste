@@ -244,14 +244,15 @@ New
     </div>
 
     <div class="field is-grouped">
-      <div class="control">
-        <button class="button" name="anonymous" type="submit">{{ tr(_langs=langs, _msg="paste-submit-anonymous") }}</button>
-      </div>
+    {# If we submit the form by pressing `Enter`, it will choose the first submit button it finds in the DOM tree. #}
     {%- if user %}
-      <div class="control">
+      <div class="control submit-authenticated">
         <button class="button is-link" type="submit">{{ tr(_langs=langs, _msg="paste-submit") }}</button>
       </div>
     {%- endif %}
+      <div class="control">
+        <button class="button" name="anonymous" type="submit">{{ tr(_langs=langs, _msg="paste-submit-anonymous") }}</button>
+      </div>
     </div>
   </div>
 </form>

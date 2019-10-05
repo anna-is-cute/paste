@@ -147,7 +147,7 @@ csv = "1"
 unic-langid = "0.5"
 
 # localisation
-fluent-bundle = "0.7"
+fluent-bundle = "0.8"
 
 # localisation
 fluent-syntax = "0.9"

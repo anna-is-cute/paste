@@ -91,7 +91,7 @@
   <div class="field {{ honeypot.class }}">
     <div class="control">
       <label class="label">{{ tr(_langs=langs, _msg="antispam-honeypot", _attr="email") }}</label>
-      <input tabindex="-1" aria-hidden="true" name="email" class="input" type="text" autocomplete="off"/>
+      <input tabindex="-1" aria-hidden="true" name="email" class="input" type="text" autocomplete="off" data-lpignore="true"/>
     </div>
   </div>
 

@@ -129,7 +129,11 @@ base32 = "0.4"
 mime = "0.2"
 
 # rewriting image urls for camo with SHA1-HMAC
-rust-crypto = "0.2"
+hmac = "0.7.1"
+sha-1 = "0.8.1"
+
+# Gravatar support
+md-5 = "0.8.0"
 
 # source of randomness
 rand = "0.7"

@@ -144,10 +144,10 @@ reqwest = "0.9"
 csv = "1"
 
 # language ids for localisation
-unic-langid = "0.5"
+unic-langid = "0.6"
 
 # localisation
-fluent-bundle = "0.7"
+fluent-bundle = "0.8"
 
 # localisation
 fluent-syntax = "0.9"

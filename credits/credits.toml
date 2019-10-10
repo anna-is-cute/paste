@@ -264,9 +264,19 @@ url = "https://github.com/sfackler/rust-native-tls"
 text = "Handles native TLS through one abstract API."
 
 [[backend]]
-name = "rust-crypto"
-url = "https://github.com/DaGenix/rust-crypto"
-text = "A (mostly) pure-Rust implementation of various cryptographic algorithms."
+name = "hmac"
+url = "https://github.com/RustCrypto/MACs"
+text = "Generic implementation of Hash-based Message Authentication Code (HMAC)."
+
+[[backend]]
+name = "sha-1"
+url = "https://github.com/RustCrypto/hashes"
+text = "An implementation of the SHA-1 cryptographic hash algorithm."
+
+[[backend]]
+name = "md-5"
+url = "https://github.com/RustCrypto/hashes"
+text = "An implementation of the MD5 cryptographic hash algorithm."
 
 [[backend]]
 name = "rand"

@@ -109,10 +109,12 @@
               {{ tr(_langs=langs, _msg="nav-register") }}
             </a>
           {%- endif %}
-            <hr class="navbar-divider"/>
-            <a class="navbar-item" id="swap_theme">
-              {{ tr(_langs=langs, _msg="nav-swap-theme") }}
-            </a>
+            <div class="requires-js">
+              <hr class="navbar-divider"/>
+              <a class="navbar-item" id="swap_theme" href="javascript:void(0)">
+                {{ tr(_langs=langs, _msg="nav-swap-theme") }}
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -255,7 +255,7 @@ logs() {
 }
 
 compose() {
-  if groups | grep docker; then
+  if groups | grep docker >/dev/null; then
     sudo=""
   else
     # shellcheck disable=SC2016

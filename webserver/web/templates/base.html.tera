@@ -14,7 +14,7 @@
   integrity="sha384-KZFhaGJD7sYGzDl+6X6mvlpcKyNzaimE1tLHvlGlL2f65ZYygEi2exgZRCw0K+Cg"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
-  integrity="sha384-4hjUUq8IEhnS5lkLKw19gCR2tpRT7NOujG9pSq1lCc2vh3t+T/WXKhdcWXquhkmM"></script>
+  integrity="sha384-zwBoM/SvColCwJ9hm3JZVZgpLWTXKwowuywp+8KnSA2XpcN9SlsUnCt4D0WEXaYY"></script>
 <script
   defer
   src="/static/js/navbar.js?v={{ resources_version }}"
@@ -22,7 +22,7 @@
 <script
   defer
   src="/static/js/notifications.js?v={{ resources_version }}"
-  integrity="sha384-cdSx71dFCbjIxo5H6bYWutR+T97fdcTMaUWPCcozlV9ZadxQkRmjoaYbZcJ76xHY"></script>
+  integrity="sha384-yI6E6wBeIs/7kTFxJ5ZSJSiuDwP7QCjkmK+mnQ7ROOvMq0a6H6pgbZyBEa2+7wws"></script>
 <link
   rel="stylesheet"
   href="/static/css/fontawesome/solid.css?v={{ resources_version }}"

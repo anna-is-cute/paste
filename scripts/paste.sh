@@ -1,5 +1,14 @@
 #!/bin/sh
 
+# This script manages a development instance of paste. It will automatically generate config files
+# from the example files, and it will automatically generate TLS certificates for localhost.
+#
+# It can be used to run any docker-compose command, as well.
+#
+# This script should be run from the repository root always (`scripts/paste.sh`).
+#
+# To get started, run `paste.sh start` and `paste.sh logs`.
+
 ###
 ### Logging
 ###
@@ -20,19 +29,19 @@ log() {
 # emit an info message to stderr
 # args(..): message
 info() {
-  log info "$@"
+  log "$(styled cyan info)" "$@"
 }
 
 # emit a warning message to stderr
 # args(..): message
 warn() {
-  log warn "$@"
+  log "$(styled yellow warn)" "$@"
 }
 
 # emit an error message to stderr
 # args(..): message
 error() {
-  log error "$@"
+  log "$(styled red error)" "$@"
 }
 
 # emit an error message and exit unsuccessfully
@@ -40,6 +49,33 @@ error() {
 die() {
   error "$@"
   exit 1
+}
+
+STYLE_RED="$(tput setaf 1)"
+STYLE_GREEN="$(tput setaf 2)"
+STYLE_YELLOW="$(tput setaf 3)"
+STYLE_CYAN="$(tput setaf 6)"
+STYLE_BOLD="$(tput bold)"
+STYLE_DIM="$(tput dim)"
+
+# apply various styles to the input
+# args(1): space-separated styles
+# args(..): text to style
+styled() {
+  s=""
+  desc="$1"
+  shift
+  for style in $desc; do
+    case "$style" in
+      "red") s="$s$STYLE_RED" ;;
+      "green") s="$s$STYLE_GREEN" ;;
+      "yellow") s="$s$STYLE_YELLOW" ;;
+      "cyan") s="$s$STYLE_CYAN" ;;
+      "bold") s="$s$STYLE_BOLD" ;;
+      "dim") s="$s$STYLE_DIM" ;;
+    esac
+  done
+  echo "$s$*$(tput sgr0)"
 }
 
 ###
@@ -50,14 +86,22 @@ die() {
 ensure_deps() {
   info "checking for dependencies"
 
+  should_die=0
+
   # need docker for running the containers
-  [ ! -x "$(command -v docker)" ] && die "missing docker"
+  [ ! -x "$(command -v docker)" ] && error "missing docker" && should_die=1
   # need docker-compose for orchestrating containers
-  [ ! -x "$(command -v docker-compose)" ] && die "missing docker-compose"
+  [ ! -x "$(command -v docker-compose)" ] && error "missing docker-compose" && should_die=1
   # need openssl for generating cert
-  [ ! -x "$(command -v openssl)" ] && die "missing openssl"
+  [ ! -x "$(command -v openssl)" ] && error "missing openssl" && should_die=1
   # need sed for doing substitutions
-  [ ! -x "$(command -v sed)" ] && die "missing sed"
+  [ ! -x "$(command -v sed)" ] && error "missing sed" && should_die=1
+  # need groups to check for docker group
+  [ ! -x "$(command -v groups)" ] && error "missing groups" && should_die=1
+  # need grep to check groups
+  [ ! -x "$(command -v grep)" ] && error "missing grep" && should_die=1
+
+  [ "$should_die" -eq 1 ] && exit 1
 }
 
 ###
@@ -87,11 +131,18 @@ generate_cert() {
 }
 
 does_cert_exist() {
-  [ -f $CERT_CERT ] && [ -f $CERT_KEY ]
+  [ -f "$CERT_CERT" ] && [ -f "$CERT_KEY" ]
 }
 
-make_cert_if_missing() {
-  does_cert_exist && return
+is_cert_good_for_a_week() {
+  # check if the cert is expired or will expire in less than a week
+  openssl x509 -checkend 604800 -noout -in "$CERT_CERT" >/dev/null
+}
+
+make_cert_if_necessary() {
+  info "checking certificate status"
+
+  does_cert_exist && is_cert_good_for_a_week && return
 
   generate_cert "localhost" "$CERT_KEY" "$CERT_CERT"
 }
@@ -226,10 +277,8 @@ docker_stop() {
 ###
 
 prepare() {
-  # first make sure we have the necessary dependencies installed
-  ensure_deps
   # generate a cert if there is none
-  make_cert_if_missing
+  make_cert_if_necessary
   # create the configs
   configs
 }
@@ -266,19 +315,25 @@ compose() {
 }
 
 show_help() {
-  stderr "usage: ./paste.sh [start|stop|restart|logs|compose|help] (args)"
+  stderr "$(styled red usage): $0 [start|stop|restart|logs|compose|help] (args)"
   stderr
-  stderr "  start"
+  stderr "this script manages a *$(styled 'yellow bold' development)* instance of paste, setting up"
+  stderr "configuration files and certificates automatically. it should be run"
+  # shellcheck disable=SC2016
+  stderr 'from the repository root (usually `scripts/paste.sh`)'
+  stderr
+  stderr "  $(styled green start)"
   stderr "    create dev config files if necessary and start paste"
-  stderr "  stop"
+  stderr "  $(styled green stop)"
   stderr "    stop paste"
-  stderr "  restart"
+  stderr "  $(styled green restart)"
   stderr "    stop then start paste"
-  stderr "  logs"
+  stderr "  $(styled green logs)"
   stderr "    view logs for all services"
-  stderr "  compose (args)"
+  stderr "  $(styled green compose) $(styled dim '(args)')"
   stderr "    run docker-compose with the given args (already using config file and name)"
-  stderr "  help"
+  stderr "    $(styled cyan ex): $0 compose restart backend"
+  stderr "  $(styled green help)"
   stderr "    display this help"
 }
 
@@ -287,13 +342,25 @@ show_help() {
 ###
 
 main() {
+  # show help on no args
   if [ "$#" -eq 0 ]; then
     show_help
     exit 1
   fi
 
+  # get first arg
   sub="$1"
   shift
+
+  # handle help before anything else, since everything else requires ensuring dependencies
+  if [ "$sub" = "help" ]; then
+    show_help
+    return
+  fi
+
+  # ensure dependencies are installed
+  ensure_deps
+
   case "$sub" in
     "start")
       start
@@ -310,8 +377,8 @@ main() {
     "compose")
       compose "$@"
       ;;
-    "help")
-      show_help
+    *)
+      die "bad subcommand"
       ;;
   esac
 }

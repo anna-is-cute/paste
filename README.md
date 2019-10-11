@@ -166,17 +166,17 @@ Bash shell in the working environment.
 
 ## Contributing
 
-To set up a development environment with a debug build of paste, use `paste.sh` in the repository
-root! Just run `paste.sh` by itself to show help.
+To set up a development environment with a debug build of paste, use `paste.sh` in the script
+directory! Just run `scripts/paste.sh` by itself to show help.
 
-- Run `./paste.sh start` to start the server and generate any missing config files and a self-signed
-  certificate.
-- If this is your first run, `./paste.sh logs` will help you keep track of the compilation. paste
-  will need to build `diesel_cli` and paste itself, which can take some time.
+- Run `scripts/paste.sh start` to start the server and generate any missing config files and a
+  self-signed certificate.
+- If this is your first run, `scripts/paste.sh logs` will help you keep track of the compilation.
+  paste will need to build `diesel_cli` and paste itself, which can take some time.
 - Once Rocket says it's ready, access `https://localhost` and accept the self-signed certificate.
 
 Changes to the HTML templates should take effect on reload, but changes to any rust will need a
-`./paste.sh compose restart backend` to recompile.
+`scripts/paste.sh compose restart backend` to recompile.
 
 ## API
 

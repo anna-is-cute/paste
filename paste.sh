@@ -262,7 +262,7 @@ compose() {
     warn 'you may be asked for your password for `sudo docker-compose`'
     sudo="sudo"
   fi
-  "$sudo" docker-compose -p paste-dev -f .docker/docker-compose.development.yml "$@"
+  $sudo docker-compose -p paste-dev -f .docker/docker-compose.development.yml "$@"
 }
 
 show_help() {

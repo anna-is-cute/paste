@@ -37,7 +37,7 @@ community!
 
 I host [paste.gg](https://paste.gg). I am poor and can't afford a good machine (paste.gg is a DigitalOcean droplet – three cores and low-ish RAM), so please don't bombard it!
 
-## Setting up your own paste server (Docker)
+## Setting up your own paste server (production, Docker)
 
 You can run your own paste server by using `docker-compose`. You will need Docker, obviously.
 
@@ -113,7 +113,7 @@ Access paste by connecting to the host via HTTPS.
 
 Done!
 
-## Setting up your own paste server (manual)
+## Setting up your own paste server (production, manual)
 
 ### You will need
 
@@ -163,6 +163,20 @@ docker run --rm -it -v "$(pwd)":/paste jkcclemens/paste
 
 By default, that will build paste, but you can also append `/bin/bash` to the command to start a
 Bash shell in the working environment.
+
+## Contributing
+
+To set up a development environment with a debug build of paste, use `paste.sh` in the repository
+root! Just run `paste.sh` by itself to show help.
+
+- Run `./paste.sh start` to start the server and generate any missing config files and a self-signed
+  certificate.
+- If this is your first run, `./paste.sh logs` will help you keep track of the compilation. paste
+  will need to build `diesel_cli` and paste itself, which can take some time.
+- Once Rocket says it's ready, access `https://localhost` and accept the self-signed certificate.
+
+Changes to the HTML templates should take effect on reload, but changes to any rust will need a
+`./paste.sh compose restart backend` to recompile.
 
 ## API
 

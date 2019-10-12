@@ -55,11 +55,14 @@ impl AvatarProvider {
         // note that this doesn't follow the SRV spec, but I don't really care
         records.iter()
           .filter(|rec| {
-            let ip = crate::RESOLV.lookup_ip(&rec.target().to_ascii()).ok()?;
+            let ip = match crate::RESOLV.lookup_ip(&rec.target().to_ascii()) {
+              Ok(i) => i,
+              Err(_) => return false,
+            };
             ip.iter().all(|ip| ip.is_global())
           })
           .map(|rec| (Cow::Owned(rec.target().to_ascii()), rec.port()))
-          .first()
+          .next()
           // otherwise, use default
           .unwrap_or(AvatarProvider::LIBRAVATAR)
       },

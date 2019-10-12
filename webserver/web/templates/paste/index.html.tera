@@ -28,15 +28,27 @@
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
-  integrity="sha384-oQwvpAb0vm0kggl/kGbjcSAlY+CKkoRkBxKFQSS2RXX5eSdL2OuKZnoGOPKdOSmE"></script>
+  integrity="sha384-n+k+iIrRS0CjApohJ9xVX0dz+TP3an5z71rnLWMouKmowP3IU4+fs9Dju7DYF01h"></script>
 <script
   defer
   src="/static/js/modal.js?v={{ resources_version }}"
   integrity="sha384-J7lVKR2PCcVXiC6KeUdovo/b24Cdk7MWAGS9f1gLIng5bEogApeNytgaPG4iiw90"></script>
 <script
   defer
+  src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
+  integrity="sha384-7jqpJ65MXFqJLDbXOqWaUyzjQx4topeCIXL7kEkbgBOOJIe6+EE/8FsGl5OsVkwX"></script>
+<script
+  defer
+  src="/static/js/highlightjs-line-numbers/highlightjs-line-numbers.js?v={{ resources_version }}"
+  integrity="sha384-83eJN6ZaPxV/LDgKmnKjiCz/gu5lISWDHQbcrpc/u1XlKNkwkS+mq5GDXnf0MFbe"></script>
+<script
+  defer
+  src="/static/js/highlight.js?v={{ resources_version }}"
+  integrity="sha384-OLkOmsABjZkHLxet3vqyYB4F0+FBSgeETYe+kp45OSmBrHYxJseA8PFzCtIRilZS"></script>
+<script
+  defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
-  integrity="sha384-iVzXYqfEmhocw3QK7b8GJvjgPmiBaA8AXF4LSzavUZigLt2UmkENsASBbl5nXhcJ"></script>
+  integrity="sha384-atFRxswSqKoXkz8JTPbRSxzqTq0u2uwTBhAgkyZqS1B3bBXeX4nHP9XUEhz1K9Dh"></script>
 {%- endblock head %}
 
 {% block title -%}

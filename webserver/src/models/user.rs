@@ -1,4 +1,4 @@
-use crypto::{digest::Digest, md5::Md5};
+use md5::{Md5, Digest};
 
 use diesel::{
   Queryable,
@@ -14,10 +14,7 @@ use rocket::{http::RawStr, request::FromFormValue};
 
 use sodiumoxide::crypto::hash::sha256;
 
-use std::{
-  cell::RefCell,
-  io::Write,
-};
+use std::io::Write;
 
 #[derive(Debug, Clone, Copy, PartialEq, AsExpression, Serialize, Deserialize)]
 #[sql_type = "SmallInt"]
@@ -36,19 +33,8 @@ impl AvatarProvider {
   }
 
   pub fn hash(self, s: &str) -> String {
-    thread_local! {
-      static MD5: RefCell<Md5> = RefCell::new(Md5::new());
-    }
-
     match self {
-      AvatarProvider::Gravatar => MD5.with(|m| {
-        let mut m = m.borrow_mut();
-        m.input_str(s);
-        let hash = m.result_str();
-        m.reset();
-
-        hash
-      }),
+      AvatarProvider::Gravatar => hex::encode(&Md5::digest(s.as_bytes())[..]),
       AvatarProvider::Libravatar => hex::encode(&sha256::hash(s.as_bytes())[..]),
     }
   }

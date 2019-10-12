@@ -127,6 +127,11 @@ td.hljs-ln-code {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  .control:not(:last-child).submit-authenticated {
+    order: 2;
+    margin-right: 0;
+    margin-left: 0.75rem;
+  }
 }
 
 .is-not-displayed {

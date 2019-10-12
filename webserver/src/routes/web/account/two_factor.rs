@@ -33,7 +33,7 @@ use serde_json::json;
 
 use sodiumoxide::randombytes;
 
-use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET, QUERY_ENCODE_SET};
+use url::Url;
 
 #[get("/account/2fa")]
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> Result<Rst> {
@@ -75,15 +75,17 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
   let shared_secret = base32::encode(Alphabet::RFC4648 { padding: false }, user.shared_secret().expect("missing secret"));
 
   // create the segments of the uri
-  let unsafe_label = format!("{} - {} ({})", config.general.site_name, user.name(), user.username());
-  let label = utf8_percent_encode(&unsafe_label, PATH_SEGMENT_ENCODE_SET);
-  let issuer = utf8_percent_encode(&config.general.site_name, QUERY_ENCODE_SET);
+  let label = format!("{} - {} ({})", config.general.site_name, user.name(), user.username());
+  let issuer = &config.general.site_name;
 
   // create the uri
-  let otpauth = format!("otpauth://totp/{}?secret={}&issuer={}", label, shared_secret, issuer);
+  let mut otpauth = Url::parse("otpauth://totp")?.join(&label)?;
+  otpauth.query_pairs_mut()
+    .append_pair("secret", &shared_secret)
+    .append_pair("issuer", issuer);
 
   // make a qr code out of the uri
-  let qr = match QrCode::new(otpauth.as_bytes()) {
+  let qr = match QrCode::new(otpauth.as_str().as_bytes()) {
     Ok(q) => q,
     Err(e) => bail!("could not create qr code: {}", e),
   };
@@ -130,7 +132,7 @@ pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Sessio
 }
 
 #[post("/account/2fa/validate", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, redis: Redis) -> Result<Redirect> {
+pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut redis: Redis) -> Result<Redirect> {
   let form = form.into_inner();
 
   if !sess.check_token(&form.anti_csrf_token) {

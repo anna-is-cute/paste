@@ -8,16 +8,14 @@ RUN apt-get update && apt-get install \
   build-essential \
   cmake \
   autoconf automake libtool \
-  libssl-dev libssh-dev libz-dev clang \
+  libssl-dev libz-dev clang \
   libpq-dev \
-  pkg-config
-RUN apt-get autoremove --assume-yes
-RUN apt-get clean autoclean
-RUN rm -rf /var/lib/{apt,dpkg,cache,log}/
+  pkg-config \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /
 
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2019-05-10
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2019-10-11
 
 RUN echo "source $HOME/.cargo/env" >> $HOME/.bashrc
 

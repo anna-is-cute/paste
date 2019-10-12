@@ -20,7 +20,7 @@ build:
   after_script:
     - strip target/release/*.so target/release/webserver
   cache:
-    key: '2019-05-10'
+    key: '2019-10-11'
     paths:
       - target
   artifacts:
@@ -45,5 +45,5 @@ deploy:
     - docker pull jkcclemens/paste-prebuilt:latest
     - docker pull jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG" || true
     - docker build --cache-from jkcclemens/paste-prebuilt:latest --cache-from jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG" -t jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG" .
-    - docker push jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG"
+    - if [ "$(echo "$CI_COMMIT_REF_SLUG" | cut -d- -f1)" != "dependabot" ]; then docker push jkcclemens/paste-prebuilt:"$CI_COMMIT_REF_SLUG"; fi
     - if [ "$CI_COMMIT_REF_SLUG" = "master" ]; then docker tag jkcclemens/paste-prebuilt:master jkcclemens/paste-prebuilt:latest && docker push jkcclemens/paste-prebuilt:latest; fi

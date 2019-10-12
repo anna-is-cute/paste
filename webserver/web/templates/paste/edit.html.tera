@@ -34,11 +34,11 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-Pv4dOlv1BMDcXBqgGQQq1g5xyk3QjPmGXAVzqh9a6Ipu8JDnbgKSAc/Q5akMhlQT"></script>
+  integrity="sha384-O5OzB+yzhIG6SZG9MyCqjxFNAG9RMYBCp4SSQQ3eJB7ae7zP1hwCdz5aagymPjux"></script>
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
-  integrity="sha384-iVzXYqfEmhocw3QK7b8GJvjgPmiBaA8AXF4LSzavUZigLt2UmkENsASBbl5nXhcJ"></script>
+  integrity="sha384-atFRxswSqKoXkz8JTPbRSxzqTq0u2uwTBhAgkyZqS1B3bBXeX4nHP9XUEhz1K9Dh"></script>
 {%- endblock head %}
 
 {% block title -%}

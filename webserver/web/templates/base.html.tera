@@ -6,15 +6,15 @@
   title="dark"
   rel="stylesheet"
   href="/static/css/dark-style.css?v={{ resources_version }}"
-  integrity="sha384-mtP22kbbJIWjCQDyEJuKvHMPlCPwu6Xdwx5kAEPjVXBDW0hLdZgZNsWxwP3grxZB"/>
+  integrity="sha384-DrLxrUCv6nsbB3AuNlsFPpy5jIEalN6/CBvo+uvx1vEkgI81eNNddJmBtYA7k0hi"/>
 <link
   title="light"
   rel="stylesheet alternate"
   href="/static/css/style.css?v={{ resources_version }}"
-  integrity="sha384-XIz9mtRSl0xV/xicTBM/mdsUdpLbvDYxkkQu6wtq/w7VMy3IoXkkyzEn9txOv4t7"/>
+  integrity="sha384-mOzDxtkBXN4nxECwXi0MvNkPTkvAn6SEeD1IWkk8SglsjDlWpTABWMvENBareUuU"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
-  integrity="sha384-4hjUUq8IEhnS5lkLKw19gCR2tpRT7NOujG9pSq1lCc2vh3t+T/WXKhdcWXquhkmM"></script>
+  integrity="sha384-zwBoM/SvColCwJ9hm3JZVZgpLWTXKwowuywp+8KnSA2XpcN9SlsUnCt4D0WEXaYY"></script>
 <script
   defer
   src="/static/js/navbar.js?v={{ resources_version }}"
@@ -22,7 +22,7 @@
 <script
   defer
   src="/static/js/notifications.js?v={{ resources_version }}"
-  integrity="sha384-cdSx71dFCbjIxo5H6bYWutR+T97fdcTMaUWPCcozlV9ZadxQkRmjoaYbZcJ76xHY"></script>
+  integrity="sha384-yI6E6wBeIs/7kTFxJ5ZSJSiuDwP7QCjkmK+mnQ7ROOvMq0a6H6pgbZyBEa2+7wws"></script>
 <link
   rel="stylesheet"
   href="/static/css/fontawesome/solid.css?v={{ resources_version }}"
@@ -109,10 +109,12 @@
               {{ tr(_langs=langs, _msg="nav-register") }}
             </a>
           {%- endif %}
-            <hr class="navbar-divider"/>
-            <a class="navbar-item" id="swap_theme">
-              {{ tr(_langs=langs, _msg="nav-swap-theme") }}
-            </a>
+            <div class="requires-js">
+              <hr class="navbar-divider"/>
+              <a class="navbar-item" id="swap_theme" href="javascript:void(0)">
+                {{ tr(_langs=langs, _msg="nav-swap-theme") }}
+              </a>
+            </div>
           </div>
         </div>
       </div>

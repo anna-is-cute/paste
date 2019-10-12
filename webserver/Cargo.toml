@@ -80,7 +80,7 @@ unicode-segmentation = "1"
 toml = "0.5"
 
 # rate limiting
-ipnetwork = "0.13"
+ipnetwork = "0.15"
 
 # anti-csrf tokens
 hex = "0.4"

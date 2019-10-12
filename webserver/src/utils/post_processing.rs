@@ -9,11 +9,8 @@ use html5ever::{
   interface::Attribute,
 };
 
-use crypto::{
-  hmac::Hmac,
-  mac::Mac,
-  sha1::Sha1,
-};
+use hmac::{Hmac, Mac};
+use sha1::Sha1;
 
 use url::{Url, ParseError as UrlParseError};
 
@@ -78,7 +75,8 @@ fn walk(config: &Config, handle: Handle, external: &Attribute, ctx: &mut Context
         Err(_) => return true,
       };
 
-      let mut hmac = Hmac::new(Sha1::new(), &crate::CAMO_KEY);
+      let mut hmac = Hmac::<Sha1>::new_varkey(&crate::CAMO_KEY)
+        .expect("HMAC can take key of any size");
       hmac.input(url.as_str().as_bytes());
       let hmac_encoded = hex::encode(&hmac.result().code());
 

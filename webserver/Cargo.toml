@@ -80,7 +80,7 @@ unicode-segmentation = "1"
 toml = "0.5"
 
 # rate limiting
-ipnetwork = "0.13"
+ipnetwork = "0.15"
 
 # anti-csrf tokens
 hex = "0.4"
@@ -129,7 +129,11 @@ base32 = "0.4"
 mime = "0.2"
 
 # rewriting image urls for camo with SHA1-HMAC
-rust-crypto = "0.2"
+hmac = "0.7.1"
+sha-1 = "0.8.1"
+
+# Gravatar support
+md-5 = "0.8.0"
 
 # source of randomness
 rand = "0.7"
@@ -144,10 +148,10 @@ reqwest = "0.9"
 csv = "1"
 
 # language ids for localisation
-unic-langid = "0.4"
+unic-langid = "0.6"
 
 # localisation
-fluent-bundle = "0.7"
+fluent-bundle = "0.8"
 
 # localisation
 fluent-syntax = "0.9"

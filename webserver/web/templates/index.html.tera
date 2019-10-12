@@ -34,7 +34,7 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-rn/87IZ8eiRZUiOH0dQKdStq3RW9aHrAQuUwSi/1qlZMbF014a/WcXO9lh6+sGUH"></script>
+  integrity="sha384-O5OzB+yzhIG6SZG9MyCqjxFNAG9RMYBCp4SSQQ3eJB7ae7zP1hwCdz5aagymPjux"></script>
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {%- endblock head %}
 
@@ -233,7 +233,7 @@ New
 
   <div class="control {{ honeypot.class }}">
     <label class="label">{{ tr(_langs=langs, _msg="antispam-honeypot", _attr="email") }}</label>
-    <input tabindex="-1" aria-hidden="true" name="email" class="input" type="text" autocomplete="off"/>
+    <input tabindex="-1" aria-hidden="true" name="email" class="input" type="text" autocomplete="off" data-lpignore="true"/>
   </div>
 
   <div class="paste-submit-buttons">
@@ -244,14 +244,15 @@ New
     </div>
 
     <div class="field is-grouped">
-      <div class="control">
-        <button class="button" name="anonymous" type="submit">{{ tr(_langs=langs, _msg="paste-submit-anonymous") }}</button>
-      </div>
+    {# If we submit the form by pressing `Enter`, it will choose the first submit button it finds in the DOM tree. #}
     {%- if user %}
-      <div class="control">
+      <div class="control submit-authenticated">
         <button class="button is-link" type="submit">{{ tr(_langs=langs, _msg="paste-submit") }}</button>
       </div>
     {%- endif %}
+      <div class="control">
+        <button class="button" name="anonymous" type="submit">{{ tr(_langs=langs, _msg="paste-submit-anonymous") }}</button>
+      </div>
     </div>
   </div>
 </form>

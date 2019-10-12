@@ -195,7 +195,7 @@ features = ["server"]
 
 # faster hashmaps
 [dependencies.hashbrown]
-git = "https://github.com/Amanieu/hashbrown"
+git = "https://github.com/rust-lang/hashbrown"
 features = ["nightly", "serde"]
 
 # displaying otpauth urls

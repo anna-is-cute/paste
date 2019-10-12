@@ -20,7 +20,7 @@ build:
   after_script:
     - strip target/release/*.so target/release/webserver
   cache:
-    key: '2019-09-01'
+    key: '2019-10-11'
     paths:
       - target
   artifacts:

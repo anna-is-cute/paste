@@ -282,8 +282,6 @@
           Parses HTML5 according to spec. Doesn't use regex to do it.
         </p>
       </div>
-    </div>
-    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/lfairy/if_chain">if_chain</a>
@@ -292,6 +290,8 @@
           Chains ifs together, for when you really need to just chain together some ifs.
         </p>
       </div>
+    </div>
+    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/achanda/ipnetwork">ipnetwork</a>
@@ -412,8 +412,6 @@
           An easy and powerful Rust HTTP Client.
         </p>
       </div>
-    </div>
-    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://rocket.rs/">rocket</a>
@@ -430,6 +428,8 @@
           A framework for serialising and deserialising data structures in Rust.
         </p>
       </div>
+    </div>
+    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/serde-rs/json">serde_json</a>

@@ -9,6 +9,7 @@ use crate::{
   models::id::ApiKeyId,
   models::status::Status,
   routes::web::{context, OptionalWebUser, Session},
+  utils::AcceptLanguage,
 };
 
 use diesel::prelude::*;
@@ -62,7 +63,8 @@ fn error(req: &Request, kind: &str, template: &'static str) -> StringOrTemplate 
   let config: State<Config> = req.guard().unwrap();
   let user: OptionalWebUser = req.guard().unwrap();
   let mut session: Session = req.guard().unwrap();
-  let ctx = context(&*config, user.as_ref(), &mut session);
+  let langs: AcceptLanguage = req.guard().unwrap();
+  let ctx = context(&*config, user.as_ref(), &mut session, langs);
   StringOrTemplate::Template(Template::render(template, ctx))
 }
 

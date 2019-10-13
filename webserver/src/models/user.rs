@@ -1,4 +1,4 @@
-use crypto::{digest::Digest, md5::Md5};
+use md5::{Md5, Digest};
 
 use diesel::{
   Queryable,
@@ -12,10 +12,7 @@ use rocket::{http::RawStr, request::FromFormValue};
 
 use sodiumoxide::crypto::hash::sha256;
 
-use std::{
-  cell::RefCell,
-  io::Write,
-};
+use std::io::Write;
 
 /// Admin status of a [`User`].
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, AsExpression)]
@@ -82,27 +79,16 @@ pub enum AvatarProvider {
 }
 
 impl AvatarProvider {
-  pub fn domain(&self) -> &str {
-    match *self {
+  pub fn domain(self) -> &'static str {
+    match self {
       AvatarProvider::Gravatar => "gravatar.com",
       AvatarProvider::Libravatar => "seccdn.libravatar.org",
     }
   }
 
-  pub fn hash(&self, s: &str) -> String {
-    thread_local! {
-      static MD5: RefCell<Md5> = RefCell::new(Md5::new());
-    }
-
-    match *self {
-      AvatarProvider::Gravatar => MD5.with(|m| {
-        let mut m = m.borrow_mut();
-        m.input_str(s);
-        let hash = m.result_str();
-        m.reset();
-
-        hash
-      }),
+  pub fn hash(self, s: &str) -> String {
+    match self {
+      AvatarProvider::Gravatar => hex::encode(&Md5::digest(s.as_bytes())[..]),
       AvatarProvider::Libravatar => hex::encode(&sha256::hash(s.as_bytes())[..]),
     }
   }

@@ -104,11 +104,6 @@ url = "https://github.com/achanda/ipnetwork"
 text = "Looks at IPv6 and IPv4 CIDRs. This is what determines whether you get rate limited. "
 
 [[backend]]
-name = "percent-encoding"
-url = "https://github.com/servo/rust-url/"
-text = "Encodes URLs with neat percent signs."
-
-[[backend]]
 name = "r2d2_redis"
 url = "https://github.com/sorccu/r2d2-redis"
 text = "Makes redis-rs work with r2d2."
@@ -264,14 +259,24 @@ url = "https://github.com/spk/rust-sidekiq"
 text = "Talks to sidekiq in Rust."
 
 [[backend]]
-name = "rust-native-tls"
+name = "native-tls"
 url = "https://github.com/sfackler/rust-native-tls"
 text = "Handles native TLS through one abstract API."
 
 [[backend]]
-name = "rust-crypto"
-url = "https://github.com/DaGenix/rust-crypto"
-text = "A (mostly) pure-Rust implementation of various cryptographic algorithms."
+name = "hmac"
+url = "https://github.com/RustCrypto/MACs"
+text = "Generic implementation of Hash-based Message Authentication Code (HMAC)."
+
+[[backend]]
+name = "sha-1"
+url = "https://github.com/RustCrypto/hashes"
+text = "An implementation of the SHA-1 cryptographic hash algorithm."
+
+[[backend]]
+name = "md-5"
+url = "https://github.com/RustCrypto/hashes"
+text = "An implementation of the MD5 cryptographic hash algorithm."
 
 [[backend]]
 name = "rand"
@@ -302,3 +307,13 @@ text = "Serde support for serialising and deserialising JSON."
 name = "csv"
 url = "https://github.com/BurntSushi/rust-csv"
 text = "CSV parsing library."
+
+[[backend]]
+name = "unic-langid"
+url = "https://github.com/zbraniecki/unic-locale"
+text = "Unicode language identifiers used for localisation."
+
+[[backend]]
+name = "fluent"
+url = "https://github.com/projectfluent/fluent-rs"
+text = "A localisation system for natural-sounding translations."

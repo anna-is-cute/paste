@@ -4,7 +4,7 @@ use crate::{
   database::DbConn,
   errors::*,
   models::paste::{Visibility, Content},
-  routes::web::{OptionalWebUser, Session},
+  routes::web::{AntiSpam, OptionalWebUser, Session},
   utils::{FormDate, Language},
 };
 
@@ -33,7 +33,7 @@ fn handle_js(input: &str) -> Result<Vec<MultiFile>> {
 }
 
 #[post("/pastes", format = "application/x-www-form-urlencoded", data = "<paste>")]
-pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> Result<Redirect> {
+pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, antispam: AntiSpam, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> Result<Redirect> {
   let paste = paste.into_inner();
   sess.set_form(&paste);
 
@@ -43,6 +43,11 @@ pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, 
   }
 
   if !paste.honeypot.is_empty() {
+    sess.add_data("error", "An error occurred. Please try again.");
+    return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
+  }
+
+  if paste.js_check != format!("{}{}", antispam.js.0, antispam.js.1) && paste.no_js_check != antispam.no_js.2.to_string() {
     sess.add_data("error", "An error occurred. Please try again.");
     return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
   }
@@ -150,6 +155,12 @@ pub struct PasteUpload {
   #[serde(skip)]
   #[form(field = "email")]
   honeypot: String,
+  #[serde(skip)]
+  #[form(field = "js-check")]
+  js_check: String,
+  #[serde(skip)]
+  #[form(field = "no-js-check")]
+  no_js_check: String,
 }
 
 #[derive(Debug, Deserialize)]

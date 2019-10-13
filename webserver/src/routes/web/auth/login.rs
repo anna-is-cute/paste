@@ -8,7 +8,10 @@ use crate::{
   errors::*,
   redis_store::Redis,
   routes::web::{context, AddCsp, Honeypot, Rst, OptionalWebUser, Session},
-  utils::totp::totp_raw_skew,
+  utils::{
+    AcceptLanguage,
+    totp::totp_raw_skew,
+  }
 };
 
 use diesel::prelude::*;
@@ -28,13 +31,13 @@ use serde_json::json;
 use std::net::SocketAddr;
 
 #[get("/login")]
-pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> AddCsp<Rst> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> AddCsp<Rst> {
   if user.is_some() {
     return AddCsp::none(Rst::Redirect(Redirect::to("lastpage")));
   }
 
   let honeypot = Honeypot::new();
-  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
   ctx["honeypot"] = json!(honeypot);
   ctx["links"] = json!(links!(
     "login_action" => uri!(crate::routes::web::auth::login::post),
@@ -61,7 +64,7 @@ pub struct RegistrationData {
 }
 
 #[post("/login", format = "application/x-www-form-urlencoded", data = "<data>")]
-pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, redis: Redis, addr: SocketAddr) -> Result<Redirect> {
+pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut redis: Redis, addr: SocketAddr) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 

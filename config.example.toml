@@ -10,6 +10,11 @@ site_domain = "paste.gg"
 # if there are no other admins registered. This can be unset once one admin is registered.
 # key = ""
 
+[store]
+# The path on the filesystem where pastes will be stored.
+# For production docker, this should be set to "/store"
+path = "./store"
+
 # Sender information for emails sent from the server
 [email.sender]
 name = ""

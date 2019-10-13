@@ -1,5 +1,4 @@
 #![feature(
-  custom_derive,
   decl_macro,
   in_band_lifetimes,
   proc_macro_hygiene,
@@ -23,6 +22,7 @@ mod backend;
 mod config;
 mod database;
 mod errors;
+mod i18n;
 mod models;
 mod redis_store;
 mod routes;
@@ -120,10 +120,13 @@ fn main() {
     .manage(reqwest::Client::new())
     .attach(fairings::Csp)
     .attach(fairings::SecurityHeaders)
-    .attach(fairings::AntiCsrf)
     .attach(fairings::LastPage::default())
     .attach(fairings::Push)
-    .attach(Template::fairing())
+    .attach(Template::custom(move |engines| {
+      // FIXME: propagate error when possible
+      let localisation = self::i18n::Localisation::new().unwrap();
+      engines.tera.register_function("tr", self::i18n::tera_function(localisation));
+    }))
     .register(catchers![
       routes::bad_request,
       routes::forbidden,

@@ -13,6 +13,9 @@ ignore = [
   "rocket_contrib",
   # see serde
   "serde_derive",
+  # both handled by a "fluent" credit
+  "fluent-bundle",
+  "fluent-syntax",
 ]
 
 exclude = [
@@ -29,12 +32,12 @@ maintenance = { status = "actively-developed" }
 
 [build-dependencies]
 # getting current commit
-git2 = "0.7"
+git2 = "0.10"
 # credits generation
 serde = "1"
 serde_derive = "1"
 serde_json = "1"
-toml = "0.4"
+toml = "0.5"
 tera = "0.11"
 
 [dependencies]
@@ -44,7 +47,7 @@ serde_derive = "1"
 serde_json = "1"
 
 # creating paste histories
-git2 = "0.7"
+git2 = "0.10"
 
 # handling binary uploads in json
 base64 = "0.10"
@@ -62,25 +65,25 @@ xz2 = "0.1"
 sodiumoxide = "0.2"
 
 # environment variable loading
-dotenv = "0.13"
+dotenv = "0.14"
 
 # lazy statics
 lazy_static = "1"
 
 # complicated ifs with pattern matching
-if_chain = "0.1"
+if_chain = "1"
 
 # splitting on graphemes
 unicode-segmentation = "1"
 
 # configuration files
-toml = "0.4"
+toml = "0.5"
 
 # rate limiting
-ipnetwork = "0.13"
+ipnetwork = "0.15"
 
 # anti-csrf tokens
-hex = "0.3"
+hex = "0.4"
 
 # custom cookies
 cookie = "0.11"
@@ -89,10 +92,10 @@ cookie = "0.11"
 r2d2 = "0.8"
 
 # in-memory data store
-redis = "0.9"
+redis = "0.12"
 
 # redis connection pooling
-r2d2_redis = "0.8"
+r2d2_redis = "0.11"
 
 # scheduling jobs
 sidekiq = "0.8"
@@ -104,13 +107,13 @@ unicode_categories = "0.1"
 tera = "0.11"
 
 # html sanitizing
-ammonia = { git = "https://github.com/notriddle/ammonia" }
+ammonia = "3"
 
 # html parsing
-html5ever = "0.22"
+html5ever = "0.24"
 
 # url parsing
-url = "1"
+url = "2"
 
 # comparing strings without case
 unicase = "2"
@@ -126,10 +129,14 @@ base32 = "0.4"
 mime = "0.2"
 
 # rewriting image urls for camo with SHA1-HMAC
-rust-crypto = "0.2"
+hmac = "0.7"
+sha-1 = "0.8"
+
+# Gravatar support
+md-5 = "0.8"
 
 # source of randomness
-rand = "0.6"
+rand = "0.7"
 
 # creating sha-384 integrity hashes
 sha2 = "0.8"
@@ -139,6 +146,15 @@ reqwest = "0.9"
 
 # csv parsing
 csv = "1"
+
+# language ids for localisation
+unic-langid = "0.6"
+
+# localisation
+fluent-bundle = "0.8"
+
+# localisation
+fluent-syntax = "0.9"
 
 # web logic
 [dependencies.rocket]
@@ -159,7 +175,7 @@ features = ["v4", "serde"]
 # database orm
 [dependencies.diesel]
 version = "1"
-features = ["unstable", "postgres", "uuid", "r2d2", "chrono", "network-address"]
+features = ["unstable", "postgres", "uuidv07", "r2d2", "chrono", "network-address"]
 
 # timestamp handling
 [dependencies.chrono]
@@ -168,18 +184,18 @@ features = ["serde"]
 
 # markdown rendering
 [dependencies.comrak]
-version = "0.4"
+version = "0.6"
 default-features = false
 
 # accepting multipart input
 [dependencies.multipart]
-version = "0.15"
+version = "0.16"
 default-features = false
-features = ["server", "use_arc_str"]
+features = ["server"]
 
 # faster hashmaps
 [dependencies.hashbrown]
-git = "https://github.com/Amanieu/hashbrown"
+git = "https://github.com/rust-lang/hashbrown"
 features = ["nightly", "serde"]
 
 # displaying otpauth urls

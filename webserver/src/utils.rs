@@ -1,3 +1,4 @@
+pub mod accept_language;
 pub mod bit_mask;
 pub mod csv;
 pub mod email;
@@ -11,6 +12,7 @@ pub mod totp;
 pub mod validator;
 
 pub use self::{
+  accept_language::AcceptLanguage,
   bit_mask::BitMask,
   form_date::FormDate,
   hashed_password::HashedPassword,

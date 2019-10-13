@@ -13,9 +13,9 @@
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Page not found.
+{{ tr(_langs=langs, _msg="error-404") }}
 {%- endblock header_subtitle %}
 
 {% block main %}
-We couldn't find what you're looking for. Sorry!
+{{ tr(_langs=langs, _msg="error-404", _attr="description") }}
 {% endblock main %}

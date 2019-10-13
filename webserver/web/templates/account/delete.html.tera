@@ -5,20 +5,20 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-TX1b4qxxTCFxJPqmHYPZ2mbd07JhxxFn9EjKzbgtQ78+CgTsOvyxg5zBNN6SeLiV"></script>
+  integrity="sha384-eDaDE1Yhbf76tCWA+34VBz+ApyYq6c79lCsUs0c6NH348bE87s8xN5G7wAJ7H82a"></script>
 {%- endblock head %}
 
-{% block title -%}Delete account{%- endblock title %}
+{% block title -%}{{ tr(_langs=langs, _msg="delete-account") }}{%- endblock title %}
 
 {% block header %}
 <section class="hero is-danger">
   <div class="hero-body">
     <div class="container">
       <h1 class="title">
-        Delete account
+        {{ tr(_langs=langs, _msg="delete-account") }}
       </h1>
       <h2 class="subtitle">
-        Delete your account here.
+        {{ tr(_langs=langs, _msg="delete-account", _attr="description") }}
       </h2>
     </div>
   </div>
@@ -26,10 +26,10 @@
     <nav class="tabs is-boxed">
       <div class="container">
         <ul>
-          <li><a href="{{ links.settings }}">Settings</a></li>
-          <li><a href="{{ links.keys }}">API keys</a></li>
-          <li><a href="{{ links.tfa }}">2FA</a></li>
-          <li class="is-active"><a href="{{ links.delete_account }}">Delete</a></li>
+          <li><a href="{{ links.settings }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="settings") }}</a></li>
+          <li><a href="{{ links.keys }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="api-keys") }}</a></li>
+          <li><a href="{{ links.tfa }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="two-factor") }}</a></li>
+          <li class="is-active"><a href="{{ links.delete_account }}">{{ tr(_langs=langs, _msg="settings-tabs", _attr="delete") }}</a></li>
         </ul>
       </div>
     </nav>
@@ -40,25 +40,23 @@
 {% block main %}
 <div class="message is-danger">
   <div class="message-header">
-    <p>Whoa there!</p>
+    <p>{{ tr(_langs=langs, _msg="delete-account-warning") }}</p>
   </div>
   <div class="message-body">
     <p>
-      <strong>Please take the time to read this text!</strong>
+      <strong>{{ tr(_langs=langs, _msg="delete-account-warning", _attr="line-1") }}</strong>
     </p>
     <p>
-      Deleting your account is <em>instantaneous and permanent</em>. All of your pastes will
-      immediately cease being accessible and will eventually be deleted off of the server by a task.
+      {{ tr(_langs=langs, _msg="delete-account-warning", _attr="line-2") | safe }}
     </p>
     <p>
-      If you really want to delete your account, type your password in the box below and click the
-      button. You will be redirected to the home page after your account is deleted.
+      {{ tr(_langs=langs, _msg="delete-account-warning", _attr="line-3") }}
     </p>
   </div>
 </div>
 <form action="{{ links.delete_account_action }}" method="post">
   <input type="hidden" name="_method" value="delete"/>
-  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+  <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="field">
     <div class="field has-addons">
       <div class="control is-expanded has-icons-left">
@@ -69,7 +67,7 @@
           name="password"
           class="input"
           type="password"
-          placeholder="Your secure password"/>
+          placeholder="{{ tr(_langs=langs, _msg="delete-account-password") }}"/>
         <span class="icon is-small is-left">
           <i class="fas fa-asterisk"></i>
         </span>
@@ -82,11 +80,11 @@
         </a>
       </div>
       <div class="control">
-        <button class="button is-danger" type="submit">Delete my account</button>
+        <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="delete-account-submit") }}</button>
       </div>
     </div>
     <p class="help">
-      Type your password to confirm account deletion.
+      {{ tr(_langs=langs, _msg="delete-account-password", _attr="help") }}
     </p>
   </div>
 </form>

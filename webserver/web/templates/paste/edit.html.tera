@@ -18,7 +18,7 @@
 <link
   rel="stylesheet"
   href="/static/css/codesass/codesass.css?v={{ resources_version }}"
-  integrity="sha384-yBnyz1mM0NZbnMLxS7s9WOQl0cPUmO1oNno5810djz5Ea4RicAZsO+atsavVEjVa"/>
+  integrity="sha384-FOcIUg2BqXAbmlN86eN/XSf5s48Y7k/GdRr3VnoJNsL4syKJENoKIT2p/5Msske7"/>
 <script
   defer
   src="/static/js/codesass/codesass.min.js?v={{ resources_version }}"
@@ -34,22 +34,18 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-JaA6P/J/KF8veQmpp0jomaNWeHDEFoEOGjqJ31zHTQBtOWzNC5ddubql8sF8npX/"></script>
-<script
-  defer
-  src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
-  integrity="sha384-5zARgXuvMiKGWrda+raHXOlTw717huPS47iQABU10DXHGQJ+7PE/PPghBZSmzaNU"></script>
+  integrity="sha384-O5OzB+yzhIG6SZG9MyCqjxFNAG9RMYBCp4SSQQ3eJB7ae7zP1hwCdz5aagymPjux"></script>
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
-  integrity="sha384-nvZWXhPMbi0ixdPLjUPfx2htsDNlNiypOV+5mX4XOwbZ2aDQjY7yw5Jd2HSf9cUr"></script>
+  integrity="sha384-atFRxswSqKoXkz8JTPbRSxzqTq0u2uwTBhAgkyZqS1B3bBXeX4nHP9XUEhz1K9Dh"></script>
 {%- endblock head %}
 
 {% block title -%}
   {% if paste.name %}
-Edit {{ paste.name }}
+    {{ tr(_langs=langs, _msg="edit-page-title", _attr="named", name=paste.name) }}
   {% else %}
-Edit untitled paste
+    {{ tr(_langs=langs, _msg="edit-page-title", _attr="unnamed") }}
   {% endif %}
 {%- endblock title %}
 
@@ -58,28 +54,26 @@ Edit untitled paste
   <div class="paste hero-body">
     <div class="container">
       <h1 class="title">
-        Edit
       {% if paste.name %}
-        <span class="keeps-spaces">{{ paste.name }}</span>
+        {{ tr(_langs=langs, _msg="edit-title", _attr="named", name=paste.name) | safe }}
       {% else %}
-        <em>untitled paste</em>
+        {{ tr(_langs=langs, _msg="edit-title", _attr="unnamed") | safe }}
       {% endif %}
       </h1>
       <h2 class="subtitle">
-        Change this paste<span class="requires-js"> and its files</span>.
+        {{ tr(_langs=langs, _msg="edit-subtitle") | safe }}
       </h2>
     </div>
   </div>
   <div class="hero-foot">
     <div class="paste container">
-      {% set file_count = paste.files | length %}
       <div class="right paste info">
-        <span>{{ paste.visibility }}</span>
-        <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
+        <span>{{ tr(_langs=langs, _msg="paste-visibility", _attr=paste.visibility) }}</span>
+        <span>{{ tr(_langs=langs, _msg="disp-num-files", files=paste.files | length) }}</span>
         <span class="timestamp" data-timestamp="{{ paste.created_at }}">{{ paste.created_at | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         {% if paste.expires %}
         <span>
-          expires
+          {{ tr(_langs=langs, _msg="disp-expires") }}
           <span class="timestamp" data-timestamp="{{ paste.expires }}">{{ paste.expires | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         </span>
         {% endif %}
@@ -98,7 +92,7 @@ Edit untitled paste
 {% block main %}
 <form id="paste_upload" method="post" action="{{ links.patch }}">
   <input type="hidden" name="_method" value="patch"/>
-  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+  <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div>
     <div class="columns">
       <div class="column">

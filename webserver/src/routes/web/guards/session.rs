@@ -1,10 +1,9 @@
 use crate::{
   models::id::{SessionId, UserId},
   redis_store::Redis,
-  routes::web::guards::AntiCsrfToken,
 };
 
-use chrono::{Utc, Duration};
+use chrono::Duration;
 
 use cookie::{Cookie, SameSite};
 
@@ -20,6 +19,8 @@ use rocket::{
 use serde::Serialize;
 
 use serde_json::{Value as JsonValue, json};
+
+use sodiumoxide::randombytes;
 
 use uuid::Uuid;
 
@@ -38,7 +39,7 @@ pub struct Session<'a, 'r> where 'r: 'a {
   pub data: HashMap<String, String>,
   #[serde(default)]
   pub json: HashMap<String, JsonValue>,
-  pub anti_csrf_tokens: Vec<AntiCsrfToken>,
+  pub anti_csrf_token: String,
 }
 
 impl Session<'a, 'r> {
@@ -49,7 +50,7 @@ impl Session<'a, 'r> {
       user_id: Default::default(),
       data: Default::default(),
       json: Default::default(),
-      anti_csrf_tokens: Default::default(),
+      anti_csrf_token: hex::encode(randombytes::randombytes(64)),
     }
   }
 
@@ -68,75 +69,48 @@ impl Session<'a, 'r> {
     self.data.insert(key.into(), value.into());
   }
 
-  pub fn add_token<S: Into<String>>(&mut self, token: S) {
-    let expiry = Utc::now() + Duration::minutes(30);
-    let token = AntiCsrfToken(
-      token.into(),
-      expiry,
-    );
-    self.anti_csrf_tokens.push(token);
-  }
-
-  pub fn purge_tokens(&mut self) {
-    let now = Utc::now();
-    self.anti_csrf_tokens.retain(|x| now <= x.1);
-
-    if self.anti_csrf_tokens.len() > 50 {
-      self.anti_csrf_tokens.reverse();
-      self.anti_csrf_tokens.truncate(50);
-      self.anti_csrf_tokens.reverse();
-    }
-  }
-
-  pub fn check_token(&mut self, token: &str) -> bool {
-    self.purge_tokens();
-
-    if let Some(i) = self.anti_csrf_tokens.iter().position(|x| x.0 == token) {
-      self.anti_csrf_tokens.remove(i);
-      return true;
-    }
-
-    false
+  pub fn check_token(&self, token: &str) -> bool {
+    self.anti_csrf_token == token
   }
 }
 
 impl FromRequest<'a, 'r> for Session<'a, 'r> {
-    type Error = String;
+  type Error = String;
 
-    fn from_request(req: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
-      // get session (private cookie, so encrypted and authed)
-      let sess_id: Option<SessionId> = req
-        .cookies()
-        .get_private("session")
-        .and_then(|x| Uuid::from_str(&x.value()).ok())
-        .map(SessionId);
+  fn from_request(req: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+    // get session (private cookie, so encrypted and authed)
+    let sess_id: Option<SessionId> = req
+      .cookies()
+      .get_private("session")
+      .and_then(|x| Uuid::from_str(&x.value()).ok())
+      .map(SessionId);
 
-      let sess_id = match sess_id {
-        Some(s) => s,
-        None => return Outcome::Success(Session::new(SessionId(Uuid::new_v4()), req)),
-      };
+    let sess_id = match sess_id {
+      Some(s) => s,
+      None => return Outcome::Success(Session::new(SessionId(Uuid::new_v4()), req)),
+    };
 
-      let redis: Redis = match req.guard() {
-        Outcome::Success(s) => s,
-        Outcome::Failure((status, _)) => return Outcome::Failure((status, "could not get redis connection".into())),
-        Outcome::Forward(()) => return Outcome::Forward(()),
-      };
+    let mut redis: Redis = match req.guard() {
+      Outcome::Success(s) => s,
+      Outcome::Failure((status, _)) => return Outcome::Failure((status, "could not get redis connection".into())),
+      Outcome::Forward(()) => return Outcome::Forward(()),
+    };
 
-      let json: String = match redis.get(format!("session:{}", sess_id.to_simple())) {
-        Ok(s) => s,
-        Err(_) => return Outcome::Success(Session::new(SessionId(Uuid::new_v4()), req)),
-      };
+    let json: String = match redis.get(format!("session:{}", sess_id.to_simple())) {
+      Ok(s) => s,
+      Err(_) => return Outcome::Success(Session::new(SessionId(Uuid::new_v4()), req)),
+    };
 
-      let mut session: Session = match serde_json::from_str(&json) {
-        Ok(s) => s,
-        // if we receive invalid json, just make a new session and let the old one die
-        Err(_) => return Outcome::Success(Session::new(SessionId(Uuid::new_v4()), req)),
-      };
+    let mut session: Session = match serde_json::from_str(&json) {
+      Ok(s) => s,
+      // if we receive invalid json, just make a new session and let the old one die
+      Err(_) => return Outcome::Success(Session::new(SessionId(Uuid::new_v4()), req)),
+    };
 
-      session.request = Some(req);
+    session.request = Some(req);
 
-      Outcome::Success(session)
-    }
+    Outcome::Success(session)
+  }
 }
 
 impl Drop for Session<'a, 'r> {
@@ -150,7 +124,7 @@ impl Drop for Session<'a, 'r> {
         },
       };
 
-      let redis: Redis = match req.guard() {
+      let mut redis: Redis = match req.guard() {
         Outcome::Success(s) => s,
         Outcome::Failure(_) | Outcome::Forward(_) => {
           println!("could not get redis connection");

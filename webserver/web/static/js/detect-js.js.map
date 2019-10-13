@@ -1,1 +1,1 @@
-{"version":3,"sources":["../../src/js/detect-js.js"],"names":["document","children","className"],"mappings":";;AAAAA,SAASC,QAAT,CAAkB,CAAlB,EAAqBC,SAArB,GAAiC,IAAjC","file":"detect-js.js","sourcesContent":["document.children[0].className = 'js';\n"]}
+{"version":3,"sources":["../../src/js/detect-js.js"],"names":["document","children","className"],"mappings":";;AAAAA,QAAQ,CAACC,QAAT,CAAkB,CAAlB,EAAqBC,SAArB,GAAiC,IAAjC","sourcesContent":["document.children[0].className = 'js';\n"],"file":"detect-js.js"}

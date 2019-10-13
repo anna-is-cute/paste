@@ -231,6 +231,8 @@ config_sidekiq_sh() {
   info "setting up sidekiq.sh"
   # copy the example config
   cp "sidekiq.example.sh" "sidekiq.sh"
+  # replace the shebang
+  sed -i 's/\/bin\/sh/\/bin\/bash/g' "sidekiq.sh"
   # we're using debug
   sed -i 's/RUST_ENV="release"/RUST_ENV="debug"/g' "sidekiq.sh"
   # set the target dir

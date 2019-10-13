@@ -13,9 +13,9 @@
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Bad request.
+{{ tr(_langs=langs, _msg="error-400") }}
 {%- endblock header_subtitle %}
 
 {% block main %}
-Your request was bad. This error message is bad.
+{{ tr(_langs=langs, _msg="error-400", _attr="description") }}
 {% endblock main %}

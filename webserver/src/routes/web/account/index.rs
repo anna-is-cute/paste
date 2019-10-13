@@ -4,7 +4,7 @@ use crate::{
   errors::*,
   models::user::AvatarProvider,
   routes::web::{context, Rst, OptionalWebUser, Session},
-  utils::{email, HashedPassword, Validator},
+  utils::{email, AcceptLanguage, HashedPassword, Validator},
 };
 use chrono::Utc;
 
@@ -30,13 +30,13 @@ pub fn well_known_password_change() -> Redirect {
 }
 
 #[get("/account")]
-pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
-  let mut ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess, langs);
   ctx["links"] = json!(links!(super::account_links(),
     "send_verification" => uri!(crate::routes::web::account::verify::resend),
     "patch_account" => uri!(crate::routes::web::account::index::patch),

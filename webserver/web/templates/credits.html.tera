@@ -5,15 +5,15 @@
 {%- endblock head %}
 
 {% block title -%}
-Credits
+{{ tr(_langs=langs, _msg="credits") }}
 {%- endblock title %}
 
 {% block header_title -%}
-Credits
+{{ tr(_langs=langs, _msg="credits") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-If paste was a movie, these would be at the end.
+{{ tr(_langs=langs, _msg="credits", _attr="description") }}
 {%- endblock header_subtitle %}
 
 {% block main %}

@@ -5,7 +5,10 @@ use crate::{
   models::id::UserId,
   redis_store::Redis,
   routes::web::{context, AddCsp, Rst, OptionalWebUser, Session},
-  utils::totp::totp_raw_skew,
+  utils::{
+    AcceptLanguage,
+    totp::totp_raw_skew,
+  },
 };
 
 use base32::Alphabet;
@@ -30,10 +33,10 @@ use serde_json::json;
 
 use sodiumoxide::randombytes;
 
-use url::percent_encoding::{utf8_percent_encode, PATH_SEGMENT_ENCODE_SET, QUERY_ENCODE_SET};
+use url::Url;
 
 #[get("/account/2fa")]
-pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
@@ -41,7 +44,7 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> R
 
   let backups = sess.data.remove("backup_codes");
 
-  let mut ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess, langs);
   ctx["tfa_enabled"] = json!(user.tfa_enabled());
   ctx["backups"] = json!(backups);
   ctx["links"] = json!(links!(super::account_links(),
@@ -54,7 +57,7 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> R
 }
 
 #[get("/account/2fa/enable")]
-pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<AddCsp<Rst>> {
+pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<AddCsp<Rst>> {
   let mut user = match user.into_inner() {
     Some(u) => u,
     None => return Ok(AddCsp::new(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get))), vec!["img-src data:"])),
@@ -72,15 +75,17 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
   let shared_secret = base32::encode(Alphabet::RFC4648 { padding: false }, user.shared_secret().expect("missing secret"));
 
   // create the segments of the uri
-  let unsafe_label = format!("{} - {} ({})", config.general.site_name, user.name(), user.username());
-  let label = utf8_percent_encode(&unsafe_label, PATH_SEGMENT_ENCODE_SET);
-  let issuer = utf8_percent_encode(&config.general.site_name, QUERY_ENCODE_SET);
+  let label = format!("{} - {} ({})", config.general.site_name, user.name(), user.username());
+  let issuer = &config.general.site_name;
 
   // create the uri
-  let otpauth = format!("otpauth://totp/{}?secret={}&issuer={}", label, shared_secret, issuer);
+  let mut otpauth = Url::parse("otpauth://totp")?.join(&label)?;
+  otpauth.query_pairs_mut()
+    .append_pair("secret", &shared_secret)
+    .append_pair("issuer", issuer);
 
   // make a qr code out of the uri
-  let qr = match QrCode::new(otpauth.as_bytes()) {
+  let qr = match QrCode::new(otpauth.as_str().as_bytes()) {
     Ok(q) => q,
     Err(e) => bail!("could not create qr code: {}", e),
   };
@@ -90,7 +95,7 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
     .max_dimensions(512, 512)
     .build();
 
-  let mut ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess, langs);
   ctx["shared_secret_segments"] = json!(secret_segments(&shared_secret));
   ctx["qr_code"] = json!(img);
   ctx["links"] = json!(links!(super::account_links(),
@@ -127,7 +132,7 @@ pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Sessio
 }
 
 #[post("/account/2fa/validate", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, redis: Redis) -> Result<Redirect> {
+pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut redis: Redis) -> Result<Redirect> {
   let form = form.into_inner();
 
   if !sess.check_token(&form.anti_csrf_token) {
@@ -178,7 +183,7 @@ pub struct Validate {
 }
 
 #[get("/account/2fa/disable")]
-pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Result<Rst> {
+pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
@@ -189,7 +194,7 @@ pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessi
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 
-  let mut ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess, langs);
   ctx["links"] = json!(links!(super::account_links(),
     "disable" => uri!(crate::routes::web::account::two_factor::disable_post),
   ));

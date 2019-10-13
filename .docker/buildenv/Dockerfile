@@ -1,7 +1,6 @@
 FROM debian:stretch
 
-RUN apt-get update
-RUN apt-get install \
+RUN apt-get update && apt-get install \
   --no-install-recommends \
   --assume-yes \
   curl ca-certificates \
@@ -9,13 +8,14 @@ RUN apt-get install \
   build-essential \
   cmake \
   autoconf automake libtool \
-  libssl1.0-dev libssh-dev libz-dev clang \
+  libssl-dev libz-dev clang \
   libpq-dev \
-  pkg-config
+  pkg-config \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /
 
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2018-12-01
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2019-10-11
 
 RUN echo "source $HOME/.cargo/env" >> $HOME/.bashrc
 

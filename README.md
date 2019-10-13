@@ -3,11 +3,13 @@
 *A sensible, modern pastebin.*
 
 [![build status](https://travis-ci.org/jkcclemens/paste.svg?branch=master "travis-ci status")](https://travis-ci.org/jkcclemens/paste)
-[![jenkins status](https://ci.akpmakes.tech/buildStatus/icon?job=paste/master "jenkins + docker status")](https://ci.akpmakes.tech/job/paste/job/master/)
+[![pipeline status](https://gitlab.com/jkcclemens/paste/badges/master/pipeline.svg "gitlab ci status")](https://gitlab.com/jkcclemens/paste/commits/master)
 [![dependency status](https://deps.rs/repo/github/jkcclemens/paste/status.svg)](https://deps.rs/repo/github/jkcclemens/paste)
 [![patreon](https://img.shields.io/badge/donate-patreon-blue.svg)](https://www.patreon.com/jkcclemens/overview)
 [![paypal](https://img.shields.io/badge/donate-paypal-blue.svg)](https://paypal.me/jkcclemens)
 [![discord](https://img.shields.io/badge/contact-discord-7289DA.svg)](https://discord.gg/EnqSwJK)
+
+<img src="docs/light_screenshot.png" width="430" alt="Light theme screenshot"> <img src="docs/dark_screenshot.png" width="430" alt="Dark theme screenshot">
 
 ## Idea
 
@@ -35,7 +37,7 @@ community!
 
 I host [paste.gg](https://paste.gg). I am poor and can't afford a good machine (paste.gg is a DigitalOcean droplet – three cores and low-ish RAM), so please don't bombard it!
 
-## Setting up your own paste server (Docker)
+## Setting up your own paste server (production, Docker)
 
 You can run your own paste server by using `docker-compose`. You will need Docker, obviously.
 
@@ -111,7 +113,7 @@ Access paste by connecting to the host via HTTPS.
 
 Done!
 
-## Setting up your own paste server (manual)
+## Setting up your own paste server (production, manual)
 
 ### You will need
 
@@ -161,6 +163,20 @@ docker run --rm -it -v "$(pwd)":/paste jkcclemens/paste
 
 By default, that will build paste, but you can also append `/bin/bash` to the command to start a
 Bash shell in the working environment.
+
+## Contributing
+
+To set up a development environment with a debug build of paste, use `paste.sh` in the script
+directory! Just run `scripts/paste.sh` by itself to show help.
+
+- Run `scripts/paste.sh start` to start the server and generate any missing config files and a
+  self-signed certificate.
+- If this is your first run, `scripts/paste.sh logs` will help you keep track of the compilation.
+  paste will need to build `diesel_cli` and paste itself, which can take some time.
+- Once Rocket says it's ready, access `https://localhost` and accept the self-signed certificate.
+
+Changes to the HTML templates should take effect on reload, but changes to any rust will need a
+`scripts/paste.sh compose restart backend` to recompile.
 
 ## API
 

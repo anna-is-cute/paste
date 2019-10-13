@@ -10,7 +10,10 @@ use rocket::{
   request::{self, FromRequest},
 };
 
-use std::{env, ops::Deref};
+use std::{
+  env,
+  ops::{Deref, DerefMut},
+};
 
 pub type RedisPool = Pool<RedisConnectionManager>;
 
@@ -51,5 +54,11 @@ impl Deref for Redis {
 
   fn deref(&self) -> &Self::Target {
     &self.0
+  }
+}
+
+impl DerefMut for Redis {
+  fn deref_mut(&mut self) -> &mut Self::Target {
+    &mut self.0
   }
 }

@@ -10,10 +10,10 @@ crate-type = ["cdylib"]
 
 [dependencies]
 chrono = "0.4"
-dotenv = "0.13"
+dotenv = "0.14"
 failure = "0.1"
 uuid = "0.7"
 
 [dependencies.diesel]
 version = "1"
-features = ["unstable", "postgres", "uuid", "chrono"]
+features = ["unstable", "postgres", "uuidv07", "chrono"]

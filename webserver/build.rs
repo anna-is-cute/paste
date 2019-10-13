@@ -106,6 +106,12 @@ crate mod credits {
           dep,
         );
       }
+
+      for dep in &self.backend {
+        if !manifest.dependencies.contains_key(&dep.name) {
+          eprintln!("warning: {} is in credits.toml and perhaps shouldn't be", dep.name);
+        }
+      }
     }
 
     fn create_html(&self) {

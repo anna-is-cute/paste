@@ -12,7 +12,7 @@ use crate::{
   errors::*,
   routes::web::{context, Session, Rst, OptionalWebUser},
   sidekiq::Job,
-  utils::{email, PasswordContext, HashedPassword},
+  utils::{email, AcceptLanguage, PasswordContext, HashedPassword},
 };
 
 use base64;
@@ -39,8 +39,8 @@ use uuid::Uuid;
 use std::net::SocketAddr;
 
 #[get("/account/forgot_password")]
-pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session) -> Template {
-  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> Template {
+  let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
   ctx["links"] = json!(links!(
     "forgot_password" => uri!(crate::routes::web::account::reset_password::post),
   ));
@@ -129,13 +129,13 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
 }
 
 #[get("/account/reset_password?<data..>")]
-pub fn reset_get(data: Form<ResetPassword>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn reset_get(data: Form<ResetPassword>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
   if check_reset(&conn, *data.id, &data.secret).is_none() {
     sess.add_data("error", "Invalid password reset URL.");
     return Ok(Rst::Redirect(Redirect::to(uri!(get))));
   }
 
-  let mut ctx = context(&*config, user.as_ref(), &mut sess);
+  let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
   ctx["pr_id"] = json!(data.id.to_simple().to_string());
   ctx["pr_secret"] = json!(&data.secret);
   ctx["links"] = json!(links!(

@@ -18,11 +18,11 @@
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
-  integrity="sha384-gJNm/NFT+oE53Jxd093fmMyvblJB8qOjWk2uFesHa4/S94u4Fikhd7SPf1oTVn72"></script>
+  integrity="sha384-n+k+iIrRS0CjApohJ9xVX0dz+TP3an5z71rnLWMouKmowP3IU4+fs9Dju7DYF01h"></script>
 <script
   defer
   src="/static/js/modal.js?v={{ resources_version }}"
-  integrity="sha384-ZRNB7Q+d2cw5nKPIP3gBP58TnspQ+F001MRqjNMPkNM0EtgaYuAbHHJc2ESs352/"></script>
+  integrity="sha384-J7lVKR2PCcVXiC6KeUdovo/b24Cdk7MWAGS9f1gLIng5bEogApeNytgaPG4iiw90"></script>
 <script
   defer
   src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
@@ -30,27 +30,26 @@
 <script
   defer
   src="/static/js/highlightjs-line-numbers/highlightjs-line-numbers.js?v={{ resources_version }}"
-  integrity="sha384-y1kZrFh7lK07Ft7JsTzkd9PEc2pTATUT9v3hUxVJphya9boH85y4XWv7b0pCaDol"></script>
+  integrity="sha384-83eJN6ZaPxV/LDgKmnKjiCz/gu5lISWDHQbcrpc/u1XlKNkwkS+mq5GDXnf0MFbe"></script>
 <script
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-3jmUxsSIfbI+4PHDB1prm8jBHB19yGb6mXxcWar5PHFTBDTikFNTYhYgZGmuaj/m"></script>
-<script
-  defer
-  src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
-  integrity="sha384-5zARgXuvMiKGWrda+raHXOlTw717huPS47iQABU10DXHGQJ+7PE/PPghBZSmzaNU"></script>
+  integrity="sha384-OLkOmsABjZkHLxet3vqyYB4F0+FBSgeETYe+kp45OSmBrHYxJseA8PFzCtIRilZS"></script>
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
-  integrity="sha384-nvZWXhPMbi0ixdPLjUPfx2htsDNlNiypOV+5mX4XOwbZ2aDQjY7yw5Jd2HSf9cUr"></script>
+  integrity="sha384-atFRxswSqKoXkz8JTPbRSxzqTq0u2uwTBhAgkyZqS1B3bBXeX4nHP9XUEhz1K9Dh"></script>
 {%- endblock head %}
 
 {% block title -%}
   {%- if paste.name -%}
-{{ paste.name }}
+    {{ paste.name }}
+  {%- elif paste.files | length > 0 -%}
+    {{ paste.files[0].name }}
   {%- else -%}
-untitled paste
+    {{ tr(_langs=langs, _msg="disp-untitled") }}
   {%- endif -%}
+  {%- if paste.author %} by {{ paste.author.username }}{%- endif -%}
 {%- endblock title %}
 
 {% block header %}
@@ -86,7 +85,7 @@ untitled paste
             <img
               class="is-less-rounded"
               src="{{ links.author_avatar }}"
-              alt="{{ paste.author.username }} avatar"/>
+              alt="{{ tr(_langs=langs, _msg="avatar-alt", username=paste.author.username) }}"/>
           </figure>
           <span class="keeps-spaces">{{ paste.author.name }}</span>
         </a>
@@ -95,7 +94,7 @@ untitled paste
         {% if paste.name %}
           <span class="keeps-spaces">{{ paste.name }}</span>
         {% else %}
-          <em>untitled paste</em>
+          <em>{{ tr(_langs=langs, _msg="disp-untitled") }}</em>
         {% endif %}
         </h1>
         {% if paste.description %}
@@ -110,20 +109,20 @@ untitled paste
     <div class="paste container">
       {% set file_count = paste.files | length %}
       <div class="right paste info">
-        <span>{{ paste.visibility }}</span>
-        <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
+        <span>{{ tr(_langs=langs, _msg="paste-visibility", _attr=paste.visibility) }}</span>
+        <span>{{ tr(_langs=langs, _msg="disp-num-files", files=paste.files | length) }}</span>
         <span class="timestamp" data-timestamp="{{ paste.created_at }}">{{ paste.created_at | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         {% if paste.expires %}
         <span>
-          expires
+          {{ tr(_langs=langs, _msg="disp-expires") }}
           <span class="timestamp" data-timestamp="{{ paste.expires }}">{{ paste.expires | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         </span>
         {% endif %}
       </div>
       <div class="left tabs">
         <ul>
-          <li class="is-active"><a href="{{ links.files  }}">files</a></li>
-          <li><a href="{{ links.revisions }}">revisions <span class="right tag">{{ num_commits }}</span></a></li>
+          <li class="is-active"><a href="{{ links.files  }}">{{ tr(_langs=langs, _msg="disp-tab-files") }}</a></li>
+          <li><a href="{{ links.revisions }}">{{ tr(_langs=langs, _msg="disp-tab-revisions") }} <span class="right tag">{{ num_commits }}</span></a></li>
         </ul>
       </div>
     </div>
@@ -136,19 +135,18 @@ untitled paste
 <div id="deletion_modal" class="modal">
   <form id="deletion_form" action="{{ links.delete }}" method="post">
     <input type="hidden" name="_method" value="delete"/>
-    <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+    <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
     <div class="modal-background closes-modal" data-modal-id="deletion_modal"></div>
     <div class="modal-card">
       <header class="modal-card-head">
-        <p class="modal-card-title">Delete paste</p>
+        <p class="modal-card-title">{{ tr(_langs=langs, _msg="disp-delete-title") }}</p>
         <button class="delete closes-modal" data-modal-id="deletion_modal" aria-label="close" type="button"></button>
       </header>
       <section class="modal-card-body">
       {% if not paste.author %}
         <div class="content">
           <p>
-            To delete an anonymous paste, you need to use its deletion key. Enter it below and click
-            "Delete" to delete this paste.
+            {{ tr(_langs=langs, _msg="disp-delete-description") }}
           </p>
         </div>
         <input
@@ -160,18 +158,18 @@ untitled paste
           autocorrect="off"
           autocapitalize="off"
           class="input"
-          placeholder="Deletion key"/>
+          placeholder="{{ tr(_langs=langs, _msg="disp-delete-key-placeholder") }}"/>
       {% endif %}
       {% if is_owner %}
         <div class="content">
           <p>
-            Please confirm you would like to delete this paste.
+            {{ tr(_langs=langs, _msg="disp-delete-confirm") }}
           </p>
         </div>
       {% endif %}
       </section>
       <footer class="modal-card-foot">
-        <button class="button is-danger" type="submit">Delete</button>
+        <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="disp-delete-button") }}</button>
       </footer>
     </div>
   </form>
@@ -180,17 +178,15 @@ untitled paste
 {% if deletion_key %}
 <div class="message is-info">
   <p class="message-header">
-    Deletion key
+    {{ tr(_langs=langs, _msg="disp-dkey-title") }}
     <button class="delete" aria-label="delete"></button>
   </p>
   <div class="message-body">
     <p>
-      In order to delete this paste, you will need to use the key below. This message will only
-      appear once.
+      {{ tr(_langs=langs, _msg="disp-dkey-msg-1") }}
     </p>
     <p>
-      Note that this key is saved on <em>this browser only</em> for 30 days. If you clear the cache,
-      the key will be lost.
+      {{ tr(_langs=langs, _msg="disp-dkey-msg-2") | safe }}
     </p>
     <p>
       <code id="deletion_key" data-paste-id="{{ paste.id }}">{{ deletion_key }}</code>
@@ -210,13 +206,13 @@ untitled paste
       {% if file.content.format == "text" and rendered[file.id] %}
       <div class="paste-tabs tabs" id="{{ file.id }}-tab-links">
         <ul>
-          <li class="paste-rendered-tab is-active"><a>Rendered</a></li>
-          <li class="paste-source-tab"><a>Source</a></li>
+          <li class="paste-rendered-tab is-active"><a>{{ tr(_langs=langs, _msg="disp-file-tab-rendered") }}</a></li>
+          <li class="paste-source-tab"><a>{{ tr(_langs=langs, _msg="disp-file-tab-source") }}</a></li>
         </ul>
       </div>
       {% endif %}
     </div>
-    <a class="is-pulled-right button" href="{{ links.raw_files[file.id] }}">Raw</a>
+    <a class="is-pulled-right button" href="{{ links.raw_files[file.id] }}">{{ tr(_langs=langs, _msg="disp-file-raw") }}</a>
   </div>
   {% endif %}
   {% if notices[file.id] %}
@@ -244,7 +240,7 @@ untitled paste
         data-ln-prefix="{{ file.name | slugify }}"><code>{{ file.content.value }}</code></pre>
     {% endif %}
   {% else %}
-    Binary content
+    {{ tr(_langs=langs, _msg="disp-file-binary-content") }}
   {% endif %}
 </div>
 {% endfor %}

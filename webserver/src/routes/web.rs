@@ -5,11 +5,20 @@ use crate::{
     models::users::User,
     schema::users as users_db,
   },
+  utils::AcceptLanguage,
 };
+
+use cookie::{Cookie, SameSite};
 
 use diesel::prelude::*;
 
 use hashbrown::HashMap;
+
+use rand::{
+  Rng,
+  distributions::{Alphanumeric, Distribution},
+  seq::SliceRandom,
+};
 
 use rocket::{
   State, Outcome,
@@ -21,6 +30,10 @@ use rocket::{
 use rocket_contrib::templates::Template;
 
 use serde_json::{Value, json};
+
+use sha2::{Digest, Sha384};
+
+use uuid::Uuid;
 
 use std::{ops::Deref, result};
 
@@ -60,9 +73,6 @@ pub struct Honeypot {
 
 impl Honeypot {
   pub fn new() -> Self {
-    use rand::{Rng, distributions::{Alphanumeric, Distribution}, seq::SliceRandom};
-    use sha2::{Digest, Sha384};
-
     const ALPHA: [char; 52] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
     let mut rng = rand::thread_rng();
@@ -91,6 +101,103 @@ impl Honeypot {
     }
   }
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AntiSpam<'a, 'r> where 'r: 'a {
+  id: Uuid,
+  #[serde(skip)]
+  request: Option<&'a Request<'r>>,
+  js: (String, String),
+  no_js: (u8, u8, u8),
+  script: String,
+  integrity_hash: String,
+}
+
+impl<'a, 'r> AntiSpam<'a, 'r> {
+  pub fn new(req: &'a Request<'r>) -> Self {
+    let mut rng = rand::thread_rng();
+
+    let length = rng.gen_range(7, 10);
+
+    let js_1: String = Alphanumeric.sample_iter(&mut rng).take(length).collect();
+    let js_2: String = Alphanumeric.sample_iter(&mut rng).take(length).collect();
+
+    let script = format!(
+      "document.getElementById('js-check').value = '{}' + '{}';",
+      js_1,
+      js_2,
+    );
+
+    let mut hasher = Sha384::new();
+    hasher.input(&script);
+    let integrity_hash = format!("sha384-{}", base64::encode(&hasher.result()[..]));
+
+    let x: u8 = rng.gen_range(1, 10);
+    let y: u8 = rng.gen_range(1, 10);
+    let sum = x + y;
+
+    AntiSpam {
+      id: Uuid::new_v4(),
+      request: Some(req),
+      js: (js_1, js_2),
+      no_js: (x, y, sum),
+      script,
+      integrity_hash,
+    }
+  }
+}
+
+
+impl FromRequest<'a, 'r> for AntiSpam<'a, 'r> {
+  type Error = String;
+
+  fn from_request(req: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+    // get antispam (private cookie, so encrypted and authed)
+    let antispam: Option<Self> = req
+      .cookies()
+      .get_private("antispam")
+      .and_then(|x| serde_json::from_str(x.value()).ok());
+
+    let antispam = match antispam {
+      Some(mut s) => {
+        s.request = Some(req);
+        s
+      },
+      None => AntiSpam::new(req),
+    };
+
+    Outcome::Success(antispam)
+  }
+}
+
+impl Drop for AntiSpam<'a, 'r> {
+  fn drop(&mut self) {
+    if let Some(req) = self.request {
+      let current_cookie = req.cookies().get_private("antispam");
+      let current_id = current_cookie
+        .and_then(|x| serde_json::from_str(x.value()).ok())
+        .map(|x: AntiSpam| x.id);
+
+      if current_id != Some(self.id) {
+        let json = match serde_json::to_string(self) {
+          Ok(b) => b,
+          Err(e) => {
+            println!("could not serialize antispam: {}", e);
+            return;
+          },
+        };
+
+        let cookie = Cookie::build("antispam", json)
+          .secure(true)
+          .http_only(true)
+          .same_site(SameSite::Lax)
+          .finish();
+        req.cookies().add_private(cookie);
+      }
+    }
+  }
+}
+
 
 #[derive(Debug, Default)]
 pub struct Links {
@@ -138,9 +245,10 @@ lazy_static! {
   };
 }
 
-pub fn context(config: &Config, user: Option<&User>, session: &mut Session) -> Value {
+pub fn context(config: &Config, user: Option<&User>, session: &mut Session, langs: AcceptLanguage) -> Value {
   json!({
     "config": &config,
+    "langs": langs.into_strings(),
     "error": session.data.remove("error"),
     "info": session.data.remove("info"),
     "form": session.take_form(),

@@ -26,27 +26,22 @@
 <script
   defer
   src="/static/js/highlightjs-line-numbers/highlightjs-line-numbers.js?v={{ resources_version }}"
-  integrity="sha384-y1kZrFh7lK07Ft7JsTzkd9PEc2pTATUT9v3hUxVJphya9boH85y4XWv7b0pCaDol"></script>
+  integrity="sha384-83eJN6ZaPxV/LDgKmnKjiCz/gu5lISWDHQbcrpc/u1XlKNkwkS+mq5GDXnf0MFbe"></script>
 <script
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-3jmUxsSIfbI+4PHDB1prm8jBHB19yGb6mXxcWar5PHFTBDTikFNTYhYgZGmuaj/m"></script>
-<script
-  defer
-  src="/static/js/moment/moment-with-locales.js?v={{ resources_version }}"
-  integrity="sha384-5zARgXuvMiKGWrda+raHXOlTw717huPS47iQABU10DXHGQJ+7PE/PPghBZSmzaNU"></script>
+  integrity="sha384-OLkOmsABjZkHLxet3vqyYB4F0+FBSgeETYe+kp45OSmBrHYxJseA8PFzCtIRilZS"></script>
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
-  integrity="sha384-nvZWXhPMbi0ixdPLjUPfx2htsDNlNiypOV+5mX4XOwbZ2aDQjY7yw5Jd2HSf9cUr"></script>
+  integrity="sha384-atFRxswSqKoXkz8JTPbRSxzqTq0u2uwTBhAgkyZqS1B3bBXeX4nHP9XUEhz1K9Dh"></script>
 {%- endblock head %}
 
 {% block title -%}
-  Revisions for
   {% if paste.name %}
-{{ paste.name }}
+    {{ tr(_langs=langs, _msg="revisions-page-title", _attr="named", name=paste.name) }}
   {% else %}
-untitled paste
+    {{ tr(_langs=langs, _msg="revisions-page-title", _attr="unnamed") }}
   {% endif %}
 {%- endblock title %}
 
@@ -78,15 +73,14 @@ untitled paste
       </div>
       <div class="left">
         <h1 class="title">
-          Revisions for
         {% if paste.name %}
-          <span class="keeps-spaces">{{ paste.name }}</span>
+          {{ tr(_langs=langs, _msg="revisions-title", _attr="named", name=paste.name) | safe }}
         {% else %}
-          <em>untitled paste</em>
+          {{ tr(_langs=langs, _msg="revisions-title", _attr="unnamed") | safe }}
         {% endif %}
         </h1>
         <h2 class="subtitle">
-          View the changes made to this paste.
+          {{ tr(_langs=langs, _msg="revisions-subtitle") }}
         </h2>
       </div>
     </div>
@@ -95,20 +89,20 @@ untitled paste
     <div class="paste container">
       {% set file_count = paste.files | length %}
       <div class="right paste info">
-        <span>{{ paste.visibility }}</span>
-        <span>{{ paste.files | length }} {% if file_count == 1 %}file{% else %}files{% endif %}</span>
+        <span>{{ tr(_langs=langs, _msg="paste-visibility", _attr=paste.visibility) }}</span>
+        <span>{{ tr(_langs=langs, _msg="disp-num-files", files=paste.files | length) }}</span>
         <span class="timestamp" data-timestamp="{{ paste.created_at }}">{{ paste.created_at | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         {% if paste.expires %}
         <span>
-          expires
+          {{ tr(_langs=langs, _msg="disp-expires") }}
           <span class="timestamp" data-timestamp="{{ paste.expires }}">{{ paste.expires | date(format="%Y-%m-%d %H:%M:%S") }} UTC</span>
         </span>
         {% endif %}
       </div>
       <div class="left tabs">
         <ul>
-          <li><a href="{{ links.files }}">files</a></li>
-          <li class="is-active"><a href="{{ links.revisions }}">revisions <span class="right tag">{{ num_commits }}</span></a></li>
+          <li><a href="{{ links.files }}">{{ tr(_langs=langs, _msg="disp-tab-files") }}</a></li>
+          <li class="is-active"><a href="{{ links.revisions }}">{{ tr(_langs=langs, _msg="disp-tab-revisions") }} <span class="right tag">{{ num_commits }}</span></a></li>
         </ul>
       </div>
     </div>
@@ -131,7 +125,7 @@ untitled paste
         {% if revision.file_name %}
           <span class="keeps-spaces">{{ revision.file_name }}</span>
         {% else %}
-          <em>unknown file</em>
+          <em>{{ tr(_langs=langs, _msg="revisions-unknown-file") }}</em>
         {% endif %}
         </h2>
       </div>

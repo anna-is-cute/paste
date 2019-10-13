@@ -5,31 +5,31 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-TX1b4qxxTCFxJPqmHYPZ2mbd07JhxxFn9EjKzbgtQ78+CgTsOvyxg5zBNN6SeLiV"></script>
+  integrity="sha384-eDaDE1Yhbf76tCWA+34VBz+ApyYq6c79lCsUs0c6NH348bE87s8xN5G7wAJ7H82a"></script>
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {%- endblock head %}
 
-{% block title -%}Log in{%- endblock title %}
+{% block title -%}{{ tr(_langs=langs, _msg="login") }}{%- endblock title %}
 
 {% block header_title -%}
-Log in
+{{ tr(_langs=langs, _msg="login") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Log in to your account.
+{{ tr(_langs=langs, _msg="login", _attr="description") }}
 {%- endblock header_subtitle %}
 
 {% block main %}
 <form method="post" action="{{ links.login_action }}">
-  <input type="hidden" name="anti_csrf_token" value="{{ session.data.anti_csrf_token }}"/>
+  <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="field">
-    <label class="label">Username</label>
+    <label class="label">{{ tr(_langs=langs, _msg="login-username") }}</label>
     <div class="control has-icons-left">
       <input
         name="username"
         class="input"
         type="text"
-        placeholder="jimbo32"
+        placeholder="{{ tr(_langs=langs, _msg="login-username", _attr="placeholder") }}"
         autocorrect="off"
         autocapitalize="off"
         {% if form.username %}value="{{ form.username }}"{% endif %}
@@ -42,7 +42,7 @@ Log in to your account.
   </div>
 
   <div class="field">
-    <label class="label">Password</label>
+    <label class="label">{{ tr(_langs=langs, _msg="login-password") }}</label>
     <div class="field-body">
       <div class="field">
         <div class="field has-addons">
@@ -52,7 +52,7 @@ Log in to your account.
               name="password"
               class="input"
               type="password"
-              placeholder="Your secure password"/>
+              placeholder="{{ tr(_langs=langs, _msg="login-password", _attr="placeholder") }}"/>
             <span class="icon is-small is-left">
               <i class="fas fa-asterisk"></i>
             </span>
@@ -70,7 +70,7 @@ Log in to your account.
   </div>
 
   <div class="field">
-    <label class="label">2FA code</label>
+    <label class="label">{{ tr(_langs=langs, _msg="login-2fa") }}</label>
     <div class="control has-icons-left">
       <input
         name="tfa_code"
@@ -78,26 +78,26 @@ Log in to your account.
         type="text"
         minlength="6"
         maxlength="12"
-        placeholder="If enabled"/>
+        placeholder="{{ tr(_langs=langs, _msg="login-2fa", _attr="placeholder") }}"/>
       <span class="icon is-small is-left">
         <i class="fas fa-lock"></i>
       </span>
     </div>
     <p class="help">
-      <a href="{{ links.forgot_password }}">Forgot your password?</a>
+      <a href="{{ links.forgot_password }}">{{ tr(_langs=langs, _msg="login-forgot-password") }}</a>
     </p>
   </div>
 
   <div class="field {{ honeypot.class }}">
     <div class="control">
-      <label class="label">Email</label>
-      <input tabindex="-1" aria-hidden="true" name="email" class="input" type="text" autocomplete="off"/>
+      <label class="label">{{ tr(_langs=langs, _msg="antispam-honeypot", _attr="email") }}</label>
+      <input tabindex="-1" aria-hidden="true" name="email" class="input" type="text" autocomplete="off" data-lpignore="true"/>
     </div>
   </div>
 
   <div class="field">
     <div class="control">
-      <input type="submit" class="button is-link" value="Log in"/>
+      <input type="submit" class="button is-link" value="{{ tr(_langs=langs, _msg="login-submit") }}"/>
     </div>
   </div>
 </form>

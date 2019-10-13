@@ -7,6 +7,7 @@ use crate::{
   },
   errors::*,
   routes::web::{context, Rst, Session},
+  utils::AcceptLanguage,
 };
 
 use super::AdminUser;
@@ -20,14 +21,14 @@ use rocket_contrib::templates::Template;
 use serde_json::json;
 
 #[get("/admin/users")]
-pub fn get(config: State<Config>, user: AdminUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn get(config: State<Config>, user: AdminUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
   let user = user.into_inner();
 
   let users: Vec<User> = users::table
     .limit(15)
     .load(&*conn)?;
 
-  let mut ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess, langs);
   ctx["links"] = json!(super::admin_links());
   ctx["users"] = json!(users);
 

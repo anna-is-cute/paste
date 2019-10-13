@@ -11,6 +11,7 @@ use crate::{
   errors::*,
   models::paste::output::{Output, OutputAuthor},
   routes::web::{context, Links, Rst, Session},
+  utils::AcceptLanguage,
 };
 
 use super::AdminUser;
@@ -24,7 +25,7 @@ use rocket_contrib::templates::Template;
 use serde_json::json;
 
 #[get("/admin/pastes")]
-pub fn get(config: State<Config>, user: AdminUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn get(config: State<Config>, user: AdminUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
   let user = user.into_inner();
 
   let pastes: Vec<(DbPaste, Option<User>)> = pastes::table
@@ -42,14 +43,14 @@ pub fn get(config: State<Config>, user: AdminUser, mut sess: Session, conn: DbCo
       paste.description(),
       paste.visibility(),
       paste.created_at(),
-      paste.updated_at().ok(),
+      paste.updated_at(&*config).ok(),
       paste.expires(),
       None,
       Vec::new(),
     ))
     .collect();
 
-  let mut ctx = context(&*config, Some(&user), &mut sess);
+  let mut ctx = context(&*config, Some(&user), &mut sess, langs);
   ctx["links"] = json!(super::admin_links()
     .add_value("paste_links", outputs
       .iter()

@@ -134,7 +134,7 @@ Done!
 
 ### You will need
 
-- [Rust](https://rustup.rs/)
+- [Rust](https://rustup.rs/) (nightly channel required)
 - Ruby
 - modern postgres (9.x+ tested)
 - redis

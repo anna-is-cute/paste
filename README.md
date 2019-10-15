@@ -33,6 +33,23 @@ issue.
 Join the [Discord server](https://discord.gg/EnqSwJK) for questions, comments, and general paste-y
 community!
 
+## Contributing
+
+**Important**: Ensure you clone the repository with submodules and [git-lfs](https://git-lfs.github.com/)!  
+Make sure git-lfs is installed, then run `git clone --recurse-submodules https://github.com/jkcclemens/paste.git`.
+
+To set up a development environment with a debug build of paste, use `paste.sh` in the script
+directory! Just run `scripts/paste.sh` by itself to show help.
+
+- Run `scripts/paste.sh start` to start the server and generate any missing config files and a
+  self-signed certificate.
+- If this is your first run, paste will need to build `diesel_cli` and `paste` itself, which can take some time.
+  - Use `scripts/paste.sh logs` to keep track of the compilation. Note that sidekiq will fail to start until compilation completes. You will be able to access nginx, but you will receive a gateway error until paste finishes compiling and starts.
+- Once Rocket says it's ready, access `https://localhost` and accept the self-signed certificate.
+
+Changes to the HTML templates and static resources should take effect on reload, but changes to any Rust will need a
+`scripts/paste.sh compose restart backend` to recompile.
+
 ## Using a pre-existing paste server
 
 I host [paste.gg](https://paste.gg). I am poor and can't afford a good machine (paste.gg is a DigitalOcean droplet – three cores and low-ish RAM), so please don't bombard it!
@@ -163,20 +180,6 @@ docker run --rm -it -v "$(pwd)":/paste jkcclemens/paste
 
 By default, that will build paste, but you can also append `/bin/bash` to the command to start a
 Bash shell in the working environment.
-
-## Contributing
-
-To set up a development environment with a debug build of paste, use `paste.sh` in the script
-directory! Just run `scripts/paste.sh` by itself to show help.
-
-- Run `scripts/paste.sh start` to start the server and generate any missing config files and a
-  self-signed certificate.
-- If this is your first run, `scripts/paste.sh logs` will help you keep track of the compilation.
-  paste will need to build `diesel_cli` and paste itself, which can take some time.
-- Once Rocket says it's ready, access `https://localhost` and accept the self-signed certificate.
-
-Changes to the HTML templates should take effect on reload, but changes to any rust will need a
-`scripts/paste.sh compose restart backend` to recompile.
 
 ## API
 

@@ -32,11 +32,13 @@ mod utils;
 
 use crate::routes::web::fairings;
 
+use parking_lot::RwLock;
+
 use rocket_contrib::templates::Template;
 
 use tera::Tera;
 
-use std::{env, path::PathBuf};
+use std::env;
 
 pub static SERVER_VERSION: Option<&'static str> = include!(concat!(env!("OUT_DIR"), "/version"));
 
@@ -80,28 +82,7 @@ fn main() {
   };
 
   let config = match config::load_config(&config_path) {
-    Ok(mut c) => {
-      let path = match PathBuf::from(config_path).canonicalize() {
-        Ok(p) => p,
-        Err(e) => {
-          println!("could not canonicalise config path: {}", e);
-          return;
-        },
-      };
-      c._path = Some(path);
-      if let Err(e) = std::fs::create_dir_all(&c.store.path) {
-        println!("could not create store at {}: {}", c.store.path.to_string_lossy(), e);
-        return;
-      }
-      c.store.path = match c.store.path.canonicalize() {
-        Ok(p) => p,
-        Err(e) => {
-          println!("could not canonicalise store path: {}", e);
-          return;
-        },
-      };
-      c
-    },
+    Ok(c) => RwLock::new(c),
     Err(e) => {
       println!("could not load config.toml: {}", e);
       return;
@@ -199,6 +180,9 @@ fn main() {
       routes::web::admin::maintenance::get,
       routes::web::admin::pastes::get,
       routes::web::admin::users::get,
+
+      routes::web::admin::config::get,
+      routes::web::admin::config::post,
 
       routes::web::users::get::get,
     ])

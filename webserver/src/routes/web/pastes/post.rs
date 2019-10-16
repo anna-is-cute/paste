@@ -52,6 +52,11 @@ pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, 
     return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
   }
 
+  if config.read().pastes.sign_in_to_create && user.is_none() {
+    sess.add_data("error", "You must be signed in to create a paste.");
+    return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
+  }
+
   let user = if paste.anonymous.is_some() || user.is_none() {
     None
   } else {

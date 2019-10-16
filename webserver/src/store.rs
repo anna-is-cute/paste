@@ -8,7 +8,7 @@ use git2::Repository;
 
 use uuid::Uuid;
 
-use std::{fs, path::Path};
+use std::{fs, path::PathBuf};
 
 pub struct Store<'c> {
   config: &'c Config,
@@ -19,8 +19,8 @@ impl Store<'c> {
     Store { config }
   }
 
-  pub fn directory(&self) -> &'c Path {
-    self.config.store.path.as_path()
+  pub fn directory(&self) -> PathBuf {
+    self.config.read().store.path.clone()
   }
 
   pub fn new_paste(&self, author: Option<UserId>) -> Result<PasteId> {
@@ -29,7 +29,7 @@ impl Store<'c> {
     let user_path = author.map(|x| x.to_simple().to_string()).unwrap_or_else(|| "anonymous".into());
 
     // get the path to the paste
-    let paste_path = self.config.store.path.join(user_path).join(id.to_simple().to_string());
+    let paste_path = self.config.read().store.path.join(user_path).join(id.to_simple().to_string());
 
     // get the files path for the paste
     let files_path = paste_path.join("files");

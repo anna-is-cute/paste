@@ -13,7 +13,7 @@ use crate::{
 
 use chrono::Utc;
 
-use diesel::{dsl::count, prelude::*};
+use diesel::{dsl::count_star, prelude::*};
 
 use rocket::{
   State,
@@ -102,6 +102,25 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, confi
     return Ok(Redirect::to(uri!(get)));
   }
 
+  // perform checks for closed registrations
+  if !config.read().registration.open {
+    // check that the email is in the whitelisted emails
+    if !config.read().registration.whitelisted_emails.contains(&data.email) {
+      sess.add_data("error", "Registration is not open and that email address is not whitelisted.");
+      return Ok(Redirect::to(uri!(get)));
+    }
+
+    // check that the email hasn't already been used (regardless of verification)
+    let existing: i64 = users::table
+      .filter(users::email.eq(&data.email))
+      .select(count_star())
+      .first(&*conn)?;
+    if existing > 0 {
+      sess.add_data("error", "A user with that email already exists.");
+      return Ok(Redirect::to(uri!(get)));
+    }
+  }
+
   {
     let pw_ctx = PasswordContext::new(
       &data.password,
@@ -118,7 +137,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, confi
 
   let existing_names: i64 = users::table
     .filter(users::username.eq(&username))
-    .select(count(users::id))
+    .select(count_star())
     .get_result(&*conn)?;
   if existing_names > 0 {
     sess.add_data("error", "A user with that username already exists.");

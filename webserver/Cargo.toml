@@ -156,6 +156,9 @@ fluent-bundle = "0.8"
 # localisation
 fluent-syntax = "0.9"
 
+# better synchronisation primitives
+parking_lot = "0.9"
+
 # web logic
 [dependencies.rocket]
 version = "0.4"

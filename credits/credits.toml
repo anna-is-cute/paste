@@ -317,3 +317,8 @@ text = "Unicode language identifiers used for localisation."
 name = "fluent"
 url = "https://github.com/projectfluent/fluent-rs"
 text = "A localisation system for natural-sounding translations."
+
+[[backend]]
+name = "parking_lot"
+url = "https://github.com/Amanieu/parking_lot"
+text = "Better synchronisation primitives."

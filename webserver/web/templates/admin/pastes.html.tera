@@ -1,5 +1,7 @@
 {% extends "base" %}
 
+{% import "admin/_nav" as nav %}
+
 {% block head -%}
 {{ super() }}
 <script
@@ -23,16 +25,7 @@ Manage all pastes.
 {%- endblock header_subtitle %}
 
 {% block header_foot %}
-<nav class="tabs is-boxed">
-  <div class="container">
-    <ul>
-      <li><a href="{{ links.overview }}">Overview</a></li>
-      <li class="is-active"><a href="{{ links.pastes }}">Pastes</a></li>
-      <li><a href="{{ links.users }}">Users</a></li>
-      <li><a href="{{ links.maintenance }}">Maintenance</a></li>
-    </ul>
-  </div>
-</nav>
+{{ nav::nav(active = "pastes") }}
 {% endblock header_foot %}
 
 {% block main %}

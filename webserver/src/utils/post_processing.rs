@@ -100,7 +100,7 @@ fn walk(config: &Config, handle: Handle, external: &Attribute, ctx: &mut Context
         .map(|x| Url::parse(&x.value));
       match url {
         // mark the url as external if it doesn't point to our host
-        Some(Ok(ref u)) if u.host_str().is_some() && u.host_str() != Some(&config.general.site_domain) => {
+        Some(Ok(ref u)) if u.host_str().is_some() && u.host_str() != Some(&config.read().general.site_domain) => {
           attrs.borrow_mut().push(external.clone());
         },
         // do not mark relative urls

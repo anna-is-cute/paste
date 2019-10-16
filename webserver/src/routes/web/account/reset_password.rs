@@ -109,16 +109,16 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
   sidekiq.push(Job::email(
     "password_reset.html.tera",
     json!({
-      "config": &*config,
+      "config": &*config.read(),
       "user": user,
       "reset_url": format!(
         "https://{}/account/reset_password?id={}&secret={}",
-        config.general.site_domain,
+        config.read().general.site_domain,
         reset.id,
         base64::encode_config(&key, base64::URL_SAFE_NO_PAD),
       ),
     }),
-    config._path.as_ref().unwrap(),
+    config.read()._path.as_ref().unwrap(),
     user.email(),
     "Password reset",
   )?.into())?;

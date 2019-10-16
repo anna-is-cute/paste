@@ -247,7 +247,7 @@ lazy_static! {
 
 pub fn context(config: &Config, user: Option<&User>, session: &mut Session, langs: AcceptLanguage) -> Value {
   json!({
-    "config": &config,
+    "config": &*config.read(),
     "langs": langs.into_strings(),
     "error": session.data.remove("error"),
     "info": session.data.remove("info"),

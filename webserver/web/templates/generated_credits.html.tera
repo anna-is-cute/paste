@@ -282,8 +282,6 @@
           Parses HTML5 according to spec. Doesn't use regex to do it.
         </p>
       </div>
-    </div>
-    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/lfairy/if_chain">if_chain</a>
@@ -292,6 +290,8 @@
           Chains ifs together, for when you really need to just chain together some ifs.
         </p>
       </div>
+    </div>
+    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/achanda/ipnetwork">ipnetwork</a>
@@ -366,6 +366,14 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
+          <a href="https://github.com/Amanieu/parking_lot">parking_lot</a>
+        </p>
+        <p>
+          Better synchronisation primitives.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
           <a href="https://github.com/kennytm/qrcode-rust">qrcode</a>
         </p>
         <p>
@@ -412,8 +420,6 @@
           An easy and powerful Rust HTTP Client.
         </p>
       </div>
-    </div>
-    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://rocket.rs/">rocket</a>
@@ -422,6 +428,8 @@
           A web framework for Rust. It powers every single request made to paste.
         </p>
       </div>
+    </div>
+    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://serde.rs/">serde</a>

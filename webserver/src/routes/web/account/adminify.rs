@@ -23,6 +23,8 @@ pub fn get(key: String, config: State<Config>, user: OptionalWebUser, mut sess: 
     None => return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get))),
   };
 
+  let config = config.read();
+
   let correct_key = match config.admin.key {
     Some(ref k) => k,
     None => {

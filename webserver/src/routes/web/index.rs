@@ -12,6 +12,14 @@ use serde_json::json;
 
 #[get("/")]
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, antispam: AntiSpam, langs: AcceptLanguage) -> AddCsp<Template> {
+  if config.read().pastes.sign_in_to_create && user.is_none() {
+    let ctx = context(&*config, user.as_ref(), &mut sess, langs);
+    // TODO: Not use AddCsp for this
+    return AddCsp::new(
+      Template::render("index_no_create", ctx),
+      Vec::<String>::new(),
+    );
+  }
   let honeypot = Honeypot::new();
   let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
   ctx["languages"] = json!(Language::context());

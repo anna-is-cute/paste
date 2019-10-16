@@ -15,7 +15,7 @@ use std::fs::read_to_string;
 
 #[get("/about")]
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> Result<Template> {
-  let about = match config.general.about_file {
+  let about = match config.read().general.about_file {
     Some(ref f) => Some(read_to_string(f)?),
     None => None,
   };

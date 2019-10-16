@@ -75,8 +75,8 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
   let shared_secret = base32::encode(Alphabet::RFC4648 { padding: false }, user.shared_secret().expect("missing secret"));
 
   // create the segments of the uri
-  let label = format!("{} - {} ({})", config.general.site_name, user.name(), user.username());
-  let issuer = &config.general.site_name;
+  let label = format!("{} - {} ({})", config.read().general.site_name, user.name(), user.username());
+  let issuer = &config.read().general.site_name;
 
   // create the uri
   let mut otpauth = Url::parse("otpauth://totp")?.join(&label)?;

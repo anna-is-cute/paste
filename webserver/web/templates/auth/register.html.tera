@@ -26,6 +26,12 @@
 {%- endblock header_subtitle %}
 
 {% block main %}
+{% if not config.registration.open %}
+<div class="notification is-warning">
+  Registration is not open. You must have a whitelisted email address to register.
+</div>
+{% endif %}
+
 <form method="post" action="{{ links.register_action }}">
   <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="field">

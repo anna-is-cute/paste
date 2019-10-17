@@ -51,7 +51,7 @@ a {
   transition: unset;
 }
 
-.input, textarea {
+.input, .textarea {
   transition: unset;
 }
 
@@ -76,7 +76,7 @@ input[type="number"],
 input[type="date"],
 input[type="time"],
 .select select,
-textarea {
+.textarea {
   background-color: $dark;
   color: $white-ter;
   border-color: $grey-dark;

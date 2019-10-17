@@ -95,7 +95,7 @@ r2d2 = "0.8"
 redis = "0.12"
 
 # redis connection pooling
-r2d2_redis = "0.11"
+r2d2_redis = "0.12"
 
 # scheduling jobs
 sidekiq = "0.8"

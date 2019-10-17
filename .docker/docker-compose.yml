@@ -6,7 +6,7 @@ services:
     image: jkcclemens/paste-prebuilt
     restart: unless-stopped
     volumes:
-      - "../config.toml:/paste/config.toml:ro"
+      - "../config.toml:/paste/config.toml"
       - "../Rocket.toml:/paste/Rocket.toml:ro"
       - "../.env:/paste/.env:ro"
       - "../webserver/web:/paste/web:ro"

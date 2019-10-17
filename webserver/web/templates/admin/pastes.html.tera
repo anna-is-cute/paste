@@ -79,4 +79,24 @@ Manage all pastes.
   {%- endfor %}
   </tbody>
 </table>
+
+<div class="content">
+  <hr/>
+  <h2>Batch delete</h2>
+  <p>
+    Insert paste IDs or URLs, one per line, to delete.
+  </p>
+  <form action="{# {{ links.batch_delete }} #}" method="paste">
+    <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+    <div class="field">
+      <div class="control">
+        <textarea
+          class="textarea"
+          name="ids"
+          rows="5"
+          placeholder="Paste IDs, one per line"></textarea>
+      </div>
+    </div>
+  </form>
+</div>
 {% endblock main %}

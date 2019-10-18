@@ -66,13 +66,13 @@
     <div id="menu" class="navbar-menu">
       <div class="navbar-start">
         <a class="navbar-item" href="{{ static_links.index }}">
-          {{ tr(_langs=langs, _msg="nav-new") }}
+          {{ tr(_langs=langs, _msg="nav", _attr="new") }}
         </a>
       </div>
       <div class="navbar-end">
       {%- if config.general.about_file %}
         <a class="navbar-item" href="{{ static_links.about }}">
-          {{ tr(_langs=langs, _msg="nav-about") }}
+          {{ tr(_langs=langs, _msg="nav", _attr="about") }}
         </a>
       {% endif %}
         <div class="navbar-item has-dropdown is-hoverable">
@@ -88,7 +88,7 @@
           </a>
         {%- else -%}
           <a class="navbar-link" href="{{ static_links.login }}">
-            {{ tr(_langs=langs, _msg="nav-log-in") }}
+            {{ tr(_langs=langs, _msg="nav", _attr="log-in") }}
           </a>
         {%- endif %}
           <div class="navbar-dropdown is-right">
@@ -96,26 +96,28 @@
             <span class="navbar-item">{{ user.username }}</span>
             <hr class="navbar-divider"/>
             <a class="navbar-item" href="{{ static_links.settings }}">
-              {{ tr(_langs=langs, _msg="nav-settings") }}
+              {{ tr(_langs=langs, _msg="nav", _attr="settings") }}
             </a>
           {%- if user.admin != "none" %}
-            <a class="navbar-item" href="{{ static_links.admin }}">Admin</a> {# FIXME: translate #}
+            <a class="navbar-item" href="{{ static_links.admin }}">
+              {{ tr(_langs=langs, _msg="nav", _attr="admin") }}
+            </a>
           {%- endif %}
             <form action="{{ static_links.logout }}" method="post">
               <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
               <button type="submit" class="navbar-item button-link">
-                {{ tr(_langs=langs, _msg="nav-log-out") }}
+                {{ tr(_langs=langs, _msg="nav", _attr="log-out") }}
               </button>
             </form>
           {%- else -%}
             <a class="navbar-item" href="{{ static_links.register }}">
-              {{ tr(_langs=langs, _msg="nav-register") }}
+              {{ tr(_langs=langs, _msg="nav", _attr="register") }}
             </a>
           {%- endif %}
             <div class="requires-js">
               <hr class="navbar-divider"/>
               <a class="navbar-item" id="swap_theme" href="javascript:void(0)">
-                {{ tr(_langs=langs, _msg="nav-swap-theme") }}
+                {{ tr(_langs=langs, _msg="nav", _attr="swap-theme") }}
               </a>
             </div>
           </div>
@@ -150,6 +152,12 @@
       <div class="notification is-warning">
         <button class="delete"></button>
         {{ error }}
+      </div>
+      {% endif -%}
+      {%- if error_safe %}
+      <div class="notification is-warning">
+        <button class="delete"></button>
+        {{ error_safe | safe }}
       </div>
       {% endif -%}
       {%- if info %}

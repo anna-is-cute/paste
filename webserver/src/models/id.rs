@@ -1,7 +1,7 @@
 macro_rules! uuid_wrapper {
   ($(#[$meta:meta])* $name:ident) => {
     $(#[$meta])*
-    #[derive(Debug, Hash, PartialEq, Eq, Clone, Copy, FromSqlRow, AsExpression)]
+    #[derive(Debug, Hash, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, FromSqlRow, AsExpression)]
     #[sql_type = "diesel::pg::types::sql_types::Uuid"]
     pub struct $name(pub uuid::Uuid);
 

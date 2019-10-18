@@ -10,6 +10,7 @@ use crate::{
     schema::{users, password_resets},
   },
   errors::*,
+  i18n::prelude::*,
   routes::web::{context, Session, Rst, OptionalWebUser},
   sidekiq::Job,
   utils::{email, AcceptLanguage, PasswordContext, HashedPassword},
@@ -48,14 +49,14 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, lang
 }
 
 #[post("/account/forgot_password", format = "application/x-www-form-urlencoded", data = "<data>")]
-pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, addr: SocketAddr) -> Result<Redirect> {
+pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, addr: SocketAddr, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 
   let res = Ok(Redirect::to(uri!(get)));
 
   if !sess.check_token(&data.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return res;
   }
 
@@ -146,7 +147,7 @@ pub fn reset_get(data: Form<ResetPassword>, config: State<Config>, user: Optiona
 }
 
 #[post("/account/reset_password", data = "<data>")]
-pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
 
   let res = Ok(Redirect::to(uri!(
@@ -158,7 +159,7 @@ pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<
   )));
 
   if !sess.check_token(&data.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return res;
   }
 

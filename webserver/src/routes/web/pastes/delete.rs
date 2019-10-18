@@ -10,6 +10,7 @@ use crate::{
     schema::{users, deletion_keys},
   },
   errors::*,
+  i18n::prelude::*,
   models::{
     id::{DeletionKeyId, PasteId},
     paste::Visibility,
@@ -30,11 +31,11 @@ use uuid::Uuid;
 use std::str::FromStr;
 
 #[delete("/p/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>", rank = 1)]
-pub fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Rst> {
   let deletion = deletion.into_inner();
 
   if !sess.check_token(&deletion.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 
@@ -114,11 +115,11 @@ pub struct PasteDeletion {
 }
 
 #[delete("/p/<username>/ids", format = "application/x-www-form-urlencoded", data = "<deletion>", rank = 2)]
-pub fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalWebUser, mut sess: Session, conn: DbConn, config: State<Config>) -> Result<Rst> {
+pub fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalWebUser, mut sess: Session, conn: DbConn, config: State<Config>, l10n: L10n) -> Result<Rst> {
   let deletion = deletion.into_inner();
 
   if !sess.check_token(&deletion.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 

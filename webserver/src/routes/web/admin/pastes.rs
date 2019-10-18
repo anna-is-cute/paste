@@ -9,7 +9,11 @@ use crate::{
     schema::{pastes, users},
   },
   errors::*,
-  models::paste::output::{Output, OutputAuthor},
+  i18n::prelude::*,
+  models::{
+    paste::output::{Output, OutputAuthor},
+    id::PasteId,
+  },
   routes::web::{context, Links, Rst, Session},
   utils::AcceptLanguage,
 };
@@ -18,19 +22,31 @@ use super::AdminUser;
 
 use diesel::prelude::*;
 
-use rocket::State;
+use rocket::{
+  request::Form,
+  response::Redirect,
+  State,
+};
 
 use rocket_contrib::templates::Template;
 
 use serde_json::json;
 
-#[get("/admin/pastes")]
-pub fn get(config: State<Config>, user: AdminUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
+use uuid::Uuid;
+
+#[get("/admin/pastes?<page>")]
+pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
   let user = user.into_inner();
+
+  let page = i64::from(page.unwrap_or(1));
+  if page <= 0 {
+    return Ok(Rst::Redirect(Redirect::to(uri!(get: 1))));
+  }
 
   let pastes: Vec<(DbPaste, Option<User>)> = pastes::table
     .left_join(users::table)
     .order_by(pastes::created_at.desc())
+    .offset(15 * (page - 1))
     .limit(15)
     .load(&*conn)?;
 
@@ -60,9 +76,99 @@ pub fn get(config: State<Config>, user: AdminUser, mut sess: Session, conn: DbCo
           crate::routes::web::pastes::get::users_username_id:
           x.author.as_ref().map(|x| x.username.as_str()).unwrap_or("anonymous"),
           x.id,
-        )
-      ))));
+        ),
+      )))
+    .add_value("batch_delete", uri!(batch_delete).to_string()));
   ctx["pastes"] = json!(outputs);
 
   Ok(Rst::Template(Template::render("admin/pastes", ctx)))
+}
+
+#[post("/admin/batch_delete", format = "application/x-www-form-urlencoded", data = "<ids>")]
+pub fn batch_delete(ids: Form<BatchDelete>, config: State<Config>, _user: AdminUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
+  // set the form in the session for restoring on error
+  sess.set_form(&*ids);
+
+  // check the anti csrf token
+  if !sess.check_token(&ids.anti_csrf_token) {
+    sess.add_data("error", l10n.tr("error-csrf")?);
+    return Ok(Redirect::to("lastpage"));
+  }
+
+  // trim each line, take the last segment of a '/' split, parse it as a uuid, then map it to a PasteId
+  let ids: Result<Vec<PasteId>> = ids.ids
+    .lines()
+    .map(str::trim)
+    .filter(|s| !s.is_empty())
+    .flat_map(|i| i.split('/').last())
+    .map(Uuid::parse_str)
+    .map(|u| u.map(PasteId).map_err(Into::into))
+    .collect();
+
+  // let the user know why a uuid couldn't be parsed, if any
+  let mut ids = match ids {
+    Ok(i) => i,
+    Err(e) => {
+      sess.add_data("error", format!("Invalid ID: {}.", e));
+      return Ok(Redirect::to("lastpage"));
+    },
+  };
+  // sort the ids
+  ids.sort_unstable();
+  // remove any duplicate ids
+  ids.dedup();
+
+  fn delete_paste(id: PasteId, config: &Config, conn: &DbConn, l10n: &L10n) -> Result<()> {
+    let paste = match id.get(&*conn)? {
+      Some(p) => p,
+      None => failure::bail!(l10n.tr("admin-batch-delete-missing")?),
+    };
+    paste.delete(config, conn)
+  }
+
+  // collect a list of errors encountered while deleting
+  let errors: Vec<String> = ids
+    .iter()
+    // map each id to a tuple of id to deletion result
+    .map(|&id| (id, delete_paste(id, &config, &conn, &l10n)))
+    // only keep the errors
+    .flat_map(|(id, res)| res.err().map(|e| (id, e)))
+    // format the error
+    .map(|(id, e)| l10n.tr_ex(
+      ("admin-batch-delete", "error"),
+      |req| req
+        .arg_str("id", id)
+        .arg_str("error", e),
+      ))
+    .collect::<Result<_>>()?;
+
+  // determine how many pastes were deleted
+  let deleted = ids.len() - errors.len();
+  // add a notification if any were deleted
+  if errors.is_empty() || deleted > 0 {
+    sess.add_data(
+      "info",
+      l10n.tr_ex(
+        ("admin-batch-delete", "success"),
+        |req| req.arg_num("pastes", deleted),
+      )?,
+    );
+  }
+  // remove the form from the session if all were successful
+  if errors.is_empty() {
+    sess.take_form();
+  } else {
+    // otherwise add a HTML error message
+    sess.add_data("error_safe", format!("<p>{}</p>", errors.join("</p><p>")));
+  }
+
+  // redirect back to the pastes page
+  Ok(Redirect::to("lastpage"))
+}
+
+#[derive(FromForm, Serialize)]
+pub struct BatchDelete {
+  #[serde(skip)]
+  pub anti_csrf_token: String,
+  pub ids: String,
 }

@@ -2,6 +2,7 @@ use crate::{
   config::Config,
   database::DbConn,
   errors::*,
+  i18n::prelude::*,
   models::id::ApiKeyId,
   routes::web::{context, Links, Rst, OptionalWebUser, Session},
   utils::AcceptLanguage,
@@ -44,11 +45,11 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn
 }
 
 #[post("/account/keys", format = "application/x-www-form-urlencoded", data = "<new>")]
-pub fn post(new: Form<NewKey>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn post(new: Form<NewKey>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   let new = new.into_inner();
 
   if !sess.check_token(&new.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
 
@@ -74,11 +75,11 @@ pub struct NewKey {
 }
 
 #[delete("/account/keys/<key>", data = "<data>")]
-pub fn delete(key: ApiKeyId, data: Form<DeleteKey>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn delete(key: ApiKeyId, data: Form<DeleteKey>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
 
   if !sess.check_token(&data.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to(uri!(get)));
   }
 

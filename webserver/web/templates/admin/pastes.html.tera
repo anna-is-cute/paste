@@ -14,14 +14,16 @@
   integrity="sha384-nvZWXhPMbi0ixdPLjUPfx2htsDNlNiypOV+5mX4XOwbZ2aDQjY7yw5Jd2HSf9cUr"></script>
 {%- endblock head %}
 
-{% block title -%}Pastes{%- endblock title %}
+{% block title -%}
+  {{ tr(_langs=langs, _msg="admin-pastes", _attr="title") }}
+{%- endblock title %}
 
 {% block header_title -%}
-Pastes
+{{ tr(_langs=langs, _msg="admin-pastes", _attr="title") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Manage all pastes.
+{{ tr(_langs=langs, _msg="admin-pastes", _attr="subtitle") }}
 {%- endblock header_subtitle %}
 
 {% block header_foot %}
@@ -32,40 +34,48 @@ Manage all pastes.
 <table class="table is-striped is-fullwidth">
   <thead>
     <tr>
-      <th>Link</th>
-      <th>Name</th>
-      <th>Description</th>
-      <th>Visibility</th>
-      <th>Author</th>
-      <th>Files</th>
-      <th>Created</th>
-      <th>Expires</th>
+      <th>{{ tr(_langs=langs, _msg="admin-pastes-list-headers", _attr="link") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-pastes-list-headers", _attr="name") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-pastes-list-headers", _attr="description") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-pastes-list-headers", _attr="visibility") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-pastes-list-headers", _attr="author") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-pastes-list-headers", _attr="files") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-pastes-list-headers", _attr="created") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-pastes-list-headers", _attr="expires") }}</th>
     </tr>
   </thead>
   <tbody>
   {%- for paste in pastes %}
     <tr>
-      <td><a href="{{ links.paste_links[paste.id] }}">Link</a></td>
+      <td><a href="{{ links.paste_links[paste.id] }}">
+        {{ tr(_langs=langs, _msg="admin-pastes-list-headers", _attr="link") }}
+      </a></td>
       <td>
         {%- if paste.name -%}
           {{ paste.name }}
         {%- else -%}
-          <em class="has-text-grey-light">empty</em>
+          <em class="has-text-grey-light">
+            {{ tr(_langs=langs, _msg="admin-pastes-list", _attr="empty") }}
+          </em>
         {%- endif -%}
       </td>
       <td>
         {%- if paste.description -%}
           {{ paste.description }}
         {%- else -%}
-          <em class="has-text-grey-light">empty</em>
+          <em class="has-text-grey-light">
+            {{ tr(_langs=langs, _msg="admin-pastes-list", _attr="empty") }}
+          </em>
         {%- endif -%}
       </td>
-      <td>{{ paste.visibility }}</td>
+      <td>{{ tr(_langs=langs, _msg="paste-visibility", _attr=paste.visibility) }}</td>
       <td>
         {%- if paste.author -%}
           {{ paste.author.username }}
         {%- else -%}
-          <em class="has-text-grey-light">anonymous</em>
+          <em class="has-text-grey-light">
+            {{ tr(_langs=langs, _msg="admin-pastes-list", _attr="anonymous") }}
+          </em>
         {%- endif -%}
       </td>
       <td>{{ paste.files | length }}</td>
@@ -73,7 +83,9 @@ Manage all pastes.
     {%- if paste.expires %}
       <td class="timestamp" data-timestamp="{{ paste.expires }}">{{ paste.expires | date(format="%Y-%m-%d %H:%M:%S") }} UTC</td>
     {%- else %}
-      <td><em class="has-text-grey-light">never</em></td>
+      <td><em class="has-text-grey-light">
+        {{ tr(_langs=langs, _msg="admin-pastes-list", _attr="never") }}
+      </em></td>
     {%- endif %}
     </tr>
   {%- endfor %}
@@ -82,11 +94,11 @@ Manage all pastes.
 
 <div class="content">
   <hr/>
-  <h2>Batch delete</h2>
+  <h2>{{ tr(_langs=langs, _msg="admin-batch-delete") }}</h2>
   <p>
-    Insert paste IDs or URLs, one per line, to delete.
+    {{ tr(_langs=langs, _msg="admin-batch-delete", _attr="desc") }}
   </p>
-  <form action="{# {{ links.batch_delete }} #}" method="paste">
+  <form action="{{ links.batch_delete }}" method="post">
     <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
     <div class="field">
       <div class="control">
@@ -94,8 +106,13 @@ Manage all pastes.
           class="textarea"
           name="ids"
           rows="5"
-          placeholder="Paste IDs, one per line"></textarea>
+          placeholder="{{ tr(_langs=langs, _msg="admin-batch-delete", _attr="placeholder") }}">{% if form.ids %}{{ form.ids }}{% endif %}</textarea>
       </div>
+    </div>
+    <div class="control">
+      <button class="button is-info" type="submit">
+        {{ tr(_langs=langs, _msg="admin-batch-delete", _attr="button") }}
+      </button>
     </div>
   </form>
 </div>

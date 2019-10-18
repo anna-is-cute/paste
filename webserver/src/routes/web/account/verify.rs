@@ -6,6 +6,7 @@ use crate::{
     models::email_verifications::EmailVerification,
   },
   errors::*,
+  i18n::prelude::*,
   models::id::EmailVerificationId,
   routes::web::{OptionalWebUser, Session},
   utils::HashedPassword,
@@ -28,11 +29,11 @@ use sidekiq::Client as SidekiqClient;
 use sodiumoxide::randombytes;
 
 #[post("/account/send_verification", format = "application/x-www-form-urlencoded", data = "<data>")]
-pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
 
   if !sess.check_token(&data.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to(uri!(super::index::get)));
   }
 

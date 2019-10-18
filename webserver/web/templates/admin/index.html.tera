@@ -6,14 +6,16 @@
 {{ super() }}
 {%- endblock head %}
 
-{% block title -%}Admin{%- endblock title %}
+{% block title -%}
+{{ tr(_langs=langs, _msg="admin-overview", _attr="title") }}
+{%- endblock title %}
 
 {% block header_title -%}
-Admin
+{{ tr(_langs=langs, _msg="admin-overview", _attr="title") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Perform administration tasks.
+{{ tr(_langs=langs, _msg="admin-overview", _attr="subtitle") }}
 {%- endblock header_subtitle %}
 
 {% block header_foot %}
@@ -24,13 +26,13 @@ Perform administration tasks.
 <nav class="level">
   <div class="level-item has-text-centered">
     <div>
-      <p class="heading">Pastes</p>
+      <p class="heading">{{ tr(_langs=langs, _msg="admin-stats", _attr="pastes") }}</p>
       <p class="title">{{ total_pastes }}</p>
     </div>
   </div>
   <div class="level-item has-text-centered">
     <div>
-      <p class="heading">Users</p>
+      <p class="heading">{{ tr(_langs=langs, _msg="admin-stats", _attr="users") }}</p>
       <p class="title">{{ total_users }}</p>
     </div>
   </div>

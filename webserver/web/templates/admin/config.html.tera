@@ -33,15 +33,15 @@
 {%- endblock head %}
 
 {% block title -%}
-Config
+{{ tr(_langs=langs, _msg="admin-config", _attr="title") }}
 {%- endblock title %}
 
 {% block header_title -%}
-Config
+{{ tr(_langs=langs, _msg="admin-config", _attr="title") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Edit the site configuration.
+{{ tr(_langs=langs, _msg="admin-config", _attr="subtitle") }}
 {%- endblock header_subtitle %}
 
 {% block header_foot %}
@@ -65,7 +65,9 @@ Edit the site configuration.
 
   <div class="field">
     <div class="control">
-      <button class="button is-link" type="submit">Save</button>
+      <button class="button is-link" type="submit">
+        {{ tr(_langs=langs, _msg="admin-config-save") }}
+      </button>
     </div>
   </div>
 </form>

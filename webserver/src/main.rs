@@ -5,7 +5,7 @@
 )]
 #![recursion_limit = "1024"]
 
-#![allow(proc_macro_derive_resolution_fallback)]
+#![allow(proc_macro_derive_resolution_fallback, clippy::too_many_arguments)]
 
 #[macro_use]
 extern crate diesel;
@@ -89,6 +89,14 @@ fn main() {
     }
   };
 
+  let localisation = match self::i18n::Localisation::new() {
+    Ok(l) => l,
+    Err(e) => {
+      println!("could not set up localisation: {:?}", e);
+      return;
+    },
+  };
+
   lazy_static::initialize(&EMAIL_TERA);
   lazy_static::initialize(&CAMO_KEY);
   lazy_static::initialize(&CAMO_URL);
@@ -99,6 +107,7 @@ fn main() {
     .manage(redis_store::init_sidekiq())
     .manage(config)
     .manage(reqwest::Client::new())
+    .manage(localisation)
     .attach(fairings::Csp)
     .attach(fairings::SecurityHeaders)
     .attach(fairings::LastPage::default())
@@ -178,11 +187,13 @@ fn main() {
 
       routes::web::admin::index::get,
       routes::web::admin::maintenance::get,
-      routes::web::admin::pastes::get,
       routes::web::admin::users::get,
 
       routes::web::admin::config::get,
       routes::web::admin::config::post,
+
+      routes::web::admin::pastes::get,
+      routes::web::admin::pastes::batch_delete,
 
       routes::web::users::get::get,
     ])

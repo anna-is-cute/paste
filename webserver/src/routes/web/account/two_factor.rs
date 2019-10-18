@@ -2,6 +2,7 @@ use crate::{
   config::Config,
   database::{DbConn, models::users::User},
   errors::*,
+  i18n::prelude::*,
   models::id::UserId,
   redis_store::Redis,
   routes::web::{context, AddCsp, Rst, OptionalWebUser, Session},
@@ -110,9 +111,9 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
 }
 
 #[post("/account/2fa/new_secret", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   if !sess.check_token(&form.into_inner().anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -132,11 +133,11 @@ pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Sessio
 }
 
 #[post("/account/2fa/validate", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut redis: Redis) -> Result<Redirect> {
+pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut redis: Redis, l10n: L10n) -> Result<Redirect> {
   let form = form.into_inner();
 
   if !sess.check_token(&form.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -202,11 +203,11 @@ pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessi
 }
 
 #[post("/account/2fa/disable", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   let form = form.into_inner();
 
   if !sess.check_token(&form.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -241,9 +242,9 @@ pub struct Disable {
 }
 
 #[post("/account/2fa/new_backup_codes", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn new_backup_codes(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn new_backup_codes(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   if !sess.check_token(&form.into_inner().anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to("lastpage"));
   }
 

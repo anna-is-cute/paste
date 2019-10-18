@@ -1,4 +1,8 @@
-use crate::routes::web::Session;
+use crate::{
+  errors::*,
+  i18n::prelude::*,
+  routes::web::Session,
+};
 
 use rocket::{
   request::Form,
@@ -6,16 +10,16 @@ use rocket::{
 };
 
 #[post("/logout", data = "<data>")]
-pub fn post(data: Form<Logout>, mut sess: Session) -> Redirect {
+pub fn post(data: Form<Logout>, mut sess: Session, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
   if !sess.check_token(&data.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
-    return Redirect::to("lastpage");
+    sess.add_data("error", l10n.tr("error-csrf")?);
+    return Ok(Redirect::to("lastpage"));
   }
 
   sess.user_id = None;
 
-  Redirect::to("lastpage")
+  Ok(Redirect::to("lastpage"))
 }
 
 #[derive(FromForm)]

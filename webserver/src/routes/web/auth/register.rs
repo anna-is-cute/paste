@@ -6,6 +6,7 @@ use crate::{
     schema::users,
   },
   errors::*,
+  i18n::prelude::*,
   models::id::UserId,
   routes::web::{context, AddCsp, Honeypot, Rst, OptionalWebUser, Session},
   utils::{email, AcceptLanguage, PasswordContext, HashedPassword, Validator},
@@ -64,12 +65,12 @@ pub struct RegistrationData {
 }
 
 #[post("/register", format = "application/x-www-form-urlencoded", data = "<data>")]
-pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, config: State<Config>, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, config: State<Config>, sidekiq: State<SidekiqClient>, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 
   if !sess.check_token(&data.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to(uri!(get)));
   }
 

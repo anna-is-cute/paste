@@ -19,7 +19,7 @@ use std::ops::Deref;
 pub(crate) fn admin_links() -> Links {
   links!(
     "overview" => uri!(crate::routes::web::admin::index::get),
-    "pastes" => uri!(crate::routes::web::admin::pastes::get),
+    "pastes" => uri!(crate::routes::web::admin::pastes::get: _),
     "users" => uri!(crate::routes::web::admin::users::get),
     "config" => uri!(crate::routes::web::admin::config::get),
     "maintenance" => uri!(crate::routes::web::admin::maintenance::get),

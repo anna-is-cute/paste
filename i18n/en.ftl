@@ -1,12 +1,14 @@
 ## Nav
 
-nav-new = New
-nav-about = About
-nav-log-in = Log in
-nav-log-out = Log out
-nav-register = Register
-nav-settings = Settings
-nav-swap-theme = Swap theme
+nav =
+  .new = New
+  .about = About
+  .log-in = Log in
+  .log-out = Log out
+  .register = Register
+  .settings = Settings
+  .admin = Admin
+  .swap-theme = Swap theme
 
 ## Footer
 
@@ -374,3 +376,99 @@ error-500 = Internal server error.
 
 error-other = Error.
   .description = You got some strange error.
+
+error-csrf = Invalid anti-CSRF token.
+
+## Admin
+
+admin-success = You are now an admin.
+
+## Admin errors
+
+admin-no-key = No admin key is set.
+admin-bad-key = Incorrect key.
+admin-already-admin = You're already an admin.
+admin-exists = You cannot become an admin this way if admins already exist.
+
+## Admin nav
+
+admin-tabs =
+  .overview = Overview
+  .pastes = Pastes
+  .users = Users
+  .config = Config
+  .maintenance = Maintenance
+
+## Admin overview
+
+admin-overview =
+  .title = Admin
+  .subtitle = Perform administration tasks.
+
+admin-stats =
+  .pastes = Pastes
+  .users = Users
+
+## Admin pastes
+
+admin-pastes =
+  .title = Pastes
+  .subtitle = Manage all pastes.
+
+admin-pastes-list-headers =
+  .link = Link
+  .name = Name
+  .description = Description
+  .visibility = Visibility
+  .author = Author
+  .files = Files
+  .created = Created
+  .expires = Expires
+
+admin-pastes-list =
+  .anonymous = anonymous
+  .empty = empty
+  .never = never
+
+admin-batch-delete = Batch delete
+  .desc = Insert paste IDs or URLs, one per line, to delete.
+  .placeholder = Paste IDs or URLs, one per line
+  .button = Delete
+  .error = Could not delete <code>{$id}</code>: {$error}.
+  .success = Deleted {$pastes} {$pastes ->
+    [one] paste
+   *[other] pastes
+  }.
+
+admin-batch-delete-missing = could not find paste
+
+## Admin users
+
+admin-users =
+  .title = Users
+  .subtitle = Manage all users.
+
+admin-users-table =
+  .name = Name
+  .username = Username
+  .email = Email
+  .email-verified = Email verified
+  .tfa-enabled = 2FA enabled
+  .admin = Admin
+
+admin-users-yes-no =
+  .yes = Yes
+  .no = No
+
+admin-users-admin =
+  .super = super
+  .admin = admin
+  .none = none
+
+## Admin config
+
+admin-config =
+  .title = Config
+  .subtitle = Edit the site configuration.
+
+admin-config-save = Save

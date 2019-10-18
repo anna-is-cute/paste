@@ -6,14 +6,16 @@
 {{ super() }}
 {%- endblock head %}
 
-{% block title -%}Users{%- endblock title %}
+{% block title -%}
+  {{ tr(_langs=langs, _msg="admin-users", _attr="title") }}
+{%- endblock title %}
 
 {% block header_title -%}
-Users
+{{ tr(_langs=langs, _msg="admin-users", _attr="title") }}
 {%- endblock header_title %}
 
 {% block header_subtitle -%}
-Manage all users.
+{{ tr(_langs=langs, _msg="admin-users", _attr="subtitle") }}
 {%- endblock header_subtitle %}
 
 {% block header_foot %}
@@ -24,12 +26,12 @@ Manage all users.
 <table class="table is-striped is-fullwidth">
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Username</th>
-      <th>Email</th>
-      <th>Email verified</th>
-      <th>2FA enabled</th>
-      <th>Admin</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="name") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="username") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="email") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="email-verified") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="tfa-enabled") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="admin") }}</th>
     </tr>
   </thead>
   <tbody>
@@ -38,15 +40,21 @@ Manage all users.
       <td>{{ user.name }}</td>
       <td>{{ user.username }}</td>
       <td>{{ user.email }}</td>
-      <td>{{ user.email_verified }}</td>
+      <td>
+      {%- if user.email_verified -%}
+        {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="yes") }}
+      {%- else -%}
+        {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="no") }}
+      {%- endif -%}
+      </td>
       <td>
         {%- if user.shared_secret -%}
-          true
+          {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="yes") }}
         {%- else -%}
-          false
+          {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="no") }}
         {%- endif -%}
       </td>
-      <td>{{ user.admin }}</td>
+      <td>{{ tr(_langs=langs, _msg="admin-users-admin", _attr=user.admin) }}</td>
     </tr>
   {%- endfor %}
   </tbody>

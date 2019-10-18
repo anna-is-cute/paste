@@ -6,6 +6,7 @@ use crate::{
     schema::{backup_codes, users},
   },
   errors::*,
+  i18n::prelude::*,
   redis_store::Redis,
   routes::web::{context, AddCsp, Honeypot, Rst, OptionalWebUser, Session},
   utils::{
@@ -64,12 +65,12 @@ pub struct RegistrationData {
 }
 
 #[post("/login", format = "application/x-www-form-urlencoded", data = "<data>")]
-pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut redis: Redis, addr: SocketAddr) -> Result<Redirect> {
+pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut redis: Redis, addr: SocketAddr, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 
   if !sess.check_token(&data.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
 

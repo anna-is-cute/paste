@@ -1,5 +1,11 @@
 use fluent_bundle::{FluentBundle, FluentResource, FluentValue};
 
+use rocket::{
+  Outcome,
+  State,
+  request::{self, FromRequest, Request},
+};
+
 use serde_derive::Deserialize;
 
 use tera::{
@@ -13,12 +19,94 @@ use unic_langid::{
   LanguageIdentifier,
 };
 
+use crate::utils::AcceptLanguage;
+
 use std::{
   borrow::Cow,
   collections::HashMap,
   ffi::OsStr,
   path::Path,
 };
+
+pub mod prelude {
+  pub use super::{Localisation, L10n};
+}
+
+pub struct L10n<'r> {
+  pub localisation: &'r Localisation,
+  pub langs: AcceptLanguage,
+}
+
+pub enum L10nKey<'a> {
+  Single(&'a str),
+  Attr(&'a str, &'a str),
+}
+
+impl<'a> L10nKey<'a> {
+  fn key(&self) -> &'a str {
+    match self {
+      Self::Single(key) => key,
+      Self::Attr(key, _) => key,
+    }
+  }
+
+  fn attr(&self) -> Option<&'a str> {
+    match self {
+      Self::Single(_) => None,
+      Self::Attr(_, attr) => Some(attr),
+    }
+  }
+}
+
+impl<'a> From<&'a str> for L10nKey<'a> {
+  fn from(s: &'a str) -> Self {
+    L10nKey::Single(s)
+  }
+}
+
+impl<'a> From<(&'a str, &'a str)> for L10nKey<'a> {
+  fn from((key, attr): (&'a str, &'a str)) -> Self {
+    L10nKey::Attr(key, attr)
+  }
+}
+
+impl<'r> L10n<'r> {
+  fn req<'a, M: Into<L10nKey<'a>>>(&'a self, msg: M) -> MessageRequest {
+    let msg = msg.into();
+    let req = MessageRequest::new(&*self.langs, msg.key());
+    match msg.attr() {
+      Some(attr) => req.attr(attr),
+      None => req,
+    }
+  }
+
+  pub fn tr<'a, M: Into<L10nKey<'a>>>(&'a self, msg: M) -> Result<String, failure::Error> {
+    self.req(msg).message(&self.localisation)
+  }
+
+  pub fn tr_ex<'a, M, F>(&'a self, msg: M, f: F) -> Result<String, failure::Error>
+    where M: Into<L10nKey<'a>>,
+          F: FnOnce(MessageRequest) -> MessageRequest,
+  {
+    let mut req = self.req(msg);
+    req = f(req);
+    req.message(&self.localisation)
+  }
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for L10n<'r> {
+  type Error = ();
+
+  fn from_request(req: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+    let localisation: State<Localisation> = req.guard()?;
+    let langs: AcceptLanguage = req.guard().unwrap(); // is infallible
+
+    Outcome::Success(Self {
+      localisation: localisation.inner(),
+      langs,
+    })
+  }
+}
 
 #[derive(Debug)]
 pub enum I18nError {
@@ -107,7 +195,7 @@ impl Localisation {
     bundles
   }
 
-  fn message<'a, 'b: 'a>(&'b self, req: MessageRequest<'a>) -> Result<Cow<'a, str>, TeraError> {
+  pub fn message<'a, 'b: 'a>(&'b self, req: &'a MessageRequest<'a>) -> Result<Cow<'a, str>, failure::Error> {
     let found = self.bundles(req.wants)
       .into_iter()
       .flat_map(|bundle| {
@@ -121,19 +209,19 @@ impl Localisation {
       .next();
 
     let (bundle, pattern) = found
-      .ok_or_else(|| TeraError::from(format!(
+      .ok_or_else(|| failure::format_err!(
         "could not find message {} in any of these locales: {}",
         match req.attr {
           Some(attr) => format!("{} with attribute {}", req.msg, attr),
           None => req.msg.to_string(),
         },
         req.wants.iter().map(ToString::to_string).collect::<Vec<_>>().join(", "),
-      )))?;
+      ))?;
 
     let mut errors = Vec::new();
     let output = bundle.format_pattern(
       pattern,
-      req.args,
+      req.args.as_ref(),
       &mut errors,
     );
     for error in errors {
@@ -143,11 +231,65 @@ impl Localisation {
   }
 }
 
-struct MessageRequest<'a> {
+// pub fn tr<'a>(l10n: &'a Localisation, langs: &'a [LanguageIdentifier], msg: &'a str) -> Result<String, failure::Error> {
+//   MessageRequest::new(langs, msg).message(l10n)
+// }
+
+// pub fn tr_ex<'a, F>(l10n: &'a Localisation, langs: &'a [LanguageIdentifier], msg: &'a str, f: F) -> Result<String, failure::Error>
+//   where F: FnOnce(MessageRequest<'a>) -> MessageRequest<'a>,
+// {
+//   let mut req = MessageRequest::new(langs, msg);
+//   req = f(req);
+//   req.message(l10n)
+// }
+
+pub struct MessageRequest<'a> {
   wants: &'a [LanguageIdentifier],
   msg: &'a str,
   attr: Option<&'a str>,
-  args: Option<&'a HashMap<&'a str, FluentValue<'a>>>,
+  args: Option<HashMap<&'a str, FluentValue<'a>>>,
+}
+
+impl<'a> MessageRequest<'a> {
+  pub fn new(langs: &'a [LanguageIdentifier], msg: &'a str) -> Self {
+    Self {
+      wants: langs,
+      msg,
+      attr: None,
+      args: None,
+    }
+  }
+
+  pub fn attr(mut self, attr: &'a str) -> Self {
+    self.attr = Some(attr);
+    self
+  }
+
+  pub fn arg<V>(mut self, key: &'a str, value: V) -> Self
+    where V: Into<FluentValue<'a>>,
+  {
+    if self.args.is_none() {
+      self.args = Some(Default::default());
+    }
+    self.args.as_mut().unwrap().insert(key, value.into());
+    self
+  }
+
+  pub fn arg_str<D>(self, key: &'a str, value: D) -> Self
+    where D: std::fmt::Display,
+  {
+    self.arg(key, FluentValue::String(Cow::Owned(value.to_string())))
+  }
+
+  pub fn arg_num<D>(self, key: &'a str, value: D) -> Self
+    where D: std::fmt::Display,
+  {
+    self.arg(key, FluentValue::Number(Cow::Owned(value.to_string())))
+  }
+
+  pub fn message(&self, l10n: &Localisation) -> Result<String, failure::Error> {
+    l10n.message(self).map(|x| x.to_string())
+  }
 }
 
 pub fn tera_function(localisation: Localisation) -> GlobalFn {
@@ -192,12 +334,13 @@ pub fn tera_function(localisation: Localisation) -> GlobalFn {
       })
       .collect::<Result<_, _>>()?;
 
-    let output = localisation.message(MessageRequest {
+    let req = MessageRequest {
       wants: &langs,
       msg: &msg,
       attr: attr.as_ref().map(AsRef::as_ref),
-      args: if args.is_empty() { None } else { Some(&args) },
-    })?;
+      args: if args.is_empty() { None } else { Some(args) },
+    };
+    let output = localisation.message(&req).map_err(|e| TeraError::from(e.to_string()))?;
 
     Ok(TeraValue::from(output))
   })

@@ -1,6 +1,7 @@
 use crate::{
   config::{AppConfig, Config, initialise},
   errors::*,
+  i18n::prelude::*,
   routes::web::{context, Rst, Session},
   utils::AcceptLanguage,
 };
@@ -35,9 +36,9 @@ pub fn get(config: State<Config>, user: AdminUser, mut sess: Session, langs: Acc
 }
 
 #[post("/admin/config", format = "application/x-www-form-urlencoded", data = "<update>")]
-pub fn post(update: Form<ConfigUpdate>, config: State<Config>, _user: AdminUser, mut sess: Session) -> Result<Redirect> {
+pub fn post(update: Form<ConfigUpdate>, config: State<Config>, _user: AdminUser, mut sess: Session, l10n: L10n) -> Result<Redirect> {
   if !sess.check_token(&update.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to(uri!(get)));
   }
 

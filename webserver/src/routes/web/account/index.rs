@@ -2,10 +2,12 @@ use crate::{
   config::Config,
   database::{DbConn, schema::users},
   errors::*,
+  i18n::L10n,
   models::user::AvatarProvider,
   routes::web::{context, Rst, OptionalWebUser, Session},
   utils::{email, AcceptLanguage, HashedPassword, Validator},
 };
+
 use chrono::Utc;
 
 use diesel::{dsl::count, prelude::*};
@@ -45,12 +47,12 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, lang
 }
 
 #[patch("/account", format = "application/x-www-form-urlencoded", data = "<update>")]
-pub fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Redirect> {
+pub fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, l10n: L10n) -> Result<Redirect> {
   let update = update.into_inner();
   sess.set_form(&update);
 
   if !sess.check_token(&update.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to(uri!(get)));
   }
 

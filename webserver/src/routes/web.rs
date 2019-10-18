@@ -250,6 +250,7 @@ pub fn context(config: &Config, user: Option<&User>, session: &mut Session, lang
     "config": &*config.read(),
     "langs": langs.into_strings(),
     "error": session.data.remove("error"),
+    "error_safe": session.data.remove("error_safe"),
     "info": session.data.remove("info"),
     "form": session.take_form(),
     "user": user,
@@ -314,6 +315,7 @@ impl Deref for OptionalWebUser {
 }
 
 #[derive(Responder)]
+#[allow(clippy::large_enum_variant)]
 pub enum Rst {
   Redirect(Redirect),
   Status(HttpStatus),

@@ -35,7 +35,7 @@
 <script
   defer
   src="/static/js/modal.js?v={{ resources_version }}"
-  integrity="sha384-J7lVKR2PCcVXiC6KeUdovo/b24Cdk7MWAGS9f1gLIng5bEogApeNytgaPG4iiw90"></script>
+  integrity="sha384-a7zkFHPsjaSEqA+6o22dF31kMpocs3bBBOnos/1S3FPBAamg4GsUJL+oiYoNjoXN"></script>
 {%- endblock head %}
 
 {% block title -%}
@@ -110,7 +110,7 @@
     <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
       <span>{{ tr(_langs=langs, _msg="user-select") }}</span>
       <span class="icon is-small">
-        <i class="fas fa-angle-down" aria-hidden="true"></i>
+        {{ icon::icon(i = "chevron-down") }}
       </span>
     </button>
   </div>

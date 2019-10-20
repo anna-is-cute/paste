@@ -97,7 +97,7 @@ New
             {%- endif %}
             </select>
             <span class="icon is-small is-left">
-              <i class="fas fa-globe"></i>
+              {{ icon::icon(i = "visibility") }}
             </span>
           </div>
         </div>
@@ -107,7 +107,7 @@ New
           <label class="label">{{ tr(_langs=langs, _msg="paste-expires") }}</label>
           <a href="https://github.com/jkcclemens/paste/wiki/Expiring-pastes" target="_blank">
             <span class="icon is-small is-right">
-              <i class="fas fa-question-circle"></i>
+              {{ icon::icon(i = "question") }}
             </span>
           </a>
         </div>
@@ -119,7 +119,7 @@ New
               <option value="absolute">{{ tr(_langs=langs, _msg="paste-expires", _attr="absolute") }}</option>
             </select>
             <span class="icon is-small is-left">
-              <i class="fas fa-stopwatch"></i>
+              {{ icon::icon(i = "expires") }}
             </span>
           </div>
         </div>

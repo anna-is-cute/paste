@@ -10,6 +10,18 @@ site_domain = "paste.gg"
 # if there are no other admins registered. This can be unset once one admin is registered.
 # key = ""
 
+[pastes]
+# Require users to sign in before they can created pastes?
+sign_in_to_create = false
+
+[registration]
+# Should registration be open to everyone?
+open = true
+# If registration is not open, users will be allowed to sign up with these emails.
+whitelisted_emails = [
+  # "example@example.com",
+]
+
 [store]
 # The path on the filesystem where pastes will be stored.
 # For production docker, this should be set to "/store"

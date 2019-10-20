@@ -6,7 +6,7 @@
       <li{% if active == "pastes" %} class="is-active"{% endif %}><a href="{{ links.pastes }}">{{ tr(_langs=langs, _msg="admin-tabs", _attr="pastes") }}</a></li>
       <li{% if active == "users" %} class="is-active"{% endif %}><a href="{{ links.users }}">{{ tr(_langs=langs, _msg="admin-tabs", _attr="users") }}</a></li>
       <li{% if active == "config" %} class="is-active"{% endif %}><a href="{{ links.config }}">{{ tr(_langs=langs, _msg="admin-tabs", _attr="config") }}</a></li>
-      <li{% if active == "maintenance" %} class="is-active"{% endif %}><a href="{{ links.maintenance }}">{{ tr(_langs=langs, _msg="admin-tabs", _attr="maintenance") }}</a></li>
+      {# <li{% if active == "maintenance" %} class="is-active"{% endif %}><a href="{{ links.maintenance }}">{{ tr(_langs=langs, _msg="admin-tabs", _attr="maintenance") }}</a></li> #}
     </ul>
   </div>
 </nav>

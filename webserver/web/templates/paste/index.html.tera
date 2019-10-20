@@ -22,7 +22,7 @@
 <script
   defer
   src="/static/js/modal.js?v={{ resources_version }}"
-  integrity="sha384-J7lVKR2PCcVXiC6KeUdovo/b24Cdk7MWAGS9f1gLIng5bEogApeNytgaPG4iiw90"></script>
+  integrity="sha384-a7zkFHPsjaSEqA+6o22dF31kMpocs3bBBOnos/1S3FPBAamg4GsUJL+oiYoNjoXN"></script>
 <script
   defer
   src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
@@ -53,6 +53,7 @@
 {%- endblock title %}
 
 {% block header %}
+{%- set is_admin = user and user.admin != "none" -%}
 <section class="hero is-dark">
   <div class="paste hero-body">
     <div class="paste container">
@@ -62,7 +63,7 @@
           <div class="control">
             <a class="button is-info is-large" href="{{ links.edit }}">
               <span class="icon is-large">
-                <i class="fas fa-pencil-alt"></i>
+                {{ icon::icon(i = "edit") }}
               </span>
             </a>
           </div>
@@ -71,10 +72,44 @@
           <div class="control">
             <button class="button is-danger is-large opens-modal" data-modal-id="deletion_modal">
               <span class="icon is-large">
-                <i class="fas fa-trash-alt"></i>
+                {{ icon::icon(i = "delete") }}
               </span>
             </button>
           </div>
+          {% endif %}
+          {% if is_admin %}
+          <form action="{{ links.admin_delete }}" method="post">
+            <input type="hidden" name="_method" value="delete"/>
+            <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+            <div class="control">
+              <button class="button is-danger is-large opens-modal" data-modal-id="admin_deletion_modal">
+                <span class="icon is-large">
+                  {{ icon::icon(i = "admin-delete") }}
+                </span>
+              </button>
+            </div>
+            <div id="admin_deletion_modal" class="modal requires-js">
+              <div class="modal-background closes-modal" data-modal-id="admin_deletion_modal"></div>
+              <div class="modal-content">
+                <div class="modal-card">
+                  <header class="modal-card-head">
+                    <p class="modal-card-title">{{ tr(_langs=langs, _msg="disp-delete-title") }}</p>
+                    <button class="delete closes-modal" data-modal-id="admin_deletion_modal" aria-label="close" type="button"></button>
+                  </header>
+                  <section class="modal-card-body">
+                    <div class="content">
+                      <p>
+                        {{ tr(_langs=langs, _msg="disp-delete-confirm") }}
+                      </p>
+                    </div>
+                  </section>
+                  <footer class="modal-card-foot">
+                    <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="disp-delete-button") }}</button>
+                  </footer>
+                </div>
+              </div>
+            </div>
+          </form>
           {% endif %}
         </div>
       </div>

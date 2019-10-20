@@ -1,17 +1,19 @@
 {% extends "frame" %}
 
+{% import "_icon" as icon %}
+
 {% block head -%}
 {{ super() }}
 <link
   title="dark"
   rel="stylesheet"
   href="/static/css/dark-style.css?v={{ resources_version }}"
-  integrity="sha384-qygQK4KA9hEsegH9mM5oSPFyAst0WnEZ3gFdCm3TTLNlA7Bt8dqmviq1kGdv6efT"/>
+  integrity="sha384-FWNuMlnujN/Hwd3HLTKWmHfAaMsqr+Qi1ssofB6D0x8RY5dzqNhlmlBgZ7uMSw+9"/>
 <link
   title="light"
   rel="stylesheet alternate"
   href="/static/css/style.css?v={{ resources_version }}"
-  integrity="sha384-O+A+1I38m55WLI7n5jZd/caLddtsErlO+13VMxUOPfuxUNM7pHSIKADJ/14Pf74W"/>
+  integrity="sha384-IFbkhx/NP9zXyUb7J4Mmk6lAZIc6qxSTPMVRYJ995QxFRSzprO3Mgzk4xLAa9VrY"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
   integrity="sha384-zwBoM/SvColCwJ9hm3JZVZgpLWTXKwowuywp+8KnSA2XpcN9SlsUnCt4D0WEXaYY"></script>
@@ -24,13 +26,9 @@
   src="/static/js/notifications.js?v={{ resources_version }}"
   integrity="sha384-yI6E6wBeIs/7kTFxJ5ZSJSiuDwP7QCjkmK+mnQ7ROOvMq0a6H6pgbZyBEa2+7wws"></script>
 <link
-  rel="stylesheet"
-  href="/static/css/fontawesome/solid.css?v={{ resources_version }}"
-  integrity="sha384-TbilV5Lbhlwdyc4RuIV/JhD8NR+BfMrvz4BL5QFa2we1hQu6wvREr3v6XSRfCTRp"/>
-<link
-  rel="stylesheet"
-  href="/static/css/fontawesome/fontawesome.css?v={{ resources_version }}"
-  integrity="sha384-ozJwkrqb90Oa3ZNb+yKFW2lToAWYdTiF1vt8JiH5ptTGHTGcN7qdoR1F95e0kYyG"/>
+  rel="preload"
+  href="/static/svg/icons.svg?v={{ resources_version }}"
+  as="image"/>
 <link rel="icon" sizes="16x16 32x32 48x48 64x64" href="/static/favicons/favicon.ico"/>
 <!--[if IE]><link rel="shortcut icon" href="/static/favicons/favicon.ico"/><![endif]-->
 <link rel="apple-touch-icon-precomposed" href="/static/favicons/favicon-152.png"/>
@@ -52,8 +50,8 @@
   <nav class="navbar">
     <div class="navbar-brand">
       <a class="navbar-item" href="{{ static_links.index }}">
-        <span class="icon">
-          <i class="fas fa-paste"></i>
+        <span class="icon is-small">
+          {{ icon::icon(i = "paste") }}
         </span>
         <span>{{ config.general.site_name }}</span>
       </a>

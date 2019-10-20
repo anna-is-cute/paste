@@ -68,7 +68,7 @@
           maxlength="6"
           placeholder="{{ tr(_langs=langs, _msg="tfa-enable-enter-code", _attr="placeholder") }}"/>
         <span class="icon is-small is-left">
-          <i class="fas fa-lock"></i>
+          {{ icon::icon(i = "lock") }}
         </span>
       </div>
     </div>

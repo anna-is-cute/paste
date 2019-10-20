@@ -22,21 +22,26 @@ impl Fairing for Push {
 
     let version = crate::RESOURCES_VERSION.as_ref().map(|x| x.as_str()).unwrap_or_default();
 
+    // These all require SRI, which doesn't work with HTTP/2 push
+    // response.adjoin_header(Header::new(
+    //   "Link",
+    //   format!("</static/js/detect-js.js?v={}>; rel=preload; as=script", version),
+    // ));
+    // response.adjoin_header(Header::new(
+    //   "Link",
+    //   format!("</static/css/style.css?v={}>; rel=preload; as=style", version),
+    // ));
+    // response.adjoin_header(Header::new(
+    //   "Link",
+    //   format!("</static/css/dark-style.css?v={}>; rel=preload; as=style", version),
+    // ));
+    // response.adjoin_header(Header::new(
+    //   "Link",
+    //   format!("</static/js/style.js?v={}>; rel=preload; as=script", version),
+    // ));
     response.adjoin_header(Header::new(
       "Link",
-      format!("</static/js/detect-js.js?v={}>; rel=preload; as=script", version),
-    ));
-    response.adjoin_header(Header::new(
-      "Link",
-      format!("</static/css/style.css?v={}>; rel=preload; as=style", version),
-    ));
-    response.adjoin_header(Header::new(
-      "Link",
-      format!("</static/css/dark-style.css?v={}>; rel=preload; as=style", version),
-    ));
-    response.adjoin_header(Header::new(
-      "Link",
-      format!("</static/js/style.js?v={}>; rel=preload; as=script", version),
+      format!("</static/svg/icons.svg?v={}>; rel=preload; as=image", version),
     ));
   }
 }

@@ -50,12 +50,12 @@
   <h1 class="title">
     {% if tfa_enabled %}
     <span class="icon is-large has-text-success">
-      <i class="fas fa-lock"></i>
+      {{ icon::icon(i = "lock") }}
     </span>
     {{ tr(_langs=langs, _msg="tfa-enabled") }}
     {% else %}
     <span class="icon is-large has-text-danger">
-      <i class="fas fa-lock-open"></i>
+      {{ icon::icon(i = "open-lock") }}
     </span>
     {{ tr(_langs=langs, _msg="tfa-disabled") }}
     {% endif %}

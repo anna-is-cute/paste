@@ -25,14 +25,14 @@
             </optgroup>
           </select>
           <span class="icon is-small is-left">
-            <i class="fas fa-code"></i>
+            {{ icon::icon(i = "language") }}
           </span>
         </div>
       </div>
       <div class="requires-js control">
         <button name="delete_button" type="button" class="button is-danger">
           <span class="icon">
-            <i class="fas fa-trash-alt"></i>
+            {{ icon::icon(i = "delete") }}
           </span>
         </button>
       </div>

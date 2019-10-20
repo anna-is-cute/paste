@@ -18,15 +18,23 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   }
 
   _toConsumableArray(document.getElementsByClassName('opens-modal')).forEach(function (e) {
-    return e.addEventListener('click', function () {
+    e.addEventListener('click', function () {
       return openModal(e);
     });
+
+    if (e.tagName.toLowerCase() === 'button') {
+      e.setAttribute('type', 'button');
+    }
   });
 
   _toConsumableArray(document.getElementsByClassName('closes-modal')).forEach(function (e) {
-    return e.addEventListener('click', function () {
+    e.addEventListener('click', function () {
       return closeModal(e);
     });
+
+    if (e.tagName.toLowerCase() === 'button') {
+      e.setAttribute('type', 'button');
+    }
   });
 })();
 //# sourceMappingURL=modal.js.map

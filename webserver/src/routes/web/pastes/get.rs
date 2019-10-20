@@ -188,6 +188,9 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         uri!(crate::routes::web::pastes::files::raw::get: &author_name, paste.id(), x.id),
       )),
   );
+  if user.as_ref().map(|x| x.is_admin()).unwrap_or(false) {
+    links.add("admin_delete", uri!(crate::routes::web::admin::pastes::delete: paste.id()));
+  }
 
   let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
   ctx["paste"] = json!(output);

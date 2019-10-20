@@ -1,6 +1,6 @@
 pub mod config;
 pub mod index;
-pub mod maintenance;
+// pub mod maintenance;
 pub mod pastes;
 pub mod users;
 
@@ -20,9 +20,9 @@ pub(crate) fn admin_links() -> Links {
   links!(
     "overview" => uri!(crate::routes::web::admin::index::get),
     "pastes" => uri!(crate::routes::web::admin::pastes::get: _),
-    "users" => uri!(crate::routes::web::admin::users::get),
+    "users" => uri!(crate::routes::web::admin::users::get: _),
     "config" => uri!(crate::routes::web::admin::config::get),
-    "maintenance" => uri!(crate::routes::web::admin::maintenance::get),
+    // "maintenance" => uri!(crate::routes::web::admin::maintenance::get),
   )
 }
 

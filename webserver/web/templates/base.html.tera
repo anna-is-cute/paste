@@ -25,10 +25,6 @@
   defer
   src="/static/js/notifications.js?v={{ resources_version }}"
   integrity="sha384-yI6E6wBeIs/7kTFxJ5ZSJSiuDwP7QCjkmK+mnQ7ROOvMq0a6H6pgbZyBEa2+7wws"></script>
-<link
-  rel="preload"
-  href="/static/svg/icons.svg?v={{ resources_version }}"
-  as="image"/>
 <link rel="icon" sizes="16x16 32x32 48x48 64x64" href="/static/favicons/favicon.ico"/>
 <!--[if IE]><link rel="shortcut icon" href="/static/favicons/favicon.ico"/><![endif]-->
 <link rel="apple-touch-icon-precomposed" href="/static/favicons/favicon-152.png"/>

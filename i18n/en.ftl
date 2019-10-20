@@ -474,6 +474,7 @@ admin-users-admin =
 admin-users-delete =
   .missing = No such user.
   .success = User deleted.
+  .super = Cannot delete a super admin.
 
 admin-users-delete-modal =
   .title = Delete user

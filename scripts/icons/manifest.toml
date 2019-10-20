@@ -1,5 +1,6 @@
 [icons]
-admin-delete = "shield-remove"
+admin-add = "shield-plus"
+admin-remove = "shield-remove"
 chevron-down = "chevron-down"
 delete = "delete"
 display-name = "account-card-details"

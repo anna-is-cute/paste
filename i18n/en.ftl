@@ -468,7 +468,7 @@ admin-users-yes-no =
 
 admin-users-admin =
   .super = super
-  .admin = admin
+  .normal = admin
   .none = none
 
 admin-users-delete =

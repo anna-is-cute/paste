@@ -20,7 +20,10 @@ use crate::{
 
 use super::AdminUser;
 
-use diesel::prelude::*;
+use diesel::{
+  dsl::count_star,
+  prelude::*,
+};
 
 use rocket::{
   request::Form,
@@ -36,6 +39,8 @@ use uuid::Uuid;
 
 #[get("/admin/pastes?<page>")]
 pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
+  const PAGE_SIZE: i64 = 15;
+
   let user = user.into_inner();
 
   let page = i64::from(page.unwrap_or(1));
@@ -43,11 +48,20 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
     return Ok(Rst::Redirect(Redirect::to(uri!(get: 1))));
   }
 
+  let total_pastes: i64 = pastes::table
+    .select(count_star())
+    .first(&*conn)?;
+  let max_page = total_pastes / PAGE_SIZE + if total_pastes % PAGE_SIZE != 0 { 1 } else { 0 };
+
+  if page > max_page {
+    return Ok(Rst::Redirect(Redirect::to(uri!(get: max_page as u32))));
+  }
+
   let pastes: Vec<(DbPaste, Option<User>)> = pastes::table
     .left_join(users::table)
     .order_by(pastes::created_at.desc())
-    .offset(15 * (page - 1))
-    .limit(15)
+    .offset(PAGE_SIZE * (page - 1))
+    .limit(PAGE_SIZE)
     .load(&*conn)?;
 
   let outputs: Vec<Output> = pastes
@@ -78,8 +92,28 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
           x.id,
         ),
       )))
-    .add_value("batch_delete", uri!(batch_delete).to_string()));
+    .add_value("delete", outputs
+      .iter()
+      .fold(&mut Links::default(), |l, x| l.add(
+        x.id.to_simple().to_string(),
+        uri!(delete: x.id),
+      )))
+    .add("batch_delete", uri!(batch_delete))
+    .add("prev", if page > 2 {
+      uri!(get: page as u32 - 1)
+    } else {
+      uri!(get: _)
+    })
+    .add("next", if page < max_page {
+      uri!(get: page as u32 + 1)
+    } else {
+      uri!(get: page as u32)
+    }));
   ctx["pastes"] = json!(outputs);
+  ctx["pagination"] = json!({
+    "page": page,
+    "max_page": max_page,
+  });
 
   Ok(Rst::Template(Template::render("admin/pastes", ctx)))
 }
@@ -171,4 +205,36 @@ pub struct BatchDelete {
   #[serde(skip)]
   pub anti_csrf_token: String,
   pub ids: String,
+}
+
+#[delete("/admin/pastes/<id>", format = "application/x-www-form-urlencoded", data = "<form>")]
+pub fn delete(id: PasteId, form: Form<Delete>, config: State<Config>, _user: AdminUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
+  // check the anti csrf token
+  if !sess.check_token(&form.anti_csrf_token) {
+    sess.add_data("error", l10n.tr("error-csrf")?);
+    return Ok(Redirect::to("lastpage"));
+  }
+
+  // get the paste from the id
+  let paste = match id.get(&conn)? {
+    Some(p) => p,
+    None => {
+      sess.add_data("error", l10n.tr(("admin-paste-delete", "missing"))?);
+      return Ok(Redirect::to("lastpage"));
+    },
+  };
+
+  // delete the paste
+  paste.delete(&config, &conn)?;
+
+  // add notification
+  sess.add_data("info", l10n.tr(("admin-paste-delete", "success"))?);
+
+  // redirect back
+  Ok(Redirect::to("lastpage"))
+}
+
+#[derive(FromForm)]
+pub struct Delete {
+  pub anti_csrf_token: String,
 }

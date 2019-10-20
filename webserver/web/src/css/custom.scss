@@ -423,3 +423,15 @@ input[type=checkbox] {
     color: $white;
   }
 }
+
+.icon svg {
+  fill: currentColor;
+}
+
+.navbar-item .icon {
+  margin: .25rem;
+}
+
+.control .icon.is-left svg {
+  padding: .5rem;
+}

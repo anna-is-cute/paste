@@ -424,11 +424,16 @@ admin-pastes-list-headers =
   .files = Files
   .created = Created
   .expires = Expires
+  .actions = Actions
 
 admin-pastes-list =
   .anonymous = anonymous
   .empty = empty
   .never = never
+
+admin-paste-delete =
+  .success = Paste deleted.
+  .missing = Could not find that paste. Was it already deleted?
 
 admin-batch-delete = Batch delete
   .desc = Insert paste IDs or URLs, one per line, to delete.
@@ -455,6 +460,7 @@ admin-users-table =
   .email-verified = Email verified
   .tfa-enabled = 2FA enabled
   .admin = Admin
+  .actions = Actions
 
 admin-users-yes-no =
   .yes = Yes
@@ -464,6 +470,15 @@ admin-users-admin =
   .super = super
   .admin = admin
   .none = none
+
+admin-users-delete =
+  .missing = No such user.
+  .success = User deleted.
+
+admin-users-delete-modal =
+  .title = Delete user
+  .confirm = Please confirm you would like to delete this user.
+  .button = Delete
 
 ## Admin config
 

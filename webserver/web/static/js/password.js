@@ -42,14 +42,13 @@
         reveal.addEventListener('click', function () {
           var pwField = reveal.parentElement.previousElementSibling.firstElementChild;
           pwField.type = pwField.type === 'password' ? 'text' : 'password';
-          var icon = reveal.querySelector('i.fas');
+          var icon = reveal.querySelector('use');
+          var href = icon.getAttribute('xlink:href');
 
           if (pwField.type === 'password') {
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
+            icon.setAttribute('xlink:href', "".concat(href.split('#')[0], "#eye"));
           } else {
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
+            icon.setAttribute('xlink:href', "".concat(href.split('#')[0], "#eye-closed"));
           }
         });
       };

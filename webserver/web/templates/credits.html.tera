@@ -22,7 +22,7 @@
 <section class="section">
   <div class="content has-text-centered">
     <span class="icon is-large has-text-danger">
-      <i class="fas fa-3x fa-heart"></i>
+      {{ icon::icon(i = "heart") }}
     </span>
   </div>
 </section>

@@ -186,14 +186,17 @@ fn main() {
       routes::web::account::adminify::get,
 
       routes::web::admin::index::get,
-      routes::web::admin::maintenance::get,
-      routes::web::admin::users::get,
+      // routes::web::admin::maintenance::get,
 
       routes::web::admin::config::get,
       routes::web::admin::config::post,
 
       routes::web::admin::pastes::get,
+      routes::web::admin::pastes::delete,
       routes::web::admin::pastes::batch_delete,
+
+      routes::web::admin::users::get,
+      routes::web::admin::users::delete,
 
       routes::web::users::get::get,
     ])

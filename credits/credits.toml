@@ -62,9 +62,9 @@ url = "https://github.com/wcoder/highlightjs-line-numbers.js"
 text = "An add-on for highlight.js that adds line numbers. We use a slightly modified version."
 
 [[frontend]]
-name = "FontAwesome"
-url = "https://fontawesome.com/"
-text = "A ubiquitous set of icons that you've probably seen before."
+name = "Material Design Icons"
+url = "https://materialdesignicons.com/"
+text = "Handy icons that we use a small subset of."
 
 [[frontend]]
 name = "highlight.js"
@@ -285,7 +285,7 @@ text = "A Rust library for random number generation."
 
 [[backend]]
 name = "hashbrown"
-url = "https://github.com/Amanieu/hashbrown"
+url = "https://github.com/rust-lang/hashbrown"
 text = "A SwissTable implementation in Rust. Faster HashMaps!"
 
 [[backend]]

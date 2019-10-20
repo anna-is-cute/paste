@@ -46,7 +46,9 @@
         <input type="hidden" name="_method" value="delete"/>
         <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
         <button class="button is-small is-danger">
-          <i class="fas fa-trash-alt"></i>
+          <span class="icon">
+            {{ icon::icon(i = "delete") }}
+          </span>
         </button>
       </form>
     </td>

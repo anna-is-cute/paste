@@ -4,6 +4,10 @@
 
 {% block head -%}
 {{ super() }}
+<script
+  defer
+  src="/static/js/modal.js?v={{ resources_version }}"
+  integrity="sha384-a7zkFHPsjaSEqA+6o22dF31kMpocs3bBBOnos/1S3FPBAamg4GsUJL+oiYoNjoXN"></script>
 {%- endblock head %}
 
 {% block title -%}
@@ -23,7 +27,7 @@
 {% endblock header_foot %}
 
 {% block main %}
-<table class="table is-striped is-fullwidth">
+<table class="table is-striped is-fullwidth is-middle">
   <thead>
     <tr>
       <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="name") }}</th>
@@ -32,6 +36,7 @@
       <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="email-verified") }}</th>
       <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="tfa-enabled") }}</th>
       <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="admin") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="actions") }}</th>
     </tr>
   </thead>
   <tbody>
@@ -55,8 +60,55 @@
         {%- endif -%}
       </td>
       <td>{{ tr(_langs=langs, _msg="admin-users-admin", _attr=user.admin) }}</td>
+      <td>
+        <form action="{{ links.delete[user.id] }}" method="post">
+          <input type="hidden" name="_method" value="delete"/>
+          <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+          <button class="button is-danger opens-modal" data-modal-id="delete-{{ user.id }}">
+            <span class="icon is-small">
+              {{ icon::icon(i = "delete") }}
+            </span>
+          </button>
+          <div id="delete-{{ user.id }}" class="requires-js modal">
+            <div class="modal-background closes-modal" data-modal-id="delete-{{ user.id }}"></div>
+            <div class="modal-content">
+              <div class="modal-card">
+                <header class="modal-card-head">
+                  <p class="modal-card-title">{{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="title") }}</p>
+                  <button class="delete closes-modal" data-modal-id="delete-{{ user.id }}" aria-label="close" type="button"></button>
+                </header>
+                <section class="modal-card-body">
+                  <div class="content">
+                    <p>
+                      {{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="confirm") }}
+                    </p>
+                  </div>
+                </section>
+                <footer class="modal-card-foot">
+                  <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="button") }}</button>
+                </footer>
+              </div>
+            </div>
+          </div>
+        </form>
+      </td>
     </tr>
   {%- endfor %}
   </tbody>
 </table>
+
+{% if pagination.max_page > 1 %}
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+  {% if pagination.page == 1 %}
+    <a class="pagination-previous" disabled>{{ tr(_langs=langs, _msg="pagination", _attr="previous") }}</a>
+  {% else %}
+    <a href="{{ links.prev }}" class="pagination-previous">{{ tr(_langs=langs, _msg="pagination", _attr="previous") }}</a>
+  {% endif %}
+  {% if pagination.page == pagination.max_page %}
+    <a class="pagination-next" disabled>{{ tr(_langs=langs, _msg="pagination", _attr="next") }}</a>
+  {% else %}
+    <a href="{{ links.next }}" class="pagination-next">{{ tr(_langs=langs, _msg="pagination", _attr="next") }}</a>
+  {% endif %}
+</nav>
+{% endif %}
 {% endblock main %}

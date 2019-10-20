@@ -435,3 +435,7 @@ input[type=checkbox] {
 .control .icon.is-left svg {
   padding: .5rem;
 }
+
+.icon svg .badge {
+  transform: scale(0.5) translate(24px, 24px);
+}

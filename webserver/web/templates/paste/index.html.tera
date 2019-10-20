@@ -84,7 +84,16 @@
             <div class="control">
               <button class="button is-danger is-large opens-modal" data-modal-id="admin_deletion_modal">
                 <span class="icon is-large">
-                  {{ icon::icon(i = "admin-delete") }}
+                  <svg viewBox="0 0 24 24">
+                    <defs>
+                      <mask id="br-circle">
+                        <rect width="100%" height="100%" fill="white"/>
+                        <circle cx="18" cy="18" r="6.5" fill="black"/>
+                      </mask>
+                    </defs>
+                    <use xlink:href="/static/svg/icons.svg?v={{ resources_version }}#delete" mask="url(#br-circle)"></use>
+                    <use class="badge" xlink:href="/static/svg/icons.svg?v={{ resources_version }}#shield"></use>
+                  </svg>
                 </span>
               </button>
             </div>

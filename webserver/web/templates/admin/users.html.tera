@@ -40,59 +40,82 @@
     </tr>
   </thead>
   <tbody>
-  {%- for user in users %}
+  {%- for target in users %}
     <tr>
-      <td>{{ user.name }}</td>
-      <td>{{ user.username }}</td>
-      <td>{{ user.email }}</td>
+      <td>{{ target.name }}</td>
+      <td>{{ target.username }}</td>
+      <td>{{ target.email }}</td>
       <td>
-      {%- if user.email_verified -%}
+      {%- if target.email_verified -%}
         {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="yes") }}
       {%- else -%}
         {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="no") }}
       {%- endif -%}
       </td>
       <td>
-        {%- if user.shared_secret -%}
+        {%- if target.shared_secret -%}
           {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="yes") }}
         {%- else -%}
           {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="no") }}
         {%- endif -%}
       </td>
-      <td>{{ tr(_langs=langs, _msg="admin-users-admin", _attr=user.admin) }}</td>
+      <td>{{ tr(_langs=langs, _msg="admin-users-admin", _attr=target.admin) }}</td>
       <td>
-      {% if user.admin != "super" %}
-        <form action="{{ links.delete[user.id] }}" method="post">
-          <input type="hidden" name="_method" value="delete"/>
-          <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
-          <button class="button is-danger opens-modal" data-modal-id="delete-{{ user.id }}">
-            <span class="icon is-small">
-              {{ icon::icon(i = "delete") }}
-            </span>
-          </button>
-          <div id="delete-{{ user.id }}" class="requires-js modal">
-            <div class="modal-background closes-modal" data-modal-id="delete-{{ user.id }}"></div>
-            <div class="modal-content">
-              <div class="modal-card">
-                <header class="modal-card-head">
-                  <p class="modal-card-title">{{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="title") }}</p>
-                  <button class="delete closes-modal" data-modal-id="delete-{{ user.id }}" aria-label="close" type="button"></button>
-                </header>
-                <section class="modal-card-body">
-                  <div class="content">
-                    <p>
-                      {{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="confirm") }}
-                    </p>
+        <div class="field is-grouped">
+        {% if target.admin != "super" %}
+          <div class="control">
+            <form action="{{ links.delete[target.id] }}" method="post">
+              <input type="hidden" name="_method" value="delete"/>
+              <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+              <button class="button is-danger opens-modal" data-modal-id="delete-{{ target.id }}">
+                <span class="icon is-small">
+                  {{ icon::icon(i = "delete") }}
+                </span>
+              </button>
+              <div id="delete-{{ target.id }}" class="requires-js modal">
+                <div class="modal-background closes-modal" data-modal-id="delete-{{ target.id }}"></div>
+                <div class="modal-content">
+                  <div class="modal-card">
+                    <header class="modal-card-head">
+                      <p class="modal-card-title">{{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="title") }}</p>
+                      <button class="delete closes-modal" data-modal-id="delete-{{ target.id }}" aria-label="close" type="button"></button>
+                    </header>
+                    <section class="modal-card-body">
+                      <div class="content">
+                        <p>
+                          {{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="confirm") }}
+                        </p>
+                      </div>
+                    </section>
+                    <footer class="modal-card-foot">
+                      <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="button") }}</button>
+                    </footer>
                   </div>
-                </section>
-                <footer class="modal-card-foot">
-                  <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="button") }}</button>
-                </footer>
+                </div>
               </div>
-            </div>
+            </form>
           </div>
-        </form>
-      {% endif %}
+        {% endif %}
+        {% if user.admin == "super" %}
+          {% if target.admin == "none" %}
+          <div class="control">
+            <button class="button">
+              <span class="icon is-small">
+                {{ icon::icon(i = "admin-add") }}
+              </span>
+            </button>
+          </div>
+          {% elif target.admin != "super" %}
+          <div class="control">
+            <button class="button">
+              <span class="icon is-small">
+                {{ icon::icon(i = "admin-remove") }}
+              </span>
+            </button>
+          </div>
+          {% endif %}
+        {% endif %}
+        </div>
       </td>
     </tr>
   {%- endfor %}

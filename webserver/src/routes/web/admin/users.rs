@@ -7,7 +7,10 @@ use crate::{
   },
   errors::*,
   i18n::prelude::*,
-  models::id::UserId,
+  models::{
+    id::UserId,
+    user::Admin,
+  },
   routes::web::{context, Links, Rst, Session},
   sidekiq::Job,
   utils::AcceptLanguage,
@@ -93,7 +96,7 @@ pub fn delete(id: UserId, form: Form<Delete>, config: State<Config>, _user: Admi
   }
 
   // get the user from the id
-  let user = match id.get(&conn)? {
+  let target = match id.get(&conn)? {
     Some(u) => u,
     None => {
       sess.add_data("error", l10n.tr(("admin-users-delete", "missing"))?);
@@ -101,11 +104,16 @@ pub fn delete(id: UserId, form: Form<Delete>, config: State<Config>, _user: Admi
     },
   };
 
+  if target.admin() == Admin::Super {
+    sess.add_data("error", l10n.tr(("admin-users-delete", "super"))?);
+    return Ok(Redirect::to("lastpage"));
+  }
+
   // delete the user
-  user.delete(&conn)?;
+  target.delete(&conn)?;
 
   // add a job to delete all their pastes
-  sidekiq.push(Job::DeleteAllPastes(&*config, user.id()).into())?;
+  sidekiq.push(Job::DeleteAllPastes(&*config, target.id()).into())?;
 
   // add a notification of success
   sess.add_data("info", l10n.tr(("admin-users-delete", "success"))?);

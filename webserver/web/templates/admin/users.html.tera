@@ -61,6 +61,7 @@
       </td>
       <td>{{ tr(_langs=langs, _msg="admin-users-admin", _attr=user.admin) }}</td>
       <td>
+      {% if user.admin != "super" %}
         <form action="{{ links.delete[user.id] }}" method="post">
           <input type="hidden" name="_method" value="delete"/>
           <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
@@ -91,6 +92,7 @@
             </div>
           </div>
         </form>
+      {% endif %}
       </td>
     </tr>
   {%- endfor %}

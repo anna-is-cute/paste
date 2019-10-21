@@ -481,6 +481,17 @@ admin-users-delete-modal =
   .confirm = Please confirm you would like to delete this user.
   .button = Delete
 
+admin-users-promote-modal =
+  .title = Promote <em>{$user}</em>
+  .line-1 = What level of admin do you want to promote <em>{$user}</em> to?
+  .superadmin = Superadmin
+  .superadmin-desc = Superadmins cannot be deleted and can change other users' admin status. They
+                     are able to control everything.
+  .superadmin-warning = <strong class="has-text-danger">Important</strong>: The only way to demote a
+                        superadmin is to access the database directly.
+  .admin = Admin
+  .admin-desc = Admins can be deleted and cannot control other users' admin status.
+
 ## Admin config
 
 admin-config =

@@ -197,6 +197,8 @@ fn main() {
 
       routes::web::admin::users::get,
       routes::web::admin::users::delete,
+      routes::web::admin::users::promote,
+      routes::web::admin::users::demote,
 
       routes::web::users::get::get,
     ])

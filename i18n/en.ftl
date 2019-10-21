@@ -435,6 +435,11 @@ admin-paste-delete =
   .success = Paste deleted.
   .missing = Could not find that paste. Was it already deleted?
 
+admin-paste-delete-modal =
+  .title = Delete paste as admin
+  .confirm = Please confirm you would like to delete this paste as an admin.
+  .button = Delete as admin
+
 admin-batch-delete = Batch delete
   .desc = Insert paste IDs or URLs, one per line, to delete.
   .placeholder = Paste IDs or URLs, one per line
@@ -475,6 +480,7 @@ admin-users-delete =
   .missing = No such user.
   .success = User deleted.
   .super = Cannot delete a super admin.
+  .other-admin = Cannot delete another admin.
 
 admin-users-delete-modal =
   .title = Delete user
@@ -490,7 +496,24 @@ admin-users-promote-modal =
   .superadmin-warning = <strong class="has-text-danger">Important</strong>: The only way to demote a
                         superadmin is to access the database directly.
   .admin = Admin
-  .admin-desc = Admins can be deleted and cannot control other users' admin status.
+  .admin-desc = Admins can be deleted and cannot control other users' admin status. Admins cannot
+                delete other admins.
+  .button = Promote
+
+admin-users-demote-modal =
+  .title = Demote <em>{$user}</em>
+  .desc = Demoted users become normal users with no admin privileges.
+  .button = Demote
+
+admin-users-status =
+  .must-be-super = You must be a superadmin to promote/demote users.
+  .missing = No such user.
+  .target-super = You cannot promote/demote a superadmin.
+  .already-admin = That user is already an admin.
+  .not-admin = That user is not an admin.
+  .promoted = User successfully promoted.
+  .demoted = User successfully demoted.
+  .invalid-level = Invalid admin level.
 
 ## Admin config
 

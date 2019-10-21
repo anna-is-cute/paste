@@ -5,7 +5,7 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-qKhsNm6xDUlVF2YxI5BxyGUFN/9B5weZsgQ5AZMQPO45ZTKxcfKniZNRYHA7obqF"></script>
+  integrity="sha384-SKdpLBPZZLlfr+HqBN9FoZXnw/Qt1xQFLfbnEz9myP60itwRb5DE6MgE2lZ6KExY"></script>
 {%- endblock head %}
 
 {% block title -%}{{ tr(_langs=langs, _msg="delete-account") }}{%- endblock title %}

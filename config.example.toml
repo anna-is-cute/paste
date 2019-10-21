@@ -9,6 +9,8 @@ site_domain = "paste.gg"
 # A random key used to become the first admin. Anyone who knows or guesses this can become an admin
 # if there are no other admins registered. This can be unset once one admin is registered.
 # key = ""
+# Should normal admins be allowed to edit the config? Superadmins are always allowed.
+admins_can_edit_config = false
 
 [pastes]
 # Require users to sign in before they can created pastes?

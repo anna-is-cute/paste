@@ -211,8 +211,7 @@ config_paste() {
   sed -i 's/"paste"/"paste dev"/g' "config.toml"
   # set the site address
   sed -i 's/paste\.gg/localhost/g' "config.toml"
-  # set the store path to "/store" for docker
-  sed -i 's/\.\/store/\/store/g' "config.toml"
+  # don't change the store path, as we're not using a volume
   # don't set up email
 }
 

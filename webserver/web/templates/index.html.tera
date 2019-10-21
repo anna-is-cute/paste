@@ -215,7 +215,7 @@ New
     <div class="control is-expanded">
       <label class="label">
         {{ tr(_langs=langs, _msg="antispam-math", a=antispam.no_js[0], b=antispam.no_js[1]) }}
-        <small><span class="has-text-grey-light tooltip is-tooltip-multiline is-dotted-underlined" data-tooltip="{{ tr(_langs=langs, _msg="antispam-math", _attr="description") }}">{{ tr(_langs=langs, _msg="antispam-math", _attr="why") }}</span></small>
+        <small><span class="has-text-grey-light tooltip has-tooltip-multiline is-dotted-underlined" data-tooltip="{{ tr(_langs=langs, _msg="antispam-math", _attr="description") }}">{{ tr(_langs=langs, _msg="antispam-math", _attr="why") }}</span></small>
       </label>
       <input
         name="no-js-check"

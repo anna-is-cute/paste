@@ -114,7 +114,7 @@
 
     var z = zxcvbn(password, values);
     var message = "Time to crack your password: ".concat(z.crack_times_display.offline_slow_hashing_1e4_per_second);
-    message += ' <small><span class="has-text-grey-light tooltip is-tooltip-multiline is-dotted-underlined" data-tooltip="This is the time it would take an attacker to successfully guess your password. Increase your password complexity until you\'re comfortable with the amount of time.">What is this?</span></small>';
+    message += ' <small><span class="has-text-grey-light tooltip has-tooltip-multiline is-dotted-underlined" data-tooltip="This is the time it would take an attacker to successfully guess your password. Increase your password complexity until you\'re comfortable with the amount of time.">What is this?</span></small>';
     strength.innerHTML = message;
     warning.innerHTML = "<br/>".concat(z.feedback.warning);
     var color;

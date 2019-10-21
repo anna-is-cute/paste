@@ -9,7 +9,7 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-qKhsNm6xDUlVF2YxI5BxyGUFN/9B5weZsgQ5AZMQPO45ZTKxcfKniZNRYHA7obqF"></script>
+  integrity="sha384-SKdpLBPZZLlfr+HqBN9FoZXnw/Qt1xQFLfbnEz9myP60itwRb5DE6MgE2lZ6KExY"></script>
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {%- endblock head %}
 
@@ -119,7 +119,7 @@
         </a>
       </div>
     </div>
-    <p class="help">
+    <p class="help requires-js">
       <progress id="strength_progress" class="password progress is-marginless is-danger" value="100" max="100"></progress>
       <span id="strength"></span>
       <span id="strength_warning" class="has-text-warning"></span>

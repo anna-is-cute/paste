@@ -99,11 +99,55 @@
         {% if user.admin == "super" %}
           {% if target.admin == "none" %}
           <div class="control">
-            <button class="button">
-              <span class="icon is-small">
-                {{ icon::icon(i = "admin-add") }}
-              </span>
-            </button>
+            <form>
+              <button class="button opens-modal" data-modal-id="promote-{{ target.id }}">
+                <span class="icon is-small">
+                  {{ icon::icon(i = "admin-add") }}
+                </span>
+              </button>
+              <div id="promote-{{ target.id }}" class="requires-js modal">
+                <div class="modal-background closes-modal" data-modal-id="promote-{{ target.id }}"></div>
+                <div class="modal-content">
+                  <div class="modal-card">
+                    <header class="modal-card-head">
+                      <p class="modal-card-title">
+                        {{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="title", user=target.username) | safe }}
+                      </p>
+                      <button class="delete closes-modal" data-modal-id="promote-{{ target.id }}" aria-label="close" type="button"></button>
+                    </header>
+                    <section class="modal-card-body">
+                      <div class="content">
+                        <p>
+                          {{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="line-1", user=target.username) | safe }}
+                        </p>
+                        <dl>
+                          <dt>{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="superadmin") }}</dt>
+                          <dd>
+                            {{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="superadmin-desc") }}
+                            <br/>
+                            {{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="superadmin-warning") | safe }}
+                          </dd>
+
+                          <dt>{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="admin") }}</dt>
+                          <dd>{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="admin-desc") }}</dd>
+                        </dl>
+                        <div class="control">
+                          <div class="select">
+                            <select name="level">
+                              <option value="superadmin">{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="superadmin") }}</option>
+                              <option value="admin" selected>{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="admin") }}</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                    <footer class="modal-card-foot">
+                      <button class="button is-info" type="submit">Promote</button>
+                    </footer>
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
           {% elif target.admin != "super" %}
           <div class="control">

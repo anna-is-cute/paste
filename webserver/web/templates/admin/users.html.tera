@@ -62,7 +62,8 @@
       <td>{{ tr(_langs=langs, _msg="admin-users-admin", _attr=target.admin) }}</td>
       <td>
         <div class="field is-grouped">
-        {% if target.admin != "super" %}
+        {% set other_admin = user.admin == "normal" and target.admin == "normal" and user.id != target.id %}
+        {% if target.admin != "super" and not other_admin %}
           <div class="control">
             <form action="{{ links.delete[target.id] }}" method="post">
               <input type="hidden" name="_method" value="delete"/>
@@ -99,8 +100,10 @@
         {% if user.admin == "super" %}
           {% if target.admin == "none" %}
           <div class="control">
-            <form>
-              <button class="button opens-modal" data-modal-id="promote-{{ target.id }}">
+            <form method="post" action="{{ links.promote[target.id] }}">
+              <input type="hidden" name="_method" value="patch"/>
+              <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+              <button class="button is-primary opens-modal" data-modal-id="promote-{{ target.id }}">
                 <span class="icon is-small">
                   {{ icon::icon(i = "admin-add") }}
                 </span>
@@ -134,7 +137,7 @@
                         <div class="control">
                           <div class="select">
                             <select name="level">
-                              <option value="superadmin">{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="superadmin") }}</option>
+                              <option value="super">{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="superadmin") }}</option>
                               <option value="admin" selected>{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="admin") }}</option>
                             </select>
                           </div>
@@ -142,7 +145,9 @@
                       </div>
                     </section>
                     <footer class="modal-card-foot">
-                      <button class="button is-info" type="submit">Promote</button>
+                      <button class="button is-info" type="submit">
+                        {{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="button") }}
+                      </button>
                     </footer>
                   </div>
                 </div>
@@ -151,11 +156,40 @@
           </div>
           {% elif target.admin != "super" %}
           <div class="control">
-            <button class="button">
-              <span class="icon is-small">
-                {{ icon::icon(i = "admin-remove") }}
-              </span>
-            </button>
+            <form method="post" action="{{ links.demote[target.id] }}">
+              <input type="hidden" name="_method" value="patch"/>
+              <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+              <button class="button is-warning opens-modal" data-modal-id="demote-{{ target.id }}">
+                <span class="icon is-small">
+                  {{ icon::icon(i = "admin-remove") }}
+                </span>
+              </button>
+              <div id="demote-{{ target.id }}" class="requires-js modal">
+                <div class="modal-background closes-modal" data-modal-id="demote-{{ target.id }}"></div>
+                <div class="modal-content">
+                  <div class="modal-card">
+                    <header class="modal-card-head">
+                      <p class="modal-card-title">
+                        {{ tr(_langs=langs, _msg="admin-users-demote-modal", _attr="title", user=target.username) | safe }}
+                      </p>
+                      <button class="delete closes-modal" data-modal-id="demote-{{ target.id }}" aria-label="close" type="button"></button>
+                    </header>
+                    <section class="modal-card-body">
+                      <div class="content">
+                        <p>
+                          {{ tr(_langs=langs, _msg="admin-users-demote-modal", _attr="desc", user=target.username) | safe }}
+                        </p>
+                      </div>
+                    </section>
+                    <footer class="modal-card-foot">
+                      <button class="button is-warning" type="submit">
+                        {{ tr(_langs=langs, _msg="admin-users-demote-modal", _attr="button") }}
+                      </button>
+                    </footer>
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
           {% endif %}
         {% endif %}

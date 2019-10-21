@@ -29,7 +29,7 @@
 <script
   defer
   src="/static/js/config.js?v={{ resources_version }}"
-  integrity="sha384-pDoCJB98t5KIvH8kC7C8/nytOz/pk2lU8Vr4t7elL9fQFLolD5AVbmgmnnEIaxAg"></script>
+  integrity="sha384-edsyuXa+tmhTOPhET1XyJyNgTKQoJodtAWTH4kf7nCo48yb2kWZHcc1xOTVKrutC"></script>
 {%- endblock head %}
 
 {% block title -%}
@@ -57,9 +57,9 @@
       <textarea
         name="config"
         class="paste textarea"
+        rows="10"
         autocorrect="off"
-        autocapitalize="off"
-        value="{{ config_text }}"></textarea>
+        autocapitalize="off">{{ config_text }}</textarea>
     </div>
   </div>
 

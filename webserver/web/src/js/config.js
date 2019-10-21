@@ -34,7 +34,7 @@
 
     editor.setHighlightCallback(codeFlaskSucksHighlight);
 
-    editor.updateCode(el.getAttribute('value'));
+    editor.updateCode(el.value);
     editor.createLineNumbers(); // TODO: fix this in codesass
 
     el.insertAdjacentElement('beforebegin', div);

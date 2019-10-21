@@ -51,7 +51,7 @@
     editor.elCode.style.background = 'none';
     editor.elCode.style.padding = '0';
     editor.setHighlightCallback(codeFlaskSucksHighlight);
-    editor.updateCode(el.getAttribute('value'));
+    editor.updateCode(el.value);
     editor.createLineNumbers(); // TODO: fix this in codesass
 
     el.insertAdjacentElement('beforebegin', div);

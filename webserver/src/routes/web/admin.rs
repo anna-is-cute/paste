@@ -14,7 +14,7 @@ use rocket::{
   request::{self, Request, FromRequest},
 };
 
-use std::ops::{Deref, DerefMut};
+use std::ops::Deref;
 
 pub(crate) fn admin_links() -> Links {
   links!(
@@ -61,11 +61,5 @@ impl Deref for AdminUser {
 
   fn deref(&self) -> &Self::Target {
     &self.0
-  }
-}
-
-impl DerefMut for AdminUser {
-  fn deref_mut(&mut self) -> &mut Self::Target {
-    &mut self.0
   }
 }

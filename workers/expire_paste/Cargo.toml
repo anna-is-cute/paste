@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 chrono = "0.4"
-dotenv = "0.14"
+dotenv = "0.15"
 failure = "0.1"
 uuid = "0.7"
 

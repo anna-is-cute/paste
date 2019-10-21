@@ -32,6 +32,8 @@ pub struct General {
 pub struct Admin {
   #[serde(default)]
   pub key: Option<String>,
+  #[serde(default)]
+  pub admins_can_edit_config: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

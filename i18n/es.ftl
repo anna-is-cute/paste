@@ -1,12 +1,13 @@
 ## Nav
 
-nav-new = Nuevo
-nav-about = Sobre
-nav-log-in = 	Iniciar sesión
-nav-log-out = Cerrar sesión
-nav-register = Registrarse
-nav-settings = Ajustes
-nav-swap-theme = Cambiar el tema
+nav =
+  .new = Nuevo
+  .about = Sobre
+  .log-in = 	Iniciar sesión
+  .log-out = Cerrar sesión
+  .register = Registrarse
+  .settings = Ajustes
+  .swap-theme = Cambiar el tema
 
 ## Footer
 

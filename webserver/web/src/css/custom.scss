@@ -152,21 +152,21 @@ td.hljs-ln-code {
 
 a.external::after {
   display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-
-  position: relative;
-  bottom: .15rem;
 
   margin-left: .25rem;
 
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  font-size: .6rem;
+  content: ' ';
 
-  content: "\f35d";
+  // display the external icon as a mask of the background colour
+  mask-image: url("/static/svg/external.svg");
+  // chrome has limited support, and many slightly older versions require a prefix
+  -webkit-mask-image: url("/static/svg/external.svg");
+  mask-size: 1rem;
+
+  width: 1rem;
+  height: 1rem;
+
+  background-color: currentColor;
 }
 
 table.is-middle td, table.is-middle th {

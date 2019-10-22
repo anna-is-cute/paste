@@ -6,7 +6,7 @@ use crate::{
       pastes::Paste as DbPaste,
       users::User,
     },
-    schema::{pastes, users},
+    schema::{files, pastes, users},
   },
   errors::*,
   i18n::prelude::*,
@@ -63,27 +63,40 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
   }
 
   // get all pastes for that page with their respective authors
-  let pastes: Vec<(DbPaste, Option<User>)> = pastes::table
+  let pastes: Vec<(DbPaste, i64, Option<User>)> = pastes::table
     .left_join(users::table)
+    .inner_join(files::table)
+    .select((
+      pastes::table::all_columns(),
+      diesel::dsl::sql::<diesel::sql_types::BigInt>("count(files.id)"),
+      users::table::all_columns().nullable(),
+    ))
+    .group_by((
+      pastes::table::all_columns(),
+      users::table::all_columns(),
+    ))
     .order_by(pastes::created_at.desc())
     .offset(PAGE_SIZE * (page - 1))
     .limit(PAGE_SIZE)
     .load(&*conn)?;
 
   // convert pastes into paste outputs
-  let outputs: Vec<Output> = pastes
+  let outputs: Vec<(Output, i64)> = pastes
     .into_iter()
-    .map(|(paste, user)| Output::new(
-      paste.id(),
-      user.map(|user| OutputAuthor::new(user.id(), user.username(), user.name())),
-      paste.name(),
-      paste.description(),
-      paste.visibility(),
-      paste.created_at(),
-      paste.updated_at(&*config).ok(),
-      paste.expires(),
-      None,
-      Vec::new(),
+    .map(|(paste, file_count, user)| (
+      Output::new(
+        paste.id(),
+        user.map(|user| OutputAuthor::new(user.id(), user.username(), user.name())),
+        paste.name(),
+        paste.description(),
+        paste.visibility(),
+        paste.created_at(),
+        paste.updated_at(&*config).ok(),
+        paste.expires(),
+        None,
+        Vec::new(),
+      ),
+      file_count,
     ))
     .collect();
 
@@ -94,7 +107,7 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
     // add links to each paste
     .add_value("paste_links", outputs
       .iter()
-      .fold(&mut Links::default(), |l, x| l.add(
+      .fold(&mut Links::default(), |l, (x, _)| l.add(
         x.id.to_simple().to_string(),
         uri!(
           crate::routes::web::pastes::get::users_username_id:
@@ -105,7 +118,7 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
     // add deletion links for each paste
     .add_value("delete", outputs
       .iter()
-      .fold(&mut Links::default(), |l, x| l.add(
+      .fold(&mut Links::default(), |l, (x, _)| l.add(
         x.id.to_simple().to_string(),
         uri!(delete: x.id),
       )))

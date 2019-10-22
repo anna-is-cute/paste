@@ -62,6 +62,7 @@ paste-relative-expiry =
 antispam-math = What is {$a} + {$b}?
   .why = Why?
   .description = Since you're not using JavaScript, paste requires you to answer this simple math question to foil simple bots. paste has an API if you're trying to do legitimate things!
+  .placeholder = Answer
 
 antispam-honeypot =
   .email = Email

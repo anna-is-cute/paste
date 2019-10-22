@@ -47,7 +47,7 @@
   </article>
   {% endif %}
 
-  <h1 class="title">
+  <h1 class="title tfa">
     {% if tfa_enabled %}
     <span class="icon is-large has-text-success">
       {{ icon::icon(i = "lock") }}

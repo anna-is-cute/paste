@@ -43,20 +43,26 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
 
   let user = user.into_inner();
 
+  // get the page number or 1 by default
   let page = i64::from(page.unwrap_or(1));
+  // redirect to first page if given page 0
   if page <= 0 {
-    return Ok(Rst::Redirect(Redirect::to(uri!(get: 1))));
+    return Ok(Rst::Redirect(Redirect::to(uri!(get: _))));
   }
 
+  // get the total number of pastes
   let total_pastes: i64 = pastes::table
     .select(count_star())
     .first(&*conn)?;
+  // determine the max page
   let max_page = total_pastes / PAGE_SIZE + if total_pastes % PAGE_SIZE != 0 { 1 } else { 0 };
 
+  // if requested a page greater than the max page, redirect to the max page
   if page > max_page {
     return Ok(Rst::Redirect(Redirect::to(uri!(get: max_page as u32))));
   }
 
+  // get all pastes for that page with their respective authors
   let pastes: Vec<(DbPaste, Option<User>)> = pastes::table
     .left_join(users::table)
     .order_by(pastes::created_at.desc())
@@ -64,6 +70,7 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
     .limit(PAGE_SIZE)
     .load(&*conn)?;
 
+  // convert pastes into paste outputs
   let outputs: Vec<Output> = pastes
     .into_iter()
     .map(|(paste, user)| Output::new(
@@ -80,8 +87,11 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
     ))
     .collect();
 
+  // create default context
   let mut ctx = context(&*config, Some(&user), &mut sess, langs);
+  // add links to context
   ctx["links"] = json!(super::admin_links()
+    // add links to each paste
     .add_value("paste_links", outputs
       .iter()
       .fold(&mut Links::default(), |l, x| l.add(
@@ -92,29 +102,36 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
           x.id,
         ),
       )))
+    // add deletion links for each paste
     .add_value("delete", outputs
       .iter()
       .fold(&mut Links::default(), |l, x| l.add(
         x.id.to_simple().to_string(),
         uri!(delete: x.id),
       )))
+    // add the batch delete endpoint
     .add("batch_delete", uri!(batch_delete))
+    // add the previous page link
     .add("prev", if page > 2 {
       uri!(get: page as u32 - 1)
     } else {
       uri!(get: _)
     })
+    // add the next page link
     .add("next", if page < max_page {
       uri!(get: page as u32 + 1)
     } else {
       uri!(get: page as u32)
     }));
+  // add the pastes
   ctx["pastes"] = json!(outputs);
+  // add pagination info
   ctx["pagination"] = json!({
     "page": page,
     "max_page": max_page,
   });
 
+  // render the template
   Ok(Rst::Template(Template::render("admin/pastes", ctx)))
 }
 

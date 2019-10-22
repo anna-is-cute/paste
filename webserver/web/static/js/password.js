@@ -43,12 +43,12 @@
           var pwField = reveal.parentElement.previousElementSibling.firstElementChild;
           pwField.type = pwField.type === 'password' ? 'text' : 'password';
           var icon = reveal.querySelector('use');
-          var href = icon.getAttribute('xlink:href');
+          var href = icon.getAttribute('href');
 
           if (pwField.type === 'password') {
-            icon.setAttribute('xlink:href', "".concat(href.split('#')[0], "#eye"));
+            icon.setAttribute('href', "".concat(href.split('#')[0], "#eye"));
           } else {
-            icon.setAttribute('xlink:href', "".concat(href.split('#')[0], "#eye-closed"));
+            icon.setAttribute('href', "".concat(href.split('#')[0], "#eye-closed"));
           }
         });
       };

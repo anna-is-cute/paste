@@ -33,11 +33,11 @@
         pwField.type = pwField.type === 'password' ? 'text' : 'password';
 
         const icon = reveal.querySelector('use');
-        const href = icon.getAttribute('xlink:href')
+        const href = icon.getAttribute('href')
         if (pwField.type === 'password') {
-          icon.setAttribute('xlink:href', `${href.split('#')[0]}#eye`);
+          icon.setAttribute('href', `${href.split('#')[0]}#eye`);
         } else {
-          icon.setAttribute('xlink:href', `${href.split('#')[0]}#eye-closed`);
+          icon.setAttribute('href', `${href.split('#')[0]}#eye-closed`);
         }
       });
     }

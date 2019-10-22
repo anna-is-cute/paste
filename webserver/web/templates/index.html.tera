@@ -102,7 +102,7 @@ New
           </div>
         </div>
       </div>
-      <div class="field">
+      <div class="field requires-js">
         <div class="label-icon">
           <label class="label">{{ tr(_langs=langs, _msg="paste-expires") }}</label>
           <a href="https://github.com/jkcclemens/paste/wiki/Expiring-pastes" target="_blank">
@@ -111,7 +111,7 @@ New
             </span>
           </a>
         </div>
-        <div class="control has-icons-left requires-js">
+        <div class="control has-icons-left">
           <div class="select is-fullwidth">
             <select id="expires">
               <option value="no" selected>{{ tr(_langs=langs, _msg="paste-expires", _attr="no") }}</option>
@@ -222,7 +222,7 @@ New
         class="input"
         type="text"
         {%- if form.name %}value="{{ form.name }}"{% endif %}
-        placeholder="Answer"/>
+        placeholder="{{ tr(_langs=langs, _msg="antispam-math", _attr="placeholder") }}"/>
     </div>
   </div>
 

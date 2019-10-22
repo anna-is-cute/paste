@@ -192,6 +192,7 @@
               data-bar="hidden"
               class="input"
               minlength="10"
+              autocomplete="new-password"
               type="password"/>
             <span class="icon is-small is-left">
               {{ icon::icon(i = "password") }}
@@ -226,6 +227,7 @@
             name="password_verify"
             class="input"
             minlength="10"
+            autocomplete="new-password"
             type="password"/>
           <span class="icon is-small is-left">
             {{ icon::icon(i = "password") }}

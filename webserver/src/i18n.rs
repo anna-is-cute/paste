@@ -147,6 +147,8 @@ type Bundle = FluentBundle<FluentResource>;
 
 #[derive(Deserialize)]
 struct Manifest {
+  #[serde(deserialize_with = "self::langid::deserialize_vec")]
+  default: Vec<LanguageIdentifier>,
   #[serde(flatten, deserialize_with = "self::langid::deserialize_map")]
   bundles: HashMap<LanguageIdentifier, ManifestBundle>,
 }
@@ -196,7 +198,12 @@ impl Localisation {
   }
 
   pub fn message<'a, 'b: 'a>(&'b self, req: &'a MessageRequest<'a>) -> Result<Cow<'a, str>, failure::Error> {
-    let found = self.bundles(req.wants)
+    let wants = if req.wants.is_empty() {
+      &self.manifest.default[..]
+    } else {
+      req.wants
+    };
+    let found = self.bundles(wants)
       .into_iter()
       .flat_map(|bundle| {
         let mut message = bundle.get_message(req.msg)?;

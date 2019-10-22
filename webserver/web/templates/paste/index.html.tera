@@ -125,13 +125,13 @@
               <span class="icon is-large">
                 <svg viewBox="0 0 24 24">
                   <defs>
-                    <mask id="br-circle">
+                    <mask id="stroke">
                       <rect width="100%" height="100%" fill="white"/>
-                      <circle cx="18" cy="18" r="6.5" fill="black"/>
+                      <use class="badge" fill="white" stroke="black" stroke-width="4" href="/static/svg/icons.svg?v={{ resources_version }}#shield"></use>
                     </mask>
                   </defs>
-                  <use xlink:href="/static/svg/icons.svg?v={{ resources_version }}#delete" mask="url(#br-circle)"></use>
-                  <use class="badge" xlink:href="/static/svg/icons.svg?v={{ resources_version }}#shield"></use>
+                  <use href="/static/svg/icons.svg?v={{ resources_version }}#delete" mask="url(#stroke)"></use>
+                  <use class="badge" href="/static/svg/icons.svg?v={{ resources_version }}#shield"></use>
                 </svg>
               </span>
             </button>

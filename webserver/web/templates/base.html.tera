@@ -8,12 +8,12 @@
   title="dark"
   rel="stylesheet"
   href="/static/css/dark-style.css?v={{ resources_version }}"
-  integrity="sha384-Q6PTGEt1y6YIo8s06HIhL/dTc+3+kfp32ExwW3yIA3PisboB1AfEQzowySO589Ha"/>
+  integrity="sha384-asg9OS7Q8by8UYy6YriwiWKwkh/3OnQey0GfbFLu9nZ2b6JePWvfdyPlacNJ0D6P"/>
 <link
   title="light"
   rel="stylesheet alternate"
   href="/static/css/style.css?v={{ resources_version }}"
-  integrity="sha384-e1ZIVozL+W/j2wEgfFmu2pOvKTI5qEFBUi9n/3Rjdwet7PlHlfEnFRWal4dO6lGT"/>
+  integrity="sha384-nUUC8z7+VSUAefTE/RvzHMzWEgDEaucy/NX/3ImloJAtJExZ/f9gIkAepfJL13We"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
   integrity="sha384-zwBoM/SvColCwJ9hm3JZVZgpLWTXKwowuywp+8KnSA2XpcN9SlsUnCt4D0WEXaYY"></script>

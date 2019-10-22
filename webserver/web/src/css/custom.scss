@@ -439,3 +439,12 @@ input[type=checkbox] {
 .icon svg .badge {
   transform: scale(0.5) translate(24px, 24px);
 }
+
+.tfa.title {
+  display: flex;
+  align-items: end;
+
+  .icon {
+    margin-right: .5rem;
+  }
+}

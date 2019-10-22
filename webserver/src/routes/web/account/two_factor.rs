@@ -90,11 +90,16 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
     Ok(q) => q,
     Err(e) => bail!("could not create qr code: {}", e),
   };
-  let img = qr
+  let mut img = qr
     .render::<svg::Color>()
     .min_dimensions(256, 256)
     .max_dimensions(512, 512)
     .build();
+
+  if let Some(width_loc) = img.find("width=") {
+    let viewbox_loc = img.find("viewBox=").unwrap();
+    img = format!("{}{}", &img[..width_loc], &img[viewbox_loc..]);
+  }
 
   let mut ctx = context(&*config, Some(&user), &mut sess, langs);
   ctx["shared_secret_segments"] = json!(secret_segments(&shared_secret));

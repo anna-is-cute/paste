@@ -238,7 +238,7 @@ reset-submit = Submit
 
 settings-tabs =
   .settings = Settings
-  .api-keys = API Keys
+  .api-keys = API keys
   .two-factor = 2FA
   .delete = Delete
 

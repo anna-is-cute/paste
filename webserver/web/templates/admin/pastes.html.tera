@@ -46,7 +46,9 @@
     </tr>
   </thead>
   <tbody>
-  {%- for paste in pastes %}
+  {% for entry in pastes %}
+    {%- set paste = entry[0] -%}
+    {%- set file_count = entry[1] -%}
     <tr>
       <td><a href="{{ links.paste_links[paste.id] }}">
         {{ tr(_langs=langs, _msg="admin-pastes-list-headers", _attr="link") }}
@@ -79,7 +81,7 @@
           </em>
         {%- endif -%}
       </td>
-      <td>{{ paste.files | length }}</td>
+      <td>{{ file_count }}</td>
       <td class="timestamp" data-timestamp="{{ paste.created_at }}">{{ paste.created_at | date(format="%Y-%m-%d %H:%M:%S") }} UTC</td>
     {%- if paste.expires %}
       <td class="timestamp" data-timestamp="{{ paste.expires }}">{{ paste.expires | date(format="%Y-%m-%d %H:%M:%S") }} UTC</td>

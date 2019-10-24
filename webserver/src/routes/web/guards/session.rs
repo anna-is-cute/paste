@@ -50,7 +50,7 @@ impl Session<'a, 'r> {
       user_id: Default::default(),
       data: Default::default(),
       json: Default::default(),
-      anti_csrf_token: hex::encode(randombytes::randombytes(64)),
+      anti_csrf_token: base64::encode_config(&randombytes::randombytes(64), base64::URL_SAFE_NO_PAD),
     }
   }
 

@@ -110,7 +110,7 @@ tera = "0.11"
 ammonia = "3"
 
 # html parsing
-html5ever = "0.24"
+html5ever = "0.25"
 
 # url parsing
 url = "2"

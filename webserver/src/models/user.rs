@@ -64,7 +64,7 @@ impl<DB: Backend<RawValue = [u8]>> FromSql<SmallInt, DB> for Admin {
       0 => Admin::None,
       1 => Admin::Normal,
       2 => Admin::Super,
-      x => return Err(Box::new(failure::format_err!("bad admin enum: {}", x).compat())),
+      x => return Err(anyhow::anyhow!("bad admin enum: {}", x).into()),
     };
     Ok(admin)
   }
@@ -128,7 +128,7 @@ impl<DB: Backend<RawValue = [u8]>> FromSql<SmallInt, DB> for AvatarProvider {
     let visibility = match <i16 as FromSql<SmallInt, DB>>::from_sql(bytes)? {
       0 => AvatarProvider::Gravatar,
       1 => AvatarProvider::Libravatar,
-      x => return Err(Box::new(failure::format_err!("bad avatar provider enum: {}", x).compat())),
+      x => return Err(anyhow::anyhow!("bad avatar provider enum: {}", x).into()),
     };
     Ok(visibility)
   }

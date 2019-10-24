@@ -1,4 +1,4 @@
-use failure::Error;
+use anyhow::Error;
 
 pub trait BackendError: Sized {
   fn into_message(self) -> Result<&'static str, Error>;

@@ -35,6 +35,11 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
 name = "arrayvec"
 version = "0.4.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3005,6 +3010,7 @@ name = "webserver"
 version = "0.1.1"
 dependencies = [
  "ammonia 3.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "anyhow 1.0.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "base32 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "base64 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -3013,7 +3019,6 @@ dependencies = [
  "csv 1.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel 1.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "fluent-bundle 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "fluent-syntax 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "git2 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -3129,10 +3134,10 @@ dependencies = [
 name = "worker_expire_paste"
 version = "0.1.0"
 dependencies = [
+ "anyhow 1.0.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel 1.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "uuid 0.7.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -3176,6 +3181,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum ahash 0.2.17 (registry+https://github.com/rust-lang/crates.io-index)" = "2f00e10d4814aa20900e7948174384f79f1317f24f0ba7494e735111653fc330"
 "checksum aho-corasick 0.7.6 (registry+https://github.com/rust-lang/crates.io-index)" = "58fb5e95d83b38284460a5fda7d6470aa0b8844d283a0b614b8535e880800d2d"
 "checksum ammonia 3.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "9e266e1f4be5ffa05309f650e2586fe1d3ae6034eb24025a7ae1dfecc330823a"
+"checksum anyhow 1.0.17 (registry+https://github.com/rust-lang/crates.io-index)" = "70a45816cea85cf69e3b34c7c99a13ca1654ee222029636a8674958043a2fac1"
 "checksum arrayvec 0.4.12 (registry+https://github.com/rust-lang/crates.io-index)" = "cd9fd44efafa8690358b7408d253adf110036b88f55672a933f01d616ad9b1b9"
 "checksum ascii 0.9.3 (registry+https://github.com/rust-lang/crates.io-index)" = "eab1c04a571841102f5345a8fc0f6bb3d31c315dec879b5c6e42e40ce7ffa34e"
 "checksum ascii_utils 0.9.3 (registry+https://github.com/rust-lang/crates.io-index)" = "71938f30533e4d95a6d17aa530939da3842c2ab6f4f84b9dae68447e4129f74a"

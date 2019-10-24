@@ -53,7 +53,7 @@ git2 = "0.10"
 base64 = "0.10"
 
 # error handling in the crate
-failure = "0.1"
+anyhow = "1"
 
 # accepting base64 gzip data
 libflate = "0.1"

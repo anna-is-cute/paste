@@ -164,6 +164,14 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
+          <a href="https://github.com/dtolnay/anyhow">anyhow</a>
+        </p>
+        <p>
+          Easy error handling in Rust.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
           <a href="https://github.com/andreasots/base32">base32</a>
         </p>
         <p>
@@ -224,14 +232,6 @@
         </p>
         <p>
           Loads .env files and makes them environment variables. Useful!
-        </p>
-      </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
-          <a href="https://boats.gitlab.io/failure/">failure</a>
-        </p>
-        <p>
-          Easy error handling in Rust.
         </p>
       </div>
       <div class="tile box is-child">

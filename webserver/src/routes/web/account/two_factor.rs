@@ -14,7 +14,7 @@ use crate::{
 
 use base32::Alphabet;
 
-use failure::bail;
+use anyhow::bail;
 
 use redis::Commands;
 

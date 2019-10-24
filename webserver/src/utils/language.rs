@@ -6,7 +6,7 @@ use diesel::{
   sql_types::Text,
 };
 
-use failure::format_err;
+use anyhow::anyhow;
 
 use rocket::{http::RawStr, request::FromFormValue};
 
@@ -1496,7 +1496,7 @@ impl<DB: Backend<RawValue = [u8]>> FromSql<Text, DB> for Language {
     let input = <String as FromSql<Text, DB>>::from_sql(bytes)?;
     match Language::from_str(&input) {
       Some(l) => Ok(l),
-      None => Err(Box::new(format_err!("bad language enum: {}", input).compat())),
+      None => Err(anyhow!("bad language enum: {}", input).into()),
     }
   }
 }

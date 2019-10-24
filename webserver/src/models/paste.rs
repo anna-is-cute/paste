@@ -10,8 +10,6 @@ use diesel::{
   sql_types::SmallInt,
 };
 
-use failure::format_err;
-
 use rocket::{http::RawStr, request::FromFormValue};
 
 use serde::de::{self, Deserialize, Deserializer};
@@ -154,7 +152,7 @@ impl<DB: Backend<RawValue = [u8]>> FromSql<SmallInt, DB> for Visibility {
       0 => Visibility::Public,
       1 => Visibility::Unlisted,
       2 => Visibility::Private,
-      x => return Err(Box::new(format_err!("bad visibility enum: {}", x).compat())),
+      x => return Err(anyhow::anyhow!("bad visibility enum: {}", x).into()),
     };
     Ok(visibility)
   }

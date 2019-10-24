@@ -80,11 +80,11 @@ impl<'r> L10n<'r> {
     }
   }
 
-  pub fn tr<'a, M: Into<L10nKey<'a>>>(&'a self, msg: M) -> Result<String, failure::Error> {
+  pub fn tr<'a, M: Into<L10nKey<'a>>>(&'a self, msg: M) -> Result<String, anyhow::Error> {
     self.req(msg).message(&self.localisation)
   }
 
-  pub fn tr_ex<'a, M, F>(&'a self, msg: M, f: F) -> Result<String, failure::Error>
+  pub fn tr_ex<'a, M, F>(&'a self, msg: M, f: F) -> Result<String, anyhow::Error>
     where M: Into<L10nKey<'a>>,
           F: FnOnce(MessageRequest) -> MessageRequest,
   {
@@ -197,7 +197,7 @@ impl Localisation {
     bundles
   }
 
-  pub fn message<'a, 'b: 'a>(&'b self, req: &'a MessageRequest<'a>) -> Result<Cow<'a, str>, failure::Error> {
+  pub fn message<'a, 'b: 'a>(&'b self, req: &'a MessageRequest<'a>) -> Result<Cow<'a, str>, anyhow::Error> {
     let wants = if req.wants.is_empty() {
       Cow::Borrowed(&self.manifest.default[..])
     } else {
@@ -219,7 +219,7 @@ impl Localisation {
       .next();
 
     let (bundle, pattern) = found
-      .ok_or_else(|| failure::format_err!(
+      .ok_or_else(|| anyhow::anyhow!(
         "could not find message {} in any of these locales: {}",
         match req.attr {
           Some(attr) => format!("{} with attribute {}", req.msg, attr),
@@ -241,11 +241,11 @@ impl Localisation {
   }
 }
 
-// pub fn tr<'a>(l10n: &'a Localisation, langs: &'a [LanguageIdentifier], msg: &'a str) -> Result<String, failure::Error> {
+// pub fn tr<'a>(l10n: &'a Localisation, langs: &'a [LanguageIdentifier], msg: &'a str) -> Result<String, anyhow::Error> {
 //   MessageRequest::new(langs, msg).message(l10n)
 // }
 
-// pub fn tr_ex<'a, F>(l10n: &'a Localisation, langs: &'a [LanguageIdentifier], msg: &'a str, f: F) -> Result<String, failure::Error>
+// pub fn tr_ex<'a, F>(l10n: &'a Localisation, langs: &'a [LanguageIdentifier], msg: &'a str, f: F) -> Result<String, anyhow::Error>
 //   where F: FnOnce(MessageRequest<'a>) -> MessageRequest<'a>,
 // {
 //   let mut req = MessageRequest::new(langs, msg);
@@ -297,7 +297,7 @@ impl<'a> MessageRequest<'a> {
     self.arg(key, FluentValue::Number(Cow::Owned(value.to_string())))
   }
 
-  pub fn message(&self, l10n: &Localisation) -> Result<String, failure::Error> {
+  pub fn message(&self, l10n: &Localisation) -> Result<String, anyhow::Error> {
     l10n.message(self).map(|x| x.to_string())
   }
 }

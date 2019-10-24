@@ -9,9 +9,9 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
+anyhow = "1"
 chrono = "0.4"
 dotenv = "0.15"
-failure = "0.1"
 uuid = "0.7"
 
 [dependencies.diesel]

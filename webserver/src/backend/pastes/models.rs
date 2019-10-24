@@ -12,7 +12,7 @@ use crate::{
 
 use chrono::{DateTime, Utc};
 
-use failure::Error;
+use anyhow::Error;
 
 pub struct PastePayload<'u> {
   pub name: Option<String>,

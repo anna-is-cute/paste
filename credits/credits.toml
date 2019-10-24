@@ -154,8 +154,8 @@ url = "https://github.com/andreasots/base32"
 text = "A Rust implementation of base32."
 
 [[backend]]
-name = "failure"
-url = "https://boats.gitlab.io/failure/"
+name = "anyhow"
+url = "https://github.com/dtolnay/anyhow"
 text = "Easy error handling in Rust."
 
 [[backend]]

@@ -185,7 +185,7 @@ pub fn batch_delete(ids: Form<BatchDelete>, config: State<Config>, _user: AdminU
   fn delete_paste(id: PasteId, config: &Config, conn: &DbConn, l10n: &L10n) -> Result<()> {
     let paste = match id.get(&*conn)? {
       Some(p) => p,
-      None => failure::bail!(l10n.tr("admin-batch-delete-missing")?),
+      None => anyhow::bail!(l10n.tr("admin-batch-delete-missing")?),
     };
     paste.delete(config, conn)
   }

@@ -81,12 +81,12 @@ pub fn initialise(mut config: AppConfig, s: &str) -> Result<AppConfig> {
   // canonicalise the config path and set it on the config
   let path = PathBuf::from(s)
     .canonicalize()
-    .map_err(|e| failure::format_err!("could not canonicalise config path: {}", e))?;
+    .map_err(|e| anyhow::anyhow!("could not canonicalise config path: {}", e))?;
   config._path = Some(path);
 
   // create the config store path
   std::fs::create_dir_all(&config.store.path)
-    .map_err(|e| failure::format_err!(
+    .map_err(|e| anyhow::anyhow!(
       "could not create store at {}: {}",
       config.store.path.to_string_lossy(),
       e,
@@ -95,7 +95,7 @@ pub fn initialise(mut config: AppConfig, s: &str) -> Result<AppConfig> {
   // canonicalise the store path and set it on the config
   let store_path = config.store.path
     .canonicalize()
-    .map_err(|e| failure::format_err!("could not canonicalise store path: {}", e))?;
+    .map_err(|e| anyhow::anyhow!("could not canonicalise store path: {}", e))?;
   config.store.path = store_path;
 
   Ok(config)

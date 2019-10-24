@@ -14,7 +14,7 @@ use diesel::{
   pg::PgConnection,
 };
 
-use failure::Error;
+use anyhow::Error;
 
 use uuid::Uuid;
 

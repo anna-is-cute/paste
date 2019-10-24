@@ -5,7 +5,7 @@ use crate::{
   store::Store,
 };
 
-use failure::format_err;
+use anyhow::anyhow;
 
 use serde::Serialize;
 
@@ -38,7 +38,7 @@ impl Job<'c> {
   {
     let rendered = crate::EMAIL_TERA
       .render(template.as_ref(), &context)
-      .map_err(|e| format_err!("tera error: {}", e))?;
+      .map_err(|e| anyhow!("tera error: {}", e))?;
 
     Ok(Job::Email {
       config_path: path.into(),

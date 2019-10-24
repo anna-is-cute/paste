@@ -23,6 +23,7 @@ mod backend;
 mod config;
 mod database;
 mod errors;
+mod filter;
 mod i18n;
 mod models;
 mod redis_store;

@@ -48,3 +48,16 @@ domain = ""
 port = 0
 username = ""
 password = ""
+
+[[filter]]
+kind = "regex"
+match = '''(?ix)
+\b
+(
+  filter\ some\ stuff\ here |
+  more\ filtered\ words
+)'''
+action = "fake_message"
+message = "an error occurred"
+on = ["title", "description", "content"]
+by = ["anonymous"]

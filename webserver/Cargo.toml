@@ -154,6 +154,10 @@ data-encoding = "2"
 image = "0.22"
 libwebp-sys = "0.2"
 
+# filters
+regex = "1"
+serde_regex = "0.4"
+
 # web logic
 [dependencies.rocket]
 version = "0.4"

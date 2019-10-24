@@ -96,7 +96,7 @@ impl FromRequest<'a, 'r> for Session<'a, 'r> {
       Outcome::Forward(()) => return Outcome::Forward(()),
     };
 
-    let json: String = match redis.get(format!("session:{}", sess_id.to_simple())) {
+    let json: String = match redis.get(sess_id.redis_key()) {
       Ok(s) => s,
       Err(_) => return Outcome::Success(Session::new(SessionId(Uuid::new_v4()), req)),
     };
@@ -134,7 +134,7 @@ impl Drop for Session<'a, 'r> {
 
       let id = self.id.to_simple().to_string();
 
-      match redis.set_ex(format!("session:{}", id), json, SESS_EXPIRE) {
+      match redis.set_ex(self.id.redis_key(), json, SESS_EXPIRE) {
         Ok(Value::Okay) => {},
         Ok(Value::Status(s)) => println!("redis responded with an unexpected status: {}", s),
         Ok(x) => println!("redis responded strangely: {:?}", x),

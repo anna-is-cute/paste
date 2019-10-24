@@ -14,6 +14,8 @@ use chrono::{DateTime, Utc};
 
 use anyhow::Error;
 
+use std::borrow::Cow;
+
 pub struct PastePayload<'u> {
   pub name: Option<String>,
   pub description: Option<String>,
@@ -43,6 +45,8 @@ pub enum CreateError {
   PasteNameTooLong,
   PasteDescriptionTooLarge,
   PasteDescriptionTooLong,
+  FailedSpamFilter,
+  FailedSpamFilterFake(Option<String>),
   FileNameTooLarge,
   FileNameTooLong,
   EmptyFile,
@@ -51,7 +55,7 @@ pub enum CreateError {
 }
 
 impl BackendError for CreateError {
-  fn into_message(self) -> Result<&'static str, Error> {
+  fn into_message(self) -> Result<Cow<'static, str>, Error> {
     let m = match self {
       CreateError::Internal(e) => return Err(e),
       CreateError::NoFiles => "you must upload at least one file",
@@ -61,12 +65,15 @@ impl BackendError for CreateError {
       CreateError::PasteNameTooLong => "paste name must be less than or equal to 255 characters",
       CreateError::PasteDescriptionTooLarge => "paste description must be less than 25 KiB",
       CreateError::PasteDescriptionTooLong => "paste description must be less than or equal to 255 characters",
+      CreateError::FailedSpamFilter => "the spam filter was triggered",
+      CreateError::FailedSpamFilterFake(None) => "an error occurred",
+      CreateError::FailedSpamFilterFake(Some(s)) => return Ok(Cow::Owned(s)),
       CreateError::FileNameTooLarge => "file name must be less than 25 KiB",
       CreateError::FileNameTooLong => "file name must be less than or equal to 255 characters",
       CreateError::EmptyFile => "file content must not be empty",
       CreateError::PastExpirationDate => "paste expiry date cannot be in the past",
     };
 
-    Ok(m)
+    Ok(Cow::Borrowed(m))
   }
 }

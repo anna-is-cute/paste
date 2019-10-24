@@ -1,4 +1,7 @@
-use crate::errors::*;
+use crate::{
+  errors::*,
+  filter::Filter,
+};
 
 use parking_lot::RwLock;
 
@@ -18,6 +21,8 @@ pub struct AppConfig {
   pub pastes: Pastes,
   #[serde(default)]
   pub registration: Registration,
+  #[serde(default, rename = "filter")]
+  pub filters: Vec<Filter>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

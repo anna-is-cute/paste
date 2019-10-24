@@ -8,6 +8,7 @@ use crate::{
     },
     schema::{deletion_keys, pastes},
   },
+  filter::Action,
   models::paste::Visibility,
   sidekiq::Job,
   store::Store,
@@ -97,6 +98,18 @@ impl PastePayload<'u> {
 
   pub fn create(self, config: &Config, conn: &DbConn, sidekiq: &SidekiqClient) -> Result<CreateSuccess, CreateError> {
     self.check()?;
+
+    // process each filter
+    for filter in &config.read().filters {
+      if filter.matches(&self) {
+        let err = match &filter.action {
+          Action::Block => CreateError::FailedSpamFilter,
+          Action::FakeError { message } => CreateError::FailedSpamFilterFake(Some(message.clone())),
+          Action::Allow | Action::Ignore => continue,
+        };
+        return Err(err);
+      }
+    }
 
     let id = Store::new(config).new_paste(self.author.map(|x| x.id()))
       .map_err(CreateError::Internal)?;

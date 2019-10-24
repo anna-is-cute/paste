@@ -322,3 +322,13 @@ text = "An image processing library."
 name = "libwebp-sys"
 url = "https://github.com/NoXF/libwebp-sys"
 text = "Static bindings to libwebp."
+
+[[backend]]
+name = "regex"
+url = "https://github.com/rust-lang/regex"
+text = "Regular expressions matching for paste filters."
+
+[[backend]]
+name = "serde_regex"
+url = "https://github.com/tailhook/serde-regex"
+text = "Compatibility layer between regex and serde."

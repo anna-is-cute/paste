@@ -13,7 +13,7 @@ use crate::{
   i18n::prelude::*,
   routes::web::{context, Session, Rst, OptionalWebUser},
   sidekiq::Job,
-  utils::{email, AcceptLanguage, PasswordContext, HashedPassword},
+  utils::{email, AcceptLanguage, ClientIp, PasswordContext, HashedPassword},
 };
 
 use base64;
@@ -37,8 +37,6 @@ use sidekiq::Client as SidekiqClient;
 
 use uuid::Uuid;
 
-use std::net::SocketAddr;
-
 #[get("/account/forgot_password")]
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> Template {
   let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
@@ -49,7 +47,7 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, lang
 }
 
 #[post("/account/forgot_password", format = "application/x-www-form-urlencoded", data = "<data>")]
-pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, addr: SocketAddr, l10n: L10n) -> Result<Redirect> {
+pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, addr: ClientIp, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 
@@ -65,7 +63,7 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
     return res;
   }
 
-  if let Some(msg) = PasswordResetAttempt::find_check(&conn, addr.ip())? {
+  if let Some(msg) = PasswordResetAttempt::find_check(&conn, *addr)? {
     sess.add_data("error", msg);
     return res;
   }
@@ -83,7 +81,7 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
   let user = match user {
     Some(u) => u,
     None => {
-      let (k, m) = match PasswordResetAttempt::find_increment(&conn, addr.ip())? {
+      let (k, m) = match PasswordResetAttempt::find_increment(&conn, *addr)? {
         Some(m) => ("error", m),
         None => {
           sess.take_form();

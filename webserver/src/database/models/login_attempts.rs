@@ -69,10 +69,13 @@ impl LoginAttempt {
     Ok(attempt)
   }
 
-  fn network(ip: IpAddr) -> IpNetwork {
+  fn network(ip: IpAddr) -> Option<IpNetwork> {
+    if !ip.is_global() {
+      return None;
+    }
     let prefix = if ip.is_ipv4() { 32 } else { 64 };
     let masked_ip = ip.to_masked(prefix);
-    IpNetwork::new(masked_ip, prefix).expect("bad prefix")
+    IpNetwork::new(masked_ip, prefix).map(Some).expect("bad prefix")
   }
 
   pub fn increment(&mut self, conn: &DbConn) -> Result<()> {
@@ -89,7 +92,10 @@ impl LoginAttempt {
   }
 
   pub fn find_increment(conn: &DbConn, ip: IpAddr) -> Result<Option<String>> {
-    let network = LoginAttempt::network(ip);
+    let network = match LoginAttempt::network(ip) {
+      Some(n) => n,
+      None => return Ok(None),
+    };
     let mut attempt = LoginAttempt::get_or_insert(conn, network)?;
 
     attempt.increment(conn)?;
@@ -120,7 +126,10 @@ impl LoginAttempt {
   }
 
   pub fn find_check(conn: &DbConn, ip: IpAddr) -> Result<Option<String>> {
-    let network = LoginAttempt::network(ip);
+    let network = match LoginAttempt::network(ip) {
+      Some(n) => n,
+      None => return Ok(None),
+    };
     let attempt = match LoginAttempt::get(conn, network)? {
       Some(a) => a,
       None => return Ok(None),

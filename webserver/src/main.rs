@@ -2,6 +2,7 @@
   decl_macro,
   in_band_lifetimes,
   proc_macro_hygiene,
+  ip,
 )]
 #![recursion_limit = "1024"]
 

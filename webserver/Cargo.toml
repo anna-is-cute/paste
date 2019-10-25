@@ -50,7 +50,7 @@ serde_json = "1"
 git2 = "0.10"
 
 # handling binary uploads in json
-base64 = "0.10"
+base64 = "0.11"
 
 # error handling in the crate
 anyhow = "1"

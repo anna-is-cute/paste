@@ -11,8 +11,9 @@ use crate::{
   routes::web::{context, AddCsp, Honeypot, Rst, OptionalWebUser, Session},
   utils::{
     AcceptLanguage,
+    ClientIp,
     totp::totp_raw_skew,
-  }
+  },
 };
 
 use diesel::prelude::*;
@@ -28,8 +29,6 @@ use rocket::response::Redirect;
 use rocket_contrib::templates::Template;
 
 use serde_json::json;
-
-use std::net::SocketAddr;
 
 #[get("/login")]
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> AddCsp<Rst> {
@@ -65,7 +64,7 @@ pub struct RegistrationData {
 }
 
 #[post("/login", format = "application/x-www-form-urlencoded", data = "<data>")]
-pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut redis: Redis, addr: SocketAddr, l10n: L10n) -> Result<Redirect> {
+pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut redis: Redis, addr: ClientIp, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 
@@ -79,7 +78,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut r
     return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
 
-  if let Some(msg) = LoginAttempt::find_check(&conn, addr.ip())? {
+  if let Some(msg) = LoginAttempt::find_check(&conn, *addr)? {
     sess.add_data("error", msg);
     return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
@@ -92,7 +91,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut r
   let user = match user {
     Some(u) => u,
     None => {
-      let msg = match LoginAttempt::find_increment(&conn, addr.ip())? {
+      let msg = match LoginAttempt::find_increment(&conn, *addr)? {
         Some(msg) => msg,
         None => "Username not found.".into(),
       };
@@ -102,7 +101,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut r
   };
 
   if !user.check_password(&data.password) {
-    let msg = match LoginAttempt::find_increment(&conn, addr.ip())? {
+    let msg = match LoginAttempt::find_increment(&conn, *addr)? {
       Some(msg) => msg,
       None => "Incorrect password.".into(),
     };
@@ -149,7 +148,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut r
   };
 
   if !tfa_check()? {
-    let msg = match LoginAttempt::find_increment(&conn, addr.ip())? {
+    let msg = match LoginAttempt::find_increment(&conn, *addr)? {
       Some(msg) => msg,
       None => "Invalid authentication code.".into(),
     };

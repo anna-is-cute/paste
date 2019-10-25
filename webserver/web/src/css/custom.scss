@@ -86,9 +86,22 @@ td.hljs-ln-code {
   -ms-user-select: unset;
   user-select: unset;
 
-  a:not([href]) {
-    cursor: text;
-    pointer-events: unset;
+  li:first-child a {
+    margin-left: 0;
+  }
+
+  li:last-child a {
+    margin-right: 0;
+  }
+
+  a {
+    padding: 0;
+    margin: $breadcrumb-item-padding-vertical $breadcrumb-item-padding-horizontal;
+
+    &:not([href]) {
+      cursor: text;
+      pointer-events: unset;
+    }
   }
 }
 

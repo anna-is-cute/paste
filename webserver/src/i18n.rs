@@ -199,11 +199,14 @@ impl Localisation {
 
   pub fn message<'a, 'b: 'a>(&'b self, req: &'a MessageRequest<'a>) -> Result<Cow<'a, str>, failure::Error> {
     let wants = if req.wants.is_empty() {
-      &self.manifest.default[..]
+      Cow::Borrowed(&self.manifest.default[..])
     } else {
-      req.wants
+      // add on the default languages so that there is always a fallback
+      let mut wants = req.wants.to_vec();
+      wants.extend(self.manifest.default.iter().cloned());
+      Cow::Owned(wants)
     };
-    let found = self.bundles(wants)
+    let found = self.bundles(&wants)
       .into_iter()
       .flat_map(|bundle| {
         let mut message = bundle.get_message(req.msg)?;

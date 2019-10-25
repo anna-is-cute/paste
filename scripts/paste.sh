@@ -169,7 +169,8 @@ config_nginx() {
   info "setting up nginx.conf"
   # copy the example config
   cp ".docker/nginx/nginx.example.conf" "$nginx_loc"
-  # default config is fine
+  # set up to show errors, since we're doing development
+  sed -i 's/error_log \/dev\/null emerg/error_log error.log error/g' "$nginx_loc"
 }
 
 config_nginx_site() {

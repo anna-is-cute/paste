@@ -228,10 +228,12 @@ impl Content {
 }
 
 mod base64_serde {
-  use base64;
+  use data_encoding::BASE64;
 
-  use serde::de::{self, Deserializer, Visitor};
-  use serde::ser::Serializer;
+  use serde::{
+    de::{self, Deserializer, Visitor},
+    ser::Serializer,
+  };
 
   use std::fmt::{self, Formatter};
 
@@ -247,7 +249,7 @@ mod base64_serde {
     fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
       where E: de::Error,
     {
-      base64::decode(v)
+      BASE64.decode(v.as_bytes())
         .map_err(|_| de::Error::invalid_value(de::Unexpected::Str(v), &"valid base64"))
     }
   }
@@ -256,7 +258,7 @@ mod base64_serde {
     where S: Serializer,
           T: AsRef<[u8]> + ?Sized,
   {
-    ser.serialize_str(&base64::encode(data))
+    ser.serialize_str(&BASE64.encode(data.as_ref()))
   }
 
   pub fn deserialize<'de, D>(des: D) -> Result<Vec<u8>, D::Error>
@@ -269,12 +271,14 @@ mod base64_serde {
 mod gzip_base64_serde {
   use super::base64_serde::Base64Visitor;
 
-  use base64;
+  use data_encoding::BASE64;
 
   use libflate::gzip::{Encoder, Decoder};
 
-  use serde::de::{self, Deserializer};
-  use serde::ser::{self, Serializer};
+  use serde::{
+    de::{self, Deserializer},
+    ser::{self, Serializer},
+  };
 
   use std::io::{Read, Write};
 
@@ -285,7 +289,7 @@ mod gzip_base64_serde {
     let mut encoder = Encoder::new(Vec::new()).map_err(ser::Error::custom)?;
     encoder.write_all(data.as_ref()).map_err(ser::Error::custom)?;
     let encoded_bytes = encoder.finish().into_result().map_err(ser::Error::custom)?;
-    ser.serialize_str(&base64::encode(&encoded_bytes))
+    ser.serialize_str(&BASE64.encode(&encoded_bytes))
   }
 
   pub fn deserialize<'de, D>(des: D) -> Result<Vec<u8>, D::Error>
@@ -302,13 +306,17 @@ mod gzip_base64_serde {
 mod xz_base64_serde {
   use super::base64_serde::Base64Visitor;
 
-  use base64;
+  use data_encoding::BASE64;
 
-  use xz2::read::XzDecoder;
-  use xz2::write::XzEncoder;
+  use xz2::{
+    read::XzDecoder,
+    write::XzEncoder,
+  };
 
-  use serde::de::{self, Deserializer};
-  use serde::ser::{self, Serializer};
+  use serde::{
+    de::{self, Deserializer},
+    ser::{self, Serializer},
+  };
 
   use std::io::{Read, Write};
 
@@ -319,7 +327,7 @@ mod xz_base64_serde {
     let mut encoder = XzEncoder::new(Vec::new(), 9);
     encoder.write_all(data.as_ref()).map_err(ser::Error::custom)?;
     let encoded_bytes = encoder.finish().map_err(ser::Error::custom)?;
-    ser.serialize_str(&base64::encode(&encoded_bytes))
+    ser.serialize_str(&BASE64.encode(&encoded_bytes))
   }
 
   pub fn deserialize<'de, D>(des: D) -> Result<Vec<u8>, D::Error>

@@ -84,11 +84,6 @@ url = "https://rocket.rs/"
 text = "A web framework for Rust. It powers every single request made to paste."
 
 [[backend]]
-name = "base64"
-url = "https://github.com/alicemaz/rust-base64"
-text = "A Rust implementation of base64."
-
-[[backend]]
 name = "dotenv"
 url = "https://github.com/purpliminal/rust-dotenv"
 text = "Loads .env files and makes them environment variables. Useful!"
@@ -149,11 +144,6 @@ url = "https://serde.rs/"
 text = "A framework for serialising and deserialising data structures in Rust."
 
 [[backend]]
-name = "base32"
-url = "https://github.com/andreasots/base32"
-text = "A Rust implementation of base32."
-
-[[backend]]
 name = "anyhow"
 url = "https://github.com/dtolnay/anyhow"
 text = "Easy error handling in Rust."
@@ -167,11 +157,6 @@ text = "Rust bindings to liblzma."
 name = "lazy_static"
 url = "https://github.com/rust-lang-nursery/lazy-static.rs"
 text = "Lazily-evaluated statics in Rust."
-
-[[backend]]
-name = "hex"
-url = "https://github.com/KokaKiwi/rust-hex"
-text = "Encodes and decodes strings of bytes as hexadecimal."
 
 [[backend]]
 name = "r2d2"
@@ -322,3 +307,8 @@ text = "A localisation system for natural-sounding translations."
 name = "parking_lot"
 url = "https://github.com/Amanieu/parking_lot"
 text = "Better synchronisation primitives."
+
+[[backend]]
+name = "data-encoding"
+url = "https://github.com/ia0/data-encoding"
+text = "Various data encodings in Rust."

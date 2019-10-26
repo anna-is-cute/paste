@@ -10,6 +10,8 @@ use crate::{
 
 use cookie::{Cookie, SameSite};
 
+use data_encoding::BASE64;
+
 use diesel::prelude::*;
 
 use hashbrown::HashMap;
@@ -92,7 +94,7 @@ impl Honeypot {
 
     let mut hasher = Sha384::new();
     hasher.input(&css);
-    let integrity_hash = format!("sha384-{}", base64::encode(&hasher.result()[..]));
+    let integrity_hash = format!("sha384-{}", BASE64.encode(&hasher.result()[..]));
 
     Honeypot {
       class,
@@ -130,7 +132,7 @@ impl<'a, 'r> AntiSpam<'a, 'r> {
 
     let mut hasher = Sha384::new();
     hasher.input(&script);
-    let integrity_hash = format!("sha384-{}", base64::encode(&hasher.result()[..]));
+    let integrity_hash = format!("sha384-{}", BASE64.encode(&hasher.result()[..]));
 
     let x: u8 = rng.gen_range(1, 10);
     let y: u8 = rng.gen_range(1, 10);

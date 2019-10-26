@@ -16,9 +16,9 @@ use crate::{
   utils::{email, AcceptLanguage, ClientIp, PasswordContext, HashedPassword},
 };
 
-use base64;
-
 use chrono::{DateTime, Utc};
+
+use data_encoding::BASE64URL_NOPAD;
 
 use diesel::prelude::*;
 
@@ -114,7 +114,7 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
         "https://{}/account/reset_password?id={}&secret={}",
         config.read().general.site_domain,
         reset.id,
-        base64::encode_config(&key, base64::URL_SAFE_NO_PAD),
+        BASE64URL_NOPAD.encode(&key),
       ),
     }),
     config.read()._path.as_ref().unwrap(),
@@ -212,7 +212,7 @@ pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn, l10n: L10n
 }
 
 fn check_reset(conn: &DbConn, id: Uuid, secret: &str) -> Option<PasswordReset> {
-  let secret = base64::decode_config(secret, base64::URL_SAFE_NO_PAD).ok()?;
+  let secret = BASE64URL_NOPAD.decode(secret.as_bytes()).ok()?;
 
   let reset: PasswordReset = password_resets::table
     .find(id)

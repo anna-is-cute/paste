@@ -172,22 +172,6 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
-          <a href="https://github.com/andreasots/base32">base32</a>
-        </p>
-        <p>
-          A Rust implementation of base32.
-        </p>
-      </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
-          <a href="https://github.com/alicemaz/rust-base64">base64</a>
-        </p>
-        <p>
-          A Rust implementation of base64.
-        </p>
-      </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
           <a href="https://github.com/chronotope/chrono">chrono</a>
         </p>
         <p>
@@ -216,6 +200,14 @@
         </p>
         <p>
           CSV parsing library.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/ia0/data-encoding">data-encoding</a>
+        </p>
+        <p>
+          Various data encodings in Rust.
         </p>
       </div>
       <div class="tile box is-child">
@@ -260,14 +252,6 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
-          <a href="https://github.com/KokaKiwi/rust-hex">hex</a>
-        </p>
-        <p>
-          Encodes and decodes strings of bytes as hexadecimal.
-        </p>
-      </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
           <a href="https://github.com/RustCrypto/MACs">hmac</a>
         </p>
         <p>
@@ -290,8 +274,6 @@
           Chains ifs together, for when you really need to just chain together some ifs.
         </p>
       </div>
-    </div>
-    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/achanda/ipnetwork">ipnetwork</a>
@@ -300,6 +282,8 @@
           Looks at IPv6 and IPv4 CIDRs. This is what determines whether you get rate limited. 
         </p>
       </div>
+    </div>
+    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/rust-lang-nursery/lazy-static.rs">lazy_static</a>

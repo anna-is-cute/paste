@@ -12,9 +12,9 @@ use crate::{
   utils::HashedPassword,
 };
 
-use base64;
-
 use chrono::Utc;
+
+use data_encoding::BASE64URL_NOPAD;
 
 use diesel::prelude::*;
 
@@ -89,7 +89,7 @@ pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, 
 
 #[get("/account/verify?<data..>")]
 pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
-  let key = match base64::decode_config(&data.key, base64::URL_SAFE_NO_PAD) {
+  let key = match BASE64URL_NOPAD.decode(data.key.as_bytes()) {
     Ok(k) => k,
     Err(_) => {
       sess.add_data("error", "Invalid email verification.");

@@ -7,6 +7,8 @@ use chrono::Duration;
 
 use cookie::{Cookie, SameSite};
 
+use data_encoding::BASE64URL_NOPAD;
+
 use hashbrown::HashMap;
 
 use redis::{Commands, Value};
@@ -50,7 +52,7 @@ impl Session<'a, 'r> {
       user_id: Default::default(),
       data: Default::default(),
       json: Default::default(),
-      anti_csrf_token: base64::encode_config(&randombytes::randombytes(64), base64::URL_SAFE_NO_PAD),
+      anti_csrf_token: BASE64URL_NOPAD.encode(&randombytes::randombytes(64)),
     }
   }
 

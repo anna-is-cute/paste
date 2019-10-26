@@ -12,7 +12,7 @@ use crate::{
   },
 };
 
-use base32::Alphabet;
+use data_encoding::{BASE32_NOPAD, HEXLOWER};
 
 use anyhow::bail;
 
@@ -73,7 +73,7 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
     generate_secret(&conn, &mut user)?;
   }
 
-  let shared_secret = base32::encode(Alphabet::RFC4648 { padding: false }, user.shared_secret().expect("missing secret"));
+  let shared_secret = BASE32_NOPAD.encode(&user.shared_secret().expect("missing secret"));
 
   // create the segments of the uri
   let label = format!("{} - {} ({})", config.read().general.site_name, user.name(), user.username());
@@ -321,7 +321,7 @@ fn generate_backup_codes(conn: &DbConn, user: UserId) -> Result<Vec<String>> {
 
   let codes: Vec<String> = (0..10)
     .map(|_| randombytes::randombytes(6))
-    .map(hex::encode)
+    .map(|r| HEXLOWER.encode(&r))
     .collect();
 
   let nbcs: Vec<NewBackupCode> = codes

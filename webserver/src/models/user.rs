@@ -1,5 +1,7 @@
 use md5::{Md5, Digest};
 
+use data_encoding::HEXLOWER;
+
 use diesel::{
   Queryable,
   backend::Backend,
@@ -88,8 +90,8 @@ impl AvatarProvider {
 
   pub fn hash(self, s: &str) -> String {
     match self {
-      AvatarProvider::Gravatar => hex::encode(&Md5::digest(s.as_bytes())[..]),
-      AvatarProvider::Libravatar => hex::encode(&sha256::hash(s.as_bytes())[..]),
+      AvatarProvider::Gravatar => HEXLOWER.encode(&Md5::digest(s.as_bytes())[..]),
+      AvatarProvider::Libravatar => HEXLOWER.encode(&sha256::hash(s.as_bytes())[..]),
     }
   }
 }

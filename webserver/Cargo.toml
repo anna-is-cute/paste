@@ -49,9 +49,6 @@ serde_json = "1"
 # creating paste histories
 git2 = "0.10"
 
-# handling binary uploads in json
-base64 = "0.11"
-
 # error handling in the crate
 anyhow = "1"
 
@@ -81,9 +78,6 @@ toml = "0.5"
 
 # rate limiting
 ipnetwork = "0.15"
-
-# anti-csrf tokens
-hex = "0.4"
 
 # custom cookies
 cookie = "0.11"
@@ -121,9 +115,6 @@ unicase = "2"
 # totp for two-factor authentication
 oath = "0.10"
 
-# encoding for totp shared keys
-base32 = "0.4"
-
 # needed to handle multipart's mime types
 # old version required because multipart depends on an old version
 mime = "0.2"
@@ -155,6 +146,9 @@ fluent-bundle = "0.8"
 
 # localisation
 fluent-syntax = "0.9"
+
+# anti-csrf tokens, encoding for totp shared keys, handling binary uploads in json
+data-encoding = "2"
 
 # web logic
 [dependencies.rocket]

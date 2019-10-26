@@ -1,5 +1,7 @@
 use crate::config::Config;
 
+use data_encoding::HEXLOWER;
+
 use html5ever::{
   local_name, namespace_url, ns, parse_fragment, serialize, Parser, QualName,
   driver::ParseOpts,
@@ -78,7 +80,7 @@ fn walk(config: &Config, handle: Handle, external: &Attribute, ctx: &mut Context
       let mut hmac = Hmac::<Sha1>::new_varkey(&crate::CAMO_KEY)
         .expect("HMAC can take key of any size");
       hmac.input(url.as_str().as_bytes());
-      let hmac_encoded = hex::encode(&hmac.result().code());
+      let hmac_encoded = HEXLOWER.encode(&hmac.result().code());
 
       // FIXME: unwrap
       new_url

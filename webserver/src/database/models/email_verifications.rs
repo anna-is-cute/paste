@@ -10,9 +10,9 @@ use crate::{
 use super::users::User;
 use super::super::schema::email_verifications;
 
-use base64;
-
 use chrono::{Utc, DateTime, NaiveDateTime, Duration};
+
+use data_encoding::BASE64URL_NOPAD;
 
 use diesel;
 use diesel::prelude::*;
@@ -47,7 +47,7 @@ impl EmailVerification {
           "https://{}/account/verify?id={}&key={}",
           config.read().general.site_domain,
           self.id.to_simple(),
-          base64::encode_config(secret, base64::URL_SAFE_NO_PAD),
+          BASE64URL_NOPAD.encode(&secret),
         ),
       }),
       config.read()._path.as_ref().unwrap(),

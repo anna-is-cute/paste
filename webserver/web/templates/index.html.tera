@@ -34,12 +34,12 @@
 <script
   defer
   src="/static/js/editor.js?v={{ resources_version }}"
-  integrity="sha384-O5OzB+yzhIG6SZG9MyCqjxFNAG9RMYBCp4SSQQ3eJB7ae7zP1hwCdz5aagymPjux"></script>
+  integrity="sha384-OjslM0l8T2o4QuupObouIjFgZNYYtuK4aPJqE2EZaOykXxvnP7belt312hEoHc2l"></script>
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {%- endblock head %}
 
 {% block title -%}
-New
+{{ tr(_langs=langs, _msg="new") }}
 {%- endblock title %}
 
 {% block header_title -%}
@@ -80,10 +80,17 @@ New
     </div>
     <div class="column is-narrow">
       <div class="field">
-        <div class="control has-icons-left">
+        <div class="label-icon">
           <label class="label">{{ tr(_langs=langs, _msg="paste-visibility") }}</label>
+          <a href="javascript:void(0);" class="tooltip has-tooltip-multiline has-tooltip-large" data-tooltip="{{ tr(_langs=langs, _msg="paste-visibility", _attr="public-desc") }}&#xa;&#xa;{{ tr(_langs=langs, _msg="paste-visibility", _attr="unlisted-desc") }}{% if user %}&#xa;&#xa;{{ tr(_langs=langs, _msg="paste-visibility", _attr="private-desc") }}{% endif %}">
+            <span class="icon is-small is-right">
+              {{ icon::icon(i = "question") }}
+            </span>
+          </a>
+        </div>
+        <div class="control has-icons-left">
           <div class="select is-fullwidth">
-            <select name="visibility">
+            <select name="visibility" data-selected="{% if form.visibility %}{{ form.visibility }}{% else %}unlisted{% endif %}">
               <option
                 value="public"
                 {%- if form.visibility and form.visibility == "public" %}selected{% endif %}>{{ tr(_langs=langs, _msg="paste-visibility", _attr="public") }}</option>
@@ -96,9 +103,17 @@ New
                 {%- if form.visibility and form.visibility == "private" %}selected{% endif %}>{{ tr(_langs=langs, _msg="paste-visibility", _attr="private") }}</option>
             {%- endif %}
             </select>
-            <span class="icon is-small is-left">
-              {{ icon::icon(i = "visibility") }}
+            <span class="icon is-small is-left" data-visibility="public">
+              {{ icon::icon(i = "vis-public") }}
             </span>
+            <span class="icon is-small is-left" data-visibility="unlisted">
+              {{ icon::icon(i = "eye-closed") }}
+            </span>
+            {%- if user %}
+            <span class="icon is-small is-left" data-visibility="private">
+              {{ icon::icon(i = "vis-private") }}
+            </span>
+            {%- endif %}
           </div>
         </div>
       </div>

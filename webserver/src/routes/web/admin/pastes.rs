@@ -120,7 +120,7 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
       .iter()
       .fold(&mut Links::default(), |l, (x, _)| l.add(
         x.id.to_simple().to_string(),
-        uri!(delete: x.id),
+        uri!(delete: x.id, _),
       )))
     // add the batch delete endpoint
     .add("batch_delete", uri!(batch_delete))
@@ -237,8 +237,8 @@ pub struct BatchDelete {
   pub ids: String,
 }
 
-#[delete("/admin/pastes/<id>", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn delete(id: PasteId, form: Form<Delete>, config: State<Config>, _user: AdminUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
+#[delete("/admin/pastes/<id>?<direct>", format = "application/x-www-form-urlencoded", data = "<form>")]
+pub fn delete(id: PasteId, direct: Option<bool>, form: Form<Delete>, config: State<Config>, _user: AdminUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   // check the anti csrf token
   if !sess.check_token(&form.anti_csrf_token) {
     sess.add_data("error", l10n.tr("error-csrf")?);
@@ -260,8 +260,12 @@ pub fn delete(id: PasteId, form: Form<Delete>, config: State<Config>, _user: Adm
   // add notification
   sess.add_data("info", l10n.tr(("admin-paste-delete", "success"))?);
 
-  // redirect back
-  Ok(Redirect::to("lastpage"))
+  // redirect to index if direct deletion, otherwise redirect back
+  if direct.unwrap_or(false) {
+    Ok(Redirect::to(uri!(crate::routes::web::index::get)))
+  } else {
+    Ok(Redirect::to("lastpage"))
+  }
 }
 
 #[derive(FromForm)]

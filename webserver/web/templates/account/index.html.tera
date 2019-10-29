@@ -198,7 +198,7 @@
               {{ icon::icon(i = "password") }}
             </span>
           </div>
-          <div class="control">
+          <div class="control requires-js">
             <a name="password_reveal" class="button">
               <span class="icon is-small">
                 {{ icon::icon(i = "eye") }}
@@ -233,7 +233,7 @@
             {{ icon::icon(i = "password") }}
           </span>
         </div>
-        <div class="control">
+        <div class="control requires-js">
           <a name="password_reveal" class="button">
             <span class="icon is-small">
               {{ icon::icon(i = "eye") }}
@@ -261,7 +261,7 @@
               {{ icon::icon(i = "password") }}
             </span>
           </div>
-          <div class="control">
+          <div class="control requires-js">
             <a name="password_reveal" class="button">
               <span class="icon is-small">
                 {{ icon::icon(i = "eye") }}

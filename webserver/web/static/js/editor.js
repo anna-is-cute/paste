@@ -493,5 +493,37 @@ var pasteEditors = {};
     document.getElementById('absolute-time').value = "".concat(hour, ":").concat(minute);
     document.getElementById('absolute-timezone').value = "".concat(date.offset / 60);
   })();
+
+  (function () {
+    var _iteratorNormalCompletion5 = true;
+    var _didIteratorError5 = false;
+    var _iteratorError5 = undefined;
+
+    try {
+      var _loop = function _loop() {
+        var select = _step5.value;
+        select.addEventListener('change', function () {
+          select.dataset.selected = select.value;
+        });
+      };
+
+      for (var _iterator5 = document.getElementsByName('visibility')[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+        _loop();
+      }
+    } catch (err) {
+      _didIteratorError5 = true;
+      _iteratorError5 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion5 && _iterator5.return != null) {
+          _iterator5.return();
+        }
+      } finally {
+        if (_didIteratorError5) {
+          throw _iteratorError5;
+        }
+      }
+    }
+  })();
 })();
 //# sourceMappingURL=editor.js.map

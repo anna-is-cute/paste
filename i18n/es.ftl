@@ -26,6 +26,7 @@ avatar-alt = {$username} avatar
 
 ## Home
 
+new = Nuevo
 new-paste = Nuevo pegado
 new-paste-desc = Crear un nuevo pegado.
 
@@ -37,8 +38,11 @@ paste-description = Descripción
   .placeholder = Descripción del pegado
 paste-visibility = Visibilidad
   .public = público
+  .public-desc = {paste-visibility.public} - visible para los buscadores y se muestra en su perfil público
   .unlisted = fuera de la lista
+  .unlisted-desc = {paste-visibility.unlisted} - oculto para los buscadores y sólo los que tienen el enlace pueden verlo
   .private = privado
+  .private-desc = {paste-visibility.private} - sólo es visible para usted cuando está conectado
 paste-expires = Expira
   .no = no
   .relative = relativo

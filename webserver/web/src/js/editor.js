@@ -410,4 +410,12 @@ const pasteEditors = {};
 
     document.getElementById('absolute-timezone').value = `${date.offset / 60}`;
   })();
+
+  (function() {
+    for (const select of document.getElementsByName('visibility')) {
+      select.addEventListener('change', () => {
+        select.dataset.selected = select.value;
+      });
+    }
+  })();
 })();

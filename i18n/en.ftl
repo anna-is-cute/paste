@@ -26,6 +26,7 @@ avatar-alt = {$username} avatar
 
 ## Home
 
+new = New
 new-paste = New paste
 new-paste-desc = Create a new paste.
 
@@ -37,8 +38,11 @@ paste-description = Description
   .placeholder = Paste description
 paste-visibility = Visibility
   .public = public
+  .public-desc = {paste-visibility.public} - visible to search engines and shows on your public profile
   .unlisted = unlisted
+  .unlisted-desc = {paste-visibility.unlisted} - hidden from search engines and only those with the link can view
   .private = private
+  .private-desc = {paste-visibility.private} - only visible to you when logged in
 paste-expires = Expires
   .no = no
   .relative = relative

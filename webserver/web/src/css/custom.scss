@@ -308,6 +308,16 @@ th, td {
   padding-bottom: 0;
 }
 
+[data-tooltip]:not(.is-loading)::before, [data-tooltip]:not(.is-loading)::after, [data-tooltip]:not(.is-disabled)::before, [data-tooltip]:not(.is-disabled)::after, [data-tooltip]:not([disabled])::before, [data-tooltip]:not([disabled])::after {
+  font-size: unset;
+}
+
+[data-tooltip].has-tooltip-multiline.has-tooltip-large:not(.disabled)::before,
+[data-tooltip].has-tooltip-multiline.has-tooltip-large:not([disabled])::before,
+[data-tooltip].has-tooltip-multiline.has-tooltip-large:not(.is-loading)::before {
+  white-space: pre-line;
+}
+
 .label-icon {
   display: flex;
 
@@ -462,5 +472,20 @@ input[type=checkbox] {
 
   .icon {
     margin-right: .5rem;
+  }
+}
+
+select[name = visibility] {
+  // by default, display no visibility icons
+  & ~ .icon {
+    display: none;
+  }
+
+  // show each icon if necessary
+  // note that this could've been done using pure CSS if parent elements could be styled
+  @each $visibility in public unlisted private {
+    &[data-selected = #{$visibility}] ~ .icon[data-visibility = #{$visibility}] {
+      display: unset;
+    }
   }
 }

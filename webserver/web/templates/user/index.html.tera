@@ -35,7 +35,7 @@
 <script
   defer
   src="/static/js/modal.js?v={{ resources_version }}"
-  integrity="sha384-a7zkFHPsjaSEqA+6o22dF31kMpocs3bBBOnos/1S3FPBAamg4GsUJL+oiYoNjoXN"></script>
+  integrity="sha384-VNZEXJC5bFeruyyTI31QPYFF+pVufPx71P6qoX/3lX7c0YhMv+4jL60dVqYYXZ1X"></script>
 {%- endblock head %}
 
 {% block title -%}

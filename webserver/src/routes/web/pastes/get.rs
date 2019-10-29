@@ -206,6 +206,41 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
   Ok(Rst::Template(Template::render("paste/index", ctx)))
 }
 
+#[get("/p/<username>/<id>/delete")]
+pub fn deletion_key(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
+  let paste: DbPaste = match id.get(&conn)? {
+    Some(p) => p,
+    None => return Ok(Rst::Status(HttpStatus::NotFound)),
+  };
+
+  let (expected_username, author): (String, Option<OutputAuthor>) = match paste.author_id() {
+    Some(author) => {
+      let user: User = users::table.find(author).first(&*conn)?;
+      (user.username().to_string(), Some(OutputAuthor::new(author, user.username(), user.name())))
+    },
+    None => ("anonymous".into(), None),
+  };
+
+  if username != expected_username {
+    return Ok(Rst::Status(HttpStatus::NotFound));
+  }
+
+  if paste.author_id().is_some() {
+    return Ok(Rst::Redirect(Redirect::to(uri!(users_username_id: username, id))));
+  }
+
+  let author_name = author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
+
+  let links = super::paste_links(paste.id(), paste.author_id(), &author_name, user.as_ref());
+
+  let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
+  ctx["user"] = json!(*user);
+  ctx["links"] = json!(links);
+  ctx["paste_id"] = json!(paste.id());
+
+  Ok(Rst::Template(Template::render("paste/delete/deletion_key", ctx)))
+}
+
 #[get("/p/<username>/<id>/edit")]
 pub fn edit(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
   let user = match user.into_inner() {

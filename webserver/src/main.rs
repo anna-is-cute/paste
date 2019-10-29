@@ -143,6 +143,8 @@ fn main() {
       routes::web::pastes::get::username_id,
       routes::web::pastes::get::users_username_id,
 
+      routes::web::pastes::get::deletion_key,
+
       routes::web::pastes::files::raw::get,
 
       routes::web::pastes::revisions::get,

@@ -22,7 +22,7 @@
 <script
   defer
   src="/static/js/modal.js?v={{ resources_version }}"
-  integrity="sha384-a7zkFHPsjaSEqA+6o22dF31kMpocs3bBBOnos/1S3FPBAamg4GsUJL+oiYoNjoXN"></script>
+  integrity="sha384-VNZEXJC5bFeruyyTI31QPYFF+pVufPx71P6qoX/3lX7c0YhMv+4jL60dVqYYXZ1X"></script>
 <script
   defer
   src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
@@ -70,11 +70,11 @@
           {% endif %}
           {% if not paste.author or is_owner %}
           <form class="control" id="deletion_form" action="{{ links.delete }}" method="post">
-            <button class="button is-danger is-large opens-modal" data-modal-id="deletion_modal">
+            <a href="{{ links.delete_standalone }}" class="button is-danger is-large opens-modal" data-modal-id="deletion_modal">
               <span class="icon is-large">
                 {{ icon::icon(i = "delete") }}
               </span>
-            </button>
+            </a>
             <div id="deletion_modal" class="modal">
               <input type="hidden" name="_method" value="delete"/>
               <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>

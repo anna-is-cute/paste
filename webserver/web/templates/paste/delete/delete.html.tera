@@ -2,10 +2,12 @@
 
 {% block head -%}
 {{ super() }}
+{% if anonymous -%}
 <script
   defer
   src="/static/js/paste.js?v={{ resources_version }}"
   integrity="sha384-n+k+iIrRS0CjApohJ9xVX0dz+TP3an5z71rnLWMouKmowP3IU4+fs9Dju7DYF01h"></script>
+{%- endif %}
 {%- endblock head %}
 
 {% block title -%}
@@ -19,12 +21,17 @@
 {% block main %}
 <div class="content">
   <p>
-    {{ tr(_langs=langs, _msg="disp-delete-description") }}
+    {% if anonymous -%}
+      {{ tr(_langs=langs, _msg="disp-delete-description") }}
+    {%- else -%}
+      {{ tr(_langs=langs, _msg="disp-delete-confirm") }}
+    {%- endif %}
   </p>
 
   <form id="deletion_form" action="{{ links.delete }}" method="post">
     <input type="hidden" name="_method" value="delete"/>
     <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+    {% if anonymous -%}
     <div class="field">
       <div class="control">
         <input
@@ -39,6 +46,7 @@
           placeholder="{{ tr(_langs=langs, _msg="disp-delete-key-placeholder") }}"/>
       </div>
     </div>
+    {%- endif %}
     <div class="field">
       <div class="control">
         <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="disp-delete-button") }}</button>

@@ -53,7 +53,7 @@
       {%- endif -%}
       </td>
       <td>
-        {%- if target.shared_secret -%}
+        {%- if tfa[target.id] -%}
           {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="yes") }}
         {%- else -%}
           {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="no") }}

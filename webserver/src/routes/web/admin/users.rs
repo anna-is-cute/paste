@@ -35,6 +35,8 @@ use serde_json::json;
 
 use sidekiq::Client as SidekiqClient;
 
+use std::collections::HashMap;
+
 #[get("/admin/users?<page>")]
 pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
   const PAGE_SIZE: i64 = 15;
@@ -69,6 +71,10 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
 
   // create the default context
   let mut ctx = context(&*config, Some(&user), &mut sess, langs);
+  // add 2fa statuses
+  ctx["tfa"] = json!(users.iter()
+    .map(|u| (u.id(), u.tfa_enabled()))
+    .collect::<HashMap<UserId, bool>>());
   // add some links
   ctx["links"] = json!(super::admin_links()
     // add the deletion endpoints

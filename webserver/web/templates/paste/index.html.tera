@@ -121,7 +121,7 @@
           <form class="control" action="{{ links.admin_delete }}" method="post">
             <input type="hidden" name="_method" value="delete"/>
             <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
-            <button class="button is-danger is-large opens-modal" data-modal-id="admin_deletion_modal">
+            <a href="{{ links.admin_delete_standalone }}" class="button is-danger is-large opens-modal" data-modal-id="admin_deletion_modal">
               <span class="icon is-large">
                 <svg viewBox="0 0 24 24">
                   <defs>
@@ -134,7 +134,7 @@
                   <use class="badge" href="/static/svg/icons.svg?v={{ resources_version }}#shield"></use>
                 </svg>
               </span>
-            </button>
+            </a>
             <div id="admin_deletion_modal" class="modal requires-js">
               <div class="modal-background closes-modal" data-modal-id="admin_deletion_modal"></div>
               <div class="modal-content">

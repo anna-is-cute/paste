@@ -190,6 +190,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
   );
   if user.as_ref().map(|x| x.is_admin()).unwrap_or(false) {
     links.add("admin_delete", uri!(crate::routes::web::admin::pastes::delete: paste.id(), true));
+    links.add("admin_delete_standalone", uri!(crate::routes::web::admin::pastes::delete_get: paste.id()));
   }
 
   let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
@@ -237,7 +238,6 @@ pub fn delete(username: String, id: PasteId, config: State<Config>, user: Option
   let links = super::paste_links(paste.id(), paste.author_id(), &author_name, user.as_ref());
 
   let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
-  ctx["user"] = json!(*user);
   ctx["links"] = json!(links);
   ctx["paste_id"] = json!(paste.id());
   ctx["anonymous"] = json!(anonymous);

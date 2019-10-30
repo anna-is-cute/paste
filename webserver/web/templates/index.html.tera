@@ -82,7 +82,7 @@
       <div class="field">
         <div class="label-icon">
           <label class="label">{{ tr(_langs=langs, _msg="paste-visibility") }}</label>
-          <a href="javascript:void(0);" class="tooltip has-tooltip-multiline has-tooltip-large" data-tooltip="{{ tr(_langs=langs, _msg="paste-visibility", _attr="public-desc") }}&#xa;&#xa;{{ tr(_langs=langs, _msg="paste-visibility", _attr="unlisted-desc") }}{% if user %}&#xa;&#xa;{{ tr(_langs=langs, _msg="paste-visibility", _attr="private-desc") }}{% endif %}">
+          <a href="javascript:void(0);" class="tooltip has-tooltip-multiline has-tooltip-bottom has-tooltip-large" data-tooltip="{{ tr(_langs=langs, _msg="paste-visibility", _attr="public-desc") }}&#xa;&#xa;{{ tr(_langs=langs, _msg="paste-visibility", _attr="unlisted-desc") }}{% if user %}&#xa;&#xa;{{ tr(_langs=langs, _msg="paste-visibility", _attr="private-desc") }}{% endif %}">
             <span class="icon is-small is-right">
               {{ icon::icon(i = "question") }}
             </span>

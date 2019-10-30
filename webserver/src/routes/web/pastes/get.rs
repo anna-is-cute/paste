@@ -207,7 +207,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
 }
 
 #[get("/p/<username>/<id>/delete")]
-pub fn deletion_key(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
+pub fn delete(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -225,8 +225,11 @@ pub fn deletion_key(username: String, id: PasteId, config: State<Config>, user: 
     return Ok(Rst::Status(HttpStatus::NotFound));
   }
 
-  if paste.author_id().is_some() {
-    return Ok(Rst::Redirect(Redirect::to(uri!(users_username_id: username, id))));
+  let is_author = paste.author_id() == user.as_ref().map(|u| u.id());
+  let anonymous = paste.author_id().is_none();
+
+  if !anonymous && !is_author {
+    return Ok(Rst::Redirect(Redirect::to(uri!(users_username_id: &username, id))));
   }
 
   let author_name = author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
@@ -237,8 +240,9 @@ pub fn deletion_key(username: String, id: PasteId, config: State<Config>, user: 
   ctx["user"] = json!(*user);
   ctx["links"] = json!(links);
   ctx["paste_id"] = json!(paste.id());
+  ctx["anonymous"] = json!(anonymous);
 
-  Ok(Rst::Template(Template::render("paste/delete/deletion_key", ctx)))
+  Ok(Rst::Template(Template::render("paste/delete/delete", ctx)))
 }
 
 #[get("/p/<username>/<id>/edit")]

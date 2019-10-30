@@ -13,7 +13,7 @@
       <div class="control has-icons-left">
         <div class="select">
           <select name="file_language">
-            <optgroup label="Highlight language">
+            <optgroup label="{{ tr(_langs=langs, _msg="file-language") }}">
               <option value="" selected>
                 {{ tr(_langs=langs, _msg="file-language-auto") }}
               </option>

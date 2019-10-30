@@ -1,0 +1,41 @@
+{% extends "base" %}
+
+{% block head -%}
+{{ super() }}
+{%- endblock head %}
+
+{% block title -%}{{ tr(_langs=langs, _msg="login") }}{%- endblock title %}
+
+{% block header_title -%}
+{{ tr(_langs=langs, _msg="login") }}
+{%- endblock header_title %}
+
+{% block header_subtitle -%}
+{{ tr(_langs=langs, _msg="login", _attr="description") }}
+{%- endblock header_subtitle %}
+
+{% block main %}
+<form method="post" action="{{ links.tfa_action }}">
+  <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+  <div class="field">
+    <label class="label">{{ tr(_langs=langs, _msg="login-2fa") }}</label>
+    <div class="control has-icons-left">
+      <input
+        name="code"
+        class="input"
+        type="text"
+        minlength="6"
+        maxlength="12"
+        placeholder="{{ tr(_langs=langs, _msg="login-2fa", _attr="placeholder") }}"/>
+      <span class="icon is-small is-left">
+        {{ icon::icon(i = "lock") }}
+      </span>
+    </div>
+  </div>
+  <div class="field">
+    <div class="control">
+      <input type="submit" class="button is-link" value="{{ tr(_langs=langs, _msg="login-submit") }}"/>
+    </div>
+  </div>
+</form>
+{% endblock main %}

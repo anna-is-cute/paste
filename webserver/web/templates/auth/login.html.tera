@@ -65,27 +65,11 @@
             </a>
           </div>
         </div>
+      <p class="help">
+        <a href="{{ links.forgot_password }}">{{ tr(_langs=langs, _msg="login-forgot-password") }}</a>
+      </p>
       </div>
     </div>
-  </div>
-
-  <div class="field">
-    <label class="label">{{ tr(_langs=langs, _msg="login-2fa") }}</label>
-    <div class="control has-icons-left">
-      <input
-        name="tfa_code"
-        class="input"
-        type="text"
-        minlength="6"
-        maxlength="12"
-        placeholder="{{ tr(_langs=langs, _msg="login-2fa", _attr="placeholder") }}"/>
-      <span class="icon is-small is-left">
-        {{ icon::icon(i = "lock") }}
-      </span>
-    </div>
-    <p class="help">
-      <a href="{{ links.forgot_password }}">{{ tr(_langs=langs, _msg="login-forgot-password") }}</a>
-    </p>
   </div>
 
   <div class="field {{ honeypot.class }}">

@@ -133,6 +133,8 @@ fn main() {
 
       routes::web::auth::login::get,
       routes::web::auth::login::post,
+      routes::web::auth::login::tfa,
+      routes::web::auth::login::tfa_post,
 
       routes::web::auth::logout::post,
 

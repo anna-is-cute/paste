@@ -123,6 +123,12 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
         x.id.to_simple().to_string(),
         uri!(delete: x.id, _),
       )))
+    .add_value("delete_standalone", outputs
+      .iter()
+      .fold(&mut Links::default(), |l, (x, _)| l.add(
+        x.id.to_simple().to_string(),
+        uri!(delete_get: x.id, _),
+      )))
     // add the batch delete endpoint
     .add("batch_delete", uri!(batch_delete))
     // add the previous page link
@@ -274,15 +280,15 @@ pub struct Delete {
   pub anti_csrf_token: String,
 }
 
-#[get("/admin/pastes/<id>/delete")]
-pub fn delete_get(id: PasteId, config: State<Config>, user: AdminUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
+#[get("/admin/pastes/<id>/delete?<direct>")]
+pub fn delete_get(id: PasteId, direct: Option<bool>, config: State<Config>, user: AdminUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(Status::NotFound)),
   };
 
   let links = links!(super::admin_links(),
-    "admin_delete" => uri!(delete: paste.id(), true),
+    "admin_delete" => uri!(delete: paste.id(), direct.unwrap_or(false)),
   );
 
   let mut ctx = context(&*config, Some(&user), &mut sess, langs);

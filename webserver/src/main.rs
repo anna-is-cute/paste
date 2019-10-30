@@ -198,6 +198,7 @@ fn main() {
 
       routes::web::admin::pastes::get,
       routes::web::admin::pastes::delete,
+      routes::web::admin::pastes::delete_get,
       routes::web::admin::pastes::batch_delete,
 
       routes::web::admin::users::get,

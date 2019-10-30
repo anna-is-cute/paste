@@ -26,6 +26,7 @@ use diesel::{
 };
 
 use rocket::{
+  http::Status,
   request::Form,
   response::Redirect,
   State,
@@ -271,4 +272,21 @@ pub fn delete(id: PasteId, direct: Option<bool>, form: Form<Delete>, config: Sta
 #[derive(FromForm)]
 pub struct Delete {
   pub anti_csrf_token: String,
+}
+
+#[get("/admin/pastes/<id>/delete")]
+pub fn delete_get(id: PasteId, config: State<Config>, user: AdminUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
+  let paste: DbPaste = match id.get(&conn)? {
+    Some(p) => p,
+    None => return Ok(Rst::Status(Status::NotFound)),
+  };
+
+  let links = links!(super::admin_links(),
+    "admin_delete" => uri!(delete: paste.id(), true),
+  );
+
+  let mut ctx = context(&*config, Some(&user), &mut sess, langs);
+  ctx["links"] = json!(links);
+
+  Ok(Rst::Template(Template::render("paste/delete/admin", ctx)))
 }

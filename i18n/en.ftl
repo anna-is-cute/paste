@@ -188,7 +188,7 @@ login-password = Password
   .placeholder = Your secure password
 
 login-2fa = 2FA code
-  .placeholder = If enabled
+  .placeholder = Generated code or backup code
 
 login-forgot-password = Forgot your password?
 

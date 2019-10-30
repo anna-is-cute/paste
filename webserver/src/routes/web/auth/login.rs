@@ -8,7 +8,7 @@ use crate::{
   errors::*,
   i18n::prelude::*,
   redis_store::Redis,
-  routes::web::{context, AddCsp, Honeypot, Rst, OptionalWebUser, Session},
+  routes::web::{context, AddCsp, Honeypot, Rst, OptionalWebUser, Session, auth::PotentialUser},
   utils::{
     AcceptLanguage,
     ClientIp,
@@ -22,9 +22,12 @@ use oath::HashType;
 
 use redis::Commands;
 
-use rocket::State;
-use rocket::request::Form;
-use rocket::response::Redirect;
+use rocket::{
+  State,
+  http::Cookies,
+  request::Form,
+  response::Redirect,
+};
 
 use rocket_contrib::templates::Template;
 
@@ -55,8 +58,6 @@ pub struct RegistrationData {
   #[serde(skip)]
   password: String,
   #[serde(skip)]
-  tfa_code: Option<String>,
-  #[serde(skip)]
   anti_csrf_token: String,
   #[serde(skip)]
   #[form(field = "email")]
@@ -64,7 +65,7 @@ pub struct RegistrationData {
 }
 
 #[post("/login", format = "application/x-www-form-urlencoded", data = "<data>")]
-pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut redis: Redis, addr: ClientIp, l10n: L10n) -> Result<Redirect> {
+pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut redis: Redis, mut cookies: Cookies, addr: ClientIp, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 
@@ -109,15 +110,49 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut r
     return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
 
-  let tfa_check = || -> Result<bool> {
+  sess.take_form();
+
+  if user.tfa_enabled() {
+    PotentialUser::set(&mut redis, &mut cookies, user.id())?;
+    return Ok(Redirect::to(uri!(tfa)));
+  }
+
+  sess.user_id = Some(user.id());
+
+  Ok(Redirect::to("lastpage"))
+}
+
+#[get("/login/2fa")]
+pub fn tfa(config: State<Config>, user: OptionalWebUser, pot: Option<PotentialUser>, mut sess: Session, langs: AcceptLanguage) -> Rst {
+  if user.is_some() || pot.is_none() {
+    return Rst::Redirect(Redirect::to("lastpage"));
+  }
+
+  let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
+  ctx["links"] = json!(links!(
+    "tfa_action" => uri!(tfa_post),
+  ));
+  Rst::Template(Template::render("auth/2fa", ctx))
+}
+
+#[post("/login/2fa", format = "application/x-www-form-urlencoded", data = "<form>")]
+pub fn tfa_post(form: Form<TwoFactor>, pot: PotentialUser, mut sess: Session, conn: DbConn, mut redis: Redis, mut cookies: Cookies, addr: ClientIp, l10n: L10n) -> Result<Redirect> {
+  if !sess.check_token(&form.anti_csrf_token) {
+    sess.add_data("error", l10n.tr("error-csrf")?);
+    return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
+  }
+
+  let user = match pot.get(&conn)? {
+    Some(u) => u,
+    None => return Ok(Redirect::to("lastpage")),
+  };
+
+  let mut tfa_check = || -> Result<bool> {
     if !user.tfa_enabled() {
       return Ok(true);
     }
 
-    let tfa_code_s = match data.tfa_code {
-      Some(s) => s,
-      None => return Ok(false),
-    };
+    let tfa_code_s = &form.code;
 
     match tfa_code_s.len() {
       6 => if_chain! {
@@ -153,11 +188,18 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut r
       None => "Invalid authentication code.".into(),
     };
     sess.add_data("error", msg);
-    return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
+    return Ok(Redirect::to(uri!(tfa)));
   }
 
   sess.user_id = Some(user.id());
 
-  sess.take_form();
+  pot.remove(&mut redis, &mut cookies)?;
+
   Ok(Redirect::to("lastpage"))
+}
+
+#[derive(FromForm)]
+pub struct TwoFactor {
+  pub anti_csrf_token: String,
+  pub code: String,
 }

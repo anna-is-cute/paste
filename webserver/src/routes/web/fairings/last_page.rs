@@ -27,6 +27,7 @@ impl LastPage {
 
     // don't track auth pages
     if path == "/login"
+      || path == "/login/2fa"
       || path == "/register"
       || path == "/favicon.ico"
       || path.starts_with("/static/")

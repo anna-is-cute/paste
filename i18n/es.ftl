@@ -164,6 +164,7 @@ pagination =
 ## File attributes
 
 file-name-placeholder = Nombre del archivo con extensión
+file-language = Lenguaje para resaltar
 file-language-auto = auto
 file-hello-world = Hola mundo!
 

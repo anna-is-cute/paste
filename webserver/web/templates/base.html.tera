@@ -144,19 +144,19 @@
     <div class="container">
       {%- if error %}
       <div class="notification is-warning">
-        <button class="delete"></button>
+        <button class="delete requires-js"></button>
         {{ error }}
       </div>
       {% endif -%}
       {%- if error_safe %}
       <div class="notification is-warning">
-        <button class="delete"></button>
+        <button class="delete requires-js"></button>
         {{ error_safe | safe }}
       </div>
       {% endif -%}
       {%- if info %}
       <div class="notification is-info">
-        <button class="delete"></button>
+        <button class="delete requires-js"></button>
         {{ info }}
       </div>
       {% endif -%}

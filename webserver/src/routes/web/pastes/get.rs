@@ -190,7 +190,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
   );
   if user.as_ref().map(|x| x.is_admin()).unwrap_or(false) {
     links.add("admin_delete", uri!(crate::routes::web::admin::pastes::delete: paste.id(), true));
-    links.add("admin_delete_standalone", uri!(crate::routes::web::admin::pastes::delete_get: paste.id()));
+    links.add("admin_delete_standalone", uri!(crate::routes::web::admin::pastes::delete_get: paste.id(), true));
   }
 
   let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);

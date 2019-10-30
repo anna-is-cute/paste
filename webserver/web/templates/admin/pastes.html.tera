@@ -94,11 +94,11 @@
         <form action="{{ links.delete[paste.id] }}" method="post">
           <input type="hidden" name="_method" value="delete"/>
           <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
-          <button class="button is-danger opens-modal" data-modal-id="delete-{{ paste.id }}">
+          <a href="{{ links.delete_standalone[paste.id] }}" class="button is-danger opens-modal" data-modal-id="delete-{{ paste.id }}">
             <span class="icon is-small">
               {{ icon::icon(i = "delete") }}
             </span>
-          </button>
+          </a>
           <div id="delete-{{paste.id}}" class="requires-js modal">
             <div class="modal-background closes-modal" data-modal-id="delete-{{ paste.id }}"></div>
             <div class="modal-content">

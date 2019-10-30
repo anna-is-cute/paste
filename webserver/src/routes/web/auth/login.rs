@@ -168,9 +168,9 @@ pub fn tfa_post(form: Form<TwoFactor>, pot: PotentialUser, mut sess: Session, co
       },
       12 => if_chain! {
         let backup_code = diesel::delete(backup_codes::table)
-            .filter(backup_codes::code.eq(tfa_code_s))
-            .get_result::<BackupCode>(&*conn)
-            .optional()?;
+          .filter(backup_codes::user_id.eq(user.id()).and(backup_codes::code.eq(tfa_code_s)))
+          .get_result::<BackupCode>(&*conn)
+          .optional()?;
         if backup_code.is_none();
         then {
           return Ok(false);

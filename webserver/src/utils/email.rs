@@ -45,7 +45,7 @@ pub fn check_email(email: &str) -> bool {
     return false;
   }
 
-  let mut had_dot = true;
+  let mut had_dot = false;
   let mut last = None;
   // Parsing the domain name.
   for &c in &email[i..] {

@@ -2872,7 +2872,7 @@ dependencies = [
 
 [[package]]
 name = "unicode-segmentation"
-version = "1.4.0"
+version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -3047,7 +3047,7 @@ dependencies = [
  "toml 0.5.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "unic-langid 0.6.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicase 2.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "unicode-segmentation 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "unicode-segmentation 1.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "unicode_categories 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "url 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "uuid 0.7.4 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -3486,7 +3486,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum unicase 2.5.1 (registry+https://github.com/rust-lang/crates.io-index)" = "2e2e6bd1e59e56598518beb94fd6db628ded570326f0a98c679a304bd9f00150"
 "checksum unicode-bidi 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)" = "49f2bd0c6468a8230e1db229cff8029217cf623c767ea5d60bfbd42729ea54d5"
 "checksum unicode-normalization 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)" = "141339a08b982d942be2ca06ff8b076563cbe223d1befd5450716790d44e2426"
-"checksum unicode-segmentation 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "dc5415c074426c7c65db13bd647c23d78c0fb2e10dca0b8fb0f40058a59bccdf"
+"checksum unicode-segmentation 1.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "49f5526225fd8b77342d5986ab5f6055552e9c0776193b5b63fd53b46debfad7"
 "checksum unicode-xid 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "fc72304796d0818e357ead4e000d19c9c174ab23dc11093ac919054d20a6a7fc"
 "checksum unicode-xid 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "826e7639553986605ec5979c7dd957c7895e93eabed50ab2ffa7f6128a75097c"
 "checksum unicode_categories 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "39ec24b3121d976906ece63c9daad25b85969647682eee313cb5779fdd69e14e"

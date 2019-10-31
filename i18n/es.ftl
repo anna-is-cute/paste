@@ -1,3 +1,5 @@
+-brand = paste
+
 ## Nav
 
 nav =
@@ -65,7 +67,7 @@ paste-relative-expiry =
 # $b (number) second number to add
 antispam-math = ¿Qué es {$a} + {$b}?
   .why = Por qué?
-  .description = Como no estás usando JavaScript, paste requiere que respondas a esta sencilla pregunta matemática para frustrar los robots simples. paste tiene un API si esta tratando de hacer cosas legítimas!
+  .description = Como no estás usando JavaScript, {-brand} requiere que respondas a esta sencilla pregunta matemática para frustrar los robots simples. {-brand} tiene un API si esta tratando de hacer cosas legítimas!
   .placeholder = Respuesta
 
 antispam-honeypot =
@@ -174,7 +176,7 @@ about-title = Sobre
 # $siteName (string) name of this paste instance
 about-blurb =
   .before = {$siteName} trabaja con
-  .paste = paste,
+  .paste = {-brand},
   .after = un proyecto de código abierto dedicado a hacer un pastebin sensible y moderno que cualquiera puede alojar.
 
 ## Log in
@@ -364,7 +366,7 @@ tfa-disable-password =
 ## Credits
 
 credits = Créditos
-  .description = Si paste fuera una película, estas serían al final.
+  .description = Si {-brand} fuera una película, estas serían al final.
 
 ## Errors
 
@@ -530,3 +532,23 @@ admin-config =
   .subtitle = Editar la configuración del sitio.
 
 admin-config-save = Guardar
+
+## CSV
+
+csv-error =
+  .utf-8 = A {-brand} le gustaría mostrarle este archivo CSV como una tabla, pero no se podía leer como UTF-8 válido: {$err}.
+  .utf-8-pos = A {-brand} le gustaría mostrarle este archivo CSV como una tabla, pero no se podía leer como UTF-8 válido en la línea {$line} (byte {$byte}): {$err}.
+  .lengths = A {-brand} le gustaría mostrarle este archivo CSV como una tabla, pero tiene una fila con {$secondRowFields} {$secondRowFields ->
+    [one] campo
+   *[other] campos
+  } mientras que la fila anterior tenía {$firstRowFields} {$firstRowFields ->
+    [one] campo
+   *[other] campos
+  }.
+  .lengths-pos = A {-brand} le gustaría mostrarle este archivo CSV como una tabla, pero tiene una fila con {$secondRowFields} {$secondRowFields ->
+    [one] campo
+   *[other] campos
+  } (línea {$line}, byte {$byte}) mientras que la fila anterior tenía {$firstRowFields} {$firstRowFields ->
+    [one] campo
+   *[other] campos
+  }.

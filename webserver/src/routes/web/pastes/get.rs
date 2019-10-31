@@ -6,6 +6,7 @@ use crate::{
     schema::{pastes, users},
   },
   errors::*,
+  i18n::L10n,
   models::{
     id::{PasteId, FileId},
     paste::{
@@ -96,7 +97,7 @@ pub fn username_id(username: String, id: PasteId) -> Redirect {
 }
 
 #[get("/p/<username>/<id>")]
-pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
+pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage, l10n: L10n) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -147,10 +148,10 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         let cleaned = CLEANER.clean(&md).to_string();
         post_processing::process(&*config, &cleaned)
       } else {
-        match csv_to_table(content) {
+        match csv_to_table(content, &l10n) {
           Ok(h) => h,
           Err(e) => {
-            notices.insert(file.id, e);
+            notices.insert(file.id, e?);
             continue;
           },
         }

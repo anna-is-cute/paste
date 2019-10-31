@@ -1,3 +1,5 @@
+-brand = paste
+
 ## Nav
 
 nav =
@@ -65,7 +67,7 @@ paste-relative-expiry =
 # $b (number) second number to add
 antispam-math = What is {$a} + {$b}?
   .why = Why?
-  .description = Since you're not using JavaScript, paste requires you to answer this simple math question to foil simple bots. paste has an API if you're trying to do legitimate things!
+  .description = Since you're not using JavaScript, {-brand} requires you to answer this simple math question to foil simple bots. {-brand} has an API if you're trying to do legitimate things!
   .placeholder = Answer
 
 antispam-honeypot =
@@ -174,7 +176,7 @@ about-title = About
 # $siteName (string) name of this paste instance
 about-blurb =
   .before = {$siteName} runs on
-  .paste = paste,
+  .paste = {-brand},
   .after = an open-source project dedicated to making a sensible, modern pastebin that anyone can host.
 
 ## Log in
@@ -364,7 +366,7 @@ tfa-disable-password =
 ## Credits
 
 credits = Credits
-  .description = If paste was a movie, these would be at the end.
+  .description = If {-brand} was a movie, these would be at the end.
 
 ## Errors
 
@@ -528,3 +530,23 @@ admin-config =
   .subtitle = Edit the site configuration.
 
 admin-config-save = Save
+
+## CSV
+
+csv-error =
+  .utf-8 = {-brand} would like to show you this CSV file as a table, but it couldn't be read as valid UTF-8: {$err}.
+  .utf-8-pos = {-brand} would like to show you this CSV file as a table, but it couldn't be read as valid UTF-8 at line {$line} (byte {$byte}): {$err}.
+  .lengths = {-brand} would like to show you this CSV file as a table, but it has a row with {$secondRowFields} {$secondRowFields ->
+    [one] field
+   *[other] fields
+  } while the previous row had {$firstRowFields} {$firstRowFields ->
+    [one] field
+   *[other] fields
+  }.
+  .lengths-pos = {-brand} would like to show you this CSV file as a table, but it has a row with {$secondRowFields} {$secondRowFields ->
+    [one] field
+   *[other] fields
+  } (line {$line}, byte {$byte}) while the previous row had {$firstRowFields} {$firstRowFields ->
+    [one] field
+   *[other] fields
+  }.

@@ -73,6 +73,7 @@ antispam-math = What is {$a} + {$b}?
 antispam-honeypot =
   .email = Email
   .title = Title
+  .error = An error occurred. Please try again.
 
 ## Paste UI
 
@@ -197,6 +198,16 @@ login-forgot-password = Forgot your password?
 
 login-submit = Log in
 
+login-error =
+  .username = Username not found.
+  .password = Incorrect password.
+  .tfa = Incorrect authentication code.
+  .rate-limit = Please try again in {$minutes} {$minutes ->
+    [one] minute
+   *[other] minutes
+  }.
+  .rate-limit-soon = Please try again in a few seconds.
+
 ## Register
 
 register = Register
@@ -218,6 +229,11 @@ register-email = Email
   .placeholder = your@email.com
 
 register-submit = Submit
+
+register-error =
+  .empty-fields = No fields can be empty.
+  .closed = Registration is not open and that email address is not whitelisted.
+  .duplicate-email = A user with that email address already exists.
 
 ## Forgot password
 
@@ -241,6 +257,15 @@ reset-password-again = Password (again)
   .placeholder = What you typed above
 
 reset-submit = Submit
+
+reset-error =
+  .bad-url = Invalid password reset URL.
+  .bad-reset = Invalid password reset.
+  .missing-account = That account does not exist.
+
+reset-success =
+  .email = If an account has a verified email address of {$email}, a password reset email was sent to it.
+  .reset = Password updated.
 
 ## Settings
 
@@ -282,6 +307,27 @@ account-current-password = Current password
 
 account-submit = Change
 
+email-verify-error =
+  .already-verified = Your email is already verified.
+  .resend-too-soon = You must wait 15 minutes between vertification email resends.
+  .invalid = Invalid email verification.
+
+email-verify-sent = Email sent.
+
+email-verify-success = Email verified.
+
+account-error =
+  .current-empty = Current password cannot be empty.
+  .invalid-email = Invalid email.
+  .invalid-display-name = Invalid display name: {$err}.
+  .invalid-username = Invalid username: {$err}.
+  .duplicate-username = A user with that username already exists.
+  .new-password-different = New passwords did not match.
+  .new-password-too-short = New password must be at least 10 characters long.
+  .new-password-invalid = New password cannot be your name, user, email, or "password".
+
+account-success = Account updated.
+
 ## API keys
 
 api-keys = API keys
@@ -296,6 +342,9 @@ api-keys-no-keys = You have no keys!
 api-key-add =
   .name-placeholder = Key name
   .submit = Add
+
+api-key-error =
+  .empty-name = API key name cannot be empty.
 
 ## Delete account
 
@@ -337,6 +386,11 @@ tfa-devices =
   .play-store = Android (Play Store)
   .ios = iOS (App Store)
   .fdroid = Android (F-Droid)
+
+tfa-error =
+  .already-enabled = 2FA is already enabled on your account.
+  .not-enabled = 2FA is not enabled on your account.
+  .missing-secret = No shared secret has been generated yet.
 
 ## Enable 2FA
 
@@ -459,6 +513,8 @@ admin-batch-delete = Batch delete
   }.
 
 admin-batch-delete-missing = could not find paste
+
+admin-batch-delete-bad-id = Invalid ID: {$err}.
 
 ## Admin users
 

@@ -180,7 +180,10 @@ pub fn batch_delete(ids: Form<BatchDelete>, config: State<Config>, _user: AdminU
   let mut ids = match ids {
     Ok(i) => i,
     Err(e) => {
-      sess.add_data("error", format!("Invalid ID: {}.", e));
+      sess.add_data("error", l10n.tr_ex(
+        "admin-batch-delete-bad-id",
+        |req| req.arg_str("err", e),
+      )?);
       return Ok(Redirect::to("lastpage"));
     },
   };

@@ -5,7 +5,7 @@ use crate::{
   i18n::prelude::*,
   models::id::UserId,
   redis_store::Redis,
-  routes::web::{context, AddCsp, Rst, OptionalWebUser, Session},
+  routes::web::{context, Rst, OptionalWebUser, Session},
   utils::{
     AcceptLanguage,
     totp::totp_raw_skew,
@@ -58,15 +58,15 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, lang
 }
 
 #[get("/account/2fa/enable")]
-pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<AddCsp<Rst>> {
+pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage, l10n: L10n) -> Result<Rst> {
   let mut user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(AddCsp::new(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get))), vec!["img-src data:"])),
+    None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
   if user.tfa_enabled() {
-    sess.add_data("error", "2FA is already enabled on your account.");
-    return Ok(AddCsp::new(Rst::Redirect(Redirect::to("lastpage")), vec!["img-src data:"]));
+    sess.add_data("error", l10n.tr(("tfa-error", "already-enabled"))?);
+    return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 
   if user.shared_secret().is_none() {
@@ -109,10 +109,7 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
     "validate" => uri!(crate::routes::web::account::two_factor::validate),
   ));
 
-  Ok(AddCsp::new(
-    Rst::Template(Template::render("account/2fa/enable", ctx)),
-    vec!["img-src data:"],
-  ))
+  Ok(Rst::Template(Template::render("account/2fa/enable", ctx)))
 }
 
 #[post("/account/2fa/new_secret", format = "application/x-www-form-urlencoded", data = "<form>")]
@@ -128,7 +125,7 @@ pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Sessio
   };
 
   if user.tfa_enabled() {
-    sess.add_data("error", "2FA is already enabled on your account.");
+    sess.add_data("error", l10n.tr(("tfa-error", "already-enabled"))?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -152,7 +149,7 @@ pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, 
   };
 
   if user.tfa_enabled() {
-    sess.add_data("error", "2FA is already enabled on your account.");
+    sess.add_data("error", l10n.tr(("tfa-error", "already-enabled"))?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -160,13 +157,13 @@ pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, 
     let ss = match user.shared_secret() {
       Some(s) => s,
       None => {
-        sess.add_data("error", "No shared secret has been generated yet.");
+        sess.add_data("error", l10n.tr(("tfa-error", "missing-secret"))?);
         return Ok(Redirect::to(uri!(get)));
       },
     };
 
     if totp_raw_skew(ss, 6, 0, 30, &HashType::SHA1).iter().all(|&x| x != form.tfa_code) {
-      sess.add_data("error", "Invalid authentication code.");
+      sess.add_data("error", l10n.tr(("login-error", "tfa"))?);
       return Ok(Redirect::to("lastpage"));
     }
   }
@@ -189,14 +186,14 @@ pub struct Validate {
 }
 
 #[get("/account/2fa/disable")]
-pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> Result<Rst> {
+pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage, l10n: L10n) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
   if !user.tfa_enabled() {
-    sess.add_data("error", "Your account does not have 2FA enabled.");
+    sess.add_data("error", l10n.tr(("tfa-error", "not-enabled"))?);
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 
@@ -222,12 +219,12 @@ pub fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Sessio
   };
 
   if !user.tfa_enabled() {
-    sess.add_data("error", "Your account does not have 2FA enabled.");
+    sess.add_data("error", l10n.tr(("tfa-error", "not-enabled"))?);
     return Ok(Redirect::to("lastpage"));
   }
 
   if !user.check_password(&form.password) {
-    sess.add_data("error", "Invalid password.");
+    sess.add_data("error", l10n.tr(("login-error", "password"))?);
     return Ok(Redirect::to(uri!(disable_get)));
   }
 
@@ -259,7 +256,7 @@ pub fn new_backup_codes(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: 
   };
 
   if !user.tfa_enabled() {
-    sess.add_data("error", "2FA is not enabled on your account.");
+    sess.add_data("error", l10n.tr(("tfa-error", "not-enabled"))?);
     return Ok(Redirect::to("lastpage"));
   }
 

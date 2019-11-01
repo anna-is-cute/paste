@@ -75,11 +75,11 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut r
   }
 
   if !data.honeypot.is_empty() {
-    sess.add_data("error", "An error occurred. Please try again.");
+    sess.add_data("error", l10n.tr(("antispam-honeypot", "error"))?);
     return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
 
-  if let Some(msg) = LoginAttempt::find_check(&conn, *addr)? {
+  if let Some(msg) = LoginAttempt::find_check(&conn, &l10n, *addr)? {
     sess.add_data("error", msg);
     return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
   }
@@ -92,9 +92,9 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut r
   let user = match user {
     Some(u) => u,
     None => {
-      let msg = match LoginAttempt::find_increment(&conn, *addr)? {
+      let msg = match LoginAttempt::find_increment(&conn, &l10n, *addr)? {
         Some(msg) => msg,
-        None => "Username not found.".into(),
+        None => l10n.tr(("login-error", "username"))?,
       };
       sess.add_data("error", msg);
       return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
@@ -102,9 +102,9 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, mut r
   };
 
   if !user.check_password(&data.password) {
-    let msg = match LoginAttempt::find_increment(&conn, *addr)? {
+    let msg = match LoginAttempt::find_increment(&conn, &l10n, *addr)? {
       Some(msg) => msg,
-      None => "Incorrect password.".into(),
+      None => l10n.tr(("login-error", "password"))?,
     };
     sess.add_data("error", msg);
     return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get)));
@@ -183,9 +183,9 @@ pub fn tfa_post(form: Form<TwoFactor>, pot: PotentialUser, mut sess: Session, co
   };
 
   if !tfa_check()? {
-    let msg = match LoginAttempt::find_increment(&conn, *addr)? {
+    let msg = match LoginAttempt::find_increment(&conn, &l10n, *addr)? {
       Some(msg) => msg,
-      None => "Invalid authentication code.".into(),
+      None => l10n.tr(("login-error", "tfa"))?,
     };
     sess.add_data("error", msg);
     return Ok(Redirect::to(uri!(tfa)));

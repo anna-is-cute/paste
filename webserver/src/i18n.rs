@@ -71,7 +71,7 @@ impl<'a> From<(&'a str, &'a str)> for L10nKey<'a> {
 }
 
 impl<'r> L10n<'r> {
-  fn req<'a, M: Into<L10nKey<'a>>>(&'a self, msg: M) -> MessageRequest {
+  fn req<M: Into<L10nKey<'r>>>(&'r self, msg: M) -> MessageRequest<'r> {
     let msg = msg.into();
     let req = MessageRequest::new(&*self.langs, msg.key());
     match msg.attr() {
@@ -80,13 +80,13 @@ impl<'r> L10n<'r> {
     }
   }
 
-  pub fn tr<'a, M: Into<L10nKey<'a>>>(&'a self, msg: M) -> Result<String, anyhow::Error> {
+  pub fn tr<M: Into<L10nKey<'r>>>(&'r self, msg: M) -> Result<String, anyhow::Error> {
     self.req(msg).message(&self.localisation)
   }
 
-  pub fn tr_ex<'a, M, F>(&'a self, msg: M, f: F) -> Result<String, anyhow::Error>
-    where M: Into<L10nKey<'a>>,
-          F: FnOnce(MessageRequest) -> MessageRequest,
+  pub fn tr_ex<M, F>(&'r self, msg: M, f: F) -> Result<String, anyhow::Error>
+    where M: Into<L10nKey<'r>>,
+          F: FnOnce(MessageRequest<'r>) -> MessageRequest<'r>,
   {
     let mut req = self.req(msg);
     req = f(req);

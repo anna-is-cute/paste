@@ -49,7 +49,7 @@ pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Sess
   };
 
   if !user.check_password(&delete.password) {
-    sess.add_data("error", "Incorrect password.");
+    sess.add_data("error", l10n.tr(("login-error", "password"))?);
     return Ok(Redirect::to(uri!(get)));
   }
 

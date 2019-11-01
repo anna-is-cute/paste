@@ -59,7 +59,7 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
   }
 
   if !email::check_email(&data.email) {
-    sess.add_data("error", "Invalid email.");
+    sess.add_data("error", l10n.tr(("account-error", "invalid-email"))?);
     return res;
   }
 
@@ -68,10 +68,10 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
     return res;
   }
 
-  let msg = format!(
-    "If an account has a verified email address of {}, a password reset email was sent to it.",
-    data.email,
-  );
+  let msg = l10n.tr_ex(
+    ("reset-success", "email"),
+    |req| req.arg("email", &*data.email),
+  )?;
 
   let user: Option<User> = users::table
     .filter(users::email.eq(&data.email))
@@ -128,9 +128,9 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
 }
 
 #[get("/account/reset_password?<data..>")]
-pub fn reset_get(data: Form<ResetPassword>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
+pub fn reset_get(data: Form<ResetPassword>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage, l10n: L10n) -> Result<Rst> {
   if check_reset(&conn, *data.id, &data.secret).is_none() {
-    sess.add_data("error", "Invalid password reset URL.");
+    sess.add_data("error", l10n.tr(("reset-error", "bad-url"))?);
     return Ok(Rst::Redirect(Redirect::to(uri!(get))));
   }
 
@@ -164,7 +164,7 @@ pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn, l10n: L10n
   let reset = match check_reset(&conn, *data.id, &data.secret) {
     Some(r) => r,
     None => {
-      sess.add_data("error", "Invalid password reset.");
+      sess.add_data("error", l10n.tr(("reset-error", "bad-reset"))?);
       return res;
     },
   };
@@ -178,7 +178,7 @@ pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn, l10n: L10n
     Some(u) => u,
     None => {
       diesel::delete(&reset).execute(&*conn)?;
-      sess.add_data("error", "That account does not exist.");
+      sess.add_data("error", l10n.tr(("reset-error", "missing-account"))?);
       return Ok(Redirect::to(uri!(get)));
     },
   };
@@ -204,7 +204,7 @@ pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn, l10n: L10n
   user.set_hashed_password(hashed);
   user.update(&conn)?;
 
-  sess.add_data("info", "Password updated.");
+  sess.add_data("info", l10n.tr(("reset-success", "reset"))?);
 
   sess.user_id = Some(user.id());
 

@@ -39,9 +39,7 @@ pub fn csv_to_table(content: &str, l10n: &L10n) -> std::result::Result<String, R
 }
 
 fn pretty_error(e: Error, l10n: &L10n) -> Result<String> {
-  let stringified = e.to_string();
-
-  let explanation = match e.into_kind() {
+  let explanation = match e.kind() {
     ErrorKind::Utf8 { pos: Some(pos), err } => l10n.tr_ex(
       ("csv-error", "utf-8-pos"),
       |req| req
@@ -67,7 +65,7 @@ fn pretty_error(e: Error, l10n: &L10n) -> Result<String> {
         .arg("secondRowFields", len)
         .arg("firstRowFields", expected_len),
     )?,
-    _ => return Ok(stringified),
+    _ => return Ok(e.to_string()),
   };
 
   Ok(explanation)

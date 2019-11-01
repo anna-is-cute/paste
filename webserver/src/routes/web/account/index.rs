@@ -62,18 +62,18 @@ pub fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalW
   };
 
   if update.current_password.is_empty() {
-    sess.add_data("error", "Current password cannot be empty.");
+    sess.add_data("error", l10n.tr(("account-error", "current-empty"))?);
     return Ok(Redirect::to(uri!(get)));
   }
 
   if !user.check_password(&update.current_password) {
-    sess.add_data("error", "Incorrect password.");
+    sess.add_data("error", l10n.tr(("login-error", "password"))?);
     return Ok(Redirect::to(uri!(get)));
   }
 
   if !update.email.is_empty() && update.email != user.email() {
     if !email::check_email(&update.email) {
-      sess.add_data("error", "Invalid email.");
+      sess.add_data("error", l10n.tr(("account-error", "invalid-email"))?);
       return Ok(Redirect::to(uri!(get)));
     }
     user.set_email(update.email);
@@ -86,7 +86,10 @@ pub fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalW
     let name = match Validator::validate_display_name(&update.name) {
       Ok(n) => n,
       Err(e) => {
-        sess.add_data("error", format!("Invalid display name: {}.", e));
+        sess.add_data("error", l10n.tr_ex(
+          ("account-error", "invalid-display-name"),
+          |req| req.arg("err", e),
+        )?);
         return Ok(Redirect::to(uri!(get)));
       },
     };
@@ -97,7 +100,10 @@ pub fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalW
     let username = match Validator::validate_username(&update.username) {
       Ok(n) => n,
       Err(e) => {
-        sess.add_data("error", format!("Invalid username: {}.", e));
+        sess.add_data("error", l10n.tr_ex(
+          ("account-error", "invalid-username"),
+          |req| req.arg("err", e),
+        )?);
         return Ok(Redirect::to(uri!(get)));
       },
     };
@@ -107,7 +113,7 @@ pub fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalW
       .select(count(users::id))
       .get_result(&*conn)?;
     if existing_names > 0 {
-      sess.add_data("error", "A user with that username already exists.");
+      sess.add_data("error", l10n.tr(("account-error", "duplicate-username"))?);
       return Ok(Redirect::to(uri!(get)));
     }
     user.set_username(username.into_owned());
@@ -119,15 +125,15 @@ pub fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalW
 
   if !update.password.is_empty() {
     if update.password != update.password_verify {
-      sess.add_data("error", "New passwords did not match.");
+      sess.add_data("error", l10n.tr(("account-error", "new-password-different"))?);
       return Ok(Redirect::to(uri!(get)));
     }
     if update.password.graphemes(true).count() < 10 {
-      sess.add_data("error", "New password must be at least 10 characters long.");
+      sess.add_data("error", l10n.tr(("account-error", "new-password-too-short"))?);
       return Ok(Redirect::to(uri!(get)));
     }
     if update.password == user.name() || update.password == user.username() || update.password == user.email() || update.password == "password" {
-      sess.add_data("error", r#"New password cannot be your name, user, email, or "password"."#);
+      sess.add_data("error", l10n.tr(("account-error", "new-password-invalid"))?);
       return Ok(Redirect::to(uri!(get)));
     }
     let hashed = HashedPassword::from(&update.password).into_string();
@@ -137,7 +143,7 @@ pub fn patch(config: State<Config>, update: Form<AccountUpdate>, user: OptionalW
   user.update(&conn)?;
 
   sess.take_form();
-  sess.add_data("info", "Account updated.");
+  sess.add_data("info", l10n.tr("account-success")?);
   Ok(Redirect::to(uri!(get)))
 }
 

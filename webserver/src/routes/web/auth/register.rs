@@ -75,31 +75,37 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, confi
   }
 
   if !data.honeypot.is_empty() {
-    sess.add_data("error", "An error occurred. Please try again.");
+    sess.add_data("error", l10n.tr(("antispam-honeypot", "error"))?);
     return Ok(Redirect::to(uri!(get)));
   }
 
   if data.username.is_empty() || data.name.is_empty()  || data.email.is_empty() || data.password.is_empty() {
-    sess.add_data("error", "No fields can be empty.");
+    sess.add_data("error", l10n.tr(("register-error", "empty-fields"))?);
     return Ok(Redirect::to(uri!(get)));
   }
   let username = match Validator::validate_username(&data.username) {
     Ok(u) => u,
     Err(e) => {
-      sess.add_data("error", format!("Invalid username: {}.", e));
+      sess.add_data("error", l10n.tr_ex(
+        ("account-error", "invalid-username"),
+        |req| req.arg("err", e),
+      )?);
       return Ok(Redirect::to(uri!(get)));
     },
   };
   let display_name = match Validator::validate_display_name(&data.name) {
     Ok(d) => d.into_owned(),
     Err(e) => {
-      sess.add_data("error", format!("Invalid display name: {}.", e));
+      sess.add_data("error", l10n.tr_ex(
+        ("account-error", "invalid-display-name"),
+        |req| req.arg("err", e),
+      )?);
       return Ok(Redirect::to(uri!(get)));
     },
   };
 
   if !email::check_email(&data.email) {
-    sess.add_data("error", "Invalid email.");
+    sess.add_data("error", l10n.tr(("account-error", "invalid-email"))?);
     return Ok(Redirect::to(uri!(get)));
   }
 
@@ -107,7 +113,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, confi
   if !config.read().registration.open {
     // check that the email is in the whitelisted emails
     if !config.read().registration.whitelisted_emails.contains(&data.email) {
-      sess.add_data("error", "Registration is not open and that email address is not whitelisted.");
+      sess.add_data("error", l10n.tr(("register-error", "closed"))?);
       return Ok(Redirect::to(uri!(get)));
     }
 
@@ -117,7 +123,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, confi
       .select(count_star())
       .first(&*conn)?;
     if existing > 0 {
-      sess.add_data("error", "A user with that email already exists.");
+      sess.add_data("error", l10n.tr(("register-error", "duplicate-email"))?);
       return Ok(Redirect::to(uri!(get)));
     }
   }
@@ -141,7 +147,7 @@ pub fn post(data: Form<RegistrationData>, mut sess: Session, conn: DbConn, confi
     .select(count_star())
     .get_result(&*conn)?;
   if existing_names > 0 {
-    sess.add_data("error", "A user with that username already exists.");
+    sess.add_data("error", l10n.tr(("account-error", "duplicate-username"))?);
     return Ok(Redirect::to(uri!(get)));
   }
 

@@ -1,6 +1,7 @@
 use crate::{
   database::DbConn,
   errors::*,
+  i18n::L10n,
   utils::BitMask,
 };
 
@@ -91,7 +92,7 @@ impl LoginAttempt {
     Ok(())
   }
 
-  pub fn find_increment(conn: &DbConn, ip: IpAddr) -> Result<Option<String>> {
+  pub fn find_increment(conn: &DbConn, l10n: &L10n, ip: IpAddr) -> Result<Option<String>> {
     let network = match LoginAttempt::network(ip) {
       Some(n) => n,
       None => return Ok(None),
@@ -99,10 +100,10 @@ impl LoginAttempt {
     let mut attempt = LoginAttempt::get_or_insert(conn, network)?;
 
     attempt.increment(conn)?;
-    attempt.check()
+    attempt.check(l10n)
   }
 
-  pub fn check(&self) -> Result<Option<String>> {
+  pub fn check(&self, l10n: &L10n) -> Result<Option<String>> {
     let attempts = self.attempts();
     if attempts < 5 {
       return Ok(None);
@@ -115,17 +116,16 @@ impl LoginAttempt {
 
     let minutes = expires.signed_duration_since(Utc::now()).num_minutes();
     if minutes != 0 {
-      Ok(Some(format!(
-        "Please try again in {} minute{}.",
-        minutes,
-        if minutes == 1 { "" } else { "s" }
-      )))
+      Ok(Some(l10n.tr_ex(
+        ("login-error", "rate-limit"),
+        |req| req.arg("minutes", minutes),
+      )?))
     } else {
-      Ok(Some("Please try again in a few seconds.".into()))
+      Ok(Some(l10n.tr(("login-error", "rate-limit-soon"))?))
     }
   }
 
-  pub fn find_check(conn: &DbConn, ip: IpAddr) -> Result<Option<String>> {
+  pub fn find_check(conn: &DbConn, l10n: &L10n, ip: IpAddr) -> Result<Option<String>> {
     let network = match LoginAttempt::network(ip) {
       Some(n) => n,
       None => return Ok(None),
@@ -135,7 +135,7 @@ impl LoginAttempt {
       None => return Ok(None),
     };
 
-    attempt.check()
+    attempt.check(l10n)
   }
 
   pub fn update(&self, conn: &DbConn) -> Result<()> {

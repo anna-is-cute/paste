@@ -43,7 +43,7 @@ pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, 
   };
 
   if user.email_verified() {
-    sess.add_data("error", "Your email is already verified.");
+    sess.add_data("error", l10n.tr(("email-verify-error", "already-verified"))?);
     return Ok(Redirect::to(uri!(super::index::get)));
   }
 
@@ -62,7 +62,7 @@ pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, 
   };
 
   if !ver.can_send_again() {
-    sess.add_data("error", "You must wait 15 minutes between verification email resends.");
+    sess.add_data("error", l10n.tr(("email-verify-error", "resend-too-soon"))?);
     return Ok(Redirect::to(uri!(super::index::get)));
   }
 
@@ -83,16 +83,16 @@ pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, 
 
   sidekiq.push(ver.job(&config, &user, &secret)?.into())?;
 
-  sess.add_data("info", "Email sent.");
+  sess.add_data("info", l10n.tr("email-verify-sent")?);
   Ok(Redirect::to(uri!(super::index::get)))
 }
 
 #[get("/account/verify?<data..>")]
-pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   let key = match BASE64URL_NOPAD.decode(data.key.as_bytes()) {
     Ok(k) => k,
     Err(_) => {
-      sess.add_data("error", "Invalid email verification.");
+      sess.add_data("error", l10n.tr(("email-verify-error", "invalid"))?);
       return Ok(Redirect::to(uri!(super::index::get)));
     },
   };
@@ -103,7 +103,7 @@ pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, c
   };
 
   if user.email_verified() {
-    sess.add_data("error", "Your email is already verified.");
+    sess.add_data("error", l10n.tr(("email-verify-error", "already-verified"))?);
     return Ok(Redirect::to(uri!(super::index::get)));
   }
 
@@ -116,13 +116,13 @@ pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, c
   let verification = match verification {
     Some(v) => v,
     None => {
-      sess.add_data("error", "Invalid email verification.");
+      sess.add_data("error", l10n.tr(("email-verify-error", "invalid"))?);
       return Ok(Redirect::to(uri!(super::index::get)));
     },
   };
 
   if !verification.check(&key) {
-    sess.add_data("error", "Invalid email verification");
+    sess.add_data("error", l10n.tr(("email-verify-error", "invalid"))?);
     return Ok(Redirect::to(uri!(super::index::get)));
   }
 
@@ -131,7 +131,7 @@ pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, c
 
   diesel::delete(&verification).execute(&*conn)?;
 
-  sess.add_data("info", "Email verified.");
+  sess.add_data("info", l10n.tr("email-verify-success")?);
   Ok(Redirect::to(uri!(super::index::get)))
 }
 

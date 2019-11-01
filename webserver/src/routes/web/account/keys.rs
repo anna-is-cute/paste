@@ -59,7 +59,7 @@ pub fn post(new: Form<NewKey>, user: OptionalWebUser, mut sess: Session, conn: D
   };
 
   if new.name.is_empty() {
-    sess.add_data("error", "API key name cannot be empty.");
+    sess.add_data("error", l10n.tr(("api-key-error", "empty-name"))?);
     return Ok(Redirect::to(uri!(get)));
   }
 

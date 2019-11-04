@@ -276,6 +276,14 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
+          <a href="https://github.com/image-rs/image">image</a>
+        </p>
+        <p>
+          An image processing library.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
           <a href="https://github.com/achanda/ipnetwork">ipnetwork</a>
         </p>
         <p>
@@ -306,6 +314,14 @@
         </p>
         <p>
           Rust implementation of DEFLATE and friends.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/NoXF/libwebp-sys">libwebp-sys</a>
+        </p>
+        <p>
+          Static bindings to libwebp.
         </p>
       </div>
       <div class="tile box is-child">

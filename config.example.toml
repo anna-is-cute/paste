@@ -4,6 +4,10 @@ site_domain = "paste.gg"
 # Set this to include custom content on the /about page
 # If not set, the About link in the navbar will not be displayed
 # about_file = "about.html"
+# If this is enabled, avatars will be downloaded and converted into WebP files at 90% quality when
+# requested.
+# Converted avatars are cached in redis for 10 minutes.
+convert_avatars = false
 
 [admin]
 # A random key used to become the first admin. Anyone who knows or guesses this can become an admin

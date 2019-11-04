@@ -312,3 +312,13 @@ text = "Better synchronisation primitives."
 name = "data-encoding"
 url = "https://github.com/ia0/data-encoding"
 text = "Various data encodings in Rust."
+
+[[backend]]
+name = "image"
+url = "https://github.com/image-rs/image"
+text = "An image processing library."
+
+[[backend]]
+name = "libwebp-sys"
+url = "https://github.com/NoXF/libwebp-sys"
+text = "Static bindings to libwebp."

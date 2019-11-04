@@ -26,6 +26,8 @@ pub struct General {
   pub site_domain: String,
   #[serde(default)]
   pub about_file: Option<String>,
+  #[serde(default)]
+  pub convert_avatars: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default)]

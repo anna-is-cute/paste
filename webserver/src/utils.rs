@@ -11,6 +11,7 @@ pub mod password;
 pub mod post_processing;
 pub mod totp;
 pub mod validator;
+pub mod webp;
 
 pub use self::{
   accept_language::AcceptLanguage,

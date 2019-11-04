@@ -150,6 +150,10 @@ fluent-syntax = "0.9"
 # anti-csrf tokens, encoding for totp shared keys, handling binary uploads in json
 data-encoding = "2"
 
+# image processing (avatars)
+image = "0.22"
+libwebp-sys = "0.2"
+
 # web logic
 [dependencies.rocket]
 version = "0.4"

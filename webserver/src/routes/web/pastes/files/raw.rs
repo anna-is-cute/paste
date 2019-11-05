@@ -22,8 +22,8 @@ pub enum As {
   Status(HttpStatus),
 }
 
-#[get("/p/<username>/<paste_id>/files/<file_id>/raw")]
-pub fn get(username: String, paste_id: PasteId, file_id: FileId, config: State<Config>, user: OptionalWebUser, conn: DbConn) -> Result<As> {
+#[get("/p/<username>/<paste_id>/files/<file_id>/raw?<svg>")]
+pub fn get(username: String, paste_id: PasteId, file_id: FileId, svg: Option<bool>, config: State<Config>, user: OptionalWebUser, conn: DbConn) -> Result<As> {
   let paste: DbPaste = match paste_id.get(&conn)? {
     Some(p) => p,
     None => return Ok(As::Status(HttpStatus::NotFound)),
@@ -52,6 +52,8 @@ pub fn get(username: String, paste_id: PasteId, file_id: FileId, config: State<C
 
   let h = if file.is_binary() == Some(true) {
     ("Content-Disposition".into(), "attachment".into())
+  } else if svg.unwrap_or(false) && file.name().ends_with(".svg") {
+    ("Content-Type".into(), "image/svg+xml".into())
   } else {
     ("Content-Type".into(), "text/plain; charset=utf-8".into())
   };

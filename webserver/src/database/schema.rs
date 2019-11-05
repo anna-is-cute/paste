@@ -14,8 +14,8 @@ table! {
 }
 
 table! {
-    deletion_keys (key) {
-        key -> Uuid,
+    deletion_keys (paste_id) {
+        key -> Text,
         paste_id -> Uuid,
     }
 }

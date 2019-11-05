@@ -119,10 +119,10 @@ impl PastePayload<'u> {
     let deletion_key = match self.author {
       Some(_) => None,
       None => {
-        let ndk = NewDeletionKey::generate(id);
-        let key = diesel::insert_into(deletion_keys::table)
+        let (ndk, key) = NewDeletionKey::generate(id);
+        diesel::insert_into(deletion_keys::table)
           .values(&ndk)
-          .get_result(&**conn)
+          .execute(&**conn)
           .map_err(|e| CreateError::Internal(e.into()))?;
         Some(key)
       }

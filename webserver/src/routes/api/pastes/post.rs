@@ -94,7 +94,7 @@ fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqCl
     paste.created_at(),
     paste.updated_at(&*config).ok(), // FIXME
     paste.expires(),
-    deletion_key.map(|x| x.key()),
+    deletion_key,
     files,
   );
 

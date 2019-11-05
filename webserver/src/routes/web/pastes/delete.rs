@@ -3,7 +3,7 @@ use crate::{
   database::{
     DbConn,
     models::{
-      deletion_keys::DeletionKey,
+      deletion_keys::{DeletionKey, SecretDeletionKey},
       pastes::Paste as DbPaste,
       users::User,
     },
@@ -12,7 +12,7 @@ use crate::{
   errors::*,
   i18n::prelude::*,
   models::{
-    id::{DeletionKeyId, PasteId},
+    id::PasteId,
     paste::Visibility,
   },
   routes::web::{Rst, OptionalWebUser, Session},
@@ -78,22 +78,22 @@ pub fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, conf
       };
 
       let key = match Uuid::from_str(&key) {
-        Ok(k) => DeletionKeyId(k),
+        Ok(k) => SecretDeletionKey(k),
         Err(_) => {
           sess.add_data("error", "Invalid deletion key.");
           return Ok(Rst::Redirect(Redirect::to("lastpage")));
         },
       };
 
-      let db_key: DeletionKey = match deletion_keys::table.find(&key).first(&*conn).optional()? {
+      let db_key: DeletionKey = match deletion_keys::table.find(paste.id()).first(&*conn).optional()? {
         Some(k) => k,
         None => {
-          sess.add_data("error", "Invalid deletion key.");
+          sess.add_data("error", "Missing deletion key.");
           return Ok(Rst::Redirect(Redirect::to("lastpage")));
         },
       };
 
-      if db_key.paste_id() != paste.id() {
+      if !db_key.check_key(&key.uuid().to_simple().to_string()) {
         sess.add_data("error", "Invalid deletion key.");
         return Ok(Rst::Redirect(Redirect::to("lastpage")));
       }

@@ -117,7 +117,7 @@ pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, 
   if let Some(dk) = deletion_key {
     sess.add_data(
       format!("deletion_key_{}", paste.id().to_simple()),
-      dk.key().to_simple().to_string()
+      dk.uuid().to_simple().to_string(),
     );
   }
 

@@ -97,7 +97,6 @@ macro_rules! uuid_wrapper {
 }
 
 pub mod api_key;
-pub mod deletion_key;
 pub mod email_verification;
 pub mod file;
 pub mod paste;
@@ -107,7 +106,6 @@ pub mod user;
 
 pub use self::{
   api_key::ApiKeyId,
-  deletion_key::DeletionKeyId,
   email_verification::EmailVerificationId,
   file::FileId,
   paste::PasteId,

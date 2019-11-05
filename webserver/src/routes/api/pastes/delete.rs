@@ -3,11 +3,12 @@ use crate::{
   database::{
     DbConn,
     models::{
-      deletion_keys::DeletionKey,
+      deletion_keys::{DeletionKey, SecretDeletionKey},
       pastes::Paste,
       users::User,
     },
   },
+  errors::*,
   models::{
     id::{PasteId, UserId},
     paste::Visibility,
@@ -15,6 +16,8 @@ use crate::{
   },
   routes::{RouteResult, RequiredUser, DeletionAuth},
 };
+
+use diesel::prelude::*;
 
 use rocket::{
   request::State,
@@ -29,7 +32,7 @@ pub fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn, config: State<Confi
     Some(p) => p,
     None => return Ok(Status::show_error(HttpStatus::NotFound, ErrorKind::MissingPaste)),
   };
-  if let Some((status, kind)) = check_deletion(&paste, auth) {
+  if let Some((status, kind)) = check_deletion(&conn, &paste, auth)? {
     return Ok(Status::show_error(status, kind));
   }
   // should be validated beyond this point
@@ -42,24 +45,24 @@ pub fn delete(id: PasteId, auth: DeletionAuth, conn: DbConn, config: State<Confi
   Ok(Status::show_success(HttpStatus::NoContent, ()))
 }
 
-fn check_deletion(paste: &Paste, auth: DeletionAuth) -> Option<(HttpStatus, ErrorKind)> {
+fn check_deletion(conn: &DbConn, paste: &Paste, auth: DeletionAuth) -> Result<Option<(HttpStatus, ErrorKind)>> {
   let author_id = paste.author_id();
   if_chain! {
     if let DeletionAuth::Key(ref key) = auth;
     if author_id.is_none();
     then {
-      return check_deletion_key(paste, key);
+      return check_deletion_key(conn, paste, key);
     }
   }
   if_chain! {
     if let DeletionAuth::User(ref user) = auth;
     if let Some(id) = author_id;
     then {
-      return check_deletion_user(paste, user, id);
+      return Ok(check_deletion_user(paste, user, id));
     }
   }
 
-  None
+  Ok(None)
 }
 
 fn check_deletion_user(paste: &Paste, user: &User, author_id: UserId) -> Option<(HttpStatus, ErrorKind)> {
@@ -72,11 +75,17 @@ fn check_deletion_user(paste: &Paste, user: &User, author_id: UserId) -> Option<
   Some((HttpStatus::Forbidden, ErrorKind::NotAllowed))
 }
 
-fn check_deletion_key(paste: &Paste, key: &DeletionKey) -> Option<(HttpStatus, ErrorKind)> {
-  if paste.id() == key.paste_id() {
-    return None;
+fn check_deletion_key(conn: &DbConn, paste: &Paste, key: &SecretDeletionKey) -> Result<Option<(HttpStatus, ErrorKind)>> {
+  use crate::database::schema::deletion_keys;
+
+  let real_key: DeletionKey = match deletion_keys::table.find(paste.id()).first(&**conn).optional()? {
+    Some(key) => key,
+    None => return Ok(Some((HttpStatus::Forbidden, ErrorKind::NotAllowed))),
+  };
+  if real_key.check_key(&key.uuid().to_simple().to_string()) {
+    return Ok(None);
   }
-  Some((HttpStatus::Forbidden, ErrorKind::NotAllowed))
+  Ok(Some((HttpStatus::Forbidden, ErrorKind::NotAllowed)))
 }
 
 #[delete("/ids", format = "application/json", data = "<info>", rank = 2)]

@@ -131,10 +131,11 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
       let md_ext = file.highlight_language.is_none() && lower.ends_with(".md") || lower.ends_with(".mdown") || lower.ends_with(".markdown");
       let md_lang = file.highlight_language == Some(Language::Markdown.hljs());
       let is_md = md_ext || md_lang;
+      let is_svg = lower.ends_with(".svg");
 
       let is_csv = file.highlight_language.is_none() && lower.ends_with(".csv");
 
-      if !is_md && !is_csv {
+      if !is_md && !is_csv && !is_svg {
         continue;
       }
 
@@ -147,7 +148,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         let md = markdown_to_html(content, &*OPTIONS);
         let cleaned = CLEANER.clean(&md).to_string();
         post_processing::process(&*config, &cleaned)
-      } else {
+      } else if is_csv {
         match csv_to_table(content, &l10n) {
           Ok(h) => h,
           Err(e) => {
@@ -155,6 +156,12 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
             continue;
           },
         }
+      } else {
+        format!(
+          "<img src=\"{src}\" alt=\"{name} SVG preview\"/>",
+          src = tera::escape_html(&uri!(super::files::raw::get: &username, paste.id(), file.id, true).to_string()),
+          name = tera::escape_html(file.name.as_deref().unwrap_or("unknown file")),
+        )
       };
 
       rendered.insert(file.id, processed);
@@ -186,7 +193,7 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
       .iter()
       .fold(&mut crate::routes::web::Links::default(), |acc, x| acc.add(
         x.id.to_simple().to_string(),
-        uri!(crate::routes::web::pastes::files::raw::get: &author_name, paste.id(), x.id),
+        uri!(crate::routes::web::pastes::files::raw::get: &author_name, paste.id(), x.id, _),
       )),
   );
   if user.as_ref().map(|x| x.is_admin()).unwrap_or(false) {

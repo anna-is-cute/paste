@@ -12,7 +12,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 (function () {
   function getSuffixFromName(name) {
     if (name === 'CMakeLists.txt') {
-      return 'CMake';
+      return 'cmake';
+    } else if (name.toLowerCase().endsWith(".svg")) {
+      return 'xml';
     }
 
     return name.split('.').pop();

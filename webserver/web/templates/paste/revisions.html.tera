@@ -30,7 +30,7 @@
 <script
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-OLkOmsABjZkHLxet3vqyYB4F0+FBSgeETYe+kp45OSmBrHYxJseA8PFzCtIRilZS"></script>
+  integrity="sha384-cXOcFtnQcrrAWhVoUkTqMYjbbU2Ny2T21NswDBR9fmqUDKIdNa85dzD2bPiWqTJ0"></script>
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"

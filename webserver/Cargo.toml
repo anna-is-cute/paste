@@ -132,9 +132,6 @@ rand = "0.7"
 # creating sha-384 integrity hashes
 sha2 = "0.8"
 
-# requests to gravatar
-reqwest = "0.9"
-
 # csv parsing
 csv = "1"
 
@@ -209,3 +206,8 @@ features = ["svg"]
 [dependencies.parking_lot]
 version = "0.9"
 features = ["nightly"]
+
+# requests to gravatar
+[dependencies.reqwest]
+version = "0.10.0-alpha"
+features = ["blocking"]

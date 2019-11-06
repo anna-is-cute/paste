@@ -3,7 +3,6 @@
   in_band_lifetimes,
   ip,
   proc_macro_hygiene,
-  ip,
 )]
 #![recursion_limit = "1024"]
 
@@ -114,7 +113,7 @@ fn main() {
     .manage(redis_store::init_pool())
     .manage(redis_store::init_sidekiq())
     .manage(config)
-    .manage(reqwest::Client::new())
+    .manage(reqwest::blocking::Client::new())
     .manage(localisation)
     .attach(fairings::Csp)
     .attach(fairings::SecurityHeaders)

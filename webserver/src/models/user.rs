@@ -16,7 +16,6 @@ use sodiumoxide::crypto::hash::sha256;
 
 use std::{
   borrow::Cow,
-  cell::RefCell,
   io::Write,
 };
 
@@ -117,7 +116,7 @@ impl AvatarProvider {
             };
             ip.iter().all(|ip| ip.is_global())
           })
-          .map(|rec| (Cow::Owned(rec.target().to_ascii()), rec.port()))
+          .map(|rec| (Cow::Owned(rec.target().to_ascii().trim_end_matches('.').to_string()), rec.port()))
           .next()
           // otherwise, use default
           .unwrap_or(AvatarProvider::LIBRAVATAR)

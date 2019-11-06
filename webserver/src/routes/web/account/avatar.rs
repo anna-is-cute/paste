@@ -15,7 +15,11 @@ use diesel::prelude::*;
 
 use redis::Commands;
 
-use reqwest::{Client, RedirectPolicy, StatusCode};
+use reqwest::{
+  blocking::Client,
+  RedirectPolicy,
+  StatusCode,
+};
 
 use rocket::{
   Outcome,
@@ -43,9 +47,29 @@ pub enum Avatar<'r> {
 #[get("/account/avatar/<id>")]
 pub fn get<'r>(id: UserId, config: State<Config>, if_mod: IfMod, conn: DbConn, mut redis: Redis) -> Result<Avatar<'r>> {
   lazy_static! {
+    // build a client that handles redirects safely
     pub static ref CLIENT: Client = Client::builder()
-      // do not allow redirects
-      .redirect(RedirectPolicy::none())
+      // allow redirects to global IPs
+      .redirect(RedirectPolicy::custom(|req| {
+        // limit redirects to 5
+        if req.previous().len() >= 5 {
+          return req.too_many_redirects();
+        }
+
+        // get the IPs of the redirect url or stop
+        let addrs = match req.url().socket_addrs(|| None) {
+          Ok(addrs) => addrs,
+          Err(_) => return req.stop(),
+        };
+
+        // prevent any non-global redirect
+        if addrs.iter().any(|addr| !addr.ip().is_global()) {
+          return req.stop();
+        }
+
+        // follow the redirect
+        req.follow()
+      }))
       .build()
       .expect("could not build client");
   }
@@ -54,10 +78,14 @@ pub fn get<'r>(id: UserId, config: State<Config>, if_mod: IfMod, conn: DbConn, m
   const HEADERS: &[&str] = &[
     "Content-Type", "Content-Length", "Cache-Control", "Expires", "Last-Modified",
   ];
+  // empty byte slice for redis
   const EMPTY: &[u8] = &[];
+  // time to cache webp avatars
   const CACHE_TIME: usize = 600;
+  // webp quality (0 - 100) for re-encoded avatars
   const WEBP_QUALITY: f32 = 90.0;
 
+  // build an appropriate response if there's a webp avatar to serve
   fn webp_response<'r>(bytes: Vec<u8>) -> Response<'r> {
     Response::build()
       .header(ContentType::WEBP)
@@ -81,17 +109,24 @@ pub fn get<'r>(id: UserId, config: State<Config>, if_mod: IfMod, conn: DbConn, m
   let (domain, port) = user.avatar_provider().domain(user.email());
   // hash the user's email with the service's hash algo
   let hash = user.avatar_provider().hash(user.email());
+
+  // create the avatar key for redis
   let redis_key = format!("avatar:{}:{}", domain, hash);
 
+  // determine if a conversion attempt should be made
   let attempt_convert = if config.read().general.convert_avatars {
     let bytes: Option<Vec<u8>> = redis.get(&redis_key)?;
 
     match bytes {
+      // if redis has an empty value for the key, do not attempt to convert
       Some(bytes) if bytes.is_empty() => false,
+      // if redis has no value, attempt a convert
       None => true,
+      // if there is already a converted avatar, return it
       Some(bytes) => return Ok(Avatar::Avatar(webp_response(bytes))),
     }
   } else {
+    // if the convert_avatars setting is off, do not attempt
     false
   };
 

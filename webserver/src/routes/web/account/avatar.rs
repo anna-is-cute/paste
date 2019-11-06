@@ -152,6 +152,9 @@ pub fn get<'r>(id: UserId, config: State<Config>, if_mod: IfMod, conn: DbConn, m
     return Ok(Avatar::NotModified(()));
   }
 
+  // if the body gets read and needs to be used later, keep track of it
+  let mut body = None;
+
   if attempt_convert {
     // allocate a buffer for the image
     let len = resp.content_length()
@@ -171,7 +174,10 @@ pub fn get<'r>(id: UserId, config: State<Config>, if_mod: IfMod, conn: DbConn, m
         return Ok(Avatar::Avatar(webp_response(webp_bytes)));
       },
       // otherwise, mark the avatar as "do not convert" for the cache time
-      _ => redis.set_ex(&redis_key, EMPTY, CACHE_TIME)?,
+      _ => {
+        redis.set_ex(&redis_key, EMPTY, CACHE_TIME)?;
+        body = Some(bytes);
+      },
     }
   }
 
@@ -207,11 +213,15 @@ pub fn get<'r>(id: UserId, config: State<Config>, if_mod: IfMod, conn: DbConn, m
   // get the status of our request
   let resp_status = resp.status();
 
-  builder
-    // stream the response
-    .streamed_body(resp)
-    // set the status to what we received
-    .raw_status(resp_status.as_u16(), resp_status.canonical_reason().unwrap_or(""));
+  match body {
+    // if we downloaded the response earlier, send it
+    Some(bytes) => builder.sized_body(Cursor::new(bytes)),
+    // otherwise, stream it directly
+    None => builder.streamed_body(resp),
+  };
+
+  // set the status to what we received
+  builder.raw_status(resp_status.as_u16(), resp_status.canonical_reason().unwrap_or(""));
 
   Ok(Avatar::Avatar(builder.finalize()))
 }

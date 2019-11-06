@@ -5,7 +5,7 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-eDaDE1Yhbf76tCWA+34VBz+ApyYq6c79lCsUs0c6NH348bE87s8xN5G7wAJ7H82a"></script>
+  integrity="sha384-UxTcHkMZg8F/aXIX/G3Ln4H5G5WDgRf6AD8g1fxpjYroUKvT/bw6q4tA6b17HjMZ"></script>
 {%- endblock head %}
 
 {% block title -%}{{ tr(_langs=langs, _msg="tfa-disable") }}{%- endblock title %}
@@ -49,13 +49,13 @@
             type="password"
             placeholder="{{ tr(_langs=langs, _msg="tfa-disable-password", _attr="placeholder") }}"/>
           <span class="icon is-small is-left">
-            <i class="fas fa-asterisk"></i>
+            {{ icon::icon(i = "password") }}
           </span>
         </div>
-        <div class="control">
+        <div class="control requires-js">
           <a name="password_reveal" class="button">
             <span class="icon is-small">
-              <i class="fas fa-eye"></i>
+              {{ icon::icon(i = "eye") }}
             </span>
           </a>
         </div>

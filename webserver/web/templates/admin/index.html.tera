@@ -1,0 +1,40 @@
+{% extends "base" %}
+
+{% import "admin/_nav" as nav %}
+
+{% block head -%}
+{{ super() }}
+{%- endblock head %}
+
+{% block title -%}
+{{ tr(_langs=langs, _msg="admin-overview", _attr="title") }}
+{%- endblock title %}
+
+{% block header_title -%}
+{{ tr(_langs=langs, _msg="admin-overview", _attr="title") }}
+{%- endblock header_title %}
+
+{% block header_subtitle -%}
+{{ tr(_langs=langs, _msg="admin-overview", _attr="subtitle") }}
+{%- endblock header_subtitle %}
+
+{% block header_foot %}
+{{ nav::nav(active = "overview") }}
+{% endblock header_foot %}
+
+{% block main %}
+<nav class="level">
+  <div class="level-item has-text-centered">
+    <div>
+      <p class="heading">{{ tr(_langs=langs, _msg="admin-stats", _attr="pastes") }}</p>
+      <p class="title">{{ total_pastes }}</p>
+    </div>
+  </div>
+  <div class="level-item has-text-centered">
+    <div>
+      <p class="heading">{{ tr(_langs=langs, _msg="admin-stats", _attr="users") }}</p>
+      <p class="title">{{ total_users }}</p>
+    </div>
+  </div>
+</nav>
+{% endblock main %}

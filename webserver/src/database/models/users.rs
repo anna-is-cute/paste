@@ -2,7 +2,7 @@ use crate::{
   errors::*,
   models::{
     id::{ApiKeyId, UserId},
-    user::AvatarProvider,
+    user::{Admin, AvatarProvider},
   },
 };
 
@@ -32,6 +32,7 @@ pub struct User {
   shared_secret: Option<Vec<u8>>,
   #[serde(skip_serializing)]
   tfa_enabled: bool,
+  admin: Admin,
   avatar_provider: AvatarProvider,
 }
 
@@ -94,6 +95,22 @@ impl User {
 
   pub fn set_tfa_enabled(&mut self, enabled: bool) {
     self.tfa_enabled = enabled;
+  }
+
+  pub fn admin(&self) -> Admin {
+    self.admin
+  }
+
+  pub fn set_admin(&mut self, admin: Admin) {
+    self.admin = admin;
+  }
+
+  pub fn is_admin(&self) -> bool {
+    self.admin == Admin::Normal || self.admin == Admin::Super
+  }
+
+  pub fn is_superadmin(&self) -> bool {
+    self.admin == Admin::Super
   }
 
   pub fn avatar_provider(&self) -> AvatarProvider {

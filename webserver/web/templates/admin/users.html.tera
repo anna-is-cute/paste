@@ -1,0 +1,217 @@
+{% extends "base" %}
+
+{% import "admin/_nav" as nav %}
+
+{% block head -%}
+{{ super() }}
+<script
+  defer
+  src="/static/js/modal.js?v={{ resources_version }}"
+  integrity="sha384-VNZEXJC5bFeruyyTI31QPYFF+pVufPx71P6qoX/3lX7c0YhMv+4jL60dVqYYXZ1X"></script>
+{%- endblock head %}
+
+{% block title -%}
+  {{ tr(_langs=langs, _msg="admin-users", _attr="title") }}
+{%- endblock title %}
+
+{% block header_title -%}
+{{ tr(_langs=langs, _msg="admin-users", _attr="title") }}
+{%- endblock header_title %}
+
+{% block header_subtitle -%}
+{{ tr(_langs=langs, _msg="admin-users", _attr="subtitle") }}
+{%- endblock header_subtitle %}
+
+{% block header_foot %}
+{{ nav::nav(active = "users") }}
+{% endblock header_foot %}
+
+{% block main %}
+<table class="table is-striped is-fullwidth is-middle">
+  <thead>
+    <tr>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="name") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="username") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="email") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="email-verified") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="tfa-enabled") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="admin") }}</th>
+      <th>{{ tr(_langs=langs, _msg="admin-users-table", _attr="actions") }}</th>
+    </tr>
+  </thead>
+  <tbody>
+  {%- for target in users %}
+    <tr>
+      <td>{{ target.name }}</td>
+      <td>{{ target.username }}</td>
+      <td>{{ target.email }}</td>
+      <td>
+      {%- if target.email_verified -%}
+        {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="yes") }}
+      {%- else -%}
+        {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="no") }}
+      {%- endif -%}
+      </td>
+      <td>
+        {%- if tfa[target.id] -%}
+          {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="yes") }}
+        {%- else -%}
+          {{ tr(_langs=langs, _msg="admin-users-yes-no", _attr="no") }}
+        {%- endif -%}
+      </td>
+      <td>{{ tr(_langs=langs, _msg="admin-users-admin", _attr=target.admin) }}</td>
+      <td>
+        <div class="field is-grouped">
+        {% set other_admin = user.admin == "normal" and target.admin == "normal" and user.id != target.id %}
+        {% if target.admin != "super" and not other_admin %}
+          <div class="control">
+            <form action="{{ links.delete[target.id] }}" method="post">
+              <input type="hidden" name="_method" value="delete"/>
+              <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+              <button class="button is-danger opens-modal" data-modal-id="delete-{{ target.id }}">
+                <span class="icon is-small">
+                  {{ icon::icon(i = "delete") }}
+                </span>
+              </button>
+              <div id="delete-{{ target.id }}" class="requires-js modal">
+                <div class="modal-background closes-modal" data-modal-id="delete-{{ target.id }}"></div>
+                <div class="modal-content">
+                  <div class="modal-card">
+                    <header class="modal-card-head">
+                      <p class="modal-card-title">{{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="title") }}</p>
+                      <button class="delete closes-modal" data-modal-id="delete-{{ target.id }}" aria-label="close" type="button"></button>
+                    </header>
+                    <section class="modal-card-body">
+                      <div class="content">
+                        <p>
+                          {{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="confirm") }}
+                        </p>
+                      </div>
+                    </section>
+                    <footer class="modal-card-foot">
+                      <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="admin-users-delete-modal", _attr="button") }}</button>
+                    </footer>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        {% endif %}
+        {% if user.admin == "super" %}
+          {% if target.admin == "none" %}
+          <div class="control">
+            <form method="post" action="{{ links.promote[target.id] }}">
+              <input type="hidden" name="_method" value="patch"/>
+              <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+              <button class="button is-primary opens-modal" data-modal-id="promote-{{ target.id }}">
+                <span class="icon is-small">
+                  {{ icon::icon(i = "admin-add") }}
+                </span>
+              </button>
+              <div id="promote-{{ target.id }}" class="requires-js modal">
+                <div class="modal-background closes-modal" data-modal-id="promote-{{ target.id }}"></div>
+                <div class="modal-content">
+                  <div class="modal-card">
+                    <header class="modal-card-head">
+                      <p class="modal-card-title">
+                        {{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="title", user=target.username) | safe }}
+                      </p>
+                      <button class="delete closes-modal" data-modal-id="promote-{{ target.id }}" aria-label="close" type="button"></button>
+                    </header>
+                    <section class="modal-card-body">
+                      <div class="content">
+                        <p>
+                          {{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="line-1", user=target.username) | safe }}
+                        </p>
+                        <dl>
+                          <dt>{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="superadmin") }}</dt>
+                          <dd>
+                            {{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="superadmin-desc") }}
+                            <br/>
+                            {{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="superadmin-warning") | safe }}
+                          </dd>
+
+                          <dt>{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="admin") }}</dt>
+                          <dd>{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="admin-desc") }}</dd>
+                        </dl>
+                        <div class="control">
+                          <div class="select">
+                            <select name="level">
+                              <option value="super">{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="superadmin") }}</option>
+                              <option value="admin" selected>{{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="admin") }}</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                    <footer class="modal-card-foot">
+                      <button class="button is-info" type="submit">
+                        {{ tr(_langs=langs, _msg="admin-users-promote-modal", _attr="button") }}
+                      </button>
+                    </footer>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          {% elif target.admin != "super" %}
+          <div class="control">
+            <form method="post" action="{{ links.demote[target.id] }}">
+              <input type="hidden" name="_method" value="patch"/>
+              <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+              <button class="button is-warning opens-modal" data-modal-id="demote-{{ target.id }}">
+                <span class="icon is-small">
+                  {{ icon::icon(i = "admin-remove") }}
+                </span>
+              </button>
+              <div id="demote-{{ target.id }}" class="requires-js modal">
+                <div class="modal-background closes-modal" data-modal-id="demote-{{ target.id }}"></div>
+                <div class="modal-content">
+                  <div class="modal-card">
+                    <header class="modal-card-head">
+                      <p class="modal-card-title">
+                        {{ tr(_langs=langs, _msg="admin-users-demote-modal", _attr="title", user=target.username) | safe }}
+                      </p>
+                      <button class="delete closes-modal" data-modal-id="demote-{{ target.id }}" aria-label="close" type="button"></button>
+                    </header>
+                    <section class="modal-card-body">
+                      <div class="content">
+                        <p>
+                          {{ tr(_langs=langs, _msg="admin-users-demote-modal", _attr="desc", user=target.username) | safe }}
+                        </p>
+                      </div>
+                    </section>
+                    <footer class="modal-card-foot">
+                      <button class="button is-warning" type="submit">
+                        {{ tr(_langs=langs, _msg="admin-users-demote-modal", _attr="button") }}
+                      </button>
+                    </footer>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          {% endif %}
+        {% endif %}
+        </div>
+      </td>
+    </tr>
+  {%- endfor %}
+  </tbody>
+</table>
+
+{% if pagination.max_page > 1 %}
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+  {% if pagination.page == 1 %}
+    <a class="pagination-previous" disabled>{{ tr(_langs=langs, _msg="pagination", _attr="previous") }}</a>
+  {% else %}
+    <a href="{{ links.prev }}" class="pagination-previous">{{ tr(_langs=langs, _msg="pagination", _attr="previous") }}</a>
+  {% endif %}
+  {% if pagination.page == pagination.max_page %}
+    <a class="pagination-next" disabled>{{ tr(_langs=langs, _msg="pagination", _attr="next") }}</a>
+  {% else %}
+    <a href="{{ links.next }}" class="pagination-next">{{ tr(_langs=langs, _msg="pagination", _attr="next") }}</a>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock main %}

@@ -3,7 +3,7 @@
 use crate::{
   config::Config,
   database::{PostgresPool, schema},
-  database::models::deletion_keys::DeletionKey,
+  database::models::deletion_keys::SecretDeletionKey,
   database::models::users::User,
   errors::*,
   models::id::ApiKeyId,
@@ -100,7 +100,7 @@ pub enum ApiKeyError {
 #[derive(Debug)]
 pub enum DeletionAuth {
   User(User),
-  Key(DeletionKey),
+  Key(SecretDeletionKey),
 }
 
 #[derive(Debug)]
@@ -146,17 +146,7 @@ impl FromRequest<'a, 'r> for DeletionAuth {
       .optional();
     let auth = match user {
       Ok(Some(u)) => DeletionAuth::User(u),
-      Ok(None) => {
-        match schema::deletion_keys::table
-          .filter(schema::deletion_keys::key.eq(uuid))
-          .first(&*conn)
-          .optional()
-        {
-          Ok(Some(d)) => DeletionAuth::Key(d),
-          Ok(None) => return Outcome::Failure((HttpStatus::BadRequest, ApiKeyError::NotLinked)),
-          Err(_) => return Outcome::Failure((HttpStatus::ServiceUnavailable, ApiKeyError::Internal)),
-        }
-      },
+      Ok(None) => DeletionAuth::Key(SecretDeletionKey(uuid)),
       Err(_) => return Outcome::Failure((HttpStatus::ServiceUnavailable, ApiKeyError::Internal)),
     };
     Outcome::Success(auth)

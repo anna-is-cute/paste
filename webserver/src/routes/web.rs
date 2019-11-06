@@ -10,6 +10,8 @@ use crate::{
 
 use cookie::{Cookie, SameSite};
 
+use data_encoding::BASE64;
+
 use diesel::prelude::*;
 
 use hashbrown::HashMap;
@@ -51,6 +53,7 @@ macro_rules! links {
 
 pub mod about;
 pub mod account;
+pub mod admin;
 pub mod auth;
 pub mod credits;
 pub mod fairings;
@@ -91,7 +94,7 @@ impl Honeypot {
 
     let mut hasher = Sha384::new();
     hasher.input(&css);
-    let integrity_hash = format!("sha384-{}", base64::encode(&hasher.result()[..]));
+    let integrity_hash = format!("sha384-{}", BASE64.encode(&hasher.result()[..]));
 
     Honeypot {
       class,
@@ -129,7 +132,7 @@ impl<'a, 'r> AntiSpam<'a, 'r> {
 
     let mut hasher = Sha384::new();
     hasher.input(&script);
-    let integrity_hash = format!("sha384-{}", base64::encode(&hasher.result()[..]));
+    let integrity_hash = format!("sha384-{}", BASE64.encode(&hasher.result()[..]));
 
     let x: u8 = rng.gen_range(1, 10);
     let y: u8 = rng.gen_range(1, 10);
@@ -238,6 +241,7 @@ lazy_static! {
       .add("logout", uri!(crate::routes::web::auth::logout::post))
       .add("register", uri!(crate::routes::web::auth::register::get))
       .add("settings", uri!(crate::routes::web::account::index::get))
+      .add("admin", uri!(crate::routes::web::admin::index::get))
       .add("credits", uri!(crate::routes::web::credits::get));
     links
   };
@@ -245,9 +249,10 @@ lazy_static! {
 
 pub fn context(config: &Config, user: Option<&User>, session: &mut Session, langs: AcceptLanguage) -> Value {
   json!({
-    "config": &config,
+    "config": &*config.read(),
     "langs": langs.into_strings(),
     "error": session.data.remove("error"),
+    "error_safe": session.data.remove("error_safe"),
     "info": session.data.remove("info"),
     "form": session.take_form(),
     "user": user,
@@ -312,6 +317,7 @@ impl Deref for OptionalWebUser {
 }
 
 #[derive(Responder)]
+#[allow(clippy::large_enum_variant)]
 pub enum Rst {
   Redirect(Redirect),
   Status(HttpStatus),

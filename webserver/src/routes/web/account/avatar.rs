@@ -1,4 +1,5 @@
 use crate::{
+  config::Config,
   database::{
     DbConn,
     schema::users,
@@ -6,21 +7,30 @@ use crate::{
   },
   errors::*,
   models::id::UserId,
+  redis_store::Redis,
+  utils::webp,
 };
 
 use diesel::prelude::*;
+
+use redis::Commands;
 
 use reqwest::{Client, RedirectPolicy, StatusCode};
 
 use rocket::{
   Outcome,
   State,
-  http::{Header, Status},
+  http::{
+    ContentType, Header, Status,
+    hyper::header::{CacheControl, CacheDirective},
+  },
   request::{self, FromRequest, Request},
   response::Response,
 };
 
 use url::Url;
+
+use std::io::{Cursor, Read};
 
 #[derive(Responder)]
 pub enum Avatar<'r> {
@@ -31,7 +41,7 @@ pub enum Avatar<'r> {
 }
 
 #[get("/account/avatar/<id>")]
-pub fn get<'r>(id: UserId, if_mod: IfMod, conn: DbConn) -> Result<Avatar<'r>> {
+pub fn get<'r>(id: UserId, config: State<Config>, if_mod: IfMod, conn: DbConn, mut redis: Redis) -> Result<Avatar<'r>> {
   lazy_static! {
     pub static ref CLIENT: Client = Client::builder()
       // do not allow redirects
@@ -44,6 +54,21 @@ pub fn get<'r>(id: UserId, if_mod: IfMod, conn: DbConn) -> Result<Avatar<'r>> {
   const HEADERS: &[&str] = &[
     "Content-Type", "Content-Length", "Cache-Control", "Expires", "Last-Modified",
   ];
+  const EMPTY: &[u8] = &[];
+  const CACHE_TIME: usize = 600;
+  const WEBP_QUALITY: f32 = 90.0;
+
+  fn webp_response<'r>(bytes: Vec<u8>) -> Response<'r> {
+    Response::build()
+      .header(ContentType::WEBP)
+      .header(CacheControl(vec![
+        CacheDirective::Public,
+        CacheDirective::MaxAge(CACHE_TIME as u32),
+      ]))
+      .sized_body(Cursor::new(bytes))
+      .status(Status::Ok)
+      .finalize()
+  }
 
   // get the user referenced by the given id
   let user: Option<User> = users::table.find(id).first(&*conn).optional()?;
@@ -56,6 +81,19 @@ pub fn get<'r>(id: UserId, if_mod: IfMod, conn: DbConn) -> Result<Avatar<'r>> {
   let (domain, port) = user.avatar_provider().domain(user.email());
   // hash the user's email with the service's hash algo
   let hash = user.avatar_provider().hash(user.email());
+  let redis_key = format!("avatar:{}:{}", domain, hash);
+
+  let attempt_convert = if config.read().general.convert_avatars {
+    let bytes: Option<Vec<u8>> = redis.get(&redis_key)?;
+
+    match bytes {
+      Some(bytes) if bytes.is_empty() => false,
+      None => true,
+      Some(bytes) => return Ok(Avatar::Avatar(webp_response(bytes))),
+    }
+  } else {
+    false
+  };
 
   // create a url from the given host, port, and hash (256px and default to identicons)
   let mut url = Url::parse("https://example.com/avatar/")?.join(&hash)?;
@@ -72,14 +110,36 @@ pub fn get<'r>(id: UserId, if_mod: IfMod, conn: DbConn) -> Result<Avatar<'r>> {
     req = req.header("If-Modified-Since", s);
   }
   // send the request
-  let resp = req.send()?;
+  let mut resp = req.send()?;
 
   // if not modified, return not modified
   if resp.status() == StatusCode::NOT_MODIFIED {
     return Ok(Avatar::NotModified(()));
   }
 
-  // create our image response
+  if attempt_convert {
+    // allocate a buffer for the image
+    let len = resp.content_length()
+      .map(|l| std::cmp::min(l, 250 * 1_000) as usize)
+      .unwrap_or(125 * 1_000);
+    let mut bytes = Vec::with_capacity(len);
+    // read in the response
+    resp.read_to_end(&mut bytes)?;
+    // attempt to parse the image and convert it
+    let image = image::load_from_memory(&bytes)
+      .ok()
+      .and_then(|i| webp::convert(&i, WEBP_QUALITY));
+    match image {
+      // if successful and the result is smaller than the original image, cache it and return it
+      Some(webp_bytes) if webp_bytes.len() < bytes.len() => {
+        redis.set_ex(&redis_key, &*webp_bytes, CACHE_TIME)?;
+        return Ok(Avatar::Avatar(webp_response(webp_bytes)));
+      },
+      // otherwise, mark the avatar as "do not convert" for the cache time
+      _ => redis.set_ex(&redis_key, EMPTY, CACHE_TIME)?,
+    }
+  }
+
   let mut builder = Response::build();
 
   // forward the allowed headers

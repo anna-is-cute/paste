@@ -1,5 +1,7 @@
 use md5::{Md5, Digest};
 
+use data_encoding::HEXLOWER;
+
 use diesel::{
   Queryable,
   backend::Backend,
@@ -7,8 +9,6 @@ use diesel::{
   serialize::{self, ToSql},
   sql_types::SmallInt,
 };
-
-use failure::format_err;
 
 use rocket::{http::RawStr, request::FromFormValue};
 
@@ -19,6 +19,62 @@ use std::{
   cell::RefCell,
   io::Write,
 };
+
+/// Admin status of a [`User`].
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, AsExpression)]
+#[sql_type = "SmallInt"]
+#[serde(rename_all = "lowercase")]
+pub enum Admin {
+  /// User is not an admin.
+  None,
+  /// User is a normal admin.
+  Normal,
+  /// User is a superadmin.
+  Super,
+}
+
+impl Default for Admin {
+  fn default() -> Self {
+    Admin::None
+  }
+}
+
+impl<DB: Backend<RawValue = [u8]>> Queryable<SmallInt, DB> for Admin {
+  type Row = i16;
+
+  fn build(row: Self::Row) -> Self {
+    match row {
+      0 => Admin::None,
+      1 => Admin::Normal,
+      2 => Admin::Super,
+      _ => panic!("invalid admin in database")
+    }
+  }
+}
+
+impl<DB: Backend> ToSql<SmallInt, DB> for Admin {
+  fn to_sql<W: Write>(&self, out: &mut serialize::Output<W, DB>) -> serialize::Result {
+    let admin: i16 = match *self {
+      Admin::None => 0,
+      Admin::Normal => 1,
+      Admin::Super => 2,
+    };
+
+    <i16 as ToSql<SmallInt, DB>>::to_sql(&admin, out)
+  }
+}
+
+impl<DB: Backend<RawValue = [u8]>> FromSql<SmallInt, DB> for Admin {
+  fn from_sql(bytes: Option<&DB::RawValue>) -> deserialize::Result<Self> {
+    let admin = match <i16 as FromSql<SmallInt, DB>>::from_sql(bytes)? {
+      0 => Admin::None,
+      1 => Admin::Normal,
+      2 => Admin::Super,
+      x => return Err(anyhow::anyhow!("bad admin enum: {}", x).into()),
+    };
+    Ok(admin)
+  }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, AsExpression, Serialize, Deserialize)]
 #[sql_type = "SmallInt"]
@@ -71,8 +127,8 @@ impl AvatarProvider {
 
   pub fn hash(self, s: &str) -> String {
     match self {
-      AvatarProvider::Gravatar => hex::encode(&Md5::digest(s.as_bytes())[..]),
-      AvatarProvider::Libravatar => hex::encode(&sha256::hash(s.as_bytes())[..]),
+      AvatarProvider::Gravatar => HEXLOWER.encode(&Md5::digest(s.as_bytes())[..]),
+      AvatarProvider::Libravatar => HEXLOWER.encode(&sha256::hash(s.as_bytes())[..]),
     }
   }
 }
@@ -111,7 +167,7 @@ impl<DB: Backend<RawValue = [u8]>> FromSql<SmallInt, DB> for AvatarProvider {
     let visibility = match <i16 as FromSql<SmallInt, DB>>::from_sql(bytes)? {
       0 => AvatarProvider::Gravatar,
       1 => AvatarProvider::Libravatar,
-      x => return Err(Box::new(format_err!("bad avatar provider enum: {}", x).compat())),
+      x => return Err(anyhow::anyhow!("bad avatar provider enum: {}", x).into()),
     };
     Ok(visibility)
   }

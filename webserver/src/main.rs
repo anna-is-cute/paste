@@ -3,10 +3,11 @@
   in_band_lifetimes,
   ip,
   proc_macro_hygiene,
+  ip,
 )]
 #![recursion_limit = "1024"]
 
-#![allow(proc_macro_derive_resolution_fallback)]
+#![allow(proc_macro_derive_resolution_fallback, clippy::too_many_arguments)]
 
 #[macro_use]
 extern crate diesel;
@@ -33,13 +34,15 @@ mod utils;
 
 use crate::routes::web::fairings;
 
+use parking_lot::RwLock;
+
 use rocket_contrib::templates::Template;
 
 use tera::Tera;
 
 use trust_dns_resolver::Resolver;
 
-use std::{env, path::PathBuf};
+use std::env;
 
 pub static SERVER_VERSION: Option<&'static str> = include!(concat!(env!("OUT_DIR"), "/version"));
 
@@ -86,32 +89,19 @@ fn main() {
   };
 
   let config = match config::load_config(&config_path) {
-    Ok(mut c) => {
-      let path = match PathBuf::from(config_path).canonicalize() {
-        Ok(p) => p,
-        Err(e) => {
-          println!("could not canonicalise config path: {}", e);
-          return;
-        },
-      };
-      c._path = Some(path);
-      if let Err(e) = std::fs::create_dir_all(&c.store.path) {
-        println!("could not create store at {}: {}", c.store.path.to_string_lossy(), e);
-        return;
-      }
-      c.store.path = match c.store.path.canonicalize() {
-        Ok(p) => p,
-        Err(e) => {
-          println!("could not canonicalise store path: {}", e);
-          return;
-        },
-      };
-      c
-    },
+    Ok(c) => RwLock::new(c),
     Err(e) => {
       println!("could not load config.toml: {}", e);
       return;
     }
+  };
+
+  let localisation = match self::i18n::Localisation::new() {
+    Ok(l) => l,
+    Err(e) => {
+      println!("could not set up localisation: {:?}", e);
+      return;
+    },
   };
 
   lazy_static::initialize(&EMAIL_TERA);
@@ -125,6 +115,7 @@ fn main() {
     .manage(redis_store::init_sidekiq())
     .manage(config)
     .manage(reqwest::Client::new())
+    .manage(localisation)
     .attach(fairings::Csp)
     .attach(fairings::SecurityHeaders)
     .attach(fairings::LastPage::default())
@@ -149,6 +140,8 @@ fn main() {
 
       routes::web::auth::login::get,
       routes::web::auth::login::post,
+      routes::web::auth::login::tfa,
+      routes::web::auth::login::tfa_post,
 
       routes::web::auth::logout::post,
 
@@ -158,6 +151,8 @@ fn main() {
       routes::web::pastes::get::id,
       routes::web::pastes::get::username_id,
       routes::web::pastes::get::users_username_id,
+
+      routes::web::pastes::get::delete,
 
       routes::web::pastes::files::raw::get,
 
@@ -199,6 +194,24 @@ fn main() {
       routes::web::account::reset_password::reset_post,
 
       routes::web::account::avatar::get,
+
+      routes::web::account::adminify::get,
+
+      routes::web::admin::index::get,
+      // routes::web::admin::maintenance::get,
+
+      routes::web::admin::config::get,
+      routes::web::admin::config::post,
+
+      routes::web::admin::pastes::get,
+      routes::web::admin::pastes::delete,
+      routes::web::admin::pastes::delete_get,
+      routes::web::admin::pastes::batch_delete,
+
+      routes::web::admin::users::get,
+      routes::web::admin::users::delete,
+      routes::web::admin::users::promote,
+      routes::web::admin::users::demote,
 
       routes::web::users::get::get,
     ])

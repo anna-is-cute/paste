@@ -14,8 +14,8 @@ table! {
 }
 
 table! {
-    deletion_keys (key) {
-        key -> Uuid,
+    deletion_keys (paste_id) {
+        key -> Text,
         paste_id -> Uuid,
     }
 }
@@ -90,6 +90,7 @@ table! {
         email_verified -> Bool,
         shared_secret -> Nullable<Bytea>,
         tfa_enabled -> Bool,
+        admin -> Int2,
         avatar_provider -> Int2,
     }
 }

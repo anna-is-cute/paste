@@ -9,7 +9,7 @@
 <script
   defer
   src="/static/js/password.js?v={{ resources_version }}"
-  integrity="sha384-eDaDE1Yhbf76tCWA+34VBz+ApyYq6c79lCsUs0c6NH348bE87s8xN5G7wAJ7H82a"></script>
+  integrity="sha384-UxTcHkMZg8F/aXIX/G3Ln4H5G5WDgRf6AD8g1fxpjYroUKvT/bw6q4tA6b17HjMZ"></script>
 <style integrity="{{ honeypot.integrity_hash | safe }}">{{ honeypot.css }}</style>
 {%- endblock head %}
 
@@ -26,6 +26,12 @@
 {%- endblock header_subtitle %}
 
 {% block main %}
+{% if not config.registration.open %}
+<div class="notification is-warning">
+  Registration is not open. You must have a whitelisted email address to register.
+</div>
+{% endif %}
+
 <form method="post" action="{{ links.register_action }}">
   <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
   <div class="field">
@@ -41,7 +47,7 @@
         {% if form.name %}value="{{ form.name }}"{% endif %}
         placeholder="{{ tr(_langs=langs, _msg="register-display-name", _attr="placeholder") }}"/>
       <span class="icon is-small is-left">
-        <i class="fas fa-id-card"></i>
+        {{ icon::icon(i = "display-name") }}
       </span>
     </div>
   </div>
@@ -60,7 +66,7 @@
         {% if form.username %}value="{{ form.username }}"{% endif %}
         placeholder="{{ tr(_langs=langs, _msg="register-username", _attr="placeholder") }}"/>
       <span class="icon is-small is-left">
-        <i class="fas fa-user"></i>
+        {{ icon::icon(i = "username") }}
       </span>
     </div>
   </div>
@@ -84,7 +90,7 @@
         {% if form.email %}value="{{ form.email }}"{% endif %}
         placeholder="{{ tr(_langs=langs, _msg="register-email", _attr="placeholder") }}"/>
       <span class="icon is-small is-left">
-        <i class="fas fa-envelope"></i>
+        {{ icon::icon(i = "email") }}
       </span>
     </div>
   </div>
@@ -102,18 +108,18 @@
           minlength="10"
           placeholder="{{ tr(_langs=langs, _msg="register-password", _attr="placeholder") }}"/>
         <span class="icon is-small is-left">
-          <i class="fas fa-asterisk"></i>
+          {{ icon::icon(i = "password") }}
         </span>
       </div>
-      <div class="control">
+      <div class="control requires-js">
         <a name="password_reveal" class="button">
           <span class="icon is-small">
-            <i class="fas fa-eye"></i>
+            {{ icon::icon(i = "eye") }}
           </span>
         </a>
       </div>
     </div>
-    <p class="help">
+    <p class="help requires-js">
       <progress id="strength_progress" class="password progress is-marginless is-danger" value="100" max="100"></progress>
       <span id="strength"></span>
       <span id="strength_warning" class="has-text-warning"></span>
@@ -134,13 +140,13 @@
           placeholder="{{ tr(_langs=langs, _msg="register-password-again", _attr="placeholder") }}"
           required/>
         <span class="icon is-small is-left">
-          <i class="fas fa-asterisk"></i>
+          {{ icon::icon(i = "password") }}
         </span>
       </div>
-      <div class="control">
+      <div class="control requires-js">
         <a name="password_reveal" class="button">
           <span class="icon is-small">
-            <i class="fas fa-eye"></i>
+            {{ icon::icon(i = "eye") }}
           </span>
         </a>
       </div>

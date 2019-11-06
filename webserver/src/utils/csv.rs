@@ -2,12 +2,17 @@ use tera::escape_html;
 
 use csv::{Error, ErrorKind, Reader};
 
-pub fn csv_to_table(content: &str) -> Result<String, String> {
+use crate::{
+  errors::*,
+  i18n::L10n,
+};
+
+pub fn csv_to_table(content: &str, l10n: &L10n) -> std::result::Result<String, Result<String>> {
   let mut table = String::new();
 
   let mut reader = Reader::from_reader(content.as_bytes());
 
-  let headers = reader.headers().map_err(pretty_error)?;
+  let headers = reader.headers().map_err(|e| pretty_error(e, l10n))?;
 
   table.push_str("<table>\n");
   table.push_str("  <thead>\n");
@@ -21,7 +26,7 @@ pub fn csv_to_table(content: &str) -> Result<String, String> {
   table.push_str("  <tbody>\n");
   for rec in reader.records() {
     table.push_str("    <tr>\n");
-    for field in rec.map_err(pretty_error)?.iter() {
+    for field in rec.map_err(|e| pretty_error(e, l10n))?.iter() {
       let safe_field = escape_html(&field);
       table.push_str(&format!("      <td>{}</td>\n", safe_field));
     }
@@ -33,25 +38,35 @@ pub fn csv_to_table(content: &str) -> Result<String, String> {
   Ok(table)
 }
 
-fn pretty_error(e: Error) -> String {
-  let opening = "paste would like to show you this CSV file as a table, but it";
-
+fn pretty_error(e: Error, l10n: &L10n) -> Result<String> {
   let explanation = match e.kind() {
-    ErrorKind::Utf8 { pos, err } => format!(
-      "couldn't be read as valid UTF-8{}: {}",
-      pos.as_ref().map(|x| format!(" at line {} (byte {})", x.line(), x.byte())).unwrap_or_default(),
-      err,
-    ),
-    ErrorKind::UnequalLengths { pos, expected_len, len } => format!(
-      "has a row with {} field{}{} while the previous row had {} field{}",
-      len,
-      if *len == 1 { "" } else { "s" },
-      pos.as_ref().map(|x| format!(" (line {}, byte {})", x.line(), x.byte())).unwrap_or_default(),
-      expected_len,
-      if *expected_len == 1 { "" } else { "s" },
-    ),
-    _ => return e.to_string(),
+    ErrorKind::Utf8 { pos: Some(pos), err } => l10n.tr_ex(
+      ("csv-error", "utf-8-pos"),
+      |req| req
+        .arg("line", pos.line())
+        .arg("byte", pos.byte())
+        .arg("err", err.to_string()),
+    )?,
+    ErrorKind::Utf8 { pos: None, err } => l10n.tr_ex(
+      ("csv-error", "utf-8"),
+      |req| req.arg("err", err.to_string()),
+    )?,
+    ErrorKind::UnequalLengths { pos: Some(pos), expected_len, len } => l10n.tr_ex(
+      ("csv-error", "lengths-pos"),
+      |req| req
+        .arg("secondRowFields", len)
+        .arg("firstRowFields", expected_len)
+        .arg("line", pos.line())
+        .arg("byte", pos.byte()),
+    )?,
+    ErrorKind::UnequalLengths { pos: None, expected_len, len } => l10n.tr_ex(
+      ("csv-error", "lengths"),
+      |req| req
+        .arg("secondRowFields", len)
+        .arg("firstRowFields", expected_len),
+    )?,
+    _ => return Ok(e.to_string()),
   };
 
-  format!("{} {}.", opening, explanation)
+  Ok(explanation)
 }

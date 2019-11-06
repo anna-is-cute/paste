@@ -22,7 +22,7 @@
 <script
   defer
   src="/static/js/modal.js?v={{ resources_version }}"
-  integrity="sha384-J7lVKR2PCcVXiC6KeUdovo/b24Cdk7MWAGS9f1gLIng5bEogApeNytgaPG4iiw90"></script>
+  integrity="sha384-VNZEXJC5bFeruyyTI31QPYFF+pVufPx71P6qoX/3lX7c0YhMv+4jL60dVqYYXZ1X"></script>
 <script
   defer
   src="/static/js/highlightjs/highlight.pack.js?v={{ resources_version }}"
@@ -34,7 +34,7 @@
 <script
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-OLkOmsABjZkHLxet3vqyYB4F0+FBSgeETYe+kp45OSmBrHYxJseA8PFzCtIRilZS"></script>
+  integrity="sha384-cXOcFtnQcrrAWhVoUkTqMYjbbU2Ny2T21NswDBR9fmqUDKIdNa85dzD2bPiWqTJ0"></script>
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
@@ -53,6 +53,7 @@
 {%- endblock title %}
 
 {% block header %}
+{%- set is_admin = user and user.admin != "none" -%}
 <section class="hero is-dark">
   <div class="paste hero-body">
     <div class="paste container">
@@ -62,19 +63,100 @@
           <div class="control">
             <a class="button is-info is-large" href="{{ links.edit }}">
               <span class="icon is-large">
-                <i class="fas fa-pencil-alt"></i>
+                {{ icon::icon(i = "edit") }}
               </span>
             </a>
           </div>
           {% endif %}
           {% if not paste.author or is_owner %}
-          <div class="control">
-            <button class="button is-danger is-large opens-modal" data-modal-id="deletion_modal">
+          <form class="control" id="deletion_form" action="{{ links.delete }}" method="post">
+            <a href="{{ links.delete_standalone }}" class="button is-danger is-large opens-modal" data-modal-id="deletion_modal">
               <span class="icon is-large">
-                <i class="fas fa-trash-alt"></i>
+                {{ icon::icon(i = "delete") }}
               </span>
-            </button>
-          </div>
+            </a>
+            <div id="deletion_modal" class="modal">
+              <input type="hidden" name="_method" value="delete"/>
+              <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+              <div class="modal-background closes-modal" data-modal-id="deletion_modal"></div>
+              <div class="modal-card">
+                <header class="modal-card-head">
+                  <p class="modal-card-title">{{ tr(_langs=langs, _msg="disp-delete-title") }}</p>
+                  <button class="delete closes-modal" data-modal-id="deletion_modal" aria-label="close" type="button"></button>
+                </header>
+                <section class="modal-card-body">
+                {% if not paste.author %}
+                  <div class="content">
+                    <p>
+                      {{ tr(_langs=langs, _msg="disp-delete-description") }}
+                    </p>
+                  </div>
+                  <input
+                    required
+                    id="deletion_key_input"
+                    data-paste-id="{{ paste.id }}"
+                    name="key"
+                    type="text"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    class="input"
+                    placeholder="{{ tr(_langs=langs, _msg="disp-delete-key-placeholder") }}"/>
+                {% endif %}
+                {% if is_owner %}
+                  <div class="content">
+                    <p>
+                      {{ tr(_langs=langs, _msg="disp-delete-confirm") }}
+                    </p>
+                  </div>
+                {% endif %}
+                </section>
+                <footer class="modal-card-foot">
+                  <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="disp-delete-button") }}</button>
+                </footer>
+              </div>
+            </div>
+          </form>
+          {% endif %}
+          {% if is_admin %}
+          <form class="control" action="{{ links.admin_delete }}" method="post">
+            <input type="hidden" name="_method" value="delete"/>
+            <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+            <a href="{{ links.admin_delete_standalone }}" class="button is-danger is-large opens-modal" data-modal-id="admin_deletion_modal">
+              <span class="icon is-large">
+                <svg viewBox="0 0 24 24">
+                  <defs>
+                    <mask id="stroke">
+                      <rect width="100%" height="100%" fill="white"/>
+                      <use class="badge" fill="white" stroke="black" stroke-width="4" href="/static/svg/icons.svg?v={{ resources_version }}#shield"></use>
+                    </mask>
+                  </defs>
+                  <use href="/static/svg/icons.svg?v={{ resources_version }}#delete" mask="url(#stroke)"></use>
+                  <use class="badge" href="/static/svg/icons.svg?v={{ resources_version }}#shield"></use>
+                </svg>
+              </span>
+            </a>
+            <div id="admin_deletion_modal" class="modal requires-js">
+              <div class="modal-background closes-modal" data-modal-id="admin_deletion_modal"></div>
+              <div class="modal-content">
+                <div class="modal-card">
+                  <header class="modal-card-head">
+                    <p class="modal-card-title">{{ tr(_langs=langs, _msg="admin-paste-delete-modal", _attr="title") }}</p>
+                    <button class="delete closes-modal" data-modal-id="admin_deletion_modal" aria-label="close" type="button"></button>
+                  </header>
+                  <section class="modal-card-body">
+                    <div class="content">
+                      <p>
+                        {{ tr(_langs=langs, _msg="admin-paste-delete-modal", _attr="confirm") }}
+                      </p>
+                    </div>
+                  </section>
+                  <footer class="modal-card-foot">
+                    <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="admin-paste-delete-modal", _attr="button") }}</button>
+                  </footer>
+                </div>
+              </div>
+            </div>
+          </form>
           {% endif %}
         </div>
       </div>
@@ -131,50 +213,6 @@
 {% endblock header %}
 
 {% block main %}
-{% if not paste.author or is_owner %}
-<div id="deletion_modal" class="modal">
-  <form id="deletion_form" action="{{ links.delete }}" method="post">
-    <input type="hidden" name="_method" value="delete"/>
-    <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
-    <div class="modal-background closes-modal" data-modal-id="deletion_modal"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <p class="modal-card-title">{{ tr(_langs=langs, _msg="disp-delete-title") }}</p>
-        <button class="delete closes-modal" data-modal-id="deletion_modal" aria-label="close" type="button"></button>
-      </header>
-      <section class="modal-card-body">
-      {% if not paste.author %}
-        <div class="content">
-          <p>
-            {{ tr(_langs=langs, _msg="disp-delete-description") }}
-          </p>
-        </div>
-        <input
-          required
-          id="deletion_key_input"
-          data-paste-id="{{ paste.id }}"
-          name="key"
-          type="text"
-          autocorrect="off"
-          autocapitalize="off"
-          class="input"
-          placeholder="{{ tr(_langs=langs, _msg="disp-delete-key-placeholder") }}"/>
-      {% endif %}
-      {% if is_owner %}
-        <div class="content">
-          <p>
-            {{ tr(_langs=langs, _msg="disp-delete-confirm") }}
-          </p>
-        </div>
-      {% endif %}
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="disp-delete-button") }}</button>
-      </footer>
-    </div>
-  </form>
-</div>
-{% endif %}
 {% if deletion_key %}
 <div class="message is-info">
   <p class="message-header">

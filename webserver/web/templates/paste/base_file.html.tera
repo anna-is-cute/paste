@@ -13,7 +13,7 @@
       <div class="control has-icons-left">
         <div class="select">
           <select name="file_language">
-            <optgroup label="Highlight language">
+            <optgroup label="{{ tr(_langs=langs, _msg="file-language") }}">
               <option value="" selected>
                 {{ tr(_langs=langs, _msg="file-language-auto") }}
               </option>
@@ -25,14 +25,14 @@
             </optgroup>
           </select>
           <span class="icon is-small is-left">
-            <i class="fas fa-code"></i>
+            {{ icon::icon(i = "language") }}
           </span>
         </div>
       </div>
       <div class="requires-js control">
         <button name="delete_button" type="button" class="button is-danger">
           <span class="icon">
-            <i class="fas fa-trash-alt"></i>
+            {{ icon::icon(i = "delete") }}
           </span>
         </button>
       </div>

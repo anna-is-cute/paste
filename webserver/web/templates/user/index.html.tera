@@ -23,7 +23,7 @@
 <script
   defer
   src="/static/js/highlight.js?v={{ resources_version }}"
-  integrity="sha384-OLkOmsABjZkHLxet3vqyYB4F0+FBSgeETYe+kp45OSmBrHYxJseA8PFzCtIRilZS"></script>
+  integrity="sha384-cXOcFtnQcrrAWhVoUkTqMYjbbU2Ny2T21NswDBR9fmqUDKIdNa85dzD2bPiWqTJ0"></script>
 <script
   defer
   src="/static/js/timestamps.js?v={{ resources_version }}"
@@ -35,7 +35,7 @@
 <script
   defer
   src="/static/js/modal.js?v={{ resources_version }}"
-  integrity="sha384-J7lVKR2PCcVXiC6KeUdovo/b24Cdk7MWAGS9f1gLIng5bEogApeNytgaPG4iiw90"></script>
+  integrity="sha384-VNZEXJC5bFeruyyTI31QPYFF+pVufPx71P6qoX/3lX7c0YhMv+4jL60dVqYYXZ1X"></script>
 {%- endblock head %}
 
 {% block title -%}
@@ -110,7 +110,7 @@
     <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
       <span>{{ tr(_langs=langs, _msg="user-select") }}</span>
       <span class="icon is-small">
-        <i class="fas fa-angle-down" aria-hidden="true"></i>
+        {{ icon::icon(i = "chevron-down") }}
       </span>
     </button>
   </div>

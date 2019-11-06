@@ -106,28 +106,28 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
-          <a href="https://fontawesome.com/">FontAwesome</a>
-        </p>
-        <p>
-          A ubiquitous set of icons that you've probably seen before.
-        </p>
-      </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
           <a href="https://highlightjs.org/">highlight.js</a>
         </p>
         <p>
           The syntax highlighter responsible for all highlighting on paste. 
         </p>
       </div>
-    </div>
-    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/wcoder/highlightjs-line-numbers.js">highlightjs-line-numbers.js</a>
         </p>
         <p>
           An add-on for highlight.js that adds line numbers. We use a slightly modified version.
+        </p>
+      </div>
+    </div>
+    <div class="tile is-vertical is-parent">
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://materialdesignicons.com/">Material Design Icons</a>
+        </p>
+        <p>
+          Handy icons that we use a small subset of.
         </p>
       </div>
       <div class="tile box is-child">
@@ -164,18 +164,10 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
-          <a href="https://github.com/andreasots/base32">base32</a>
+          <a href="https://github.com/dtolnay/anyhow">anyhow</a>
         </p>
         <p>
-          A Rust implementation of base32.
-        </p>
-      </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
-          <a href="https://github.com/alicemaz/rust-base64">base64</a>
-        </p>
-        <p>
-          A Rust implementation of base64.
+          Easy error handling in Rust.
         </p>
       </div>
       <div class="tile box is-child">
@@ -212,6 +204,14 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
+          <a href="https://github.com/ia0/data-encoding">data-encoding</a>
+        </p>
+        <p>
+          Various data encodings in Rust.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
           <a href="https://diesel.rs/">diesel</a>
         </p>
         <p>
@@ -224,14 +224,6 @@
         </p>
         <p>
           Loads .env files and makes them environment variables. Useful!
-        </p>
-      </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
-          <a href="https://boats.gitlab.io/failure/">failure</a>
-        </p>
-        <p>
-          Easy error handling in Rust.
         </p>
       </div>
       <div class="tile box is-child">
@@ -252,18 +244,10 @@
       </div>
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
-          <a href="https://github.com/Amanieu/hashbrown">hashbrown</a>
+          <a href="https://github.com/rust-lang/hashbrown">hashbrown</a>
         </p>
         <p>
           A SwissTable implementation in Rust. Faster HashMaps!
-        </p>
-      </div>
-      <div class="tile box is-child">
-        <p class="subtitle is-marginless">
-          <a href="https://github.com/KokaKiwi/rust-hex">hex</a>
-        </p>
-        <p>
-          Encodes and decodes strings of bytes as hexadecimal.
         </p>
       </div>
       <div class="tile box is-child">
@@ -294,12 +278,22 @@
     <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
+          <a href="https://github.com/image-rs/image">image</a>
+        </p>
+        <p>
+          An image processing library.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
           <a href="https://github.com/achanda/ipnetwork">ipnetwork</a>
         </p>
         <p>
           Looks at IPv6 and IPv4 CIDRs. This is what determines whether you get rate limited. 
         </p>
       </div>
+    </div>
+    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://github.com/rust-lang-nursery/lazy-static.rs">lazy_static</a>
@@ -322,6 +316,14 @@
         </p>
         <p>
           Rust implementation of DEFLATE and friends.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/NoXF/libwebp-sys">libwebp-sys</a>
+        </p>
+        <p>
+          Static bindings to libwebp.
         </p>
       </div>
       <div class="tile box is-child">
@@ -362,6 +364,14 @@
         </p>
         <p>
           OATH algorithms for two-factor authentication.
+        </p>
+      </div>
+      <div class="tile box is-child">
+        <p class="subtitle is-marginless">
+          <a href="https://github.com/Amanieu/parking_lot">parking_lot</a>
+        </p>
+        <p>
+          Better synchronisation primitives.
         </p>
       </div>
       <div class="tile box is-child">
@@ -420,6 +430,8 @@
           A web framework for Rust. It powers every single request made to paste.
         </p>
       </div>
+    </div>
+    <div class="tile is-vertical is-parent">
       <div class="tile box is-child">
         <p class="subtitle is-marginless">
           <a href="https://serde.rs/">serde</a>

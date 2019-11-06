@@ -219,7 +219,9 @@ const pasteEditors = {};
     function updateLanguage() {
       function getSuffixFromName(name) {
         if (name === 'CMakeLists.txt') {
-          return 'CMake';
+          return 'cmake';
+        } else if (name.toLowerCase().endsWith('.svg')) {
+          return 'xml';
         }
 
         return name.split('.').pop();
@@ -409,5 +411,13 @@ const pasteEditors = {};
     document.getElementById('absolute-time').value = `${hour}:${minute}`;
 
     document.getElementById('absolute-timezone').value = `${date.offset / 60}`;
+  })();
+
+  (function() {
+    for (const select of document.getElementsByName('visibility')) {
+      select.addEventListener('change', () => {
+        select.dataset.selected = select.value;
+      });
+    }
   })();
 })();

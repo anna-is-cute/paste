@@ -86,9 +86,22 @@ td.hljs-ln-code {
   -ms-user-select: unset;
   user-select: unset;
 
-  a:not([href]) {
-    cursor: text;
-    pointer-events: unset;
+  li:first-child a {
+    margin-left: 0;
+  }
+
+  li:last-child a {
+    margin-right: 0;
+  }
+
+  a {
+    padding: 0;
+    margin: $breadcrumb-item-padding-vertical $breadcrumb-item-padding-horizontal;
+
+    &:not([href]) {
+      cursor: text;
+      pointer-events: unset;
+    }
   }
 }
 
@@ -152,21 +165,22 @@ td.hljs-ln-code {
 
 a.external::after {
   display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-
-  position: relative;
-  bottom: .15rem;
 
   margin-left: .25rem;
 
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  font-size: .6rem;
+  content: ' ';
 
-  content: "\f35d";
+  // chrome has limited support, and many slightly older versions require a prefix
+  -webkit-mask-image: url("/static/svg/external.svg");
+  // display the external icon as a mask of the background colour
+  mask-image: url("/static/svg/external.svg");
+  -webkit-mask-size: 1rem;
+  mask-size: 1rem;
+
+  width: 1rem;
+  height: 1rem;
+
+  background-color: currentColor;
 }
 
 table.is-middle td, table.is-middle th {
@@ -292,6 +306,16 @@ th, td {
 
 #paste_upload .columns .column {
   padding-bottom: 0;
+}
+
+[data-tooltip]:not(.is-loading)::before, [data-tooltip]:not(.is-loading)::after, [data-tooltip]:not(.is-disabled)::before, [data-tooltip]:not(.is-disabled)::after, [data-tooltip]:not([disabled])::before, [data-tooltip]:not([disabled])::after {
+  font-size: unset;
+}
+
+[data-tooltip].has-tooltip-multiline.has-tooltip-large:not(.disabled)::before,
+[data-tooltip].has-tooltip-multiline.has-tooltip-large:not([disabled])::before,
+[data-tooltip].has-tooltip-multiline.has-tooltip-large:not(.is-loading)::before {
+  white-space: pre-line;
 }
 
 .label-icon {
@@ -421,5 +445,47 @@ input[type=checkbox] {
   &.is-info {
     background-color: $info;
     color: $white;
+  }
+}
+
+.icon svg {
+  fill: currentColor;
+  width: inherit;
+  height: inherit;
+}
+
+.navbar-item .icon {
+  margin: .25rem;
+}
+
+.control .icon.is-left svg {
+  padding: .5rem;
+}
+
+.icon svg .badge {
+  transform: scale(0.5) translate(24px, 24px);
+}
+
+.tfa.title {
+  display: flex;
+  align-items: end;
+
+  .icon {
+    margin-right: .5rem;
+  }
+}
+
+select[name = visibility] {
+  // by default, display no visibility icons
+  & ~ .icon {
+    display: none;
+  }
+
+  // show each icon if necessary
+  // note that this could've been done using pure CSS if parent elements could be styled
+  @each $visibility in public unlisted private {
+    &[data-selected = #{$visibility}] ~ .icon[data-visibility = #{$visibility}] {
+      display: unset;
+    }
   }
 }

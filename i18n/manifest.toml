@@ -8,6 +8,9 @@
 
 # all bundles except en should fall back on en as a last resort
 
+# bundles to fall back on, in order, if user sent no languages
+default = ["en"]
+
 # English
 [en]
 serves = [

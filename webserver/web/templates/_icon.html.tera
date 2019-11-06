@@ -1,0 +1,5 @@
+{% macro icon(i) -%}
+<svg viewBox="0 0 24 24">
+  <use href="/static/svg/icons.svg?v={{ resources_version }}#{{ i }}"></use>
+</svg>
+{%- endmacro icon %}

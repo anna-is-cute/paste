@@ -3,15 +3,16 @@ use crate::{
   database::{
     DbConn,
     models::{
-      deletion_keys::DeletionKey,
+      deletion_keys::{DeletionKey, SecretDeletionKey},
       pastes::Paste as DbPaste,
       users::User,
     },
     schema::{users, deletion_keys},
   },
   errors::*,
+  i18n::prelude::*,
   models::{
-    id::{DeletionKeyId, PasteId},
+    id::PasteId,
     paste::Visibility,
   },
   routes::web::{Rst, OptionalWebUser, Session},
@@ -30,11 +31,11 @@ use uuid::Uuid;
 use std::str::FromStr;
 
 #[delete("/p/<username>/<id>", format = "application/x-www-form-urlencoded", data = "<deletion>", rank = 1)]
-pub fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Rst> {
+pub fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Rst> {
   let deletion = deletion.into_inner();
 
   if !sess.check_token(&deletion.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 
@@ -77,22 +78,22 @@ pub fn delete(deletion: Form<PasteDeletion>, username: String, id: PasteId, conf
       };
 
       let key = match Uuid::from_str(&key) {
-        Ok(k) => DeletionKeyId(k),
+        Ok(k) => SecretDeletionKey(k),
         Err(_) => {
           sess.add_data("error", "Invalid deletion key.");
           return Ok(Rst::Redirect(Redirect::to("lastpage")));
         },
       };
 
-      let db_key: DeletionKey = match deletion_keys::table.find(&key).first(&*conn).optional()? {
+      let db_key: DeletionKey = match deletion_keys::table.find(paste.id()).first(&*conn).optional()? {
         Some(k) => k,
         None => {
-          sess.add_data("error", "Invalid deletion key.");
+          sess.add_data("error", "Missing deletion key.");
           return Ok(Rst::Redirect(Redirect::to("lastpage")));
         },
       };
 
-      if db_key.paste_id() != paste.id() {
+      if !db_key.check_key(&key.uuid().to_simple().to_string()) {
         sess.add_data("error", "Invalid deletion key.");
         return Ok(Rst::Redirect(Redirect::to("lastpage")));
       }
@@ -114,11 +115,11 @@ pub struct PasteDeletion {
 }
 
 #[delete("/p/<username>/ids", format = "application/x-www-form-urlencoded", data = "<deletion>", rank = 2)]
-pub fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalWebUser, mut sess: Session, conn: DbConn, config: State<Config>) -> Result<Rst> {
+pub fn ids(deletion: Form<MultiPasteDeletion>, username: String, user: OptionalWebUser, mut sess: Session, conn: DbConn, config: State<Config>, l10n: L10n) -> Result<Rst> {
   let deletion = deletion.into_inner();
 
   if !sess.check_token(&deletion.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 

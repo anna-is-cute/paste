@@ -2,18 +2,19 @@ use crate::{
   config::Config,
   database::{DbConn, models::users::User},
   errors::*,
+  i18n::prelude::*,
   models::id::UserId,
   redis_store::Redis,
-  routes::web::{context, AddCsp, Rst, OptionalWebUser, Session},
+  routes::web::{context, Rst, OptionalWebUser, Session},
   utils::{
     AcceptLanguage,
     totp::totp_raw_skew,
   },
 };
 
-use base32::Alphabet;
+use data_encoding::{BASE32_NOPAD, HEXLOWER};
 
-use failure::bail;
+use anyhow::bail;
 
 use redis::Commands;
 
@@ -57,26 +58,26 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, lang
 }
 
 #[get("/account/2fa/enable")]
-pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<AddCsp<Rst>> {
+pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage, l10n: L10n) -> Result<Rst> {
   let mut user = match user.into_inner() {
     Some(u) => u,
-    None => return Ok(AddCsp::new(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get))), vec!["img-src data:"])),
+    None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
   if user.tfa_enabled() {
-    sess.add_data("error", "2FA is already enabled on your account.");
-    return Ok(AddCsp::new(Rst::Redirect(Redirect::to("lastpage")), vec!["img-src data:"]));
+    sess.add_data("error", l10n.tr(("tfa-error", "already-enabled"))?);
+    return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 
   if user.shared_secret().is_none() {
     generate_secret(&conn, &mut user)?;
   }
 
-  let shared_secret = base32::encode(Alphabet::RFC4648 { padding: false }, user.shared_secret().expect("missing secret"));
+  let shared_secret = BASE32_NOPAD.encode(&user.shared_secret().expect("missing secret"));
 
   // create the segments of the uri
-  let label = format!("{} - {} ({})", config.general.site_name, user.name(), user.username());
-  let issuer = &config.general.site_name;
+  let label = format!("{} - {} ({})", config.read().general.site_name, user.name(), user.username());
+  let issuer = &config.read().general.site_name;
 
   // create the uri
   let mut otpauth = Url::parse("otpauth://totp")?.join(&label)?;
@@ -89,11 +90,16 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
     Ok(q) => q,
     Err(e) => bail!("could not create qr code: {}", e),
   };
-  let img = qr
+  let mut img = qr
     .render::<svg::Color>()
     .min_dimensions(256, 256)
     .max_dimensions(512, 512)
     .build();
+
+  if let Some(width_loc) = img.find("width=") {
+    let viewbox_loc = img.find("viewBox=").unwrap();
+    img = format!("{}{}", &img[..width_loc], &img[viewbox_loc..]);
+  }
 
   let mut ctx = context(&*config, Some(&user), &mut sess, langs);
   ctx["shared_secret_segments"] = json!(secret_segments(&shared_secret));
@@ -103,16 +109,13 @@ pub fn enable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessio
     "validate" => uri!(crate::routes::web::account::two_factor::validate),
   ));
 
-  Ok(AddCsp::new(
-    Rst::Template(Template::render("account/2fa/enable", ctx)),
-    vec!["img-src data:"],
-  ))
+  Ok(Rst::Template(Template::render("account/2fa/enable", ctx)))
 }
 
 #[post("/account/2fa/new_secret", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   if !sess.check_token(&form.into_inner().anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -122,7 +125,7 @@ pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Sessio
   };
 
   if user.tfa_enabled() {
-    sess.add_data("error", "2FA is already enabled on your account.");
+    sess.add_data("error", l10n.tr(("tfa-error", "already-enabled"))?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -132,11 +135,11 @@ pub fn new_secret(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Sessio
 }
 
 #[post("/account/2fa/validate", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut redis: Redis) -> Result<Redirect> {
+pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, conn: DbConn, mut redis: Redis, l10n: L10n) -> Result<Redirect> {
   let form = form.into_inner();
 
   if !sess.check_token(&form.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -146,7 +149,7 @@ pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, 
   };
 
   if user.tfa_enabled() {
-    sess.add_data("error", "2FA is already enabled on your account.");
+    sess.add_data("error", l10n.tr(("tfa-error", "already-enabled"))?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -154,13 +157,13 @@ pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, 
     let ss = match user.shared_secret() {
       Some(s) => s,
       None => {
-        sess.add_data("error", "No shared secret has been generated yet.");
+        sess.add_data("error", l10n.tr(("tfa-error", "missing-secret"))?);
         return Ok(Redirect::to(uri!(get)));
       },
     };
 
     if totp_raw_skew(ss, 6, 0, 30, &HashType::SHA1).iter().all(|&x| x != form.tfa_code) {
-      sess.add_data("error", "Invalid authentication code.");
+      sess.add_data("error", l10n.tr(("login-error", "tfa"))?);
       return Ok(Redirect::to("lastpage"));
     }
   }
@@ -183,14 +186,14 @@ pub struct Validate {
 }
 
 #[get("/account/2fa/disable")]
-pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> Result<Rst> {
+pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage, l10n: L10n) -> Result<Rst> {
   let user = match *user {
     Some(ref u) => u,
     None => return Ok(Rst::Redirect(Redirect::to(uri!(crate::routes::web::auth::login::get)))),
   };
 
   if !user.tfa_enabled() {
-    sess.add_data("error", "Your account does not have 2FA enabled.");
+    sess.add_data("error", l10n.tr(("tfa-error", "not-enabled"))?);
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 
@@ -202,11 +205,11 @@ pub fn disable_get(config: State<Config>, user: OptionalWebUser, mut sess: Sessi
 }
 
 #[post("/account/2fa/disable", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   let form = form.into_inner();
 
   if !sess.check_token(&form.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -216,12 +219,12 @@ pub fn disable_post(form: Form<Disable>, user: OptionalWebUser, mut sess: Sessio
   };
 
   if !user.tfa_enabled() {
-    sess.add_data("error", "Your account does not have 2FA enabled.");
+    sess.add_data("error", l10n.tr(("tfa-error", "not-enabled"))?);
     return Ok(Redirect::to("lastpage"));
   }
 
   if !user.check_password(&form.password) {
-    sess.add_data("error", "Invalid password.");
+    sess.add_data("error", l10n.tr(("login-error", "password"))?);
     return Ok(Redirect::to(uri!(disable_get)));
   }
 
@@ -241,9 +244,9 @@ pub struct Disable {
 }
 
 #[post("/account/2fa/new_backup_codes", format = "application/x-www-form-urlencoded", data = "<form>")]
-pub fn new_backup_codes(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn new_backup_codes(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   if !sess.check_token(&form.into_inner().anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -253,7 +256,7 @@ pub fn new_backup_codes(form: Form<TokenOnly>, user: OptionalWebUser, mut sess: 
   };
 
   if !user.tfa_enabled() {
-    sess.add_data("error", "2FA is not enabled on your account.");
+    sess.add_data("error", l10n.tr(("tfa-error", "not-enabled"))?);
     return Ok(Redirect::to("lastpage"));
   }
 
@@ -315,7 +318,7 @@ fn generate_backup_codes(conn: &DbConn, user: UserId) -> Result<Vec<String>> {
 
   let codes: Vec<String> = (0..10)
     .map(|_| randombytes::randombytes(6))
-    .map(hex::encode)
+    .map(|r| HEXLOWER.encode(&r))
     .collect();
 
   let nbcs: Vec<NewBackupCode> = codes

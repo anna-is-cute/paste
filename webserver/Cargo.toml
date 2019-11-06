@@ -49,11 +49,8 @@ serde_json = "1"
 # creating paste histories
 git2 = "0.10"
 
-# handling binary uploads in json
-base64 = "0.10"
-
 # error handling in the crate
-failure = "0.1"
+anyhow = "1"
 
 # accepting base64 gzip data
 libflate = "0.1"
@@ -65,7 +62,7 @@ xz2 = "0.1"
 sodiumoxide = "0.2"
 
 # environment variable loading
-dotenv = "0.14"
+dotenv = "0.15"
 
 # lazy statics
 lazy_static = "1"
@@ -82,9 +79,6 @@ toml = "0.5"
 # rate limiting
 ipnetwork = "0.15"
 
-# anti-csrf tokens
-hex = "0.4"
-
 # custom cookies
 cookie = "0.11"
 
@@ -92,10 +86,10 @@ cookie = "0.11"
 r2d2 = "0.8"
 
 # in-memory data store
-redis = "0.12"
+redis = "0.13"
 
 # redis connection pooling
-r2d2_redis = "0.11"
+r2d2_redis = "0.12"
 
 # scheduling jobs
 sidekiq = "0.8"
@@ -121,19 +115,16 @@ unicase = "2"
 # totp for two-factor authentication
 oath = "0.10"
 
-# encoding for totp shared keys
-base32 = "0.4"
-
 # needed to handle multipart's mime types
 # old version required because multipart depends on an old version
 mime = "0.2"
 
 # rewriting image urls for camo with SHA1-HMAC
-hmac = "0.7.1"
-sha-1 = "0.8.1"
+hmac = "0.7"
+sha-1 = "0.8"
 
 # Gravatar support
-md-5 = "0.8.0"
+md-5 = "0.8"
 
 # source of randomness
 rand = "0.7"
@@ -158,6 +149,13 @@ fluent-syntax = "0.9"
 
 # dns resolver for libravatar
 trust-dns-resolver = "0.12"
+
+# anti-csrf tokens, encoding for totp shared keys, handling binary uploads in json
+data-encoding = "2"
+
+# image processing (avatars)
+image = "0.22"
+libwebp-sys = "0.2"
 
 # web logic
 [dependencies.rocket]
@@ -198,7 +196,7 @@ features = ["server"]
 
 # faster hashmaps
 [dependencies.hashbrown]
-git = "https://github.com/Amanieu/hashbrown"
+git = "https://github.com/rust-lang/hashbrown"
 features = ["nightly", "serde"]
 
 # displaying otpauth urls
@@ -206,3 +204,8 @@ features = ["nightly", "serde"]
 git = "https://github.com/kennytm/qrcode-rust"
 default-features = false
 features = ["svg"]
+
+# better synchronisation primitives
+[dependencies.parking_lot]
+version = "0.9"
+features = ["nightly"]

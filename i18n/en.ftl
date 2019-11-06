@@ -1,12 +1,16 @@
+-brand = paste
+
 ## Nav
 
-nav-new = New
-nav-about = About
-nav-log-in = Log in
-nav-log-out = Log out
-nav-register = Register
-nav-settings = Settings
-nav-swap-theme = Swap theme
+nav =
+  .new = New
+  .about = About
+  .log-in = Log in
+  .log-out = Log out
+  .register = Register
+  .settings = Settings
+  .admin = Admin
+  .swap-theme = Swap theme
 
 ## Footer
 
@@ -24,6 +28,7 @@ avatar-alt = {$username} avatar
 
 ## Home
 
+new = New
 new-paste = New paste
 new-paste-desc = Create a new paste.
 
@@ -35,8 +40,11 @@ paste-description = Description
   .placeholder = Paste description
 paste-visibility = Visibility
   .public = public
+  .public-desc = {paste-visibility.public} - visible to search engines and shows on your public profile
   .unlisted = unlisted
+  .unlisted-desc = {paste-visibility.unlisted} - hidden from search engines and only those with the link can view
   .private = private
+  .private-desc = {paste-visibility.private} - only visible to you when logged in
 paste-expires = Expires
   .no = no
   .relative = relative
@@ -59,11 +67,13 @@ paste-relative-expiry =
 # $b (number) second number to add
 antispam-math = What is {$a} + {$b}?
   .why = Why?
-  .description = Since you're not using JavaScript, paste requires you to answer this simple math question to foil simple bots. paste has an API if you're trying to do legitimate things!
+  .description = Since you're not using JavaScript, {-brand} requires you to answer this simple math question to foil simple bots. {-brand} has an API if you're trying to do legitimate things!
+  .placeholder = Answer
 
 antispam-honeypot =
   .email = Email
   .title = Title
+  .error = An error occurred. Please try again.
 
 ## Paste UI
 
@@ -157,6 +167,7 @@ pagination =
 ## File attributes
 
 file-name-placeholder = File name with extension
+file-language = Highlight language
 file-language-auto = auto
 file-hello-world = Hello world!
 
@@ -166,7 +177,7 @@ about-title = About
 # $siteName (string) name of this paste instance
 about-blurb =
   .before = {$siteName} runs on
-  .paste = paste,
+  .paste = {-brand},
   .after = an open-source project dedicated to making a sensible, modern pastebin that anyone can host.
 
 ## Log in
@@ -181,11 +192,21 @@ login-password = Password
   .placeholder = Your secure password
 
 login-2fa = 2FA code
-  .placeholder = If enabled
+  .placeholder = Generated code or backup code
 
 login-forgot-password = Forgot your password?
 
 login-submit = Log in
+
+login-error =
+  .username = Username not found.
+  .password = Incorrect password.
+  .tfa = Incorrect authentication code.
+  .rate-limit = Please try again in {$minutes} {$minutes ->
+    [one] minute
+   *[other] minutes
+  }.
+  .rate-limit-soon = Please try again in a few seconds.
 
 ## Register
 
@@ -208,6 +229,11 @@ register-email = Email
   .placeholder = your@email.com
 
 register-submit = Submit
+
+register-error =
+  .empty-fields = No fields can be empty.
+  .closed = Registration is not open and that email address is not whitelisted.
+  .duplicate-email = A user with that email address already exists.
 
 ## Forgot password
 
@@ -232,11 +258,20 @@ reset-password-again = Password (again)
 
 reset-submit = Submit
 
+reset-error =
+  .bad-url = Invalid password reset URL.
+  .bad-reset = Invalid password reset.
+  .missing-account = That account does not exist.
+
+reset-success =
+  .email = If an account has a verified email address of {$email}, a password reset email was sent to it.
+  .reset = Password updated.
+
 ## Settings
 
 settings-tabs =
   .settings = Settings
-  .api-keys = API Keys
+  .api-keys = API keys
   .two-factor = 2FA
   .delete = Delete
 
@@ -272,6 +307,27 @@ account-current-password = Current password
 
 account-submit = Change
 
+email-verify-error =
+  .already-verified = Your email is already verified.
+  .resend-too-soon = You must wait 15 minutes between vertification email resends.
+  .invalid = Invalid email verification.
+
+email-verify-sent = Email sent.
+
+email-verify-success = Email verified.
+
+account-error =
+  .current-empty = Current password cannot be empty.
+  .invalid-email = Invalid email.
+  .invalid-display-name = Invalid display name: {$err}.
+  .invalid-username = Invalid username: {$err}.
+  .duplicate-username = A user with that username already exists.
+  .new-password-different = New passwords did not match.
+  .new-password-too-short = New password must be at least 10 characters long.
+  .new-password-invalid = New password cannot be your name, user, email, or "password".
+
+account-success = Account updated.
+
 ## API keys
 
 api-keys = API keys
@@ -286,6 +342,9 @@ api-keys-no-keys = You have no keys!
 api-key-add =
   .name-placeholder = Key name
   .submit = Add
+
+api-key-error =
+  .empty-name = API key name cannot be empty.
 
 ## Delete account
 
@@ -328,6 +387,11 @@ tfa-devices =
   .ios = iOS (App Store)
   .fdroid = Android (F-Droid)
 
+tfa-error =
+  .already-enabled = 2FA is already enabled on your account.
+  .not-enabled = 2FA is not enabled on your account.
+  .missing-secret = No shared secret has been generated yet.
+
 ## Enable 2FA
 
 tfa-enable = Enable 2FA
@@ -356,7 +420,7 @@ tfa-disable-password =
 ## Credits
 
 credits = Credits
-  .description = If paste was a movie, these would be at the end.
+  .description = If {-brand} was a movie, these would be at the end.
 
 ## Errors
 
@@ -374,3 +438,171 @@ error-500 = Internal server error.
 
 error-other = Error.
   .description = You got some strange error.
+
+error-csrf = Invalid anti-CSRF token.
+
+## Admin
+
+admin-success = You are now an admin.
+
+## Admin errors
+
+admin-no-key = No admin key is set.
+admin-bad-key = Incorrect key.
+admin-already-admin = You're already an admin.
+admin-exists = You cannot become an admin this way if admins already exist.
+
+## Admin nav
+
+admin-tabs =
+  .overview = Overview
+  .pastes = Pastes
+  .users = Users
+  .config = Config
+  .maintenance = Maintenance
+
+## Admin overview
+
+admin-overview =
+  .title = Admin
+  .subtitle = Perform administration tasks.
+
+admin-stats =
+  .pastes = Pastes
+  .users = Users
+
+## Admin pastes
+
+admin-pastes =
+  .title = Pastes
+  .subtitle = Manage all pastes.
+
+admin-pastes-list-headers =
+  .link = Link
+  .name = Name
+  .description = Description
+  .visibility = Visibility
+  .author = Author
+  .files = Files
+  .created = Created
+  .expires = Expires
+  .actions = Actions
+
+admin-pastes-list =
+  .anonymous = anonymous
+  .empty = empty
+  .never = never
+
+admin-paste-delete =
+  .success = Paste deleted.
+  .missing = Could not find that paste. Was it already deleted?
+
+admin-paste-delete-modal =
+  .title = Delete paste as admin
+  .confirm = Please confirm you would like to delete this paste as an admin.
+  .button = Delete as admin
+
+admin-batch-delete = Batch delete
+  .desc = Insert paste IDs or URLs, one per line, to delete.
+  .placeholder = Paste IDs or URLs, one per line
+  .button = Delete
+  .error = Could not delete <code>{$id}</code>: {$error}.
+  .success = Deleted {$pastes} {$pastes ->
+    [one] paste
+   *[other] pastes
+  }.
+
+admin-batch-delete-missing = could not find paste
+
+admin-batch-delete-bad-id = Invalid ID: {$err}.
+
+## Admin users
+
+admin-users =
+  .title = Users
+  .subtitle = Manage all users.
+
+admin-users-table =
+  .name = Name
+  .username = Username
+  .email = Email
+  .email-verified = Email verified
+  .tfa-enabled = 2FA enabled
+  .admin = Admin
+  .actions = Actions
+
+admin-users-yes-no =
+  .yes = Yes
+  .no = No
+
+admin-users-admin =
+  .super = super
+  .normal = admin
+  .none = none
+
+admin-users-delete =
+  .missing = No such user.
+  .success = User deleted.
+  .super = Cannot delete a super admin.
+  .other-admin = Cannot delete another admin.
+
+admin-users-delete-modal =
+  .title = Delete user
+  .confirm = Please confirm you would like to delete this user.
+  .button = Delete
+
+admin-users-promote-modal =
+  .title = Promote <em>{$user}</em>
+  .line-1 = What level of admin do you want to promote <em>{$user}</em> to?
+  .superadmin = Superadmin
+  .superadmin-desc = Superadmins cannot be deleted and can change other users' admin status. They
+                     are able to control everything.
+  .superadmin-warning = <strong class="has-text-danger">Important</strong>: The only way to demote a
+                        superadmin is to access the database directly.
+  .admin = Admin
+  .admin-desc = Admins can be deleted and cannot control other users' admin status. Admins cannot
+                delete other admins.
+  .button = Promote
+
+admin-users-demote-modal =
+  .title = Demote <em>{$user}</em>
+  .desc = Demoted users become normal users with no admin privileges.
+  .button = Demote
+
+admin-users-status =
+  .must-be-super = You must be a superadmin to promote/demote users.
+  .missing = No such user.
+  .target-super = You cannot promote/demote a superadmin.
+  .already-admin = That user is already an admin.
+  .not-admin = That user is not an admin.
+  .promoted = User successfully promoted.
+  .demoted = User successfully demoted.
+  .invalid-level = Invalid admin level.
+
+## Admin config
+
+admin-config =
+  .title = Config
+  .subtitle = Edit the site configuration.
+
+admin-config-save = Save
+
+## CSV
+
+csv-error =
+  .utf-8 = {-brand} would like to show you this CSV file as a table, but it couldn't be read as valid UTF-8: {$err}.
+  .utf-8-pos = {-brand} would like to show you this CSV file as a table, but it couldn't be read as valid UTF-8 at line {$line} (byte {$byte}): {$err}.
+  .lengths = {-brand} would like to show you this CSV file as a table, but it has a row with {$secondRowFields} {$secondRowFields ->
+    [one] field
+   *[other] fields
+  } while the previous row had {$firstRowFields} {$firstRowFields ->
+    [one] field
+   *[other] fields
+  }.
+  .lengths-pos = {-brand} would like to show you this CSV file as a table, but it has a row with {$secondRowFields} {$secondRowFields ->
+    [one] field
+   *[other] fields
+  } (line {$line}, byte {$byte}) while the previous row had {$firstRowFields} {$firstRowFields ->
+    [one] field
+   *[other] fields
+  }.

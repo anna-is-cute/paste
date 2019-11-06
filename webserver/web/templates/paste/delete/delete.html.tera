@@ -1,0 +1,57 @@
+{% extends "base" %}
+
+{% block head -%}
+{{ super() }}
+{% if anonymous -%}
+<script
+  defer
+  src="/static/js/paste.js?v={{ resources_version }}"
+  integrity="sha384-n+k+iIrRS0CjApohJ9xVX0dz+TP3an5z71rnLWMouKmowP3IU4+fs9Dju7DYF01h"></script>
+{%- endif %}
+{%- endblock head %}
+
+{% block title -%}
+{{ tr(_langs=langs, _msg="disp-delete-title") }}
+{%- endblock title %}
+
+{% block header_title -%}
+{{ tr(_langs=langs, _msg="disp-delete-title") }}
+{%- endblock header_title %}
+
+{% block main %}
+<div class="content">
+  <p>
+    {% if anonymous -%}
+      {{ tr(_langs=langs, _msg="disp-delete-description") }}
+    {%- else -%}
+      {{ tr(_langs=langs, _msg="disp-delete-confirm") }}
+    {%- endif %}
+  </p>
+
+  <form id="deletion_form" action="{{ links.delete }}" method="post">
+    <input type="hidden" name="_method" value="delete"/>
+    <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
+    {% if anonymous -%}
+    <div class="field">
+      <div class="control">
+        <input
+          required
+          id="deletion_key_input"
+          data-paste-id="{{ paste_id }}"
+          name="key"
+          type="text"
+          autocorrect="off"
+          autocapitalize="off"
+          class="input"
+          placeholder="{{ tr(_langs=langs, _msg="disp-delete-key-placeholder") }}"/>
+      </div>
+    </div>
+    {%- endif %}
+    <div class="field">
+      <div class="control">
+        <button class="button is-danger" type="submit">{{ tr(_langs=langs, _msg="disp-delete-button") }}</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock main %}

@@ -26,6 +26,13 @@ type JsonResult<'a> = std::result::Result<Json<Paste>, JsonError<'a>>;
 type MultipartResult = std::result::Result<MultipartUpload, String>;
 
 fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> RouteResult<Output> {
+  if config.read().pastes.sign_in_to_create && user.is_none() {
+    return Ok(Status::show_error(
+      HttpStatus::BadRequest,
+      ErrorKind::MustBeAuthed,
+    ));
+  }
+
   // check that file names are not the empty string
   if info.files.iter().filter_map(|x| x.name.as_ref()).any(|x| x.is_empty()) {
     return Ok(Status::show_error(
@@ -87,7 +94,7 @@ fn _post(info: Paste, user: OptionalUser, conn: DbConn, sidekiq: State<SidekiqCl
     paste.created_at(),
     paste.updated_at(&*config).ok(), // FIXME
     paste.expires(),
-    deletion_key.map(|x| x.key()),
+    deletion_key,
     files,
   );
 

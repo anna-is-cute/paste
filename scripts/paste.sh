@@ -169,7 +169,8 @@ config_nginx() {
   info "setting up nginx.conf"
   # copy the example config
   cp ".docker/nginx/nginx.example.conf" "$nginx_loc"
-  # default config is fine
+  # set up to show errors, since we're doing development
+  sed -i 's/error_log \/dev\/null emerg/error_log error.log error/g' "$nginx_loc"
 }
 
 config_nginx_site() {
@@ -211,8 +212,7 @@ config_paste() {
   sed -i 's/"paste"/"paste dev"/g' "config.toml"
   # set the site address
   sed -i 's/paste\.gg/localhost/g' "config.toml"
-  # set the store path to "/store" for docker
-  sed -i 's/\.\/store/\/store/g' "config.toml"
+  # don't change the store path, as we're not using a volume
   # don't set up email
 }
 
@@ -231,6 +231,8 @@ config_sidekiq_sh() {
   info "setting up sidekiq.sh"
   # copy the example config
   cp "sidekiq.example.sh" "sidekiq.sh"
+  # replace the shebang
+  sed -i 's/\/bin\/sh/\/bin\/bash/g' "sidekiq.sh"
   # we're using debug
   sed -i 's/RUST_ENV="release"/RUST_ENV="debug"/g' "sidekiq.sh"
   # set the target dir

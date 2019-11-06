@@ -62,9 +62,9 @@ url = "https://github.com/wcoder/highlightjs-line-numbers.js"
 text = "An add-on for highlight.js that adds line numbers. We use a slightly modified version."
 
 [[frontend]]
-name = "FontAwesome"
-url = "https://fontawesome.com/"
-text = "A ubiquitous set of icons that you've probably seen before."
+name = "Material Design Icons"
+url = "https://materialdesignicons.com/"
+text = "Handy icons that we use a small subset of."
 
 [[frontend]]
 name = "highlight.js"
@@ -82,11 +82,6 @@ text = "An extension to Bulma that adds CSS-only tooltips."
 name = "rocket"
 url = "https://rocket.rs/"
 text = "A web framework for Rust. It powers every single request made to paste."
-
-[[backend]]
-name = "base64"
-url = "https://github.com/alicemaz/rust-base64"
-text = "A Rust implementation of base64."
 
 [[backend]]
 name = "dotenv"
@@ -149,13 +144,8 @@ url = "https://serde.rs/"
 text = "A framework for serialising and deserialising data structures in Rust."
 
 [[backend]]
-name = "base32"
-url = "https://github.com/andreasots/base32"
-text = "A Rust implementation of base32."
-
-[[backend]]
-name = "failure"
-url = "https://boats.gitlab.io/failure/"
+name = "anyhow"
+url = "https://github.com/dtolnay/anyhow"
 text = "Easy error handling in Rust."
 
 [[backend]]
@@ -167,11 +157,6 @@ text = "Rust bindings to liblzma."
 name = "lazy_static"
 url = "https://github.com/rust-lang-nursery/lazy-static.rs"
 text = "Lazily-evaluated statics in Rust."
-
-[[backend]]
-name = "hex"
-url = "https://github.com/KokaKiwi/rust-hex"
-text = "Encodes and decodes strings of bytes as hexadecimal."
 
 [[backend]]
 name = "r2d2"
@@ -285,7 +270,7 @@ text = "A Rust library for random number generation."
 
 [[backend]]
 name = "hashbrown"
-url = "https://github.com/Amanieu/hashbrown"
+url = "https://github.com/rust-lang/hashbrown"
 text = "A SwissTable implementation in Rust. Faster HashMaps!"
 
 [[backend]]
@@ -322,3 +307,23 @@ text = "A localisation system for natural-sounding translations."
 name = "trust-dns-resolver"
 url = "https://github.com/bluejekyll/trust-dns"
 text = "Utilizes the trust client library to perform DNS resolution. Used for libravatar."
+
+[[backend]]
+name = "parking_lot"
+url = "https://github.com/Amanieu/parking_lot"
+text = "Better synchronisation primitives."
+
+[[backend]]
+name = "data-encoding"
+url = "https://github.com/ia0/data-encoding"
+text = "Various data encodings in Rust."
+
+[[backend]]
+name = "image"
+url = "https://github.com/image-rs/image"
+text = "An image processing library."
+
+[[backend]]
+name = "libwebp-sys"
+url = "https://github.com/NoXF/libwebp-sys"
+text = "Static bindings to libwebp."

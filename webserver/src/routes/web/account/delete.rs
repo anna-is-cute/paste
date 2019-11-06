@@ -2,6 +2,7 @@ use crate::{
   config::Config,
   database::DbConn,
   errors::*,
+  i18n::prelude::*,
   routes::web::{context, Rst, OptionalWebUser, Session},
   sidekiq::Job,
   utils::AcceptLanguage,
@@ -34,11 +35,11 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, lang
 }
 
 #[delete("/account", format = "application/x-www-form-urlencoded", data = "<delete>")]
-pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> Result<Redirect> {
+pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>, l10n: L10n) -> Result<Redirect> {
   let delete = delete.into_inner();
 
   if !sess.check_token(&delete.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to(uri!(get)));
   }
 
@@ -48,7 +49,7 @@ pub fn delete(delete: Form<DeleteRequest>, user: OptionalWebUser, mut sess: Sess
   };
 
   if !user.check_password(&delete.password) {
-    sess.add_data("error", "Incorrect password.");
+    sess.add_data("error", l10n.tr(("login-error", "password"))?);
     return Ok(Redirect::to(uri!(get)));
   }
 

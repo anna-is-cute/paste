@@ -3,6 +3,7 @@ use crate::{
   config::Config,
   database::DbConn,
   errors::*,
+  i18n::prelude::*,
   models::paste::{Visibility, Content},
   routes::web::{AntiSpam, OptionalWebUser, Session},
   utils::{FormDate, Language},
@@ -33,12 +34,12 @@ fn handle_js(input: &str) -> Result<Vec<MultiFile>> {
 }
 
 #[post("/pastes", format = "application/x-www-form-urlencoded", data = "<paste>")]
-pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, antispam: AntiSpam, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>) -> Result<Redirect> {
+pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, antispam: AntiSpam, conn: DbConn, sidekiq: State<SidekiqClient>, config: State<Config>, l10n: L10n) -> Result<Redirect> {
   let paste = paste.into_inner();
   sess.set_form(&paste);
 
   if !sess.check_token(&paste.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
   }
 
@@ -49,6 +50,11 @@ pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, 
 
   if paste.js_check != format!("{}{}", antispam.js.0, antispam.js.1) && paste.no_js_check != antispam.no_js.2.to_string() {
     sess.add_data("error", "An error occurred. Please try again.");
+    return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
+  }
+
+  if config.read().pastes.sign_in_to_create && user.is_none() {
+    sess.add_data("error", "You must be signed in to create a paste.");
     return Ok(Redirect::to(uri!(crate::routes::web::index::get)));
   }
 
@@ -111,7 +117,7 @@ pub fn post(paste: Form<PasteUpload>, user: OptionalWebUser, mut sess: Session, 
   if let Some(dk) = deletion_key {
     sess.add_data(
       format!("deletion_key_{}", paste.id().to_simple()),
-      dk.key().to_simple().to_string()
+      dk.uuid().to_simple().to_string(),
     );
   }
 

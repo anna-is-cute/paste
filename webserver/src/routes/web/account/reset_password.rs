@@ -10,14 +10,15 @@ use crate::{
     schema::{users, password_resets},
   },
   errors::*,
+  i18n::prelude::*,
   routes::web::{context, Session, Rst, OptionalWebUser},
   sidekiq::Job,
-  utils::{email, AcceptLanguage, PasswordContext, HashedPassword},
+  utils::{email, AcceptLanguage, ClientIp, PasswordContext, HashedPassword},
 };
 
-use base64;
-
 use chrono::{DateTime, Utc};
+
+use data_encoding::BASE64URL_NOPAD;
 
 use diesel::prelude::*;
 
@@ -36,8 +37,6 @@ use sidekiq::Client as SidekiqClient;
 
 use uuid::Uuid;
 
-use std::net::SocketAddr;
-
 #[get("/account/forgot_password")]
 pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, langs: AcceptLanguage) -> Template {
   let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
@@ -48,31 +47,31 @@ pub fn get(config: State<Config>, user: OptionalWebUser, mut sess: Session, lang
 }
 
 #[post("/account/forgot_password", format = "application/x-www-form-urlencoded", data = "<data>")]
-pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, addr: SocketAddr) -> Result<Redirect> {
+pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, addr: ClientIp, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
   sess.set_form(&data);
 
   let res = Ok(Redirect::to(uri!(get)));
 
   if !sess.check_token(&data.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return res;
   }
 
   if !email::check_email(&data.email) {
-    sess.add_data("error", "Invalid email.");
+    sess.add_data("error", l10n.tr(("account-error", "invalid-email"))?);
     return res;
   }
 
-  if let Some(msg) = PasswordResetAttempt::find_check(&conn, addr.ip())? {
+  if let Some(msg) = PasswordResetAttempt::find_check(&conn, *addr)? {
     sess.add_data("error", msg);
     return res;
   }
 
-  let msg = format!(
-    "If an account has a verified email address of {}, a password reset email was sent to it.",
-    data.email,
-  );
+  let msg = l10n.tr_ex(
+    ("reset-success", "email"),
+    |req| req.arg("email", &*data.email),
+  )?;
 
   let user: Option<User> = users::table
     .filter(users::email.eq(&data.email))
@@ -82,7 +81,7 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
   let user = match user {
     Some(u) => u,
     None => {
-      let (k, m) = match PasswordResetAttempt::find_increment(&conn, addr.ip())? {
+      let (k, m) = match PasswordResetAttempt::find_increment(&conn, *addr)? {
         Some(m) => ("error", m),
         None => {
           sess.take_form();
@@ -109,16 +108,16 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
   sidekiq.push(Job::email(
     "password_reset.html.tera",
     json!({
-      "config": &*config,
+      "config": &*config.read(),
       "user": user,
       "reset_url": format!(
         "https://{}/account/reset_password?id={}&secret={}",
-        config.general.site_domain,
+        config.read().general.site_domain,
         reset.id,
-        base64::encode_config(&key, base64::URL_SAFE_NO_PAD),
+        BASE64URL_NOPAD.encode(&key),
       ),
     }),
-    config._path.as_ref().unwrap(),
+    config.read()._path.as_ref().unwrap(),
     user.email(),
     "Password reset",
   )?.into())?;
@@ -129,9 +128,9 @@ pub fn post(data: Form<ResetRequest>, config: State<Config>, mut sess: Session, 
 }
 
 #[get("/account/reset_password?<data..>")]
-pub fn reset_get(data: Form<ResetPassword>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
+pub fn reset_get(data: Form<ResetPassword>, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage, l10n: L10n) -> Result<Rst> {
   if check_reset(&conn, *data.id, &data.secret).is_none() {
-    sess.add_data("error", "Invalid password reset URL.");
+    sess.add_data("error", l10n.tr(("reset-error", "bad-url"))?);
     return Ok(Rst::Redirect(Redirect::to(uri!(get))));
   }
 
@@ -146,7 +145,7 @@ pub fn reset_get(data: Form<ResetPassword>, config: State<Config>, user: Optiona
 }
 
 #[post("/account/reset_password", data = "<data>")]
-pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<Redirect> {
+pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   let data = data.into_inner();
 
   let res = Ok(Redirect::to(uri!(
@@ -158,14 +157,14 @@ pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<
   )));
 
   if !sess.check_token(&data.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return res;
   }
 
   let reset = match check_reset(&conn, *data.id, &data.secret) {
     Some(r) => r,
     None => {
-      sess.add_data("error", "Invalid password reset.");
+      sess.add_data("error", l10n.tr(("reset-error", "bad-reset"))?);
       return res;
     },
   };
@@ -179,7 +178,7 @@ pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<
     Some(u) => u,
     None => {
       diesel::delete(&reset).execute(&*conn)?;
-      sess.add_data("error", "That account does not exist.");
+      sess.add_data("error", l10n.tr(("reset-error", "missing-account"))?);
       return Ok(Redirect::to(uri!(get)));
     },
   };
@@ -205,7 +204,7 @@ pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<
   user.set_hashed_password(hashed);
   user.update(&conn)?;
 
-  sess.add_data("info", "Password updated.");
+  sess.add_data("info", l10n.tr(("reset-success", "reset"))?);
 
   sess.user_id = Some(user.id());
 
@@ -213,7 +212,7 @@ pub fn reset_post(data: Form<Reset>, mut sess: Session, conn: DbConn) -> Result<
 }
 
 fn check_reset(conn: &DbConn, id: Uuid, secret: &str) -> Option<PasswordReset> {
-  let secret = base64::decode_config(secret, base64::URL_SAFE_NO_PAD).ok()?;
+  let secret = BASE64URL_NOPAD.decode(secret.as_bytes()).ok()?;
 
   let reset: PasswordReset = password_resets::table
     .find(id)

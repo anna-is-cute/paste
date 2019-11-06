@@ -1,17 +1,19 @@
 {% extends "frame" %}
 
+{% import "_icon" as icon %}
+
 {% block head -%}
 {{ super() }}
 <link
   title="dark"
   rel="stylesheet"
   href="/static/css/dark-style.css?v={{ resources_version }}"
-  integrity="sha384-s4T0HKOBvHSZx9+Ujs3eKf4GdjUp6rvrfFgDWI2hJT1nqhU05/uRMvJVWx6j8hUA"/>
+  integrity="sha384-knVnZN0iT3U1g+rqNwlKV6sKwEzzwdqZSPqZAEZu41lBiwrAOJldhjf4aBsHkP6T"/>
 <link
   title="light"
   rel="stylesheet alternate"
   href="/static/css/style.css?v={{ resources_version }}"
-  integrity="sha384-KZFhaGJD7sYGzDl+6X6mvlpcKyNzaimE1tLHvlGlL2f65ZYygEi2exgZRCw0K+Cg"/>
+  integrity="sha384-RaxEci85b80kIs2Xbgqvn82wpkpUk8xvE8u7hcxixqLrr2iPq1K3aXJKqgHq2BZb"/>
 <script
   src="/static/js/style.js?v={{ resources_version }}"
   integrity="sha384-zwBoM/SvColCwJ9hm3JZVZgpLWTXKwowuywp+8KnSA2XpcN9SlsUnCt4D0WEXaYY"></script>
@@ -23,14 +25,6 @@
   defer
   src="/static/js/notifications.js?v={{ resources_version }}"
   integrity="sha384-yI6E6wBeIs/7kTFxJ5ZSJSiuDwP7QCjkmK+mnQ7ROOvMq0a6H6pgbZyBEa2+7wws"></script>
-<link
-  rel="stylesheet"
-  href="/static/css/fontawesome/solid.css?v={{ resources_version }}"
-  integrity="sha384-TbilV5Lbhlwdyc4RuIV/JhD8NR+BfMrvz4BL5QFa2we1hQu6wvREr3v6XSRfCTRp"/>
-<link
-  rel="stylesheet"
-  href="/static/css/fontawesome/fontawesome.css?v={{ resources_version }}"
-  integrity="sha384-ozJwkrqb90Oa3ZNb+yKFW2lToAWYdTiF1vt8JiH5ptTGHTGcN7qdoR1F95e0kYyG"/>
 <link rel="icon" sizes="16x16 32x32 48x48 64x64" href="/static/favicons/favicon.ico"/>
 <!--[if IE]><link rel="shortcut icon" href="/static/favicons/favicon.ico"/><![endif]-->
 <link rel="apple-touch-icon-precomposed" href="/static/favicons/favicon-152.png"/>
@@ -52,8 +46,8 @@
   <nav class="navbar">
     <div class="navbar-brand">
       <a class="navbar-item" href="{{ static_links.index }}">
-        <span class="icon">
-          <i class="fas fa-paste"></i>
+        <span class="icon is-small">
+          {{ icon::icon(i = "paste") }}
         </span>
         <span>{{ config.general.site_name }}</span>
       </a>
@@ -66,13 +60,13 @@
     <div id="menu" class="navbar-menu">
       <div class="navbar-start">
         <a class="navbar-item" href="{{ static_links.index }}">
-          {{ tr(_langs=langs, _msg="nav-new") }}
+          {{ tr(_langs=langs, _msg="nav", _attr="new") }}
         </a>
       </div>
       <div class="navbar-end">
       {%- if config.general.about_file %}
         <a class="navbar-item" href="{{ static_links.about }}">
-          {{ tr(_langs=langs, _msg="nav-about") }}
+          {{ tr(_langs=langs, _msg="nav", _attr="about") }}
         </a>
       {% endif %}
         <div class="navbar-item has-dropdown is-hoverable">
@@ -88,7 +82,7 @@
           </a>
         {%- else -%}
           <a class="navbar-link" href="{{ static_links.login }}">
-            {{ tr(_langs=langs, _msg="nav-log-in") }}
+            {{ tr(_langs=langs, _msg="nav", _attr="log-in") }}
           </a>
         {%- endif %}
           <div class="navbar-dropdown is-right">
@@ -96,23 +90,28 @@
             <span class="navbar-item">{{ user.username }}</span>
             <hr class="navbar-divider"/>
             <a class="navbar-item" href="{{ static_links.settings }}">
-              {{ tr(_langs=langs, _msg="nav-settings") }}
+              {{ tr(_langs=langs, _msg="nav", _attr="settings") }}
             </a>
+          {%- if user.admin != "none" %}
+            <a class="navbar-item" href="{{ static_links.admin }}">
+              {{ tr(_langs=langs, _msg="nav", _attr="admin") }}
+            </a>
+          {%- endif %}
             <form action="{{ static_links.logout }}" method="post">
               <input type="hidden" name="anti_csrf_token" value="{{ session.anti_csrf_token }}"/>
               <button type="submit" class="navbar-item button-link">
-                {{ tr(_langs=langs, _msg="nav-log-out") }}
+                {{ tr(_langs=langs, _msg="nav", _attr="log-out") }}
               </button>
             </form>
           {%- else -%}
             <a class="navbar-item" href="{{ static_links.register }}">
-              {{ tr(_langs=langs, _msg="nav-register") }}
+              {{ tr(_langs=langs, _msg="nav", _attr="register") }}
             </a>
           {%- endif %}
             <div class="requires-js">
               <hr class="navbar-divider"/>
               <a class="navbar-item" id="swap_theme" href="javascript:void(0)">
-                {{ tr(_langs=langs, _msg="nav-swap-theme") }}
+                {{ tr(_langs=langs, _msg="nav", _attr="swap-theme") }}
               </a>
             </div>
           </div>
@@ -145,13 +144,19 @@
     <div class="container">
       {%- if error %}
       <div class="notification is-warning">
-        <button class="delete"></button>
+        <button class="delete requires-js"></button>
         {{ error }}
+      </div>
+      {% endif -%}
+      {%- if error_safe %}
+      <div class="notification is-warning">
+        <button class="delete requires-js"></button>
+        {{ error_safe | safe }}
       </div>
       {% endif -%}
       {%- if info %}
       <div class="notification is-info">
-        <button class="delete"></button>
+        <button class="delete requires-js"></button>
         {{ info }}
       </div>
       {% endif -%}

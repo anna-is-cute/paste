@@ -4,6 +4,29 @@ site_domain = "paste.gg"
 # Set this to include custom content on the /about page
 # If not set, the About link in the navbar will not be displayed
 # about_file = "about.html"
+# If this is enabled, avatars will be downloaded and converted into WebP files at 90% quality when
+# requested.
+# Converted avatars are cached in redis for 10 minutes.
+convert_avatars = false
+
+[admin]
+# A random key used to become the first admin. Anyone who knows or guesses this can become an admin
+# if there are no other admins registered. This can be unset once one admin is registered.
+# key = ""
+# Should normal admins be allowed to edit the config? Superadmins are always allowed.
+admins_can_edit_config = false
+
+[pastes]
+# Require users to sign in before they can created pastes?
+sign_in_to_create = false
+
+[registration]
+# Should registration be open to everyone?
+open = true
+# If registration is not open, users will be allowed to sign up with these emails.
+whitelisted_emails = [
+  # "example@example.com",
+]
 
 [store]
 # The path on the filesystem where pastes will be stored.

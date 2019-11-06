@@ -1,5 +1,6 @@
 use crate::{
-  models::id::{DeletionKeyId, PasteId, FileId, UserId},
+  database::models::deletion_keys::SecretDeletionKey,
+  models::id::{PasteId, FileId, UserId},
   utils::Language,
 };
 
@@ -15,7 +16,7 @@ pub struct Output {
   #[serde(flatten)]
   pub paste: Paste,
   #[serde(skip_serializing_if = "Option::is_none")]
-  pub deletion_key: Option<DeletionKeyId>,
+  pub deletion_key: Option<SecretDeletionKey>,
   pub files: Vec<OutputFile>,
 }
 
@@ -29,7 +30,7 @@ impl Output {
     created_at: DateTime<Utc>,
     updated_at: Option<DateTime<Utc>>,
     expires: Option<DateTime<Utc>>,
-    deletion_key: Option<DeletionKeyId>,
+    deletion_key: Option<SecretDeletionKey>,
     files: F,
   ) -> Self
     where N: AsRef<str>,

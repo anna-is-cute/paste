@@ -1,0 +1,26 @@
+{% extends "base" %}
+
+{% block head -%}
+{{ super() }}
+<meta
+  name="description"
+  content="A sensible, modern pastebin. Share text and source code snippets with no hassle."/>
+{%- endblock head %}
+
+{% block title -%}
+New
+{%- endblock title %}
+
+{% block header_title -%}
+{{ tr(_langs=langs, _msg="new-paste") }}
+{%- endblock header_title %}
+
+{% block header_subtitle -%}
+{{ tr(_langs=langs, _msg="new-paste-desc") }}
+{%- endblock header_subtitle %}
+
+{% block main %}
+<div class="notification is-info">
+  Only logged-in users can create pastes.
+</div>
+{% endblock main %}

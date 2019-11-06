@@ -1,7 +1,7 @@
 use crate::{
   backend::errors::BackendError,
   database::models::{
-    deletion_keys::DeletionKey,
+    deletion_keys::SecretDeletionKey,
     files::File,
     pastes::Paste,
     users::User,
@@ -12,7 +12,7 @@ use crate::{
 
 use chrono::{DateTime, Utc};
 
-use failure::Error;
+use anyhow::Error;
 
 pub struct PastePayload<'u> {
   pub name: Option<String>,
@@ -32,7 +32,7 @@ pub struct FilePayload {
 pub struct CreateSuccess {
   pub paste: Paste,
   pub files: Vec<File>,
-  pub deletion_key: Option<DeletionKey>,
+  pub deletion_key: Option<SecretDeletionKey>,
 }
 
 pub enum CreateError {

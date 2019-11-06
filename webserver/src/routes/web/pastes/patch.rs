@@ -6,6 +6,7 @@ use crate::{
     schema::{users, files},
   },
   errors::*,
+  i18n::prelude::*,
   models::{
     id::{PasteId, FileId},
     paste::{
@@ -78,12 +79,12 @@ fn check_paste(paste: &PasteUpdate, files: &[MultiFile]) -> result::Result<(), S
 }
 
 #[patch("/p/<username>/<paste_id>", format = "application/x-www-form-urlencoded", data = "<update>")]
-pub fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>) -> Result<Rst> {
+pub fn patch(update: LenientForm<PasteUpdate>, username: String, paste_id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, sidekiq: State<SidekiqClient>, l10n: L10n) -> Result<Rst> {
   let update = update.into_inner();
   sess.set_form(&update);
 
   if !sess.check_token(&update.anti_csrf_token) {
-    sess.add_data("error", "Invalid anti-CSRF token.");
+    sess.add_data("error", l10n.tr("error-csrf")?);
     return Ok(Rst::Redirect(Redirect::to("lastpage")));
   }
 

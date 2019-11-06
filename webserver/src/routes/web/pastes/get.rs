@@ -6,6 +6,7 @@ use crate::{
     schema::{pastes, users},
   },
   errors::*,
+  i18n::L10n,
   models::{
     id::{PasteId, FileId},
     paste::{
@@ -96,7 +97,7 @@ pub fn username_id(username: String, id: PasteId) -> Redirect {
 }
 
 #[get("/p/<username>/<id>")]
-pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
+pub fn users_username_id(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage, l10n: L10n) -> Result<Rst> {
   let paste: DbPaste = match id.get(&conn)? {
     Some(p) => p,
     None => return Ok(Rst::Status(HttpStatus::NotFound)),
@@ -130,10 +131,11 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
       let md_ext = file.highlight_language.is_none() && lower.ends_with(".md") || lower.ends_with(".mdown") || lower.ends_with(".markdown");
       let md_lang = file.highlight_language == Some(Language::Markdown.hljs());
       let is_md = md_ext || md_lang;
+      let is_svg = lower.ends_with(".svg");
 
       let is_csv = file.highlight_language.is_none() && lower.ends_with(".csv");
 
-      if !is_md && !is_csv {
+      if !is_md && !is_csv && !is_svg {
         continue;
       }
 
@@ -146,14 +148,20 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
         let md = markdown_to_html(content, &*OPTIONS);
         let cleaned = CLEANER.clean(&md).to_string();
         post_processing::process(&*config, &cleaned)
-      } else {
-        match csv_to_table(content) {
+      } else if is_csv {
+        match csv_to_table(content, &l10n) {
           Ok(h) => h,
           Err(e) => {
-            notices.insert(file.id, e);
+            notices.insert(file.id, e?);
             continue;
           },
         }
+      } else {
+        format!(
+          "<img src=\"{src}\" alt=\"{name} SVG preview\"/>",
+          src = tera::escape_html(&uri!(super::files::raw::get: &username, paste.id(), file.id, true).to_string()),
+          name = tera::escape_html(file.name.as_deref().unwrap_or("unknown file")),
+        )
       };
 
       rendered.insert(file.id, processed);
@@ -185,9 +193,13 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
       .iter()
       .fold(&mut crate::routes::web::Links::default(), |acc, x| acc.add(
         x.id.to_simple().to_string(),
-        uri!(crate::routes::web::pastes::files::raw::get: &author_name, paste.id(), x.id),
+        uri!(crate::routes::web::pastes::files::raw::get: &author_name, paste.id(), x.id, _),
       )),
   );
+  if user.as_ref().map(|x| x.is_admin()).unwrap_or(false) {
+    links.add("admin_delete", uri!(crate::routes::web::admin::pastes::delete: paste.id(), true));
+    links.add("admin_delete_standalone", uri!(crate::routes::web::admin::pastes::delete_get: paste.id(), true));
+  }
 
   let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
   ctx["paste"] = json!(output);
@@ -201,6 +213,44 @@ pub fn users_username_id(username: String, id: PasteId, config: State<Config>, u
   ctx["links"] = json!(links);
 
   Ok(Rst::Template(Template::render("paste/index", ctx)))
+}
+
+#[get("/p/<username>/<id>/delete")]
+pub fn delete(username: String, id: PasteId, config: State<Config>, user: OptionalWebUser, mut sess: Session, conn: DbConn, langs: AcceptLanguage) -> Result<Rst> {
+  let paste: DbPaste = match id.get(&conn)? {
+    Some(p) => p,
+    None => return Ok(Rst::Status(HttpStatus::NotFound)),
+  };
+
+  let (expected_username, author): (String, Option<OutputAuthor>) = match paste.author_id() {
+    Some(author) => {
+      let user: User = users::table.find(author).first(&*conn)?;
+      (user.username().to_string(), Some(OutputAuthor::new(author, user.username(), user.name())))
+    },
+    None => ("anonymous".into(), None),
+  };
+
+  if username != expected_username {
+    return Ok(Rst::Status(HttpStatus::NotFound));
+  }
+
+  let is_author = paste.author_id() == user.as_ref().map(|u| u.id());
+  let anonymous = paste.author_id().is_none();
+
+  if !anonymous && !is_author {
+    return Ok(Rst::Redirect(Redirect::to(uri!(users_username_id: &username, id))));
+  }
+
+  let author_name = author.as_ref().map(|x| x.username.to_string()).unwrap_or_else(|| "anonymous".into());
+
+  let links = super::paste_links(paste.id(), paste.author_id(), &author_name, user.as_ref());
+
+  let mut ctx = context(&*config, user.as_ref(), &mut sess, langs);
+  ctx["links"] = json!(links);
+  ctx["paste_id"] = json!(paste.id());
+  ctx["anonymous"] = json!(anonymous);
+
+  Ok(Rst::Template(Template::render("paste/delete/delete", ctx)))
 }
 
 #[get("/p/<username>/<id>/edit")]

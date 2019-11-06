@@ -45,10 +45,12 @@ pub fn check_email(email: &str) -> bool {
     return false;
   }
 
+  let mut had_dot = false;
   let mut last = None;
   // Parsing the domain name.
   for &c in &email[i..] {
     if c == b'.' {
+      had_dot = true;
       // A dot can't follow a dot.
       if last == Some(b'.') {
         return false;
@@ -61,5 +63,5 @@ pub fn check_email(email: &str) -> bool {
     last = Some(c);
   }
 
-  true
+  had_dot
 }

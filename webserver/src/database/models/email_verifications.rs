@@ -10,9 +10,9 @@ use crate::{
 use super::users::User;
 use super::super::schema::email_verifications;
 
-use base64;
-
 use chrono::{Utc, DateTime, NaiveDateTime, Duration};
+
+use data_encoding::BASE64URL_NOPAD;
 
 use diesel;
 use diesel::prelude::*;
@@ -41,16 +41,16 @@ impl EmailVerification {
     Job::email(
       "verify.html.tera",
       json!({
-        "config": config,
+        "config": &*config.read(),
         "user": user,
         "verify_url": format!(
           "https://{}/account/verify?id={}&key={}",
-          config.general.site_domain,
+          config.read().general.site_domain,
           self.id.to_simple(),
-          base64::encode_config(secret, base64::URL_SAFE_NO_PAD),
+          BASE64URL_NOPAD.encode(&secret),
         ),
       }),
-      config._path.as_ref().unwrap(),
+      config.read()._path.as_ref().unwrap(),
       self.email.as_str(),
       "Verify your email",
     )

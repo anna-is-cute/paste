@@ -167,6 +167,10 @@ Done!
       alias /path/to/repo/webserver/web/static/;
     }
     ```
+    
+## Command-line client
+
+A compatible and recommended command-line client for paste is [bins](https://github.com/jkcclemens/bins).
 
 ## Compiling
 

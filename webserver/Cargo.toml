@@ -204,5 +204,5 @@ features = ["svg"]
 
 # better synchronisation primitives
 [dependencies.parking_lot]
-version = "0.9"
+version = "0.10"
 features = ["nightly"]

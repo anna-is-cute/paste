@@ -872,7 +872,7 @@ dependencies = [
 [[package]]
 name = "hashbrown"
 version = "0.6.3"
-source = "git+https://github.com/rust-lang/hashbrown#4e7acb5aed8ecdd93fc6f4dc9fcf6d9b8cede39d"
+source = "git+https://github.com/rust-lang/hashbrown#2c60ecb9d9712543baded0d4d766a1d38b66d34c"
 dependencies = [
  "ahash 0.2.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",

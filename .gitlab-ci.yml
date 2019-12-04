@@ -8,8 +8,23 @@ services:
   - docker:dind
 
 stages:
+  - buildenv
   - build
   - deploy
+
+docker buildenv:
+  stage: buildenv
+  only:
+    refs:
+      - master
+    changes:
+      - .docker/buildenv/Dockerfile
+  script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - cd .docker/buildenv
+    - docker build -t jkcclemens/paste:latest .
+    - docker push jkcclemens/paste:latest
+    - docker logout
 
 build:
   stage: build

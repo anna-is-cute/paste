@@ -3,10 +3,7 @@ use rocket::{
   request::{self, Request, FromRequest},
 };
 
-use unic_langid::{
-  LanguageIdentifier,
-  parser::parse_language_identifier,
-};
+use unic_langid::LanguageIdentifier;
 
 use std::convert::Infallible;
 
@@ -28,7 +25,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for AcceptLanguage {
       // only accept 10 possible languages
       .take(10)
       .map(|x| x.split(';').next().unwrap().trim())
-      .flat_map(parse_language_identifier)
+      .flat_map(str::parse)
       .collect();
     Outcome::Success(AcceptLanguage(langs))
   }

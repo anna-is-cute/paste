@@ -3,10 +3,9 @@ extern crate serde_derive;
 
 use lettre::{
   ClientSecurity, ClientTlsParameters, SmtpClient, SmtpTransport, Transport,
+  builder::EmailBuilder,
   smtp::authentication::{Credentials, Mechanism},
 };
-
-use lettre_email::EmailBuilder;
 
 use native_tls::TlsConnector;
 
@@ -75,7 +74,7 @@ fn do_email(path: &str, email: &str, subject: &str, content: &str) {
     },
   };
   let mut transport = SmtpTransport::new(client);
-  if let Err(e) = transport.send(email.into()) {
+  if let Err(e) = transport.send(email) {
     eprintln!("could not send email: {}", e);
   }
 }

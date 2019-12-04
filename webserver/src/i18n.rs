@@ -14,10 +14,7 @@ use tera::{
   Value as TeraValue,
 };
 
-use unic_langid::{
-  parser::parse_language_identifier,
-  LanguageIdentifier,
-};
+use unic_langid::LanguageIdentifier;
 
 use crate::utils::AcceptLanguage;
 
@@ -113,7 +110,7 @@ pub enum I18nError {
   Io(std::io::Error),
   Fluents(Vec<fluent_bundle::FluentError>),
   FluentParse(Vec<fluent_syntax::parser::errors::ParserError>),
-  LangId(unic_langid::parser::errors::ParserError),
+  LangId(unic_langid::LanguageIdentifierError),
   Toml(toml::de::Error),
 }
 
@@ -135,7 +132,7 @@ fn bundles() -> Result<HashMap<LanguageIdentifier, FluentBundle<FluentResource>>
     };
     let ftl = std::fs::read_to_string(&entry).map_err(I18nError::Io)?;
     let resource = FluentResource::try_new(ftl).map_err(|(_, e)| I18nError::FluentParse(e))?;
-    let lang_id = parse_language_identifier(&lang_id).map_err(I18nError::LangId)?;
+    let lang_id: LanguageIdentifier = lang_id.parse().map_err(I18nError::LangId)?;
     let mut bundle = FluentBundle::new(&[lang_id.clone()]);
     bundle.add_resource(resource).map_err(I18nError::Fluents)?;
     bundles.insert(lang_id, bundle);
@@ -318,7 +315,7 @@ pub fn tera_function(localisation: Localisation) -> GlobalFn {
         _ => None,
       })
       .map(|vs| vs.into_iter()
-        .flat_map(|v| parse_language_identifier(&v))
+        .flat_map(|v| v.parse())
         .collect())
       .ok_or_else(|| TeraError::from("missing _lang parameter"))?;
     let msg = args.remove("_msg")
@@ -363,10 +360,7 @@ mod langid {
     de::{self, Deserializer},
   };
 
-  use unic_langid::{
-    LanguageIdentifier,
-    parser::parse_language_identifier,
-  };
+  use unic_langid::LanguageIdentifier;
 
   use std::collections::HashMap;
 
@@ -377,7 +371,7 @@ mod langid {
     where D: Deserializer<'de>,
   {
     let s = String::deserialize(des)?;
-    parse_language_identifier(s.as_str()).map_err(de::Error::custom)
+    s.parse().map_err(de::Error::custom)
   }
 
   pub fn deserialize_vec<'de, D>(des: D) -> Result<Vec<LanguageIdentifier>, D::Error>

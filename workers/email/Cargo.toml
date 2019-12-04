@@ -10,8 +10,6 @@ crate-type = ["cdylib"]
 
 [dependencies]
 # sending and creating emails
-lettre = { git = "https://github.com/lettre/lettre" }
-lettre_email = { git = "https://github.com/lettre/lettre" }
 native-tls = "0.2"
 
 # deserializing config
@@ -20,3 +18,7 @@ serde_derive = "1"
 
 # config format
 toml = "0.5"
+
+[dependencies.lettre]
+git = "https://github.com/lettre/lettre"
+features = ["builder"]

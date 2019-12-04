@@ -1,5 +1,7 @@
 FROM debian:stretch
 
+# this comment was added to force a rebuild - remove on next edit
+
 RUN apt-get update && apt-get install \
   --no-install-recommends \
   --assume-yes \

@@ -1198,7 +1198,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "lettre"
 version = "0.9.2"
-source = "git+https://github.com/lettre/lettre#0a450e64a8f7c046feb72c109a8699f34da17a05"
+source = "git+https://github.com/lettre/lettre#d2675fab82e1ec0381ae2a56947532f6e154cb98"
 dependencies = [
  "base64 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bufstream 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",

@@ -167,7 +167,7 @@ features = ["json", "tera_templates"]
 
 # unique paste-related ids
 [dependencies.uuid]
-version = "0.7"
+version = "0.8"
 features = ["v4", "serde"]
 
 # database orm

@@ -706,7 +706,7 @@ dependencies = [
 
 [[package]]
 name = "fluent-bundle"
-version = "0.9.0"
+version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -3231,7 +3231,7 @@ dependencies = [
  "data-encoding 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "diesel 1.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "dotenv 0.15.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "fluent-bundle 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "fluent-bundle 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "fluent-syntax 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "git2 0.10.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "hashbrown 0.6.3 (git+https://github.com/rust-lang/hashbrown)",
@@ -3465,7 +3465,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum fast_chemail 0.9.6 (registry+https://github.com/rust-lang/crates.io-index)" = "495a39d30d624c2caabe6312bfead73e7717692b44e0b32df168c275a2e8e9e4"
 "checksum filetime 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)" = "1ff6d4dab0aa0c8e6346d46052e93b13a16cf847b54ed357087c35011048cc7d"
 "checksum flate2 1.0.13 (registry+https://github.com/rust-lang/crates.io-index)" = "6bd6d6f4752952feb71363cffc9ebac9411b75b87c6ab6058c40c8900cf43c0f"
-"checksum fluent-bundle 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = "19975f63fe023ac660d9457cbfd6371480fce192a1fb7a0238c81d827266339c"
+"checksum fluent-bundle 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)" = "cb733f6cedee059a77da074a14d1d855f3c7a04de18164b181ba2aa82221e281"
 "checksum fluent-langneg 0.11.1 (registry+https://github.com/rust-lang/crates.io-index)" = "55e840a3a9938e6dd9a57a6a3be02bef1d51b1d75b883cdfe84810c7e7ca1293"
 "checksum fluent-syntax 0.9.1 (registry+https://github.com/rust-lang/crates.io-index)" = "7be7427364d95bc7b59f3b7cd0b1a74bb70c2ee0ae667b63b853d359470dc85c"
 "checksum fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)" = "2fad85553e09a6f881f739c29f0b00b0f01357c743266d478b68951ce23285f3"

@@ -1,0 +1,82 @@
+image: alpine/edge
+secrets:
+  - 37c7f072-08d5-4d90-a94e-b88b949b5bdd # ssh
+  - 1d5aac39-677e-4a62-ba2d-39f00e67b239 # docker
+packages:
+  - binutils
+  - docker
+  - git
+  - openssh-client
+  - perl-utils
+  - shadow
+sources:
+  - https://git.sr.ht/~jkcclemens/paste
+tasks:
+  - docker-setup: |
+      sudo mount -t tmpfs -o size=4G /dev/null /dev/shm
+      sudo service cgroups start
+      sleep 2
+      sudo nohup dockerd --bip 172.18.0.1/16 </dev/null >/dev/null 2>&1 &
+      sleep 5
+      sudo usermod -aG docker "$(whoami)"
+  - docker-buildenv: |
+      cd paste
+      # exit if the buildenv dockerfile wasn't modified by this commit
+      # fixme: need to check all commits in push
+      git diff-tree --no-commit-id --name-only -r HEAD | grep ^.docker/buildenv/Dockerfile || exit 0
+      cd .docker/buildenv
+      docker build -t jkcclemens/paste:latest .
+      docker push jkcclemens/paste:latest
+  - restore-cache: |
+      export RUSTC_VERSION=$(docker run --rm jkcclemens/paste /root/.cargo/bin/rustc --version | cut -d ' ' -f 4 | head -c -2)
+      export TARGET_ARCHIVE=paste-"$RUSTC_VERSION".tar.gz
+      if scp -o StrictHostKeyChecking=no cache@warm.kitteh.space:/home/cache/"$TARGET_ARCHIVE" "$TARGET_ARCHIVE"; then
+        tar xf "$TARGET_ARCHIVE"
+        rm "$TARGET_ARCHIVE"
+      fi
+  - build: |
+      cd paste
+      # remove unneeded submodules (saves close to 200 MB)
+      git submodule deinit --all
+      rm -rf .git/modules
+      mkdir -p "$HOME/.cargo/registry/index"
+      mkdir -p "$HOME/.cargo/registry/cache"
+      mkdir -p "$HOME/.cargo/git/db"
+      docker run \
+        -v "$(pwd)":/paste \
+        -v "$HOME/.cargo/registry/index":/root/.cargo/registry/index \
+        -v "$HOME/.cargo/registry/cache":/root/.cargo/registry/cache \
+        -v "$HOME/.cargo/git/db":/root/.cargo/git/db \
+        jkcclemens/paste \
+        /root/.cargo/bin/cargo build --all --release
+      sudo strip target/release/*.so target/release/webserver
+  - deploy: |
+      cd paste
+      cp .docker/paste/* ./
+      mkdir exec
+      cp target/release/webserver target/release/*.so exec/
+      cd exec
+      find . -name '*.so' -print0 | xargs -0 shasum -a 256 >> shasums
+      cd ..
+      cp .gitignore .dockerignore
+      chmod +x run.sh
+      docker pull jkcclemens/paste-prebuilt:latest
+      export SLUG=$(git name-rev --name-only HEAD | sed 's/[^[:alnum:]\-_]/-/g')
+      docker pull jkcclemens/paste-prebuilt:"$SLUG" || true
+      docker build \
+        --cache-from jkcclemens/paste-prebuilt:latest \
+        --cache-from jkcclemens/paste-prebuilt:"$SLUG" \
+        -t jkcclemens/paste-prebuilt:"$SLUG" \
+        .
+      if [ "$(echo "$SLUG" | cut -d- -f1)" != "dependabot" ]; then
+        docker push jkcclemens/paste-prebuilt:"$SLUG"
+      fi
+      if [ "$SLUG" = "master" ]; then
+        docker tag jkcclemens/paste-prebuilt:master jkcclemens/paste-prebuilt:latest
+        docker push jkcclemens/paste-prebuilt:latest
+      fi
+  - upload-cache: |
+      export RUSTC_VERSION=$(docker run --rm jkcclemens/paste /root/.cargo/bin/rustc --version | cut -d ' ' -f 4 | head -c -2)
+      export TARGET_ARCHIVE=paste-"$RUSTC_VERSION".tar.gz
+      tar cfz "$TARGET_ARCHIVE" paste/target .cargo/registry/index .cargo/registry/cache .cargo/git/db
+      scp -o StrictHostKeyChecking=no "$TARGET_ARCHIVE" cache@warm.kitteh.space:/home/cache/"$TARGET_ARCHIVE"

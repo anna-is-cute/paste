@@ -1,7 +1,5 @@
 FROM debian:stretch
 
-# this comment was added to force a rebuild - remove on next edit
-
 RUN apt-get update && apt-get install \
   --no-install-recommends \
   --assume-yes \
@@ -13,11 +11,12 @@ RUN apt-get update && apt-get install \
   libssl-dev libz-dev clang \
   libpq-dev \
   pkg-config \
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
+  && apt-get clean
 
 WORKDIR /
 
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2019-11-25
+RUN curl --proto 'https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain nightly-2019-12-12
 
 RUN echo "source $HOME/.cargo/env" >> $HOME/.bashrc
 

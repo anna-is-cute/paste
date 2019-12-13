@@ -63,7 +63,8 @@ tasks:
       docker pull jkcclemens/paste-prebuilt:latest
       export SLUG=$(git name-rev --name-only HEAD | sed 's/[^[:alnum:]\-_]/-/g')
       docker pull jkcclemens/paste-prebuilt:"$SLUG" || true
-      docker build \
+      DOCKER_BUILDKIT=1 docker build \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
         --cache-from jkcclemens/paste-prebuilt:latest \
         --cache-from jkcclemens/paste-prebuilt:"$SLUG" \
         -t jkcclemens/paste-prebuilt:"$SLUG" \

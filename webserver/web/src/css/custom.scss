@@ -196,19 +196,19 @@ table.is-middle td, table.is-middle th {
   white-space: pre-wrap;
 }
 
-.box pre {
+.box .content > pre {
   margin-left: -1.25rem;
   margin-right: -1.25rem;
 
   white-space: pre-wrap;
 
   &:first-child {
-    margin-top: -1.5rem;
+		margin-top: -1.5rem;
   }
 
   &:last-child {
-    margin-bottom: -1.25rem;
-    border-radius: 0 0 $radius-large $radius-large;
+		margin-bottom: -1.25rem;
+		border-radius: 0 0 $radius-large $radius-large;
   }
 }
 

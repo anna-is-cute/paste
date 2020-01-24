@@ -29,8 +29,8 @@ use uuid::Uuid;
 #[belongs_to(User)]
 pub struct EmailVerification {
   id: EmailVerificationId,
-  email: String,
-  user_id: UserId,
+  pub email: String,
+  pub user_id: UserId,
   key: String,
   last_sent: Option<NaiveDateTime>,
   expiry: NaiveDateTime,

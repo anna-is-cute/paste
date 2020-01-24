@@ -2,8 +2,11 @@ use crate::{
   config::Config,
   database::{
     DbConn,
-    schema::email_verifications,
-    models::email_verifications::EmailVerification,
+    schema::{email_verifications, users},
+    models::{
+      email_verifications::EmailVerification,
+      users::User,
+    },
   },
   errors::*,
   i18n::prelude::*,
@@ -88,7 +91,7 @@ pub fn resend(data: Form<Resend>, config: State<Config>, user: OptionalWebUser, 
 }
 
 #[get("/account/verify?<data..>")]
-pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
+pub fn get(data: Form<Verification>, mut sess: Session, conn: DbConn, l10n: L10n) -> Result<Redirect> {
   let key = match BASE64URL_NOPAD.decode(data.key.as_bytes()) {
     Ok(k) => k,
     Err(_) => {
@@ -97,19 +100,8 @@ pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, c
     },
   };
 
-  let mut user = match user.into_inner() {
-    Some(u) => u,
-    None => return Ok(Redirect::to(uri!(crate::routes::web::auth::login::get))),
-  };
-
-  if user.email_verified() {
-    sess.add_data("error", l10n.tr(("email-verify-error", "already-verified"))?);
-    return Ok(Redirect::to(uri!(super::index::get)));
-  }
-
   let verification: Option<EmailVerification> = email_verifications::table
     .find(*data.id)
-    .filter(email_verifications::email.eq(user.email()))
     .first(&*conn)
     .optional()?;
 
@@ -123,6 +115,24 @@ pub fn get(data: Form<Verification>, user: OptionalWebUser, mut sess: Session, c
 
   if !verification.check(&key) {
     sess.add_data("error", l10n.tr(("email-verify-error", "invalid"))?);
+    return Ok(Redirect::to(uri!(super::index::get)));
+  }
+
+  let mut user: User = match users::table
+    .find(verification.user_id)
+    .filter(users::email.eq(&verification.email))
+    .first(&*conn)
+    .optional()?
+  {
+    Some(u) => u,
+    None => {
+      sess.add_data("error", l10n.tr(("email-verify-error", "invalid"))?);
+      return Ok(Redirect::to(uri!(super::index::get)));
+    },
+  };
+
+  if user.email_verified() {
+    sess.add_data("error", l10n.tr(("email-verify-error", "already-verified"))?);
     return Ok(Redirect::to(uri!(super::index::get)));
   }
 

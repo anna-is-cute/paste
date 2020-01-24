@@ -64,7 +64,10 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
 
   // get all users for the page ordered by admin status (users have no created_at field)
   let users: Vec<User> = users::table
-    .order_by(users::admin.desc())
+    .order_by((
+      users::admin.desc(),
+      users::username.desc(),
+    ))
     .offset(PAGE_SIZE * (page - 1))
     .limit(PAGE_SIZE)
     .load(&*conn)?;

@@ -66,7 +66,7 @@ pub fn get(page: Option<u32>, config: State<Config>, user: AdminUser, mut sess: 
   let users: Vec<User> = users::table
     .order_by((
       users::admin.desc(),
-      users::username.desc(),
+      users::username.asc(),
     ))
     .offset(PAGE_SIZE * (page - 1))
     .limit(PAGE_SIZE)

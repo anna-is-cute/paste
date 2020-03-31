@@ -8,3 +8,6 @@
 [submodule "web/src/css/bulma-tooltip"]
 	path = webserver/web/src/css/bulma-tooltip
 	url = https://github.com/Wikiki/bulma-tooltip
+[submodule ".docker/camo"]
+	path = .docker/camo
+	url = https://github.com/atmos/camo

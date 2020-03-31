@@ -39,7 +39,7 @@ services:
       - "../:/paste:z"
       - "libraries:/libraries:ro"
   camo:
-    image: inventid/camo
+    build: camo
     restart: unless-stopped
     environment:
       - CAMO_KEY=${CAMO_KEY}

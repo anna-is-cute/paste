@@ -168,9 +168,9 @@
 <footer class="footer">
   <nav class="breadcrumb is-centered has-bullet-separator" aria-label="breadcrumbs">
     <ul>
-      <li><a href="https://github.com/jkcclemens/paste">{{ tr(_langs=langs, _msg="footer-code") }}</a></li>
-      <li><a href="https://github.com/jkcclemens/paste/commit/{{ server_version }}">{{ tr(_langs=langs, _msg="footer-server-version", version=server_version | truncate(length=7) | replace(from="…", to="")) }}</a></li>
-      <li><a href="https://github.com/jkcclemens/paste/commit/{{ resources_version }}">{{ tr(_langs=langs, _msg="footer-resources-version", version=resources_version | truncate(length=7) | replace(from="…", to="")) }}</a></li>
+      <li><a href="https://github.com/ascclemens/paste">{{ tr(_langs=langs, _msg="footer-code") }}</a></li>
+      <li><a href="https://github.com/ascclemens/paste/commit/{{ server_version }}">{{ tr(_langs=langs, _msg="footer-server-version", version=server_version | truncate(length=7) | replace(from="…", to="")) }}</a></li>
+      <li><a href="https://github.com/ascclemens/paste/commit/{{ resources_version }}">{{ tr(_langs=langs, _msg="footer-resources-version", version=resources_version | truncate(length=7) | replace(from="…", to="")) }}</a></li>
       <li><a href="{{ static_links.credits }}">{{ tr(_langs=langs, _msg="footer-credits") }}</a></li>
       <li class="is-active"><a>&copy; {{ now() | date(format="%Y") }}</a></li>
     </ul>

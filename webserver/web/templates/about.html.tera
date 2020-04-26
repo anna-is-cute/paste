@@ -17,7 +17,7 @@
   {{ about | safe }}
   <p>
     {{ tr(_langs=langs, _msg="about-blurb", _attr="before", siteName=config.general.site_name) }}
-    <a class="external" href="https://github.com/jkcclemens/paste">
+    <a class="external" href="https://github.com/ascclemens/paste">
       {{ tr(_langs=langs, _msg="about-blurb", _attr="paste", siteName=config.general.site_name) }}
     </a>
     {{ tr(_langs=langs, _msg="about-blurb", _attr="after", siteName=config.general.site_name) }}

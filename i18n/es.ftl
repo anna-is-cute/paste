@@ -380,7 +380,7 @@ error-404 = Página no encontrada.
   .description = No pudimos encontrar lo que buscaba. Lo siento!
 
 error-500 = Error interno del servidor.
-  .description = También conocido como "metimos la pata". Esto siempre es un error, así que siéntese libre de <a href="https://github.com/jkcclemens/paste/issues/new?title=500%20on%20%3Croute%3E&body=So%20I%20was%20trying%20to%20go%20to%20%3Croute%3E,%20but%20then%20the%20server%20was%20all%20like%20nah,%20bb,%20500!">reportarlo</a>!
+  .description = También conocido como "metimos la pata". Esto siempre es un error, así que siéntese libre de <a href="https://github.com/ascclemens/paste/issues/new?title=500%20on%20%3Croute%3E&body=So%20I%20was%20trying%20to%20go%20to%20%3Croute%3E,%20but%20then%20the%20server%20was%20all%20like%20nah,%20bb,%20500!">reportarlo</a>!
 
 error-other = Error.
   .description = Tiene un error extraño.

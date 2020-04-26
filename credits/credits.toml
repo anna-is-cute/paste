@@ -5,8 +5,8 @@ patrons = []
 # The People section. The "team," so to speak.
 
 [[people]]
-name = "Kyle Clemens"
-github = "jkcclemens"
+name = "Anna Clemens"
+github = "ascclemens"
 text = "Lead developer and Rust aficionado who hates frontend."
 
 [[people]]

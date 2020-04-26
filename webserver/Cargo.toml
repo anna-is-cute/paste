@@ -1,7 +1,7 @@
 [package]
 name = "webserver"
 version = "0.1.1"
-authors = ["Kyle Clemens <git@kyleclemens.com>"]
+authors = ["Anna Clemens <git@kyleclemens.com>"]
 
 build = "build.rs"
 
@@ -27,7 +27,7 @@ exclude = [
 ]
 
 [badges]
-travis-ci = { repository = "jkcclemens/paste", branch = "master" }
+travis-ci = { repository = "ascclemens/paste", branch = "master" }
 maintenance = { status = "actively-developed" }
 
 [build-dependencies]

@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install \
 
 WORKDIR /
 
-RUN curl --proto 'https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain nightly-2019-12-12
+RUN curl --proto 'https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal --default-toolchain nightly-2020-05-15
 
 RUN echo "source $HOME/.cargo/env" >> $HOME/.bashrc
 

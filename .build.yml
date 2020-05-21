@@ -19,6 +19,7 @@ tasks:
       sudo nohup dockerd --bip 172.18.0.1/16 </dev/null >/dev/null 2>&1 &
       sleep 5
       sudo usermod -aG docker "$(whoami)"
+      sudo service docker start
   - docker-buildenv: |
       cd paste
       # exit if the buildenv dockerfile wasn't modified by this commit

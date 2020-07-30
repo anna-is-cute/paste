@@ -36,7 +36,7 @@ community!
 ## Contributing
 
 **Important**: Ensure you clone the repository with submodules and [git-lfs](https://git-lfs.github.com/)!  
-Make sure git-lfs is installed, then run `git clone --recurse-submodules https://github.com/jkcclemens/paste.git`.
+Make sure git-lfs is installed, then run `git clone --recurse-submodules https://github.com/ascclemens/paste.git`.
 
 To set up a development environment with a debug build of paste, use `paste.sh` in the script
 directory! Just run `scripts/paste.sh` by itself to show help.

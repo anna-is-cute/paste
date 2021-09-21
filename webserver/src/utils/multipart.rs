@@ -1,6 +1,6 @@
 use crate::models::paste::{Content, Paste, PasteFile};
 
-use mime::{Mime, TopLevel};
+use mime::Mime;
 
 use multipart::server::Multipart;
 
@@ -81,7 +81,7 @@ impl FromDataSimple for MultipartUpload {
       }
 
       let content = match entry.headers.content_type {
-        Some(Mime(TopLevel::Image, _, _)) => Content::Base64(data),
+        Some(ref mime) if mime.type_() == mime::IMAGE => Content::Base64(data),
         _ => match String::from_utf8(data) {
           Ok(s) => Content::Text(s),
           Err(e) => Content::Base64(e.into_bytes()),

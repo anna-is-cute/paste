@@ -4,7 +4,7 @@ use std::convert::TryFrom;
 
 pub fn convert(image: &DynamicImage, quality: f32) -> Option<Vec<u8>> {
   // convert the image to RGBA
-  let image = image.to_rgba();
+  let image = image.to_rgba8();
   // get the dimensions of the image
   let (w, h) = image.dimensions();
   let w = i32::try_from(w).ok()?;

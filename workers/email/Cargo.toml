@@ -1,7 +1,7 @@
 [package]
 name = "worker_email"
 version = "0.1.0"
-authors = ["Anna Clemens <git@kyleclemens.com>"]
+authors = ["Anna Clemens <git@annaclemens.io>"]
 
 edition = "2018"
 
@@ -9,9 +9,6 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
-# sending and creating emails
-native-tls = "0.2"
-
 # deserializing config
 serde = "1"
 serde_derive = "1"
@@ -21,4 +18,4 @@ toml = "0.5"
 
 [dependencies.lettre]
 git = "https://github.com/lettre/lettre"
-features = ["builder"]
+features = ["smtp-transport", "native-tls", "builder"]

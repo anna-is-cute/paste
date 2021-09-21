@@ -5,16 +5,17 @@ use crate::{
 
 use chrono::Duration;
 
-use cookie::{Cookie, SameSite};
+//use cookie::{Cookie, SameSite};
 
 use data_encoding::BASE64URL_NOPAD;
 
 use hashbrown::HashMap;
 
-use redis::{Commands, Value};
+use r2d2_redis::redis::{Commands, Value};
 
 use rocket::{
   Outcome,
+  http::{Cookie, SameSite},
   request::{self, Request, FromRequest},
 };
 

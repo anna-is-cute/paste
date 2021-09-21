@@ -184,9 +184,9 @@ url = "https://lettre.at/"
 text = "Sends, creates, examines, modifies, and does anything else you could possibly want to do with emails."
 
 [[backend]]
-name = "oath"
-url = "https://github.com/avacariu/rust-oath"
-text = "OATH algorithms for two-factor authentication."
+name = "one-time"
+url = "https://crates.io/crates/one-time"
+text = "Digest-agnostic HOTP and TOTP implementations according to their RFC specifications."
 
 [[backend]]
 name = "sha2"
@@ -217,16 +217,6 @@ text = "Chains ifs together, for when you really need to just chain together som
 name = "toml"
 url = "https://github.com/alexcrichton/toml-rs"
 text = "Parses TOML files. Gotta load the configuration somehow!"
-
-[[backend]]
-name = "cookie"
-url = "https://github.com/alexcrichton/cookie-rs"
-text = "Creates and processes delicious cookies for your browser."
-
-[[backend]]
-name = "redis"
-url = "https://github.com/mitsuhiko/redis-rs"
-text = "Talks to redis... in Rust."
 
 [[backend]]
 name = "ammonia"

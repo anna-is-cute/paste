@@ -16,9 +16,7 @@ use data_encoding::{BASE32_NOPAD, HEXLOWER};
 
 use anyhow::bail;
 
-use redis::Commands;
-
-use oath::HashType;
+use r2d2_redis::redis::Commands;
 
 use qrcode::{QrCode, render::svg};
 
@@ -162,7 +160,7 @@ pub fn validate(form: Form<Validate>, user: OptionalWebUser, mut sess: Session, 
       },
     };
 
-    if totp_raw_skew(ss, 6, 0, 30, &HashType::SHA1).iter().all(|&x| x != form.tfa_code) {
+    if totp_raw_skew(ss).ok_or_else(|| anyhow::anyhow!("could not generate totp codes"))?.iter().all(|&x| x != form.tfa_code) {
       sess.add_data("error", l10n.tr(("login-error", "tfa"))?);
       return Ok(Redirect::to("lastpage"));
     }

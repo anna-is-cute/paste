@@ -224,7 +224,7 @@ pub fn batch_delete(ids: Form<BatchDelete>, config: State<Config>, _user: AdminU
       "info",
       l10n.tr_ex(
         ("admin-batch-delete", "success"),
-        |req| req.arg_num("pastes", deleted),
+        |req| req.arg_num("pastes", deleted.into()),
       )?,
     );
   }

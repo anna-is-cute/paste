@@ -5,13 +5,14 @@ use data_encoding::HEXLOWER;
 use html5ever::{
   local_name, namespace_url, ns, parse_fragment, serialize, Parser, QualName,
   driver::ParseOpts,
-  rcdom::{NodeData, RcDom, Handle},
   tendril::TendrilSink,
   tree_builder::TreeSink,
   interface::Attribute,
 };
 
-use hmac::{Hmac, Mac};
+use markup5ever_rcdom::{NodeData, RcDom, Handle, SerializableHandle};
+
+use hmac::{Hmac, Mac, NewMac};
 use sha1::Sha1;
 
 use url::{Url, ParseError as UrlParseError};
@@ -77,10 +78,10 @@ fn walk(config: &Config, handle: Handle, external: &Attribute, ctx: &mut Context
         Err(_) => return true,
       };
 
-      let mut hmac = Hmac::<Sha1>::new_varkey(&crate::CAMO_KEY)
+      let mut hmac = Hmac::<Sha1>::new_from_slice(&crate::CAMO_KEY)
         .expect("HMAC can take key of any size");
-      hmac.input(url.as_str().as_bytes());
-      let hmac_encoded = HEXLOWER.encode(&hmac.result().code());
+      hmac.update(url.as_str().as_bytes());
+      let hmac_encoded = HEXLOWER.encode(&hmac.finalize().into_bytes());
 
       // FIXME: unwrap
       new_url
@@ -92,7 +93,8 @@ fn walk(config: &Config, handle: Handle, external: &Attribute, ctx: &mut Context
         .query_pairs_mut()
         .append_pair("url", url.as_str());
 
-      url_attr.value = new_url.into_string().into();
+      let new_url: String = new_url.into();
+      url_attr.value = new_url.into();
     },
     NodeData::Element { ref name, ref attrs, .. } if &*name.local == "a" => {
       let url = attrs
@@ -140,8 +142,10 @@ pub fn process(config: &Config, src: &str) -> String {
 
   walk(config, dom.get_document(), &external, &mut ctx);
 
+  let handle: SerializableHandle = dom.document.children.borrow()[0].clone().into();
+
   let mut s = Vec::default();
-  serialize(&mut s, &dom.document.children.borrow()[0], Default::default()).expect("serialization failed");
+  serialize(&mut s, &handle, Default::default()).expect("serialization failed");
 
   String::from_utf8_lossy(&s).to_string()
 }

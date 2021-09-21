@@ -1,8 +1,9 @@
 use r2d2::{Pool, PooledConnection};
 
-use r2d2_redis::RedisConnectionManager;
-
-use redis::Connection;
+use r2d2_redis::{
+  RedisConnectionManager,
+  redis::Connection,
+};
 
 use rocket::{
   Request, State, Outcome,
@@ -53,12 +54,12 @@ impl Deref for Redis {
   type Target = Connection;
 
   fn deref(&self) -> &Self::Target {
-    &self.0
+    &*self.0
   }
 }
 
 impl DerefMut for Redis {
   fn deref_mut(&mut self) -> &mut Self::Target {
-    &mut self.0
+    &mut *self.0
   }
 }

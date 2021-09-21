@@ -102,7 +102,7 @@ impl PasswordResetAttempt {
       return Ok(None);
     }
 
-    let expires = DateTime::from_utc(*self.timestamp(), Utc) + Duration::hours(1);
+    let expires = DateTime::<Utc>::from_utc(*self.timestamp(), Utc) + Duration::hours(1);
     if expires <= Utc::now() {
       return Ok(None);
     }

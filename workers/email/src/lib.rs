@@ -2,12 +2,14 @@
 extern crate serde_derive;
 
 use lettre::{
-  ClientSecurity, ClientTlsParameters, SmtpClient, SmtpTransport, Transport,
-  builder::EmailBuilder,
-  smtp::authentication::{Credentials, Mechanism},
+  SmtpTransport, Transport, Message,
+  address::Address,
+  message::{Mailbox, SinglePart},
+  transport::smtp::{
+    client::{Tls, TlsParameters},
+    authentication::{Credentials, Mechanism}
+  },
 };
-
-use native_tls::TlsConnector;
 
 use std::{
   ffi::CStr,
@@ -35,12 +37,27 @@ fn do_email(path: &str, email: &str, subject: &str, content: &str) {
     },
   };
 
-  let email = EmailBuilder::new()
-    .from((config.sender.from, config.sender.name))
-    .to(email)
+  let email: Address = match email.parse() {
+    Ok(a) => a,
+    Err(e) => {
+      eprintln!("invalid email address: {}", e);
+      return;
+    },
+  };
+
+  let sender_addr: Address = match config.sender.from.parse() {
+    Ok(a) => a,
+    Err(e) => {
+      eprintln!("invalid email address: {}", e);
+      return;
+    },
+  };
+  let sender = Mailbox::new(Some(config.sender.name), sender_addr);
+  let email = Message::builder()
+    .from(sender)
+    .to(Mailbox::new(None, email))
     .subject(subject)
-    .html(content)
-    .build();
+    .singlepart(SinglePart::html(content.to_string()));
 
   let email = match email {
     Ok(e) => e,
@@ -50,31 +67,21 @@ fn do_email(path: &str, email: &str, subject: &str, content: &str) {
     },
   };
 
-  let connector = match TlsConnector::new() {
-    Ok(c) => c,
+  let params = match TlsParameters::new(config.smtp.domain) {
+    Ok(p) => p,
     Err(e) => {
-      eprintln!("could not create tls connector: {}", e);
+      eprintln!("could not create tls parameters: {}", e);
       return;
     },
   };
-  let security = ClientSecurity::Wrapper(
-    ClientTlsParameters::new(
-      config.smtp.domain,
-      connector,
-    ),
-  );
-  let addr = (config.smtp.address.as_str(), config.smtp.port);
-  let client = match SmtpClient::new(addr, security) {
-    Ok(c) => c
-      .credentials(Credentials::new(config.smtp.username, config.smtp.password))
-      .authentication_mechanism(Mechanism::Login),
-    Err(e) => {
-      eprintln!("could not create smtp transport builder: {}", e);
-      return;
-    },
-  };
-  let mut transport = SmtpTransport::new(client);
-  if let Err(e) = transport.send(email) {
+
+  let transport = SmtpTransport::builder_dangerous(config.smtp.address.as_str())
+    .port(config.smtp.port)
+    .tls(Tls::Wrapper(params))
+    .credentials(Credentials::new(config.smtp.username, config.smtp.password))
+    .authentication(vec![Mechanism::Login])
+    .build();
+  if let Err(e) = transport.send(&email) {
     eprintln!("could not send email: {}", e);
   }
 }

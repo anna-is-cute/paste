@@ -220,7 +220,7 @@ fn check_reset(conn: &DbConn, id: Uuid, secret: &str) -> Option<PasswordReset> {
     .optional()
     .ok()??;
 
-  if DateTime::from_utc(reset.expiry(), Utc) < Utc::now() {
+  if DateTime::<Utc>::from_utc(reset.expiry(), Utc) < Utc::now() {
     return None;
   }
 

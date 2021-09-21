@@ -1,7 +1,7 @@
 [package]
 name = "webserver"
 version = "0.1.1"
-authors = ["Anna Clemens <git@kyleclemens.com>"]
+authors = ["Anna Clemens <git@annaclemens.io>"]
 
 build = "build.rs"
 
@@ -13,9 +13,12 @@ ignore = [
   "rocket_contrib",
   # see serde
   "serde_derive",
-  # both handled by a "fluent" credit
+  # all handled by a "fluent" credit
   "fluent-bundle",
   "fluent-syntax",
+  "intl-memoizer",
+  # handled by html5ever
+  "markup5ever_rcdom",
 ]
 
 exclude = [
@@ -28,17 +31,17 @@ exclude = [
 
 [badges]
 travis-ci = { repository = "ascclemens/paste", branch = "master" }
-maintenance = { status = "actively-developed" }
+maintenance = { status = "passively-maintained" }
 
 [build-dependencies]
 # getting current commit
-git2 = "0.10"
+git2 = "0.13"
 # credits generation
 serde = "1"
 serde_derive = "1"
 serde_json = "1"
 toml = "0.5"
-tera = "0.11"
+tera = "1"
 
 [dependencies]
 # json serialization and deserialization
@@ -47,13 +50,13 @@ serde_derive = "1"
 serde_json = "1"
 
 # creating paste histories
-git2 = "0.10"
+git2 = "0.13"
 
 # error handling in the crate
 anyhow = "1"
 
 # accepting base64 gzip data
-libflate = "0.1"
+libflate = "1"
 
 # accepting base64 xz data
 xz2 = "0.1"
@@ -77,22 +80,16 @@ unicode-segmentation = "1"
 toml = "0.5"
 
 # rate limiting
-ipnetwork = "0.15"
-
-# custom cookies
-cookie = "0.11"
+ipnetwork = "0.18"
 
 # connection pooling
 r2d2 = "0.8"
 
-# in-memory data store
-redis = "0.13"
-
 # redis connection pooling
-r2d2_redis = "0.12"
+r2d2_redis = "0.14"
 
 # scheduling jobs
-sidekiq = "0.8"
+sidekiq = "0.9"
 
 # username validation
 unicode_categories = "0.1"
@@ -104,7 +101,8 @@ tera = "0.11"
 ammonia = "3"
 
 # html parsing
-html5ever = "0.24"
+html5ever = "0.25"
+markup5ever_rcdom = "0.1"
 
 # url parsing
 url = "2"
@@ -113,50 +111,46 @@ url = "2"
 unicase = "2"
 
 # totp for two-factor authentication
-oath = "0.10"
+one-time = "0.1"
 
 # needed to handle multipart's mime types
 # old version required because multipart depends on an old version
-mime = "0.2"
+mime = "0.3"
 
 # rewriting image urls for camo with SHA1-HMAC
-hmac = "0.7"
-sha-1 = "0.8"
+hmac = "0.11"
+sha-1 = "0.9"
 
 # Gravatar support
-md-5 = "0.8"
+md-5 = "0.9"
 
 # source of randomness
-rand = "0.7"
+rand = "0.8"
 
 # creating sha-384 integrity hashes
-sha2 = "0.8"
-
-# requests to gravatar
-reqwest = "0.9"
+sha2 = "0.9"
 
 # csv parsing
 csv = "1"
 
 # language ids for localisation
-unic-langid = "0.7"
+unic-langid = "0.9"
 
 # localisation
-fluent-bundle = "0.9"
-
-# localisation
-fluent-syntax = "0.9"
+fluent-bundle = "0.15"
+fluent-syntax = "0.11"
+intl-memoizer = "0.5"
 
 # anti-csrf tokens, encoding for totp shared keys, handling binary uploads in json
 data-encoding = "2"
 
 # image processing (avatars)
-image = "0.22"
-libwebp-sys = "0.2"
+image = "0.23"
+libwebp-sys = "0.4"
 
 # filters
 regex = "1"
-serde_regex = "0.4"
+serde_regex = "1"
 
 # web logic
 [dependencies.rocket]
@@ -171,7 +165,7 @@ features = ["json", "tera_templates"]
 
 # unique paste-related ids
 [dependencies.uuid]
-version = "0.7"
+version = "0.8"
 features = ["v4", "serde"]
 
 # database orm
@@ -186,12 +180,12 @@ features = ["serde"]
 
 # markdown rendering
 [dependencies.comrak]
-version = "0.6"
+version = "0.12"
 default-features = false
 
 # accepting multipart input
 [dependencies.multipart]
-version = "0.16"
+version = "0.18"
 default-features = false
 features = ["server"]
 
@@ -208,5 +202,10 @@ features = ["svg"]
 
 # better synchronisation primitives
 [dependencies.parking_lot]
-version = "0.10"
+version = "0.11"
 features = ["nightly"]
+
+# requests to gravatar
+[dependencies.reqwest]
+version= "0.11"
+features = ["blocking"]

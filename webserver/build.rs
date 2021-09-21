@@ -131,18 +131,18 @@ crate mod credits {
       let people_html: Vec<String> = self.people
         .iter()
         .map(|person| {
-          let mut ctx = serde_json::to_value(person).unwrap();
-          ctx["is_team"] = serde_json::json!(true);
+          let mut ctx = tera::Context::from_serialize(person).unwrap();
+          ctx.insert("is_team", &true);
           tera.render("credit.html.tera", &ctx).unwrap()
         })
         .collect();
 
-      let people_section = tera.render("section.html.tera", &Section {
+      let people_section = tera.render("section.html.tera", &tera::Context::from_serialize(Section {
         name: "People",
         cols: people_html
           .chunks((people_html.len() as f32 / 3.0).ceil() as usize)
           .collect(),
-      }).unwrap();
+      }).unwrap()).unwrap();
 
       final_html.push_str(&people_section);
 
@@ -151,15 +151,15 @@ crate mod credits {
       if !self.patrons.is_empty() {
         let patron_html: Vec<String> = self.patrons
           .iter()
-          .map(|person| tera.render("credit.html.tera", person).unwrap())
+          .map(|person| tera.render("credit.html.tera", &tera::Context::from_serialize(person).unwrap()).unwrap())
           .collect();
 
-        let patron_section = tera.render("section.html.tera", &Section {
+        let patron_section = tera.render("section.html.tera", &tera::Context::from_serialize(Section {
           name: "Patrons",
           cols: patron_html
             .chunks((patron_html.len() as f32 / 3.0).ceil() as usize)
             .collect(),
-        }).unwrap();
+        }).unwrap()).unwrap();
 
         final_html.push_str(&patron_section);
       }
@@ -168,15 +168,15 @@ crate mod credits {
 
       let frontend_html: Vec<String> = self.frontend
         .iter()
-        .map(|person| tera.render("credit.html.tera", person).unwrap())
+        .map(|person| tera.render("credit.html.tera", &tera::Context::from_serialize(person).unwrap()).unwrap())
         .collect();
 
-      let frontend_section = tera.render("section.html.tera", &Section {
+      let frontend_section = tera.render("section.html.tera", &tera::Context::from_serialize(Section {
         name: "Frontend",
         cols: frontend_html
           .chunks((frontend_html.len() as f32 / 3.0).ceil() as usize)
           .collect(),
-      }).unwrap();
+      }).unwrap()).unwrap();
 
       final_html.push_str(&frontend_section);
 
@@ -184,15 +184,15 @@ crate mod credits {
 
       let backend_html: Vec<String> = self.backend
         .iter()
-        .map(|person| tera.render("credit.html.tera", person).unwrap())
+        .map(|person| tera.render("credit.html.tera", &tera::Context::from_serialize(person).unwrap()).unwrap())
         .collect();
 
-      let backend_section = tera.render("section.html.tera", &Section {
+      let backend_section = tera.render("section.html.tera", &tera::Context::from_serialize(Section {
         name: "Backend",
         cols: backend_html
           .chunks((backend_html.len() as f32 / 3.0).ceil() as usize)
           .collect(),
-      }).unwrap();
+      }).unwrap()).unwrap();
 
       final_html.push_str(&backend_section);
 

@@ -18,9 +18,7 @@ use crate::{
 
 use diesel::prelude::*;
 
-use oath::HashType;
-
-use redis::Commands;
+use r2d2_redis::redis::Commands;
 
 use rocket::{
   State,
@@ -159,7 +157,7 @@ pub fn tfa_post(form: Form<TwoFactor>, pot: PotentialUser, mut sess: Session, co
         if let Some(ss) = user.shared_secret();
         if let Ok(tfa_code) = tfa_code_s.parse::<u64>();
         if !redis.exists::<_, bool>(format!("otp:{},{}", user.id(), tfa_code))?;
-        if totp_raw_skew(ss, 6, 0, 30, &HashType::SHA1).iter().any(|&x| x == tfa_code);
+        if totp_raw_skew(ss).ok_or_else(|| anyhow::anyhow!("could not generate totp codes"))?.iter().any(|&x| x == tfa_code);
         then {
           redis.set_ex(format!("otp:{},{}", user.id(), tfa_code), "", 120)?;
         } else {

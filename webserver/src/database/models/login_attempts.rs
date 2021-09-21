@@ -109,7 +109,7 @@ impl LoginAttempt {
       return Ok(None);
     }
 
-    let expires = DateTime::from_utc(*self.timestamp(), Utc) + Duration::minutes(30);
+    let expires = DateTime::<Utc>::from_utc(*self.timestamp(), Utc) + Duration::minutes(30);
     if expires <= Utc::now() {
       return Ok(None);
     }

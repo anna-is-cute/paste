@@ -8,7 +8,7 @@ use crate::{
   utils::AcceptLanguage,
 };
 
-use cookie::{Cookie, SameSite};
+use rocket::http::{Cookie, SameSite};
 
 use data_encoding::BASE64;
 
@@ -79,13 +79,13 @@ impl Honeypot {
 
     let mut rng = rand::thread_rng();
 
-    let length = rng.gen_range(15, 20);
+    let length = rng.gen_range(15..20);
 
     let start = ALPHA.choose(&mut rng).unwrap();
-    let end: String = Alphanumeric.sample_iter(&mut rng).take(length).collect();
+    let end: String = Alphanumeric.sample_iter(&mut rng).map(char::from).take(length).collect();
     let class = format!("{}{}", start, end);
 
-    let skip = rng.gen_range(1, 4);
+    let skip = rng.gen_range(1..4);
 
     let css = format!(
       "[class *= {}] {{ position: absolute; left: -100vw; width: 1px; height: 1px; }}",
@@ -93,8 +93,8 @@ impl Honeypot {
     );
 
     let mut hasher = Sha384::new();
-    hasher.input(&css);
-    let integrity_hash = format!("sha384-{}", BASE64.encode(&hasher.result()[..]));
+    hasher.update(&css);
+    let integrity_hash = format!("sha384-{}", BASE64.encode(&hasher.finalize()[..]));
 
     Honeypot {
       class,
@@ -119,10 +119,10 @@ impl<'a, 'r> AntiSpam<'a, 'r> {
   pub fn new(req: &'a Request<'r>) -> Self {
     let mut rng = rand::thread_rng();
 
-    let length = rng.gen_range(7, 10);
+    let length = rng.gen_range(7..10);
 
-    let js_1: String = Alphanumeric.sample_iter(&mut rng).take(length).collect();
-    let js_2: String = Alphanumeric.sample_iter(&mut rng).take(length).collect();
+    let js_1: String = Alphanumeric.sample_iter(&mut rng).map(char::from).take(length).collect();
+    let js_2: String = Alphanumeric.sample_iter(&mut rng).map(char::from).take(length).collect();
 
     let script = format!(
       "document.getElementById('js-check').value = '{}' + '{}';",
@@ -131,11 +131,11 @@ impl<'a, 'r> AntiSpam<'a, 'r> {
     );
 
     let mut hasher = Sha384::new();
-    hasher.input(&script);
-    let integrity_hash = format!("sha384-{}", BASE64.encode(&hasher.result()[..]));
+    hasher.update(&script);
+    let integrity_hash = format!("sha384-{}", BASE64.encode(&hasher.finalize()[..]));
 
-    let x: u8 = rng.gen_range(1, 10);
-    let y: u8 = rng.gen_range(1, 10);
+    let x: u8 = rng.gen_range(1..10);
+    let y: u8 = rng.gen_range(1..10);
     let sum = x + y;
 
     AntiSpam {

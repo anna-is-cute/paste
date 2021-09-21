@@ -20,7 +20,7 @@ use crate::{
 
 use ammonia::Builder;
 
-use comrak::{markdown_to_html, ComrakOptions};
+use comrak::{markdown_to_html, ComrakOptions, ComrakExtensionOptions, ComrakParseOptions, ComrakRenderOptions};
 
 use diesel::prelude::*;
 
@@ -38,15 +38,21 @@ use serde_json::json;
 
 lazy_static! {
   static ref OPTIONS: ComrakOptions = ComrakOptions {
-    github_pre_lang: true,
-    ext_strikethrough: true,
-    ext_table: true,
-    ext_autolink: true,
-    ext_tasklist: true,
-    ext_footnotes: true,
-    // allows html and bad links: ammonia + our post-processor cleans the output, not comrak
-    unsafe_: true,
-    .. Default::default()
+    extension: ComrakExtensionOptions {
+      strikethrough: true,
+      table: true,
+      autolink: true,
+      tasklist: true,
+      footnotes: true,
+      ..Default::default()
+    },
+    parse: ComrakParseOptions::default(),
+    render: ComrakRenderOptions {
+      github_pre_lang: true,
+      // allows html and bad links: ammonia + our post-processor cleans the output, not comrak
+      unsafe_: true,
+      ..Default::default()
+    },
   };
 
   static ref CLEANER: Builder<'static> = {

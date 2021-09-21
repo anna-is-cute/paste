@@ -58,7 +58,7 @@ impl EmailVerification {
 
   pub fn can_send_again(&self) -> bool {
     let last_sent = match self.last_sent {
-      Some(l) => DateTime::from_utc(l, Utc),
+      Some(l) => DateTime::<Utc>::from_utc(l, Utc),
       None => return true,
     };
 
@@ -90,7 +90,7 @@ impl EmailVerification {
   }
 
   pub fn check(&self, bytes: &[u8]) -> bool {
-    if DateTime::from_utc(self.expiry, Utc) < Utc::now() {
+    if DateTime::<Utc>::from_utc(self.expiry, Utc) < Utc::now() {
       return false;
     }
 

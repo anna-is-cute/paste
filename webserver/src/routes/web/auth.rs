@@ -4,9 +4,9 @@ pub mod register;
 
 use chrono::Duration;
 
-use cookie::SameSite;
+use rocket::http::SameSite;
 
-use redis::Commands;
+use r2d2_redis::redis::Commands;
 
 use rocket::{
   Outcome,

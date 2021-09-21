@@ -1,4 +1,4 @@
-use fluent_bundle::{FluentBundle, FluentResource, FluentValue};
+use fluent_bundle::{bundle::FluentBundle, FluentResource, FluentValue, FluentArgs, types::FluentNumber};
 
 use rocket::{
   Outcome,
@@ -109,7 +109,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for L10n<'r> {
 pub enum I18nError {
   Io(std::io::Error),
   Fluents(Vec<fluent_bundle::FluentError>),
-  FluentParse(Vec<fluent_syntax::parser::errors::ParserError>),
+  FluentParse(Vec<fluent_syntax::parser::ParserError>),
   LangId(unic_langid::LanguageIdentifierError),
   Toml(toml::de::Error),
 }
@@ -119,7 +119,7 @@ fn manifest() -> Result<Manifest, I18nError> {
   toml::from_str(&f).map_err(I18nError::Toml)
 }
 
-fn bundles() -> Result<HashMap<LanguageIdentifier, FluentBundle<FluentResource>>, I18nError> {
+fn bundles() -> Result<HashMap<LanguageIdentifier, Bundle>, I18nError> {
   let mut bundles = HashMap::new();
   for entry in Path::new("./i18n/").read_dir().map_err(I18nError::Io)? {
     let entry = entry.map_err(I18nError::Io)?.path();
@@ -133,14 +133,14 @@ fn bundles() -> Result<HashMap<LanguageIdentifier, FluentBundle<FluentResource>>
     let ftl = std::fs::read_to_string(&entry).map_err(I18nError::Io)?;
     let resource = FluentResource::try_new(ftl).map_err(|(_, e)| I18nError::FluentParse(e))?;
     let lang_id: LanguageIdentifier = lang_id.parse().map_err(I18nError::LangId)?;
-    let mut bundle = FluentBundle::new(&[lang_id.clone()]);
+    let mut bundle = FluentBundle::new_concurrent(vec![lang_id.clone()]);
     bundle.add_resource(resource).map_err(I18nError::Fluents)?;
     bundles.insert(lang_id, bundle);
   }
   Ok(bundles)
 }
 
-type Bundle = FluentBundle<FluentResource>;
+type Bundle = FluentBundle<FluentResource, intl_memoizer::concurrent::IntlLangMemoizer>;
 
 #[derive(Deserialize)]
 struct Manifest {
@@ -206,10 +206,10 @@ impl Localisation {
     let found = self.bundles(&wants)
       .into_iter()
       .flat_map(|bundle| {
-        let mut message = bundle.get_message(req.msg)?;
+        let message = bundle.get_message(req.msg)?;
         let pattern = match req.attr {
-          Some(attr) => message.attributes.remove(attr),
-          None => message.value,
+          Some(attr) => message.get_attribute(attr).map(|attr| attr.value()),
+          None => message.value(),
         }?;
         Some((bundle, pattern))
       })
@@ -254,7 +254,7 @@ pub struct MessageRequest<'a> {
   wants: &'a [LanguageIdentifier],
   msg: &'a str,
   attr: Option<&'a str>,
-  args: Option<HashMap<&'a str, FluentValue<'a>>>,
+  args: Option<FluentArgs<'a>>,
 }
 
 impl<'a> MessageRequest<'a> {
@@ -278,7 +278,7 @@ impl<'a> MessageRequest<'a> {
     if self.args.is_none() {
       self.args = Some(Default::default());
     }
-    self.args.as_mut().unwrap().insert(key, value.into());
+    self.args.as_mut().unwrap().set(key, value);
     self
   }
 
@@ -288,10 +288,8 @@ impl<'a> MessageRequest<'a> {
     self.arg(key, FluentValue::String(Cow::Owned(value.to_string())))
   }
 
-  pub fn arg_num<D>(self, key: &'a str, value: D) -> Self
-    where D: std::fmt::Display,
-  {
-    self.arg(key, FluentValue::Number(Cow::Owned(value.to_string())))
+  pub fn arg_num(self, key: &'a str, value: FluentNumber) -> Self {
+    self.arg(key, FluentValue::Number(value))
   }
 
   pub fn message(&self, l10n: &Localisation) -> Result<String, anyhow::Error> {
@@ -315,8 +313,8 @@ pub fn tera_function(localisation: Localisation) -> GlobalFn {
         _ => None,
       })
       .map(|vs| vs.into_iter()
-        .flat_map(|v| v.parse())
-        .collect())
+           .flat_map(|v| v.parse())
+           .collect())
       .ok_or_else(|| TeraError::from("missing _lang parameter"))?;
     let msg = args.remove("_msg")
       .and_then(|v| match v {
@@ -329,12 +327,14 @@ pub fn tera_function(localisation: Localisation) -> GlobalFn {
         TeraValue::String(s) => Some(s),
         _ => None,
       });
-    let args: HashMap<&str, FluentValue> = args
+    let args: FluentArgs = args
       .iter()
       .map(|(key, value)| {
         let value = match value {
           TeraValue::String(ref s) => FluentValue::String(s.into()),
-          TeraValue::Number(ref n) => FluentValue::Number(n.to_string().into()),
+          TeraValue::Number(ref n) if n.is_u64() => FluentValue::Number(n.as_u64().unwrap().into()),
+          TeraValue::Number(ref n) if n.is_i64() => FluentValue::Number(n.as_i64().unwrap().into()),
+          TeraValue::Number(ref n) if n.is_f64() => FluentValue::Number(n.as_f64().unwrap().into()),
           _ => return Err(TeraError::from("translation args must be strings or numbers")),
         };
         Ok((key.as_str(), value))
@@ -345,7 +345,7 @@ pub fn tera_function(localisation: Localisation) -> GlobalFn {
       wants: &langs,
       msg: &msg,
       attr: attr.as_ref().map(AsRef::as_ref),
-      args: if args.is_empty() { None } else { Some(args) },
+      args: if args.iter().next().is_none() { None } else { Some(args) },
     };
     let output = localisation.message(&req).map_err(|e| TeraError::from(e.to_string()))?;
 

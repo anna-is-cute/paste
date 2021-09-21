@@ -13,9 +13,9 @@ use crate::{
 
 use diesel::prelude::*;
 
-use redis::Commands;
+use r2d2_redis::redis::Commands;
 
-use reqwest::Client;
+use reqwest::blocking::Client;
 
 use rocket::{
   http::{

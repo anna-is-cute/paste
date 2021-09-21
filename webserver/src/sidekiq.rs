@@ -30,11 +30,11 @@ pub enum Job<'c> {
 
 impl Job<'c> {
   pub fn email<T, C, P, E, S>(template: T, context: C, path: P, email: E, subject: S) -> Result<Job<'c>>
-    where T: AsRef<str>,
-          C: Serialize,
-          P: Into<PathBuf>,
-          E: Into<String>,
-          S: Into<String>,
+  where T: AsRef<str>,
+        C: Serialize,
+        P: Into<PathBuf>,
+        E: Into<String>,
+        S: Into<String>,
   {
     let rendered = crate::EMAIL_TERA
       .render(template.as_ref(), &context)

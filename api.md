@@ -91,14 +91,14 @@ Create a new paste.
         // gzip - base64 of the gzip-compressed content
         // xz - base64 of the xz-compressed content
 
-        // (required)  the format of the file
+        // (required) the format of the file
         // specify that the content field is valid utf-8 text
         "format": "text",
         // (optional) the syntax highlighting language to use
         // if not specified or null, the web UI will autodetect which language to use based on
         // extension
         "highlight_language": null,
-        // (required)  the value of the file contents
+        // (required) the value of the file contents
         // content of the file as valid utf-8 text
         "value": "Hello!"
       }
@@ -109,7 +109,7 @@ Create a new paste.
         // specify that the content field is base64-encoded data
         "format": "base64",
         // content of the jpg in base64 (truncated here)
-        "content": "/9j/4AAQSkZJRgABAQAAAQABAAD//gA7..."
+        "value": "/9j/4AAQSkZJRgABAQAAAQABAAD//gA7..."
       }
     }
   ]

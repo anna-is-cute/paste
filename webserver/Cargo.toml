@@ -146,7 +146,7 @@ data-encoding = "2"
 
 # image processing (avatars)
 image = "0.23"
-libwebp-sys = "0.4"
+libwebp-sys = "0.9"
 
 # filters
 regex = "1"
